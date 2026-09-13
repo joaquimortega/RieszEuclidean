@@ -15,7 +15,12 @@
     "RieszEuclidean.Results.hull_invariant_probability",
     "RieszEuclidean.Results.stationary_koopman",
     "RieszEuclidean.Results.beurling_iff_vague",
-    "RieszEuclidean.Results.integrated_spectral_norm"
+    "RieszEuclidean.Results.integrated_spectral_norm",
+    "RieszEuclidean.Results.continuous_fejer",
+    "RieszEuclidean.Results.finite_filter_symbol",
+    "RieszEuclidean.Results.spectral_control_measure",
+    "RieszEuclidean.Results.stationary_cutoffs",
+    "RieszEuclidean.Results.bump_kernel_projection"
   ],
   "permitted_axioms": [
     "propext",

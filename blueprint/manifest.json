@@ -15,7 +15,7 @@
       "source_labels": [
         "eq:riesz"
       ],
-      "scope": "Concrete Euclidean L², synthesis, translation and weak-convergence definitions",
+      "scope": "Concrete Euclidean L\u00b2, synthesis, translation and weak-convergence definitions",
       "file": "RieszEuclidean/Basic.lean",
       "declarations": []
     },
@@ -77,7 +77,7 @@
       "source_labels": [
         "eq:P"
       ],
-      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection, with L¹∩L² agreement, translation commutation and the stated convolution kernel",
+      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection, with L\u00b9\u2229L\u00b2 agreement, translation commutation and the stated convolution kernel",
       "file": "RieszEuclidean/FourierL2.lean",
       "declarations": [
         "RieszEuclidean.integral_fourier_mul",
@@ -131,7 +131,7 @@
         "RieszEuclidean.fourierProjection_translation_integrable",
         "RieszEuclidean.fourierProjection_translation"
       ],
-      "progress": "Verified unitary Euclidean Fourier transform, integral agreement on L¹∩L² for both signs, orthogonal domain cutoff, Fourier-support range characterization, convolution formula for L¹∩L² inputs, and translation commutation on all L² for finite-measure domains.",
+      "progress": "Verified unitary Euclidean Fourier transform, integral agreement on L\u00b9\u2229L\u00b2 for both signs, orthogonal domain cutoff, Fourier-support range characterization, convolution formula for L\u00b9\u2229L\u00b2 inputs, and translation commutation on all L\u00b2 for finite-measure domains.",
       "partial_files": [
         "RieszEuclidean/SchwartzDensity.lean",
         "RieszEuclidean/FourierExtension.lean",
@@ -423,7 +423,7 @@
         "RieszEuclidean/InvariantProbability.lean",
         "RieszEuclidean/HullInvariantMeasure.lean"
       ],
-      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. The Koopman operators are constructed with the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}. They are unitaries, obey the additive group law, and form a strongly continuous representation on the separable stationary L² space. Constants are invariant and the constant one has norm one. Finite injective point matching controls compactly supported test integrals. Weak convergence therefore implies vague convergence. A compactly supported bump distinguishes different configurations, so the continuous counting-test map is injective; compactness makes it an embedding and proves the converse. All mathematical components of this node compile and pass all 15 integrated linters. The standalone compiles and the complete 245-declaration transitive axiom audit uses only standard Lean axioms."
+      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. The Koopman operators are constructed with the manuscript convention U_z f(\u0393)=f(\u0393+z), hence pullback by T_{-z}. They are unitaries, obey the additive group law, and form a strongly continuous representation on the separable stationary L\u00b2 space. Constants are invariant and the constant one has norm one. Finite injective point matching controls compactly supported test integrals. Weak convergence therefore implies vague convergence. A compactly supported bump distinguishes different configurations, so the continuous counting-test map is injective; compactness makes it an embedding and proves the converse. All mathematical components of this node compile and pass all 15 integrated linters. The standalone compiles and the complete 245-declaration transitive axiom audit uses only standard Lean axioms."
     },
     {
       "id": "bochner",
@@ -456,7 +456,7 @@
         "RieszEuclidean.RepresentsCorrelation.unitary_mass",
         "RieszEuclidean.integrable_fourierChar"
       ],
-      "progress": "Actual hull correlations are continuous and positive definite: every finite complex quadratic form is real and nonnegative. The correlation at zero is the squared vector norm, correlations are uniformly bounded, and parallelogram and scalar homogeneity identities are proved. The invariant unit constant has correlation identically one. Representing measures are proved unique using the actual positive 2π Fourier characters, and their mass equals the squared vector norm. Existence for general correlations remains pending."
+      "progress": "Actual hull correlations are continuous and positive definite: every finite complex quadratic form is real and nonnegative. The correlation at zero is the squared vector norm, correlations are uniformly bounded, and parallelogram and scalar homogeneity identities are proved. The invariant unit constant has correlation identically one. Representing measures are proved unique using the actual positive 2\u03c0 Fourier characters, and their mass equals the squared vector norm. Existence for general correlations remains pending."
     },
     {
       "id": "scalar-calculus",
@@ -470,7 +470,7 @@
         "eq:multiplier-norm",
         "eq:control-null"
       ],
-      "scope": "Control measure, Dirac constant spectrum, and L¹ integrated filter calculus",
+      "scope": "Control measure, Dirac constant spectrum, and L\u00b9 integrated filter calculus",
       "file": "RieszEuclidean/SpectralMeasures.lean",
       "declarations": [
         "RieszEuclidean.representsCorrelation_one",
@@ -496,13 +496,43 @@
         "RieszEuclidean.integral_fourier_gram",
         "RieszEuclidean.integratedUnitary_spectral_norm_sq",
         "RieszEuclidean.integratedKernelSymbol_eq_fourierInv",
-        "RieszEuclidean.integrable_integratedKernelSymbol_sq"
+        "RieszEuclidean.integrable_integratedKernelSymbol_sq",
+        "RieszEuclidean.adjointKernel",
+        "RieszEuclidean.integrable_adjointKernel",
+        "RieszEuclidean.unitary_inner_neg",
+        "RieszEuclidean.integratedUnitary_adjoint_pairing",
+        "RieszEuclidean.integratedUnitaryCLM_adjoint",
+        "RieszEuclidean.adjointKernel_involutive",
+        "RieszEuclidean.integratedKernelSymbol_adjoint",
+        "RieszEuclidean.integratedKernelConvolution",
+        "RieszEuclidean.integrable_integratedKernelConvolution",
+        "RieszEuclidean.integrable_unitary_convolution_kernel",
+        "RieszEuclidean.integratedUnitary_convolution",
+        "RieszEuclidean.integratedUnitaryCLM_convolution",
+        "RieszEuclidean.integratedKernelSymbol_convolution",
+        "RieszEuclidean.exists_unit_sequence_scalar_approximants",
+        "RieszEuclidean.norm_integratedUnitary_le_symbol",
+        "RieszEuclidean.norm_integratedUnitaryCLM_le_symbol",
+        "RieszEuclidean.integratedKernelSymbol_sub",
+        "RieszEuclidean.integratedUnitaryCLM_eq_of_symbol_eq",
+        "RieszEuclidean.spectralMeasure_set_le",
+        "RieszEuclidean.spectralMeasure_univ",
+        "RieszEuclidean.spectralMeasure_set_le_norm",
+        "RieszEuclidean.spectralMeasure_null_of_tendsto",
+        "RieszEuclidean.spectralControlWeight",
+        "RieszEuclidean.tsum_spectralControlWeight",
+        "RieszEuclidean.spectralControlWeight_ne_zero",
+        "RieszEuclidean.spectralControlMeasure",
+        "RieszEuclidean.spectralControlMeasure_probability",
+        "RieszEuclidean.spectralControlMeasure_null_seq",
+        "RieszEuclidean.spectralMeasure_absolutelyContinuous_control",
+        "RieszEuclidean.exists_spectralControlMeasure"
       ],
-      "progress": "The actual invariant unit constant is represented by the Dirac measure at zero. Addition and nonnegative scaling of representing measures are proved. Uniqueness yields the spectral parallelogram and squared-modulus homogeneity identities whenever the relevant representing measures are supplied. The integrated unitary action is constructed for every integrable scalar kernel. Orbit integrability, vector linearity, almost-everywhere kernel congruence, and the L¹ operator-norm bound are proved. Its squared norm is the iterated integral of the correlation Gram kernel. The double correlation kernel and the three-variable Fourier Gram kernel are absolutely integrable. Fubini and character factorization prove the spectral norm identity for every L¹ kernel whenever a representing measure is supplied. The symbol is exactly the positive Euclidean Fourier transform, and its square is integrable against every finite spectral measure. General measure existence, the common control measure, convolution and adjoint identities remain pending."
+      "progress": "The actual invariant unit constant is represented by the Dirac measure at zero. Addition and nonnegative scaling of representing measures are proved. Uniqueness yields the spectral parallelogram and squared-modulus homogeneity identities whenever the relevant representing measures are supplied. The integrated unitary action is constructed for every integrable scalar kernel. Orbit integrability, vector linearity, almost-everywhere kernel congruence, and the L\u00b9 operator-norm bound are proved. Its squared norm is the iterated integral of the correlation Gram kernel. The double correlation kernel and the three-variable Fourier Gram kernel are absolutely integrable. Fubini and character factorization prove the spectral norm identity for every L\u00b9 kernel whenever a representing measure is supplied. The symbol is exactly the positive Euclidean Fourier transform, and its square is integrable against every finite spectral measure. Reflection and conjugation define the integrable involuted kernel. Unitarity and change of variables prove the adjoint pairing and actual operator adjoint identity. Absolute integrability of the convolution kernel permits Fubini, proving both vector and bounded-operator composition identities. The Fourier symbol conjugates under kernel involution and multiplies under convolution. These algebra identities do not assume spectral measure existence. A uniform symbol bound controls the actual operator norm, and equal symbols give equal operators, assuming representing measures for all vectors. Separability provides unit vectors whose scalar multiples approximate every vector. The explicit dyadic weighted sum of their spectral measures is a probability measure. The parallelogram estimate and passage through norm limits prove that every vector spectral measure is absolutely continuous with respect to this one measure. All scalar-calculus components are now implemented with the representing family explicit. General Bochner existence is postponed at the user\u2019s request; this node remains pending because that dependency is not yet proved."
     },
     {
       "id": "continuous-fejer",
-      "status": "pending",
+      "status": "proved",
       "dependencies": [
         "fourier-l2"
       ],
@@ -511,8 +541,66 @@
         "eq:fejer-coefficients"
       ],
       "scope": "Positive continuous-box kernels and approximate-identity convergence",
-      "file": null,
-      "declarations": []
+      "file": "RieszEuclidean/FejerWeights.lean",
+      "declarations": [
+        "RieszEuclidean.fejerWeight",
+        "RieszEuclidean.fejerWeight_nonneg",
+        "RieszEuclidean.fejerWeight_le_one",
+        "RieszEuclidean.fejerWeight_zero",
+        "RieszEuclidean.fejerWeight_neg",
+        "RieszEuclidean.continuous_fejerWeight",
+        "RieszEuclidean.fejerWeight_eq_zero_of_coordinate",
+        "RieszEuclidean.isCompact_euclideanBox",
+        "RieszEuclidean.fejerWeight_eq_zero_outside",
+        "RieszEuclidean.hasCompactSupport_fejerWeight",
+        "RieszEuclidean.tendsto_fejerWeight",
+        "RieszEuclidean.integrable_fejerWeight",
+        "RieszEuclidean.integrable_fejerWeight_smul",
+        "RieszEuclidean.tendsto_integral_fejerWeight_smul",
+        "RieszEuclidean.tendsto_integral_norm_fejerWeight_smul_sub",
+        "RieszEuclidean.mem_euclideanBox_iff_coordinates",
+        "RieszEuclidean.euclideanBox_inter_translate_eq",
+        "RieszEuclidean.overlap_interval_length",
+        "RieszEuclidean.volume_euclideanBox_inter_translate",
+        "RieszEuclidean.volume_real_euclideanBox_inter_translate",
+        "RieszEuclidean.fejerWeight_eq_normalized_overlap",
+        "RieszEuclidean.integrable_sq_norm_fullL2",
+        "RieszEuclidean.integral_sq_norm_fullL2",
+        "RieszEuclidean.inverseFourier_sq_norm",
+        "RieszEuclidean.fejerKernel",
+        "RieszEuclidean.inverseFourier_box_indicator",
+        "RieszEuclidean.fejerKernel_eq_box_integral",
+        "RieszEuclidean.fejerKernel_nonneg",
+        "RieszEuclidean.fejerKernel_integrable_integral",
+        "RieszEuclidean.boxNorm_smul",
+        "RieszEuclidean.smul_euclideanBox_one",
+        "RieszEuclidean.box_exponential_integral_scale",
+        "RieszEuclidean.fejerKernel_scale",
+        "RieszEuclidean.fejerKernel_integral_closedBall_scale",
+        "RieszEuclidean.tendsto_fejerKernel_tail",
+        "RieszEuclidean.smoothedIndicator",
+        "RieszEuclidean.integrable_smoothedIndicator",
+        "RieszEuclidean.smoothedIndicator_mem_Icc",
+        "RieszEuclidean.exists_indicator_constant_ball",
+        "RieszEuclidean.abs_smoothedIndicator_sub_le_tail",
+        "RieszEuclidean.tendsto_smoothedIndicator",
+        "RieszEuclidean.fejerCutoff",
+        "RieszEuclidean.integrable_fejerCutoff_integrand",
+        "RieszEuclidean.fejerCutoff_mem_Icc",
+        "RieszEuclidean.tendsto_fejerCutoff",
+        "RieszEuclidean.continuous_fejerKernel",
+        "RieszEuclidean.measurable_fejerCutoff",
+        "RieszEuclidean.integrable_box_indicator",
+        "RieszEuclidean.box_indicator_autocorrelation",
+        "RieszEuclidean.fejerWeight_eq_box_autocorrelation",
+        "RieszEuclidean.integratedKernelSymbol_fejerWeight",
+        "RieszEuclidean.fourier_domain_indicator",
+        "RieszEuclidean.fourier_modulated_fejerWeight",
+        "RieszEuclidean.smoothedIndicator_eq_domain_integral",
+        "RieszEuclidean.integrable_fejerWeight_domainKernel",
+        "RieszEuclidean.integratedKernelSymbol_fejerWeight_domainKernel"
+      ],
+      "progress": "The full continuous Euclidean Fej\u00e9r construction is proved. Product weights are exactly the normalized actual translated-box overlaps, including in dimension zero. They are nonnegative, at most one, compactly supported, and converge to one. Actual positive-sign Plancherel proves that the box Fourier kernel is nonnegative, integrable and has mass one. Euclidean dilation proves its exact scaling and vanishing tails. The smoothed indicators lie between zero and one and converge to the domain indicator off its frontier. The normalized autocorrelation identity and Fourier transposition prove both the Fourier transform of the weight and the exact w_R times domain-kernel coefficient formula. No Bochner assumption is used."
     },
     {
       "id": "cutoffs",
@@ -525,8 +613,52 @@
         "prop:cutoffs"
       ],
       "scope": "Construct good-parameter projections and prove scalar norm identities",
-      "file": null,
-      "declarations": []
+      "file": "RieszEuclidean/GoodParameters.lean",
+      "declarations": [
+        "RieszEuclidean.translatedExceptionalMass",
+        "RieszEuclidean.goodParameters",
+        "RieszEuclidean.measurable_translatedExceptionalMass",
+        "RieszEuclidean.translatedExceptionalMass_ae_zero",
+        "RieszEuclidean.measurableSet_goodParameters",
+        "RieszEuclidean.volume_compl_goodParameters",
+        "RieszEuclidean.frontier_goodParameters",
+        "RieszEuclidean.mem_goodParameters_frontier",
+        "RieszEuclidean.exists_clm_of_strong_limit",
+        "RieszEuclidean.exists_clm_of_pointwise_cauchy",
+        "RieszEuclidean.strong_limit_apply_tendsto",
+        "RieszEuclidean.strong_limit_comp",
+        "RieszEuclidean.strong_limit_idempotent",
+        "RieszEuclidean.strong_limit_isSelfAdjoint",
+        "RieszEuclidean.exists_projection_of_cauchy_contractions",
+        "RieszEuclidean.integratedUnitary_spectral_difference_sq",
+        "RieszEuclidean.integratedUnitary_cauchy_of_symbol_tendsto",
+        "RieszEuclidean.strong_limit_spectral_norm_sq",
+        "RieszEuclidean.exists_integratedUnitary_limit_spectral_norm",
+        "RieszEuclidean.integratedUnitary_idempotence_defect_tendsto",
+        "RieszEuclidean.exists_spectral_cutoff_of_symbol_tendsto",
+        "RieszEuclidean.strong_limit_spectral_difference_sq",
+        "RieszEuclidean.domainKernel_eq_fourier",
+        "RieszEuclidean.continuous_domainKernel",
+        "RieszEuclidean.norm_domainKernel_le",
+        "RieszEuclidean.domainKernel_neg",
+        "RieszEuclidean.finiteFilterKernel",
+        "RieszEuclidean.integrable_finiteFilterKernel",
+        "RieszEuclidean.adjointKernel_finiteFilterKernel",
+        "RieszEuclidean.finiteFilter",
+        "RieszEuclidean.finiteFilter_isSelfAdjoint",
+        "RieszEuclidean.integratedKernelSymbol_finiteFilterKernel",
+        "RieszEuclidean.integratedKernelSymbol_finiteFilterKernel_eq_fejerCutoff",
+        "RieszEuclidean.norm_finiteFilter_le",
+        "RieszEuclidean.cutoffSymbol",
+        "RieszEuclidean.cutoffSymbol_idempotent",
+        "RieszEuclidean.fejerCutoff_ae_tendsto_of_goodParameter",
+        "RieszEuclidean.finiteFilterKernel_ae_symbol_tendsto",
+        "RieszEuclidean.exists_stationary_cutoff",
+        "RieszEuclidean.integral_cutoffSymbol_sq",
+        "RieszEuclidean.stationary_cutoff_difference_sq",
+        "RieszEuclidean.exists_stationary_cutoff_family"
+      ],
+      "progress": "The actual finite filters converge strongly as real R tends to infinity to a simultaneous family of self-adjoint idempotent contractions on a measurable conull parameter set. Spectral mass and two-parameter difference identities are proved. Representing spectral measures and their common domination remain explicit hypotheses; this node remains pending because Bochner existence is postponed."
     },
     {
       "id": "comparison-kernel",
@@ -539,8 +671,29 @@
         "prop:M"
       ],
       "scope": "Construct the actual M_t and prove idempotence, self-adjointness and norm Lipschitz continuity",
-      "file": null,
-      "declarations": []
+      "file": "RieszEuclidean/BumpKernel.lean",
+      "declarations": [
+        "RieszEuclidean.bumpKernel",
+        "RieszEuclidean.bump_active_unique",
+        "RieszEuclidean.bumpKernel_support_subsingleton",
+        "RieszEuclidean.summable_bumpKernel",
+        "RieszEuclidean.bumpKernel_eq_single",
+        "RieszEuclidean.norm_bumpKernel_le",
+        "RieszEuclidean.bumpKernel_eq_zero_of_two_mul_lt",
+        "RieszEuclidean.bumpKernel_hermitian",
+        "RieszEuclidean.bumpKernel_translate",
+        "RieszEuclidean.bumpKernel_eq_single_right",
+        "RieszEuclidean.integrable_bump_cross",
+        "RieszEuclidean.integral_bump_cross",
+        "RieszEuclidean.bumpKernel_product_eq_cross",
+        "RieszEuclidean.bumpKernel_eq_zero_of_no_active",
+        "RieszEuclidean.integrable_bumpKernel_product",
+        "RieszEuclidean.integral_bumpKernel_product",
+        "RieszEuclidean.bumpKernel_locally_finite_sum",
+        "RieszEuclidean.continuous_bumpKernel",
+        "RieszEuclidean.continuous_bumpKernel_of_hasCompactSupport"
+      ],
+      "progress": "The actual bump-kernel series has proved summability, uniform bounds, finite propagation, Hermitian symmetry, translation covariance, product integrability, the normalized projection integral identity and joint continuity in its two spatial variables for fixed configuration. Configuration-variable continuity and the actual stationary operator M_t remain under development."
     },
     {
       "id": "continuous-averaging",
@@ -597,7 +750,7 @@
       "source_labels": [
         "thm:ball"
       ],
-      "scope": "Unconditional nonexistence for every d ≥ 2 and every positive-radius ball",
+      "scope": "Unconditional nonexistence for every d \u2265 2 and every positive-radius ball",
       "file": null,
       "declarations": []
     },
@@ -671,7 +824,7 @@
       "source_labels": [
         "sec:ellipsoids"
       ],
-      "scope": "Determinant-correct L² pullback, 2π phases and transpose frequency transport",
+      "scope": "Determinant-correct L\u00b2 pullback, 2\u03c0 phases and transpose frequency transport",
       "file": "RieszEuclidean/Affine.lean",
       "declarations": [
         "RieszEuclidean.planeAffine_map",
@@ -764,6 +917,27 @@
     "RieszEuclidean/Correlations.lean": "4d9764bfdde7277c0a682f717d5cae296305370bfd722bcfb2630ff20a318d0d",
     "RieszEuclidean/SpectralMeasures.lean": "b377cd44f84bd5e9271bfb1f0e3a5f76a980c697ddd0d4d5a899e1d01128a60d",
     "RieszEuclidean/IntegratedUnitary.lean": "38ef236cd542314ae3c203308bc65a7dc1ec0f3a0816146153410b1f843bad77",
-    "RieszEuclidean/SpectralNorm.lean": "7ecc280e704ef3c34ec57b0928ced318bcb192f890119ee993686fa20b723ed5"
+    "RieszEuclidean/SpectralNorm.lean": "7ecc280e704ef3c34ec57b0928ced318bcb192f890119ee993686fa20b723ed5",
+    "RieszEuclidean/IntegratedAlgebra.lean": "2957c6bf58d37401a1e9b658d7dd2b2559008e131fc788925b999b000f298688",
+    "RieszEuclidean/UnitSphereApproximation.lean": "72f2a422c723cc874c30e168af3ec9968e064a3ee5b029eaa763983753cc3f9c",
+    "RieszEuclidean/SymbolBound.lean": "9ee1e4adc98926e4c73e3c0b60abee3b1a3acbac1e0ab06cd05c355d564a1631",
+    "RieszEuclidean/ControlMeasure.lean": "0b261781d03e75b36de39324b23e2fd120c8e4b0fae11c5b236317dceed90e3b",
+    "RieszEuclidean/FejerWeights.lean": "df5aefdb0f7ac6acd87bb9fe797a42a92d457265c68e8a9b6f90212442a37e29",
+    "RieszEuclidean/BoxOverlap.lean": "4b0f654495850b8a66154595da8fc25d49962d368f357f7e18e21277aacb2862",
+    "RieszEuclidean/GoodParameters.lean": "83db2c847490bb071d86ab13bd8d772a66042cec83a1944d8463ae8ad4ce77cb",
+    "RieszEuclidean/StrongOperatorLimits.lean": "76a9221ddbbcaa529c8bd2d3514236d32ea4cda22ff551e65b2523553bf101d0",
+    "RieszEuclidean/FejerKernel.lean": "c55106b54cd07f8a4db92371cd79174c31ff979a83ee9c73977bcb1614145709",
+    "RieszEuclidean/FejerConcentration.lean": "9e26a4eeb9f11f1852915f040d07e786a2faf672c0f433d287ae648d1cad68db",
+    "RieszEuclidean/ApproximateCutoffs.lean": "b15c213f844b5f7e6d962cb4bf295115252d90fb8178c31f37ad2fb52351c3b8",
+    "RieszEuclidean/SmoothedFejer.lean": "781f45dbf3d8b2d8400f672a8eeadd7e6447109f39c668842435b6e2bf23697c",
+    "RieszEuclidean/FejerFourier.lean": "d2ed6859e86a23e1e74a37162ee1f9698a4de91446475bd6958c428b5f848d98",
+    "RieszEuclidean/FejerCoefficients.lean": "811765e204174c2eb9de76544bb922335e729ee2515a1aeacb13625c0ef21f1c",
+    "RieszEuclidean/SpectralCutoffLimits.lean": "b6dd593427d464f68fc6a14fab7713dce24f16e7a82aa0a38afbacef066b09b8",
+    "RieszEuclidean/SpectralCutoffDifference.lean": "cd91bcb12ae716decd2045db332b8415348e8f713bc9b49786099f6b7f990d75",
+    "RieszEuclidean/FiniteFilters.lean": "9dc37b1bb7cad193cd3eb1a0e1c50065971aa3bb842e89212a108c8381613005",
+    "RieszEuclidean/BumpKernel.lean": "bddc97e6c17194a3196915de9e1748582555c360bdac40e59f2fd08717e5d162",
+    "RieszEuclidean/StationaryCutoffs.lean": "ca0ddd372fe423119177d4785dd9fb7f28636fa30e9aa3c0a0317ff225cc9f6b",
+    "RieszEuclidean/BumpKernelProjection.lean": "ac901aa5b417f6a09491f96c0452ac055fa8cfa2951fea1dbd9614105176635c",
+    "RieszEuclidean/BumpKernelContinuity.lean": "ceba0c91fec327ebef69c1ccc54c188519d14a30a0e5829ed64b2808c48e9bed"
   }
 }

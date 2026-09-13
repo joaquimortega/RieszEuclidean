@@ -1,25 +1,29 @@
 # Development status
 
-The full formalization remains in progress. The scaffold, independent dependency
-manifest, source manuscript and blueprint are in place.
+The full formalization remains in progress: **10 of 25 blueprint obligations
+(40%) are proved**. This counts completed nodes, not estimated remaining effort.
 
-Implemented and compiled:
+The Euclidean Fourier and initial bump constructions, compact configuration hull,
+invariant probability measure, stationary Koopman system and continuous Fejér
+construction are proved. The continuous filters use real radii tending to infinity.
 
-- Actual Euclidean synthesis and Beurling weak-convergence definitions.
-- Projection-gap equivalence and strict-inclusion obstruction (ported proofs).
-- Simultaneous strong-limit gap transfer and the moving-comparison obstruction.
-- Determinant-correct L² pullback and arbitrary affine invariance of the actual
-  exponential Riesz basis predicate, with 2π phases and transpose frequencies.
-- Fixed-translation invariance of weak convergence and preservation of separation.
+Given representing spectral measures, the common control measure, integrated
+spectral calculus and simultaneous stationary cutoff family are proved, including
+strong convergence, projection properties and spectral norm/difference identities.
+Bochner existence is postponed at the user's request; these downstream results
+retain explicit measure hypotheses and their blueprint nodes remain pending.
 
-The actual Fourier/bump construction, compact hull and stationary measure,
-Euclidean Bochner measures, continuous filters, covariant projection kernels,
-averaged scalar forms, boundary geometry and unconditional main theorems remain
-open obligations. See `blueprint/manifest.json` for the complete dependency plan.
+The bump comparison kernel has proved bounds, covariance, Hermitian symmetry,
+product integrability, its projection integral identity and joint spatial continuity. Continuity in the configuration variable,
+the stationary comparison operators, averaging, boundary geometry and the
+unconditional main theorems still require work.
 
-No proof-development `sorry` is used in the implemented files. This does **not**
-mean that the manuscript is formalized: unfinished work is recorded as pending
-blueprint nodes, not hidden behind axioms or assumed analytic-data structures.
+The nineteen-result reference and standalone solution pass official Comparator and
+Lean kernel verification. All 15 linters pass for modular, public and standalone
+sources. All 434 transitive axiom reports use standard axioms only. Exact verified
+inputs and logs are recorded in `reviews/comparator-fejer-cutoffs-hashes.json` and
+`reviews/fejer-cutoffs-progress.md`.
 
-The CI build verifies implemented sources. The full-paper completion command
-`python3 scripts/check_blueprint.py --require-complete` must currently fail.
+No unfinished theorem is replaced by `sorry` or a new axiom. See
+`blueprint/manifest.json` for precise scopes and dependencies. The full-paper
+check `python3 scripts/check_blueprint.py --require-complete` must still fail.

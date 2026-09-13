@@ -1,5 +1,9 @@
 # Standalone verification status
 
+The current nineteen-result checkpoint passes official Comparator and Lean kernel
+verification. See [the current audit](fejer-cutoffs-progress.md). The checkpoint
+accounts below are historical; their smaller counts do not describe current scope.
+
 The compact `MainResults.lean` reference states four implemented supporting
 results: the projection gap equivalence, strict-inclusion obstruction,
 preservation of separation under weak limits, and affine invariance of the
@@ -37,11 +41,11 @@ The newer five-result run includes Schwartz Parseval and passed. See
 `fourier-progress.md`, `comparator-fourier.txt`, and
 `comparator-fourier-hashes.json`. Earlier logs and hashes above are historical.
 
-The latest seven-result verification includes Schwartz density and unitary
+The seven-result verification includes Schwartz density and unitary
 Fourier/cutoff existence. See `unitary-cutoff-validation.md` for current scope
 and `comparator-unitary-cutoff-hashes.json` for verified inputs.
 
-The latest eight-result verification covers the full initial Fourier
+The eight-result verification covers the full initial Fourier
 construction, including L¹∩L² integral agreement, the kernel formula and
 translation commutation. See `fourier-module-validation.md`.
 

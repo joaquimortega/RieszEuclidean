@@ -35,7 +35,7 @@ This does not assert that the paper's analytic construction already exists.
 
 ## Section 2: Fourier projection and bumps
 
-Construct the unitary Fourier transform on Euclidean `L²` with the positive
+**Implemented:** Construct the unitary Fourier transform on Euclidean `L²` with the positive
 exponent convention, then its conjugate of multiplication by `1_Ω`.
 Prove the compact-support kernel formula `p(v-w)` by integrability and Fubini.
 A Riesz lower bound gives a positive separation constant. Scale a real
@@ -45,7 +45,7 @@ orthonormal family. The exact identity between projected bump synthesis and
 exponential synthesis gives the projection gap. Completeness/surjectivity of
 synthesis is essential here; a Riesz sequence alone is insufficient.
 
-Planned modules: `FourierL2`, `Bumps`. The pinned Mathlib has Fourier inversion
+Implemented across the Fourier, bump, synthesis and initial-gap modules. The pinned Mathlib has Fourier inversion
 and Schwartz Fourier transforms but no ready-to-use continuum Bochner spectral
 construction was found in the initial inventory. Reusing names from the older
 project must not hide this additional analytic work.
@@ -54,45 +54,49 @@ project must not hide this additional analytic work.
 
 `WeaklyConverges` is the two-sided local matching definition for subsets of ℝⁿ.
 The elementary module proves constant convergence, translation invariance, and
-preservation of the common separation bound. The full compactness theorem is
-still required. Supply a compact metrizable space of separated configurations,
-identify its topology with local matching, and prove joint continuity of real
+preservation of the common separation bound. The full compactness theorem is proved. The implementation supplies a compact
+metrizable space of separated configurations and
+identifies its topology with local matching and proves joint continuity of real
 translations. The empty set is permitted in the ambient space and excluded
 from the actual hull by the projection gap, not by an unsupported assumption.
 
 Prove strong convergence of bump projections by matching finitely many centers
-for compactly supported inputs, then use density. Average real translates over
-boxes, take a probability-measure limit and prove invariance from the
-symmetric-difference estimate. The Koopman action on `L²(X,μ)` must be strongly
-continuous and must have a nonzero invariant constant vector.
+for compactly supported inputs, then use density. Continuous box averaging, the invariant probability measure and the strongly
+continuous Koopman action on separable `L²(X,μ)` with invariant unit constant are
+proved. Strong convergence of the configuration bump projections remains pending.
 
-Planned modules: `ConfigurationHull`, `BumpLimits`, `Stationary`.
+The configuration, translation-hull, invariant-measure and Koopman modules are
+implemented. `BumpLimits` remains pending.
 
 ## Section 4: Bochner measures and cutoffs
 
-Prove the required Euclidean Bochner theorem (or use a proved Mathlib result)
-for continuous positive-definite correlations. Spectral measures are on ℝⁿ,
-not a compact torus. Prove finiteness, uniqueness, the parallelogram law and
-the Dirac measure of the constant vector. Construct one control measure from
-a countable dense sequence and prove domination of null sets.
+General Euclidean Bochner existence for continuous positive-definite correlations
+is postponed at the user's request. Spectral measures stay on ℝⁿ. Uniqueness,
+finiteness, total mass, the parallelogram law and the invariant constant's Dirac
+spectrum are proved. A countable dense sequence of normalized vectors constructs
+one probability control measure and proves domination of every spectral measure,
+provided the representing family is supplied.
 
-Integrated L¹ kernels replace trigonometric polynomials. The integrated operator,
-its L¹ bound, absolute integrability of the correlation and Fourier Gram kernels,
-and the spectral norm identity for a supplied representing measure are proved.
-The existence of these measures for general vectors is still pending. Establish
-convolution multiplication and adjoints. Continuous box overlaps
-produce positive approximate identities. Boundary-nullity gives a common
-Lebesgue-conull set of good parameters. Scalar dominated convergence produces
-strong cutoff limits, idempotence, self-adjointness and difference norms.
+Integrated L¹ operators have proved adjoint and convolution formulas, spectral
+norm identities and the uniform symbol bound. Actual continuous box overlaps give
+the Fejér weights. Plancherel proves positivity and unit mass of their Fourier
+kernels; dilation and integrable tails prove concentration. The smoothed indicator
+is the exact finite-filter symbol and converges off the frontier.
 
-Planned modules: `Bochner`, `ScalarCalculus`, `ContinuousFejer`, `Cutoffs`.
-Do not assume a spectral-measure record without constructing it.
+Boundary-nullity gives a measurable conull good-parameter set. Scalar dominated
+convergence, pointwise Cauchy limits of bounded operators and composition limits
+construct the simultaneous cutoff family for real radii tending to infinity.
+Self-adjointness, idempotence, spectral mass and two-parameter difference identities
+are proved. These statements retain the representing-measure hypotheses. Thus the
+continuous-Fejér node is proved, while scalar calculus and cutoffs remain pending
+on the postponed Bochner dependency.
 
 ## Section 5: comparison and averaged scalar forms
 
-The covariant bump kernel is uniformly bounded and supported where
-`‖v-w‖ ≤ 2r`. Prove Hermitian symmetry, covariance and the kernel projection
-identity. Define `M_t` by an L²-valued integral of multiplication by `k_z`
+The actual covariant bump kernel has proved uniform bounds, support where
+`‖v-w‖ ≤ 2r`, Hermitian symmetry, covariance, product integrability, the kernel
+projection identity and joint spatial continuity for fixed configuration. Joint
+configuration continuity remains under development. The next construction defines `M_t` by an L²-valued integral of multiplication by `k_z`
 after `U_z`. Invariance and the kernel identities prove that it is an
 orthogonal projection. Compact support gives operator-norm Lipschitz continuity.
 

@@ -17,8 +17,9 @@ Radius selection, the positive uniform Fourier lower bound and the translated
 orthonormal family are also proved, together with isometric synthesis and the
 projection onto its range. The initial projection gap and the
 compact metrizable configuration space with its jointly continuous translation action
-are proved. This completes 8 of 25 blueprint obligations; the stationary-measure,
-spectral and geometric arguments remain pending.
+are proved. The current blueprint has 10 of 25 obligations proved (40%). Bochner existence
+is postponed; comparison operators, averaging and geometric conclusions remain
+pending. See [development status](STATUS.md) for the current conditional results.
 
 ## Build from a standalone clone
 
@@ -61,8 +62,12 @@ Conditional projection lemmas do not discharge those theorems.
 
 ## Manuscript
 
-The canonical repository copy is `paper/RieszEuclidean.tex`. With a TeX Live
-installation containing AMS packages, microtype, hyperref, and latexmk:
+The canonical manuscript is `paper/RieszEuclidean.tex`; edit this file directly.
+In the author’s parent workspace, `RieszEuclidean.tex` is a relative symlink to
+this file, so edits through either path affect the same manuscript. The repository
+contains the real file and remains self-contained when cloned.
+
+With a TeX Live installation containing AMS packages, microtype, hyperref, and latexmk:
 
 ```sh
 mkdir -p paper/build
@@ -83,7 +88,7 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states fourteen proved supporting results with concrete
+`MainResults.lean` currently states nineteen proved supporting results with concrete
 basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
 assembled from the modular source with Mathlib imports only. The analytic results include Schwartz Parseval, Schwartz density, and existence
 of the unitary Fourier transform with its measurable-domain cutoffs. Neither file yet
@@ -129,31 +134,30 @@ Riesz–Markov–Kakutani represents it by the required measure.
 stationary L² space, with the group law and invariant unit constant. It follows
 the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}.
 
-The stationary-system node is complete: 9 of 25 blueprint nodes are proved and
-16 remain pending. At the stationary-system checkpoint, all builds, all 15 linters,
-and the 245-declaration axiom audit pass. The official Comparator accepted thirteen supporting results, and the
-Lean kernel accepted the standalone solution. The verified inputs are recorded
-in `reviews/comparator-stationary-system-hashes.json`; the successful log is
-`reviews/comparator-stationary-system.txt`.
+The continuous Fejér node is complete: **10 of 25 blueprint obligations (40%)**
+are proved. This is a node count, not an estimate of remaining effort.
 
-Further development (not part of the stationary-system Comparator checkpoint):
-`Correlations` proves continuity, positive definiteness and the scalar identities
-for actual hull correlations. `SpectralMeasures` proves uniqueness and mass of
-representing measures, constructs the Dirac spectrum of the invariant constant,
-and derives measure identities when the representing measures are supplied.
-`IntegratedUnitary` constructs the L¹ integrated operators, proves their norm
-bound and expands their squared norm as a double correlation integral.
-`SpectralNorm` proves absolute integrability of the correlation and Fourier Gram
-kernels. Fubini gives the spectral norm identity whenever the vector's representing
-measure is supplied; the symbol is the actual positive Euclidean Fourier transform.
-General Bochner measure existence and the remaining scalar calculus are pending;
-the blueprint count remains 9 of 25.
+The scalar calculus now includes kernel adjoints and convolution, the uniform
+Fourier-symbol operator bound, and a common probability control measure from a
+dense sequence of unit vectors. The actual box Fejér kernel has mass one and
+concentrates at zero. Its convolution with the domain indicator is the exact
+symbol of the finite filter. Dominated convergence gives the simultaneous
+stationary cutoff family, with strong convergence, self-adjointness, idempotence
+and spectral norm and difference identities.
 
-The spectral checkpoint passes all builds and all 15 linters, with 287 standard-only
-axiom reports. Official Comparator and Lean's kernel accepted fourteen supporting
-results, including the spectral norm identity for a supplied representing measure. See
-[the progress audit](reviews/spectral-progress.md) for scope and input hashes.
+General Bochner existence is postponed at the user's request. The control measure
+and cutoff theorems explicitly assume representing spectral measures; their
+full-paper nodes therefore remain pending. No spectral existence axiom is added.
 
-General Bochner existence is postponed at the user's request. Development continues
-with the remaining calculus, cutoffs, comparison and geometry, retaining the
-postponed result as an explicit dependency wherever it is needed.
+The actual bump kernel has proved bounds, finite propagation, covariance,
+Hermitian symmetry, product integrability, the projection integral identity and
+joint continuity in its spatial variables for fixed configuration. Configuration
+continuity, the stationary comparison operators, averaging and geometry remain
+under development.
+
+Official Comparator and Lean's kernel accepted all nineteen supporting results,
+including continuous Fejér approximation, the finite-filter symbol, the control
+measure, stationary cutoffs and the bump-kernel projection identity. All builds,
+all 15 linters and the 434-declaration transitive axiom audit pass. See
+[development status](STATUS.md) and [the checkpoint audit](reviews/fejer-cutoffs-progress.md)
+for scope, exact inputs and remaining obligations.

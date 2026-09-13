@@ -9,7 +9,7 @@ theorems. Its wrapper proofs use the checked modular library, so the reference
 needs neither theorem placeholders nor warning suppressions.
 -/
 noncomputable section
-open MeasureTheory
+open MeasureTheory Filter Topology
 open scoped ENNReal
 namespace RieszEuclidean.Results
 
@@ -187,4 +187,75 @@ theorem integrated_spectral_norm {d : ℕ} {H : Type*}
     ‖∫ y, a y • U y f‖ ^ 2 = ∫ θ, ‖Real.fourierIntegralInv a θ‖ ^ 2 ∂σ := by
   simpa only [integratedUnitary, integratedKernelSymbol_eq_fourierInv] using
     integratedUnitary_spectral_norm_sq U hU hadd ha f hσ
+/-- The continuous box Fejér kernels have unit mass and concentrate at zero;
+their actual domain cutoffs converge off the frontier. -/
+theorem continuous_fejer {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    (∀ R > 0, Integrable (fejerKernel d R) ∧ (∫ x, fejerKernel d R x) = 1 ∧
+      ∀ x, 0 ≤ fejerKernel d R x) ∧
+    (∀ ε > 0, Filter.Tendsto
+      (fun R : ℝ => ∫ x in (Metric.closedBall 0 ε)ᶜ, fejerKernel d R x)
+      Filter.atTop (nhds 0)) ∧
+    (∀ R > 0, ∀ x, fejerCutoff Ω R x ∈ Set.Icc (0 : ℝ) 1) ∧
+    ∀ x ∉ frontier Ω, Filter.Tendsto (fun R : ℝ => fejerCutoff Ω R x)
+      Filter.atTop (nhds (Ω.indicator (fun _ => (1 : ℝ)) x)) := by
+  refine ⟨?_, fun _ hε => tendsto_fejerKernel_tail d hε,
+    fun _ hR x => fejerCutoff_mem_Icc hΩ hR x, fun _ hx => tendsto_fejerCutoff hΩ hx⟩
+  intro R hR
+  exact ⟨(fejerKernel_integrable_integral d hR).1,
+    (fejerKernel_integrable_integral d hR).2, fejerKernel_nonneg d R⟩
+/-- The finite filter uses the Fourier transform of the actual domain kernel. -/
+theorem finite_filter_symbol {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤) (t : Euclidean d)
+    {R : ℝ} (hR : 0 < R) :
+    Integrable (finiteFilterKernel Ω t R) ∧ ∀ θ,
+      Real.fourierIntegralInv (finiteFilterKernel Ω t R) θ =
+        (fejerCutoff Ω R (t + θ) : ℂ) := by
+  refine ⟨integrable_finiteFilterKernel Ω hΩ hfin t hR, fun θ => ?_⟩
+  rw [← integratedKernelSymbol_eq_fourierInv]
+  exact integratedKernelSymbol_finiteFilterKernel_eq_fejerCutoff Ω hΩ hfin t hR θ
+/-- Separability produces a probability control measure from the supplied spectral measures. -/
+theorem spectral_control_measure {d : ℕ} {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [TopologicalSpace.SeparableSpace H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H) (h0 : ∀ f, U 0 f = f)
+    (σ : H → Measure (Euclidean d))
+    (hσ : ∀ f, RepresentsCorrelation (unitaryCorrelation U f) (σ f))
+    (u : H) (hu : ‖u‖ = 1) :
+    ∃ h : ℕ → H, (∀ n, ‖h n‖ = 1) ∧
+      IsProbabilityMeasure (spectralControlMeasure σ h) ∧
+      ∀ f, σ f ≪ spectralControlMeasure σ h :=
+  exists_spectralControlMeasure U h0 σ hσ u hu
+/-- The actual finite filters give simultaneous orthogonal cutoffs, conditional on
+the explicitly supplied representing measures and their common domination. -/
+theorem stationary_cutoffs {d : ℕ} {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f))
+    (hadd : ∀ z y f, U z (U y f) = U (z + y) f) (h0 : ∀ f, U 0 f = f)
+    (σ : H → Measure (Euclidean d))
+    (hσ : ∀ f, RepresentsCorrelation (unitaryCorrelation U f) (σ f))
+    (μ : Measure (Euclidean d)) [SFinite μ] (hdom : ∀ f, σ f ≪ μ)
+    (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤)
+    (hboundary : volume (frontier Ω) = 0) :
+    MeasurableSet (goodParameters μ (frontier Ω)) ∧
+      volume (goodParameters μ (frontier Ω))ᶜ = 0 ∧
+      ∃ P : goodParameters μ (frontier Ω) → H →L[ℂ] H,
+        (∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t) ∧
+        (∀ (t : goodParameters μ (frontier Ω)) f, Tendsto (fun R : ℝ => integratedUnitary U (finiteFilterKernel Ω t R) f)
+          atTop (𝓝 (P t f))) ∧
+        (∀ t f, ‖P t f‖ ^ 2 = (σ f).real {θ | (t : Euclidean d) + θ ∈ Ω}) ∧
+        (∀ s t f, ‖P s f - P t f‖ ^ 2 =
+          ∫ θ, ‖cutoffSymbol Ω s θ - cutoffSymbol Ω t θ‖ ^ 2 ∂σ f) :=
+  exists_stationary_cutoff_family U hU hadd h0 σ hσ μ hdom Ω hΩ hfin hboundary
+/-- The concrete bump kernel is continuous in its spatial variables and satisfies
+the integrable projection identity. -/
+theorem bump_kernel_projection {d : ℕ} {δ r : ℝ} {Γ : Set (Euclidean d)}
+    (hΓ : Separated δ Γ) (hδ : 0 < δ) (hr : 2 * r ≤ δ) (b : Euclidean d → ℂ)
+    (hb : Continuous b) (hs : ∀ x, r ≤ ‖x‖ → b x = 0)
+    (hi : Integrable (fun x => ‖b x‖ ^ 2)) (hn : (∫ x, ‖b x‖ ^ 2) = 1) :
+    Continuous (fun p : Euclidean d × Euclidean d => bumpKernel Γ b p.1 p.2) ∧
+    ∀ v w, Integrable (fun u => bumpKernel Γ b v u * bumpKernel Γ b u w) ∧
+      (∫ u, bumpKernel Γ b v u * bumpKernel Γ b u w) = bumpKernel Γ b v w :=
+  ⟨continuous_bumpKernel hΓ hδ b hb hs, fun v w =>
+    ⟨integrable_bumpKernel_product hΓ hr b hs hi v w,
+      integral_bumpKernel_product hΓ hr b hs hn v w⟩⟩
 end RieszEuclidean.Results
