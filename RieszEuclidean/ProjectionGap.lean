@@ -1,3 +1,6 @@
+import Mathlib.Topology.Algebra.Group.Pointwise
+import Mathlib.Topology.Metrizable.CompletelyMetrizable
+import Mathlib.Analysis.Normed.Order.Lattice
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.Normed.Operator.Banach
 import Mathlib.Analysis.SpecificLimits.Normed
@@ -84,6 +87,7 @@ theorem norm_sub_apply_sq (P Q : OrthProjection H) (x : H) :
 
 instance range_completeSpace [CompleteSpace H] (P : OrthProjection H) :
     CompleteSpace P.range := by
+  letI : T0Space H := MetricSpace.instT0Space
   have h : IsClosed (P.range : Set H) := by
     have heq : (P.range : Set H) = {x | P.op x = x} := by
       ext x

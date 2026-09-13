@@ -108,7 +108,7 @@ techniques:
   - RieszEuclidean/L2Transport.lean
   - RieszEuclidean/Affine.lean
 - name: Euclidean Fourier and bump projections
-  status: initial Fourier constructions and normalized bumps proved; initial gap pending
+  status: initial Fourier constructions, normalized bumps and initial gap proved
   description: Bilinear Fubini and Schwartz inversion prove Parseval. Compact-support smooth
     approximation and an explicit L² estimate prove Schwartz density. The Fourier isometry on
     this dense subspace extends continuously; norm preservation and closed dense range give
@@ -124,7 +124,12 @@ techniques:
     the radius small enough. Separation makes distinct translated supports disjoint, proving
     orthonormality in actual Euclidean L². Orthogonal-family summation constructs isometric
     synthesis V, and V composed with its adjoint is the orthogonal range projection.
-    The synthesis-to-Fourier-projection isomorphism and initial gap remain pending.
+    The exact Fourier formula for translated bumps, bounded invertible multiplication and
+    contraction from ambient L² to the restricted domain measure are constructed.
+    Equality on coordinate vectors and continuity establish the synthesis identity on all
+    square-summable coefficients. Zero extension identifies the domain projection range;
+    unitary conjugation identifies the Fourier projection range. The synthesis identity
+    induces a range isomorphism, and the projection-gap theorem gives distance less than one.
   files:
   - RieszEuclidean/FourierL2.lean
   - RieszEuclidean/SchwartzDensity.lean
@@ -138,6 +143,15 @@ techniques:
   - RieszEuclidean/BumpFourier.lean
   - RieszEuclidean/BumpTranslates.lean
   - RieszEuclidean/BumpSynthesis.lean
+  - RieszEuclidean/BumpTransform.lean
+  - RieszEuclidean/L2Multiplier.lean
+  - RieszEuclidean/BumpMultiplier.lean
+  - RieszEuclidean/DomainRestriction.lean
+  - RieszEuclidean/BumpIdentity.lean
+  - RieszEuclidean/DomainExtension.lean
+  - RieszEuclidean/FourierRange.lean
+  - RieszEuclidean/RangeIso.lean
+  - RieszEuclidean/InitialGap.lean
 - name: Stationary compact hull and scalar Bochner measures
   status: planned; not yet formalized
   description: Prove compactness of the separated-set hull, continuity of the real action and an invariant
@@ -156,13 +170,13 @@ techniques:
     the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
     triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
 comparator:
-  status: eight supporting results verified; full-paper main theorems pending
+  status: nine supporting results verified; full-paper main theorems pending
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-fourier-complete.txt
-  input_hashes: reviews/comparator-fourier-complete-hashes.json
-  verified_scope: Eight supporting results, including the full initial Fourier construction with integral, kernel and translation semantics; no geometric nonexistence theorem.
+  verification_log: reviews/comparator-initial-gap-aligned.txt
+  input_hashes: reviews/comparator-initial-gap-hashes.json
+  verified_scope: Nine supporting results, including the initial Fourier construction and existence of normalized bumps with the initial projection gap; no geometric nonexistence theorem.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice

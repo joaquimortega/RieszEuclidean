@@ -1,0 +1,34 @@
+Running as unit: run-p1481121-i1481421.service; invocation ID: cf8af4c5358243788bc596498c78232e
+Building MainResults
+✔ [2590/2608] Built RieszEuclidean.MovingComparison
+✔ [2591/2608] Built RieszEuclidean.CutoffProjection
+✔ [2592/2608] Built RieszEuclidean.L2Multiplier
+✔ [2593/2608] Built RieszEuclidean.DomainRestriction
+✔ [2594/2608] Built RieszEuclidean.DomainExtension
+✔ [2595/2608] Built RieszEuclidean.FourierAgreement
+✔ [2596/2608] Built RieszEuclidean.FourierRange
+✔ [2597/2608] Built RieszEuclidean.FourierKernel
+✔ [2598/2608] Built RieszEuclidean.FourierTranslations
+✔ [2599/2608] Built RieszEuclidean.BumpTranslates
+✔ [2600/2608] Built RieszEuclidean.BumpSynthesis
+✔ [2601/2608] Built RieszEuclidean.RangeIso
+✔ [2602/2608] Built RieszEuclidean.BumpTransform
+✔ [2603/2608] Built RieszEuclidean.BumpMultiplier
+✔ [2604/2608] Built RieszEuclidean.BumpIdentity
+✔ [2605/2608] Built RieszEuclidean.InitialGap
+✔ [2606/2608] Built RieszEuclidean
+✔ [2607/2608] Built MainResults
+Build completed successfully.
+Exporting #[RieszEuclidean.Results.projection_gap, RieszEuclidean.Results.strict_inclusion_obstruction, RieszEuclidean.Results.weak_limit_separation, RieszEuclidean.Results.affine_invariance, RieszEuclidean.Results.fourier_parseval, RieszEuclidean.Results.euclidean_fourier_cutoff, RieszEuclidean.Results.schwartz_density, RieszEuclidean.Results.euclidean_fourier_analysis, RieszEuclidean.Results.initial_bumps, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight] from MainResults
+Building RieszEuclideanStandalone
+✔ [2579/2580] Built RieszEuclideanStandalone
+Build completed successfully.
+Exporting #[RieszEuclidean.Results.projection_gap, RieszEuclidean.Results.strict_inclusion_obstruction, RieszEuclidean.Results.weak_limit_separation, RieszEuclidean.Results.affine_invariance, RieszEuclidean.Results.fourier_parseval, RieszEuclidean.Results.euclidean_fourier_cutoff, RieszEuclidean.Results.schwartz_density, RieszEuclidean.Results.euclidean_fourier_analysis, RieszEuclidean.Results.initial_bumps, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight] from RieszEuclideanStandalone
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 9min 47.289s
+CPU time consumed: 13min 23.108s
+Memory peak: 3.1G (swap: 0B)

@@ -1,3 +1,4 @@
+import Mathlib.Analysis.Normed.Order.Lattice
 import RieszEuclidean.ProjectionGap
 
 /-!

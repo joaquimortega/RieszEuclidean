@@ -44,3 +44,6 @@ and `comparator-unitary-cutoff-hashes.json` for verified inputs.
 The latest eight-result verification covers the full initial Fourier
 construction, including L¹∩L² integral agreement, the kernel formula and
 translation commutation. See `fourier-module-validation.md`.
+
+The nine-result initial-gap checkpoint passes official Comparator and Lean kernel
+verification. See initial-gap-validation.md and comparator-initial-gap-aligned.txt.

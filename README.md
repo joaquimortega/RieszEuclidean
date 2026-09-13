@@ -15,7 +15,8 @@ It does not replace this route with the earlier lattice proof.
 Frequency separation and normalized nonnegative smooth compact bumps are now proved.
 Radius selection, the positive uniform Fourier lower bound and the translated
 orthonormal family are also proved, together with isometric synthesis and the
-projection onto its range. The initial projection gap remains pending.
+projection onto its range. The initial projection gap is proved. This completes
+7 of 25 blueprint obligations; the hull, spectral and geometric arguments remain pending.
 
 ## Build from a standalone clone
 
@@ -80,7 +81,7 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states eight proved supporting results with concrete
+`MainResults.lean` currently states nine proved supporting results with concrete
 basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
 assembled from the modular source with Mathlib imports only. The analytic results include Schwartz Parseval, Schwartz density, and existence
 of the unitary Fourier transform with its measurable-domain cutoffs. Neither file yet

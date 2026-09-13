@@ -18,3 +18,12 @@ import RieszEuclidean.Bumps
 import RieszEuclidean.BumpFourier
 import RieszEuclidean.BumpTranslates
 import RieszEuclidean.BumpSynthesis
+import RieszEuclidean.L2Multiplier
+import RieszEuclidean.BumpTransform
+import RieszEuclidean.BumpMultiplier
+import RieszEuclidean.DomainRestriction
+import RieszEuclidean.BumpIdentity
+import RieszEuclidean.DomainExtension
+import RieszEuclidean.FourierRange
+import RieszEuclidean.RangeIso
+import RieszEuclidean.InitialGap

@@ -7,6 +7,7 @@ import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.l2Space
 import Mathlib.Analysis.Normed.Operator.Banach
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
+import Mathlib.Analysis.Normed.Order.Lattice
 import Mathlib.Analysis.NormedSpace.OperatorNorm.Completeness
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.Exponential
@@ -20,6 +21,9 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
+import Mathlib.Topology.Algebra.Group.Pointwise
+import Mathlib.Topology.EMetricSpace.Paracompact
+import Mathlib.Topology.Metrizable.CompletelyMetrizable
 
 /-!
 # Standalone Euclidean formalization: implemented components
@@ -1050,6 +1054,7 @@ theorem norm_sub_apply_sq (P Q : OrthProjection H) (x : H) :
 
 instance range_completeSpace [CompleteSpace H] (P : OrthProjection H) :
     CompleteSpace P.range := by
+  letI : T0Space H := MetricSpace.instT0Space
   have h : IsClosed (P.range : Set H) := by
     have heq : (P.range : Set H) = {x | P.op x = x} := by
       ext x
@@ -1368,6 +1373,99 @@ theorem fourierProjection_mem_range_iff {d : ℕ} (Ω : Set (Euclidean d))
     apply (paperFourierL2 d).injective
     rw [fourierProjection_transform]
     exact (domainCutoff_eq_self_iff Ω hΩ _).mpr h
+end RieszEuclidean
+
+/- Source: RieszEuclidean/L2Multiplier.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+noncomputable section
+namespace RieszEuclidean
+/-- Multiplication by an essentially bounded measurable scalar function on L². -/
+def l2Multiplier {α : Type} [MeasurableSpace α] {μ : Measure α}
+    (m : α → ℂ) (hm : AEStronglyMeasurable m μ) {C : ℝ}
+    (hC : ∀ᵐ x ∂μ, ‖m x‖ ≤ C) (f : Lp ℂ 2 μ) : Lp ℂ 2 μ :=
+  ((Lp.memLp f).of_le_mul (hm.mul (Lp.memLp f).aestronglyMeasurable)
+    (by filter_upwards [hC] with x hx; simpa only [Pi.mul_apply, norm_mul] using mul_le_mul_of_nonneg_right hx (norm_nonneg (f x)))).toLp _
+/-- Representative formula for bounded multiplication. -/
+theorem l2Multiplier_coe {α : Type} [MeasurableSpace α] {μ : Measure α}
+    (m : α → ℂ) (hm : AEStronglyMeasurable m μ) {C : ℝ}
+    (hC : ∀ᵐ x ∂μ, ‖m x‖ ≤ C) (f : Lp ℂ 2 μ) :
+    (l2Multiplier m hm hC f : α → ℂ) =ᵐ[μ] fun x => m x * f x :=
+  MemLp.coeFn_toLp _
+/-- The multiplier norm is controlled by its pointwise bound. -/
+theorem l2Multiplier_norm_le {α : Type} [MeasurableSpace α] {μ : Measure α}
+    (m : α → ℂ) (hm : AEStronglyMeasurable m μ) {C : ℝ}
+    (hC : ∀ᵐ x ∂μ, ‖m x‖ ≤ C) (f : Lp ℂ 2 μ) :
+    ‖l2Multiplier m hm hC f‖ ≤ C * ‖f‖ := by
+  apply Lp.norm_le_mul_norm_of_ae_le_mul
+  filter_upwards [l2Multiplier_coe m hm hC f, hC] with x hx hb
+  rw [hx, norm_mul]
+  exact mul_le_mul_of_nonneg_right hb (norm_nonneg _)
+/-- Bounded multiplication as a complex linear map. -/
+def l2MultiplierLM {α : Type} [MeasurableSpace α] {μ : Measure α}
+    (m : α → ℂ) (hm : AEStronglyMeasurable m μ) {C : ℝ}
+    (hC : ∀ᵐ x ∂μ, ‖m x‖ ≤ C) : Lp ℂ 2 μ →ₗ[ℂ] Lp ℂ 2 μ where
+  toFun := l2Multiplier m hm hC
+  map_add' f g := by
+    apply Lp.ext
+    filter_upwards [l2Multiplier_coe m hm hC (f + g), l2Multiplier_coe m hm hC f,
+      l2Multiplier_coe m hm hC g, Lp.coeFn_add f g,
+      Lp.coeFn_add (l2Multiplier m hm hC f) (l2Multiplier m hm hC g)] with x h1 h2 h3 h4 h5
+    simp only [h1, h5, Pi.add_apply, h2, h3, h4, mul_add]
+  map_smul' c f := by
+    apply Lp.ext
+    filter_upwards [l2Multiplier_coe m hm hC (c • f), l2Multiplier_coe m hm hC f,
+      Lp.coeFn_smul c f, Lp.coeFn_smul c (l2Multiplier m hm hC f)] with x h1 h2 h3 h4
+    simp only [h1, h4, Pi.smul_apply, h2, h3, smul_eq_mul, RingHom.id_apply]
+    ring
+/-- Bounded multiplication as a continuous linear operator. -/
+def l2MultiplierCLM {α : Type} [MeasurableSpace α] {μ : Measure α}
+    (m : α → ℂ) (hm : AEStronglyMeasurable m μ) {C : ℝ}
+    (hC : ∀ᵐ x ∂μ, ‖m x‖ ≤ C) : Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ :=
+  (l2MultiplierLM m hm hC).mkContinuous C (l2Multiplier_norm_le m hm hC)
+/-- Reciprocal multiplication reverses multiplication by a nonzero function. -/
+theorem l2Multiplier_inv_mul {α : Type} [MeasurableSpace α] {μ : Measure α}
+    (m : α → ℂ) (hm : AEStronglyMeasurable m μ) {C D : ℝ}
+    (hC : ∀ᵐ x ∂μ, ‖m x‖ ≤ C) (hD : ∀ᵐ x ∂μ, ‖(m x)⁻¹‖ ≤ D)
+    (hz : ∀ᵐ x ∂μ, m x ≠ 0) (f : Lp ℂ 2 μ) :
+    l2Multiplier (fun x => (m x)⁻¹) hm.aemeasurable.inv.aestronglyMeasurable hD (l2Multiplier m hm hC f) = f := by
+  apply Lp.ext
+  filter_upwards [l2Multiplier_coe (fun x => (m x)⁻¹) hm.aemeasurable.inv.aestronglyMeasurable hD (l2Multiplier m hm hC f),
+    l2Multiplier_coe m hm hC f, hz] with x h1 h2 h3
+  rw [h1, h2, ← mul_assoc, inv_mul_cancel₀ h3, one_mul]
+/-- A bounded multiplier bounded away from zero is a continuous linear equivalence. -/
+def l2MultiplierEquiv {α : Type} [MeasurableSpace α] {μ : Measure α}
+    (m : α → ℂ) (hm : AEStronglyMeasurable m μ) {C c : ℝ}
+    (hC : ∀ᵐ x ∂μ, ‖m x‖ ≤ C) (hc : 0 < c)
+    (hl : ∀ᵐ x ∂μ, c ≤ ‖m x‖) : Lp ℂ 2 μ ≃L[ℂ] Lp ℂ 2 μ := by
+  have hi : AEStronglyMeasurable (fun x => (m x)⁻¹) μ :=
+    hm.aemeasurable.inv.aestronglyMeasurable
+  have hz : ∀ᵐ x ∂μ, m x ≠ 0 := hl.mono (fun x hx => norm_pos_iff.mp (hc.trans_le hx))
+  have hD : ∀ᵐ x ∂μ, ‖(m x)⁻¹‖ ≤ c⁻¹ := by
+    filter_upwards [hl] with x hx
+    rw [norm_inv]
+    exact inv_anti₀ hc hx
+  refine
+    { toLinearEquiv :=
+        { toLinearMap := l2MultiplierLM m hm hC
+          invFun := l2Multiplier (fun x => (m x)⁻¹) hi hD
+          left_inv := l2Multiplier_inv_mul m hm hC hD hz
+          right_inv := ?_ }
+      continuous_toFun := (l2MultiplierCLM m hm hC).continuous
+      continuous_invFun := (l2MultiplierCLM (fun x => (m x)⁻¹) hi hD).continuous }
+  intro f
+  apply Lp.ext
+  filter_upwards [l2Multiplier_coe m hm hC (l2Multiplier (fun x => (m x)⁻¹) hi hD f),
+    l2Multiplier_coe (fun x => (m x)⁻¹) hi hD f, hz] with x h1 h2 h3
+  change (l2Multiplier m hm hC (l2Multiplier (fun x => (m x)⁻¹) hi hD f) : α → ℂ) x = f x
+  rw [h1, h2, ← mul_assoc, mul_inv_cancel₀ h3, one_mul]
+/-- The multiplier equivalence retains the prescribed pointwise multiplication formula. -/
+theorem l2MultiplierEquiv_coe {α : Type} [MeasurableSpace α] {μ : Measure α}
+    (m : α → ℂ) (hm : AEStronglyMeasurable m μ) {C c : ℝ}
+    (hC : ∀ᵐ x ∂μ, ‖m x‖ ≤ C) (hc : 0 < c)
+    (hl : ∀ᵐ x ∂μ, c ≤ ‖m x‖) (f : Lp ℂ 2 μ) :
+    (l2MultiplierEquiv m hm hC hc hl f : α → ℂ) =ᵐ[μ] fun x => m x * f x :=
+  l2Multiplier_coe m hm hC f
 end RieszEuclidean
 
 /- Source: RieszEuclidean/FourierAgreement.lean -/
@@ -1707,6 +1805,358 @@ theorem isometryRangeProjection_range {H K : Type} [NormedAddCommGroup H]
     exact congrArg e hy
 end RieszEuclidean
 
+/- Source: RieszEuclidean/BumpTransform.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+/-- Translation of a bump introduces exactly the paper's exponential phase. -/
+theorem inverseFourier_translate {d : ℕ} (b : Euclidean d → ℂ) (t x : Euclidean d) :
+    Real.fourierIntegralInv (fun ξ => b (ξ - t)) x =
+      exponential t x * Real.fourierIntegralInv b x := by
+  have h := congrFun (VectorFourier.fourierIntegral_comp_add_right Real.fourierChar volume
+    (-innerₗ (Euclidean d)) b (-t)) x
+  simpa [Real.fourierIntegralInv, Function.comp_def, sub_eq_add_neg, Circle.smul_def,
+    Real.fourierChar_apply, exponential_eq_phase] using h
+/-- The actual unitary transform of a translated L² bump has its phased integral representative. -/
+theorem paperFourierL2_translated_bump {d : ℕ} (b : SchwartzMap (Euclidean d) ℂ)
+    (t : Euclidean d) :
+    (paperFourierL2 d (translationL2 (-t) (b.toLp 2 volume)) : Euclidean d → ℂ) =ᵐ[volume]
+      fun x => exponential t x * Real.fourierIntegralInv b x := by
+  have hb : Integrable (b.toLp 2 volume : Euclidean d → ℂ) :=
+    b.integrable.congr (b.coeFn_toLp 2 volume).symm
+  have h := paperFourierL2_eq_integral _ (translationL2_integrable (-t) _ hb)
+  apply h.trans
+  apply Filter.Eventually.of_forall
+  intro x
+  rw [show Real.fourierIntegralInv (translationL2 (-t) (b.toLp 2 volume) : Euclidean d → ℂ) x =
+      Real.fourierIntegralInv (fun ξ => b (ξ - t)) x from ?_]
+  · exact inverseFourier_translate b t x
+  · rw [Real.fourierIntegralInv_eq, Real.fourierIntegralInv_eq]
+    apply integral_congr_ae
+    filter_upwards [translated_bump_coe b t] with ξ hξ
+    rw [hξ]
+end RieszEuclidean
+
+/- Source: RieszEuclidean/BumpMultiplier.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+noncomputable section
+namespace RieszEuclidean
+/-- A bump with a positive Fourier lower bound gives an invertible multiplier on the domain. -/
+def bumpFourierMultiplier {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (b : SchwartzMap (Euclidean d) ℂ) {c : ℝ} (hc : 0 < c)
+    (hl : ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) : DomainL2 Ω ≃L[ℂ] DomainL2 Ω := by
+  have hm : AEStronglyMeasurable (Real.fourierIntegralInv b) (volume.restrict Ω) :=
+    (VectorFourier.fourierIntegral_continuous Real.continuous_fourierChar
+      (continuous_fst.inner continuous_snd).neg b.integrable).aestronglyMeasurable
+  have hu : ∀ᵐ x ∂volume.restrict Ω, ‖Real.fourierIntegralInv b x‖ ≤ ∫ ξ, ‖b ξ‖ :=
+    Filter.Eventually.of_forall (fun x => VectorFourier.norm_fourierIntegral_le_integral_norm _ _ _ _ _)
+  have hl' : ∀ᵐ x ∂volume.restrict Ω, c ≤ ‖Real.fourierIntegralInv b x‖ := by
+    filter_upwards [ae_restrict_mem hΩ] with x hx
+    exact hl x hx
+  exact l2MultiplierEquiv (Real.fourierIntegralInv b) hm hu hc hl'
+end RieszEuclidean
+
+/- Source: RieszEuclidean/DomainRestriction.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory
+namespace RieszEuclidean
+/-- Restrict an ambient L² class to the domain measure. -/
+def domainRestriction {d : ℕ} (Ω : Set (Euclidean d)) (f : FullL2 d) : DomainL2 Ω :=
+  ((Lp.memLp f).mono_measure Measure.restrict_le_self).toLp f
+/-- Restriction keeps the same representative on the restricted measure. -/
+theorem domainRestriction_coe {d : ℕ} (Ω : Set (Euclidean d)) (f : FullL2 d) :
+    (domainRestriction Ω f : Euclidean d → ℂ) =ᵐ[volume.restrict Ω] f :=
+  MemLp.coeFn_toLp _
+/-- Restriction is norm decreasing. -/
+theorem domainRestriction_norm_le {d : ℕ} (Ω : Set (Euclidean d)) (f : FullL2 d) :
+    ‖domainRestriction Ω f‖ ≤ ‖f‖ := by
+  rw [Lp.norm_def, Lp.norm_def]
+  rw [eLpNorm_congr_ae (domainRestriction_coe Ω f)]
+  exact ENNReal.toReal_mono (Lp.memLp f).eLpNorm_ne_top
+    (eLpNorm_mono_measure f Measure.restrict_le_self)
+/-- Restriction is a complex linear map. -/
+def domainRestrictionLM {d : ℕ} (Ω : Set (Euclidean d)) : FullL2 d →ₗ[ℂ] DomainL2 Ω where
+  toFun := domainRestriction Ω
+  map_add' f g := by
+    apply Lp.ext
+    have ha := (Lp.coeFn_add f g).filter_mono (ae_mono (Measure.restrict_le_self (s := Ω)))
+    filter_upwards [domainRestriction_coe Ω (f + g), domainRestriction_coe Ω f,
+      domainRestriction_coe Ω g, Lp.coeFn_add (domainRestriction Ω f) (domainRestriction Ω g), ha]
+      with x h1 h2 h3 h4 h5
+    simp only [h1, h4, Pi.add_apply, h2, h3, h5]
+  map_smul' c f := by
+    apply Lp.ext
+    have ha := (Lp.coeFn_smul c f).filter_mono (ae_mono (Measure.restrict_le_self (s := Ω)))
+    filter_upwards [domainRestriction_coe Ω (c • f), domainRestriction_coe Ω f,
+      Lp.coeFn_smul c (domainRestriction Ω f), ha] with x h1 h2 h3 h4
+    simp only [h1, h3, Pi.smul_apply, h2, h4, RingHom.id_apply]
+/-- Restriction as a bounded linear map of norm at most one. -/
+def domainRestrictionCLM {d : ℕ} (Ω : Set (Euclidean d)) : FullL2 d →L[ℂ] DomainL2 Ω :=
+  (domainRestrictionLM Ω).mkContinuous 1 (fun f => by simpa using domainRestriction_norm_le Ω f)
+end RieszEuclidean
+
+/- Source: RieszEuclidean/BumpIdentity.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+/-- The domain multiplier has its exact Fourier representative. -/
+theorem bumpFourierMultiplier_coe {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (b : SchwartzMap (Euclidean d) ℂ) {c : ℝ} (hc : 0 < c)
+    (hl : ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) (f : DomainL2 Ω) :
+    (bumpFourierMultiplier Ω hΩ b hc hl f : Euclidean d → ℂ) =ᵐ[volume.restrict Ω]
+      fun x => Real.fourierIntegralInv b x * f x := by
+  unfold bumpFourierMultiplier
+  exact l2MultiplierEquiv_coe _ _ _ _ _ f
+/-- On coordinate vectors the Fourier restriction of bump synthesis is multiplier times Riesz synthesis. -/
+theorem bump_synthesis_coordinate {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (b : SchwartzMap (Euclidean d) ℂ)
+    (V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d)
+    (hV : ∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume))
+    (S : SeqL2 Λ ≃L[ℂ] DomainL2 Ω)
+    (hS : ∀ i : Λ, (S (lp.single 2 i 1) : Euclidean d → ℂ) =ᵐ[volume.restrict Ω]
+      exponential (i : Euclidean d))
+    {c : ℝ} (hc : 0 < c) (hl : ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) (i : Λ) :
+    domainRestriction Ω (paperFourierL2 d (V (lp.single 2 i 1))) =
+      bumpFourierMultiplier Ω hΩ b hc hl (S (lp.single 2 i 1)) := by
+  rw [hV]
+  apply Lp.ext
+  have ht := (paperFourierL2_translated_bump b (i : Euclidean d)).filter_mono
+    (ae_mono (Measure.restrict_le_self (s := Ω)))
+  filter_upwards [domainRestriction_coe Ω
+      (paperFourierL2 d (translationL2 (-(i : Euclidean d)) (b.toLp 2 volume))),
+    ht, bumpFourierMultiplier_coe Ω hΩ b hc hl (S (lp.single 2 i 1)), hS i]
+    with x h1 h2 h3 h4
+  rw [h1, h2, h3, h4, mul_comm]
+/-- Continuous linear maps on complex ℓ² are determined by unit coordinate vectors. -/
+theorem seqL2_ext_on_single {ι H : Type} [DecidableEq ι] [NormedAddCommGroup H]
+    [NormedSpace ℂ H] (A B : SeqL2 ι →L[ℂ] H)
+    (h : ∀ i, A (lp.single 2 i 1) = B (lp.single 2 i 1)) : A = B := by
+  apply lp.ext_continuousLinearMap (by norm_num : (2 : ENNReal) ≠ ⊤)
+  intro i
+  apply ContinuousLinearMap.ext
+  intro z
+  change A (lp.single 2 i z) = B (lp.single 2 i z)
+  have hz : lp.single (E := fun _ : ι => ℂ) 2 i z = z • lp.single 2 i 1 := by
+    rw [← lp.single_smul]
+    simp
+  rw [hz, map_smul, map_smul, h]
+/-- The exact synthesis identity holds on all square-summable coefficient sequences. -/
+theorem bump_synthesis_identity {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (b : SchwartzMap (Euclidean d) ℂ)
+    (V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d)
+    (hV : ∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume))
+    (S : SeqL2 Λ ≃L[ℂ] DomainL2 Ω)
+    (hS : ∀ i : Λ, (S (lp.single 2 i 1) : Euclidean d → ℂ) =ᵐ[volume.restrict Ω]
+      exponential (i : Euclidean d))
+    {c : ℝ} (hc : 0 < c) (hl : ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) :
+    (domainRestrictionCLM Ω).comp
+      ((paperFourierL2 d).toContinuousLinearEquiv.toContinuousLinearMap.comp V.toContinuousLinearMap) =
+      (bumpFourierMultiplier Ω hΩ b hc hl).toContinuousLinearMap.comp S.toContinuousLinearMap := by
+  apply seqL2_ext_on_single
+  intro i
+  exact bump_synthesis_coordinate hΩ b V hV S hS hc hl i
+end RieszEuclidean
+
+/- Source: RieszEuclidean/DomainExtension.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Set
+namespace RieszEuclidean
+/-- Extend a domain L² class by zero to ambient Euclidean space. -/
+def domainExtension {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : FullL2 d :=
+  ((memLp_indicator_iff_restrict hΩ).mpr (Lp.memLp f)).toLp (Ω.indicator f)
+/-- The extension has the zero-extended representative. -/
+theorem domainExtension_coe {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : (domainExtension Ω hΩ f : Euclidean d → ℂ) =ᵐ[volume] Ω.indicator f :=
+  MemLp.coeFn_toLp _
+/-- Zero extension preserves the L² norm. -/
+theorem domainExtension_norm {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : ‖domainExtension Ω hΩ f‖ = ‖f‖ := by
+  rw [Lp.norm_def, Lp.norm_def, eLpNorm_congr_ae (domainExtension_coe Ω hΩ f),
+    eLpNorm_indicator_eq_eLpNorm_restrict hΩ]
+/-- Restricting an extension gives the original domain class. -/
+theorem domainRestriction_extension {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : domainRestriction Ω (domainExtension Ω hΩ f) = f := by
+  apply Lp.ext
+  have he := (domainExtension_coe Ω hΩ f).filter_mono
+    (ae_mono (Measure.restrict_le_self (s := Ω)))
+  filter_upwards [domainRestriction_coe Ω (domainExtension Ω hΩ f), he, ae_restrict_mem hΩ]
+    with x h1 h2 hx
+  rw [h1, h2, indicator_of_mem hx]
+/-- Extending a restriction gives precisely the domain cutoff. -/
+theorem domainExtension_restriction {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) : domainExtension Ω hΩ (domainRestriction Ω f) = domainCutoff Ω hΩ f := by
+  apply Lp.ext
+  have hr := (ae_restrict_iff' hΩ).mp (domainRestriction_coe Ω f)
+  filter_upwards [domainExtension_coe Ω hΩ (domainRestriction Ω f),
+    domainCutoff_coe Ω hΩ f, hr] with x h1 h2 h3
+  rw [h1, h2]
+  by_cases hx : x ∈ Ω
+  · simpa only [indicator_of_mem hx] using h3 hx
+  · simp only [indicator_of_not_mem hx]
+/-- Zero extension is a complex linear isometry. -/
+def domainExtensionLI {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    DomainL2 Ω →ₗᵢ[ℂ] FullL2 d where
+  toFun := domainExtension Ω hΩ
+  map_add' f g := by
+    apply Lp.ext
+    have ha := (ae_restrict_iff' hΩ).mp (Lp.coeFn_add f g)
+    filter_upwards [domainExtension_coe Ω hΩ (f + g), domainExtension_coe Ω hΩ f,
+      domainExtension_coe Ω hΩ g, Lp.coeFn_add (domainExtension Ω hΩ f) (domainExtension Ω hΩ g), ha]
+      with x h1 h2 h3 h4 h5
+    rw [h1, h4]
+    simp only [Pi.add_apply, h2, h3]
+    by_cases hx : x ∈ Ω
+    · simpa only [indicator_of_mem hx, Pi.add_apply] using h5 hx
+    · simp only [indicator_of_not_mem hx, add_zero]
+  map_smul' c f := by
+    apply Lp.ext
+    have ha := (ae_restrict_iff' hΩ).mp (Lp.coeFn_smul c f)
+    filter_upwards [domainExtension_coe Ω hΩ (c • f), domainExtension_coe Ω hΩ f,
+      Lp.coeFn_smul c (domainExtension Ω hΩ f), ha] with x h1 h2 h3 h4
+    simp only [RingHom.id_apply, h1, h3, Pi.smul_apply, h2]
+    by_cases hx : x ∈ Ω
+    · simpa only [indicator_of_mem hx, Pi.smul_apply] using h4 hx
+    · simp only [indicator_of_not_mem hx, smul_zero]
+  norm_map' := domainExtension_norm Ω hΩ
+/-- Zero extension has exactly the range of the domain projection. -/
+theorem domainExtension_range {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    LinearMap.range (domainExtensionLI Ω hΩ).toLinearMap = (domainProjection Ω hΩ).range := by
+  ext f
+  constructor
+  · rintro ⟨g, rfl⟩
+    apply ((domainProjection Ω hΩ).mem_range_iff _).mpr
+    change domainCutoff Ω hΩ (domainExtension Ω hΩ g) = domainExtension Ω hΩ g
+    rw [← domainExtension_restriction, domainRestriction_extension]
+  · intro hf
+    refine ⟨domainRestriction Ω f, ?_⟩
+    change domainExtension Ω hΩ (domainRestriction Ω f) = f
+    rw [domainExtension_restriction]
+    exact ((domainProjection Ω hΩ).mem_range_iff f).mp hf
+end RieszEuclidean
+
+/- Source: RieszEuclidean/FourierRange.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory
+namespace RieszEuclidean
+/-- Embed domain L² isometrically into the Fourier projection range. -/
+def fourierDomainEmbedding {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    DomainL2 Ω →ₗᵢ[ℂ] FullL2 d :=
+  (paperFourierL2 d).symm.toLinearIsometry.comp (domainExtensionLI Ω hΩ)
+/-- The embedding has exactly the range of the Fourier projection. -/
+theorem fourierDomainEmbedding_range {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    LinearMap.range (fourierDomainEmbedding Ω hΩ).toLinearMap = (fourierProjection Ω hΩ).range := by
+  ext f
+  constructor
+  · rintro ⟨g, rfl⟩
+    apply ((fourierProjection Ω hΩ).mem_range_iff _).mpr
+    apply (paperFourierL2 d).injective
+    rw [fourierProjection_transform]
+    change domainCutoff Ω hΩ ((paperFourierL2 d) ((paperFourierL2 d).symm
+      (domainExtension Ω hΩ g))) = (paperFourierL2 d) ((paperFourierL2 d).symm (domainExtension Ω hΩ g))
+    rw [LinearIsometryEquiv.apply_symm_apply, ← domainExtension_restriction, domainRestriction_extension]
+  · intro hf
+    refine ⟨domainRestriction Ω (paperFourierL2 d f), ?_⟩
+    apply (paperFourierL2 d).injective
+    change (paperFourierL2 d) ((paperFourierL2 d).symm
+      (domainExtension Ω hΩ (domainRestriction Ω (paperFourierL2 d f)))) = paperFourierL2 d f
+    rw [LinearIsometryEquiv.apply_symm_apply, domainExtension_restriction, ← fourierProjection_transform]
+    rw [((fourierProjection Ω hΩ).mem_range_iff f).mp hf]
+/-- Embedding the restricted Fourier transform is the Fourier projection itself. -/
+theorem fourierDomainEmbedding_restriction {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) :
+    fourierDomainEmbedding Ω hΩ (domainRestriction Ω (paperFourierL2 d f)) =
+      (fourierProjection Ω hΩ).op f := by
+  apply (paperFourierL2 d).injective
+  change (paperFourierL2 d) ((paperFourierL2 d).symm
+    (domainExtension Ω hΩ (domainRestriction Ω (paperFourierL2 d f)))) = _
+  rw [LinearIsometryEquiv.apply_symm_apply, domainExtension_restriction, fourierProjection_transform]
+end RieszEuclidean
+
+/- Source: RieszEuclidean/RangeIso.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+namespace RieszEuclidean
+/-- An isometry identifies its source with any equal range submodule. -/
+def isometryRangeEquiv {A H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] (V : A →ₗᵢ[ℂ] H)
+    (Q : Submodule ℂ H) (hQ : LinearMap.range V.toLinearMap = Q) : A ≃ₗᵢ[ℂ] Q :=
+  V.equivRange.trans (LinearIsometryEquiv.ofEq _ _ hQ)
+/-- The range equivalence has the original isometry as its ambient representative. -/
+theorem isometryRangeEquiv_coe {A H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] (V : A →ₗᵢ[ℂ] H)
+    (Q : Submodule ℂ H) (hQ : LinearMap.range V.toLinearMap = Q) (x : A) :
+    (isometryRangeEquiv V Q hQ x : H) = V x := rfl
+/-- An invertible synthesis identity induces the required projection range isomorphism. -/
+theorem rangeIso_of_synthesis {A B H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
+    [NormedAddCommGroup B] [InnerProductSpace ℂ B]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    (P Q : OrthProjection H) (V : A →ₗᵢ[ℂ] H) (W : B →ₗᵢ[ℂ] H)
+    (hV : LinearMap.range V.toLinearMap = Q.range)
+    (hW : LinearMap.range W.toLinearMap = P.range) (E : A ≃L[ℂ] B)
+    (h : ∀ a, P.op (V a) = W (E a)) : P.RangeIso Q := by
+  let eV := (isometryRangeEquiv V Q.range hV).toContinuousLinearEquiv
+  let eW := (isometryRangeEquiv W P.range hW).toContinuousLinearEquiv
+  refine ⟨eV.symm.trans (E.trans eW), ?_⟩
+  intro x
+  obtain ⟨a, rfl⟩ := eV.surjective x
+  change (eW (E (eV.symm (eV a))) : H) = P.op (eV a)
+  rw [ContinuousLinearEquiv.symm_apply_apply]
+  exact (h a).symm
+end RieszEuclidean
+
+/- Source: RieszEuclidean/InitialGap.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+/-- The concrete bump projection has distance less than one from the Fourier projection. -/
+theorem initial_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (b : SchwartzMap (Euclidean d) ℂ)
+    (V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d)
+    (hV : ∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume))
+    (S : SeqL2 Λ ≃L[ℂ] DomainL2 Ω)
+    (hS : ∀ i : Λ, (S (lp.single 2 i 1) : Euclidean d → ℂ) =ᵐ[volume.restrict Ω]
+      exponential (i : Euclidean d))
+    {c : ℝ} (hc : 0 < c) (hl : ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) :
+    ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 := by
+  apply ((fourierProjection Ω hΩ).gap_iff_rangeIso (isometryRangeProjection V)).mpr
+  apply rangeIso_of_synthesis (fourierProjection Ω hΩ) (isometryRangeProjection V)
+    V (fourierDomainEmbedding Ω hΩ) (isometryRangeProjection_range V).symm
+    (fourierDomainEmbedding_range Ω hΩ) (S.trans (bumpFourierMultiplier Ω hΩ b hc hl))
+  intro a
+  have he := DFunLike.congr_fun (bump_synthesis_identity hΩ b V hV S hS hc hl) a
+  rw [← fourierDomainEmbedding_restriction Ω hΩ (V a)]
+  exact congrArg (fourierDomainEmbedding Ω hΩ) he
+/-- Every exponential Riesz basis on a bounded domain supplies the paper's small bump and initial gap. -/
+theorem exists_initial_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω)
+    (hB : HasExponentialRieszBasis Ω Λ) :
+    ∃ δ r : ℝ, 0 < δ ∧ Separated δ Λ ∧ 0 < r ∧ 2 * r < δ ∧
+      ∃ b : SchwartzMap (Euclidean d) ℂ,
+        HasCompactSupport b ∧ ‖b.toLp 2 volume‖ = 1 ∧
+        (∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) ∧
+        (∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) ∧
+        (∃ c : ℝ, 0 < c ∧ ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) ∧
+        ∃ V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d,
+          (∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
+          ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 := by
+  classical
+  obtain ⟨δ, hδ, hΛ⟩ := riesz_frequencies_separated hΩ hb hB
+  obtain ⟨r, hr, hrδ, b, hs, hn, hp, hz, c, hc, hl⟩ := exists_bump_fourier_lower hb hδ
+  let V := bumpSynthesis hΛ hrδ b hz hn
+  have hV : ∀ i : Λ, V (lp.single 2 i 1) =
+      translationL2 (-(i : Euclidean d)) (b.toLp 2 volume) := by
+    intro i
+    exact orthonormalSynthesis_single (translated_bumps_orthonormal hΛ hrδ b hz hn) i
+  obtain ⟨S, hS⟩ := hB
+  exact ⟨δ, r, hδ, hΛ, hr, hrδ, b, hs, hn, hp, hz, ⟨c, hc, hl⟩,
+    V, hV, initial_bump_gap hΩ b V hV S hS hc hl⟩
+end RieszEuclidean
+
 /- Source: RieszEuclidean/MovingComparison.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 /-!
@@ -1952,4 +2402,18 @@ theorem euclidean_fourier_analysis (d : ℕ) :
     have heq : g = translationL2 t f := Lp.ext (hg.trans (translationL2_coe t f).symm)
     rw [heq, fourierProjection_translation Ω hΩ hfin]
     exact translationL2_coe t _
+/-- Every exponential Riesz basis on a bounded domain supplies the paper's small bump and initial gap. -/
+theorem initial_bumps {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω)
+    (hB : HasExponentialRieszBasis Ω Λ) :
+    ∃ δ r : ℝ, 0 < δ ∧ Separated δ Λ ∧ 0 < r ∧ 2 * r < δ ∧
+      ∃ b : SchwartzMap (Euclidean d) ℂ,
+        HasCompactSupport b ∧ ‖b.toLp 2 volume‖ = 1 ∧
+        (∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) ∧
+        (∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) ∧
+        (∃ c : ℝ, 0 < c ∧ ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) ∧
+        ∃ V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d,
+          (∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
+          ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 :=
+  exists_initial_bump_gap hΩ hb hB
 end RieszEuclidean.Results

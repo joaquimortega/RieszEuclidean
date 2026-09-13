@@ -1,4 +1,5 @@
 import RieszEuclidean.FourierL2
+import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 import Mathlib.MeasureTheory.Function.ContinuousMapDense
 
