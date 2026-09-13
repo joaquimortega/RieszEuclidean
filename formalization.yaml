@@ -19,7 +19,8 @@ sources:
 status:
   scope: >-
     Concrete definitions, projection-gap lemmas, elementary weak-limit lemmas and
-    the conditional moving-comparison obstruction are implemented. The full
+    the conditional moving-comparison obstruction, and full affine transport of
+    actual exponential synthesis are implemented. The full
     Euclidean constructions and unconditional main theorems remain pending.
   sorry_count: 0
   sorry_in_definitions: 0

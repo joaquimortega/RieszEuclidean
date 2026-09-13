@@ -15,3 +15,9 @@ requires no access to the original repository.
 The manuscript is by Joaquim Ortega-Cerdà. Formalization and tooling are
 AI-assisted work directed by the author. No independent review is claimed.
 No new redistribution license has been assigned by the assistant.
+
+`L2Transport.lean` extracts the general Pullback, Equiv and Sequences sections
+of `DiskRiesz/BallRounding.lean` at the same commit. It performs no frequency
+rounding. `Affine.lean` ports `DiskRiesz/BallAffine.lean`, quantifies over all
+finite dimensions directly, and uses the Euclidean manuscript's 2π convention.
+The imports and declarations are local to this repository.

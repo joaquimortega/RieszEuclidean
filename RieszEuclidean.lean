@@ -3,3 +3,5 @@ import RieszEuclidean.ProjectionGap
 import RieszEuclidean.MovingComparison
 
 import RieszEuclidean.WeakLimits
+import RieszEuclidean.L2Transport
+import RieszEuclidean.Affine

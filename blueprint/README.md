@@ -127,8 +127,9 @@ tangential frequencies. For an odd polygon, prove that at most two maximal
 edges have a given unoriented direction and extract an unpaired edge.
 Specify the concrete polygon presentation and any fidelity limitation.
 
-Affine pullback requires the determinant factor, transpose frequency map and
-unit phases with the paper's `2π` convention. It transports the ball result
+**Implemented:** `L2Transport.lean` and `Affine.lean` prove the determinant factor,
+transpose frequency map and unit phases with the paper's `2π` convention.
+This transport can carry a future ball result
 to ellipsoids and standard triangles to all noncollinear triples.
 
 Planned modules: `EdgeGeometry`, `PolygonGeometry`, `Affine`, `Main`.

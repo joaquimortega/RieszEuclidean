@@ -22,7 +22,7 @@ cd RieszEuclidean
 lake exe cache get
 lake build
 python3 scripts/check_blueprint.py
-lake env lean RieszEuclidean/ProofAudit.lean
+python3 scripts/check_axioms.py
 ```
 
 `lean-toolchain` and `lake-manifest.json` pin Lean and every Lake dependency.

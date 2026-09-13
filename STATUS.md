@@ -8,6 +8,8 @@ Implemented and compiled:
 - Actual Euclidean synthesis and Beurling weak-convergence definitions.
 - Projection-gap equivalence and strict-inclusion obstruction (ported proofs).
 - Simultaneous strong-limit gap transfer and the moving-comparison obstruction.
+- Determinant-correct L² pullback and arbitrary affine invariance of the actual
+  exponential Riesz basis predicate, with 2π phases and transpose frequencies.
 - Fixed-translation invariance of weak convergence and preservation of separation.
 
 The actual Fourier/bump construction, compact hull and stationary measure,
