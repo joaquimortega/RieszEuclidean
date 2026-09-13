@@ -17,9 +17,10 @@ Radius selection, the positive uniform Fourier lower bound and the translated
 orthonormal family are also proved, together with isometric synthesis and the
 projection onto its range. The initial projection gap and the
 compact metrizable configuration space with its jointly continuous translation action
-are proved. The current blueprint has 10 of 25 obligations proved (40%). Bochner existence
-is postponed; comparison operators, averaging and geometric conclusions remain
-pending. See [development status](STATUS.md) for the current conditional results.
+are proved. The current blueprint has 13 of 25 obligations proved (52%). Bochner existence
+is postponed; continuous averaging, planar geometry and the unconditional main
+theorems remain pending. See [development status](STATUS.md) for the current
+conditional results.
 
 ## Build from a standalone clone
 
@@ -88,7 +89,7 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states nineteen proved supporting results with concrete
+`MainResults.lean` currently states twenty-three proved supporting results with concrete
 basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
 assembled from the modular source with Mathlib imports only. The analytic results include Schwartz Parseval, Schwartz density, and existence
 of the unitary Fourier transform with its measurable-domain cutoffs. Neither file yet
@@ -134,8 +135,7 @@ Riesz–Markov–Kakutani represents it by the required measure.
 stationary L² space, with the group law and invariant unit constant. It follows
 the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}.
 
-The continuous Fejér node is complete: **10 of 25 blueprint obligations (40%)**
-are proved. This is a node count, not an estimate of remaining effort.
+The integrated blueprint has **13 of 25 obligations (52%) proved**. This is a node count, not an estimate of remaining effort.
 
 The scalar calculus now includes kernel adjoints and convolution, the uniform
 Fourier-symbol operator bound, and a common probability control measure from a
@@ -151,13 +151,15 @@ full-paper nodes therefore remain pending. No spectral existence axiom is added.
 
 The actual bump kernel has proved bounds, finite propagation, covariance,
 Hermitian symmetry, product integrability, the projection integral identity and
-joint continuity in its spatial variables for fixed configuration. Configuration
-continuity, the stationary comparison operators, averaging and geometry remain
-under development.
+joint continuity in its spatial variables, including configuration continuity.
+The stationary comparison family is self-adjoint, idempotent and operator-norm
+Lipschitz. Continuous averaging, planar geometry and the unconditional main
+theorems remain under development.
 
-Official Comparator and Lean's kernel accepted all nineteen supporting results,
-including continuous Fejér approximation, the finite-filter symbol, the control
-measure, stationary cutoffs and the bump-kernel projection identity. All builds,
-all 15 linters and the 434-declaration transitive axiom audit pass. See
-[development status](STATUS.md) and [the checkpoint audit](reviews/fejer-cutoffs-progress.md)
-for scope, exact inputs and remaining obligations.
+Official Comparator and Lean's default kernel accepted all twenty-three current
+supporting results. Modular, public and standalone builds and all 15 linters
+pass; all 597 transitive axiom reports use only standard Lean axioms.
+The earlier `ee0e4c5` checkpoint covered nineteen results and 10/25 nodes.
+See [development status](STATUS.md) and
+[the checkpoint audit](reviews/comparison-sphere-progress.md) for the current
+scope, exact verified inputs and remaining obligations.

@@ -60,13 +60,14 @@ identifies its topology with local matching and proves joint continuity of real
 translations. The empty set is permitted in the ambient space and excluded
 from the actual hull by the projection gap, not by an unsupported assumption.
 
-Prove strong convergence of bump projections by matching finitely many centers
-for compactly supported inputs, then use density. Continuous box averaging, the invariant probability measure and the strongly
+Strong convergence of the configuration bump projections by matching finitely many centers
+for compactly supported inputs, then use density, is proved. Continuous box averaging, the invariant probability measure and the strongly
 continuous Koopman action on separable `L²(X,μ)` with invariant unit constant are
-proved. Strong convergence of the configuration bump projections remains pending.
+proved.
 
-The configuration, translation-hull, invariant-measure and Koopman modules are
-implemented. `BumpLimits` remains pending.
+The configuration, translation-hull, invariant-measure, Koopman and bump-limit
+modules are implemented. The hull-gap result uses the actual basis hypothesis
+to obtain a uniform hull gap.
 
 ## Section 4: Bochner measures and cutoffs
 
@@ -95,10 +96,10 @@ on the postponed Bochner dependency.
 
 The actual covariant bump kernel has proved uniform bounds, support where
 `‖v-w‖ ≤ 2r`, Hermitian symmetry, covariance, product integrability, the kernel
-projection identity and joint spatial continuity for fixed configuration. Joint
-configuration continuity remains under development. The next construction defines `M_t` by an L²-valued integral of multiplication by `k_z`
-after `U_z`. Invariance and the kernel identities prove that it is an
-orthogonal projection. Compact support gives operator-norm Lipschitz continuity.
+projection identity and joint spatial continuity, including configuration
+continuity. The stationary comparison family `M_t` is self-adjoint,
+idempotent and operator-norm Lipschitz. The averaged scalar construction and
+its gap estimate remain pending.
 
 For each configuration use the actual compactly supported test function
 `|C_R|⁻¹ᐟ² 1_C_R(v) exp(-2πit·v) f(Γ-v)`. Tonelli proves the averaged energy
@@ -108,14 +109,12 @@ pointwise in the configuration, then Cauchy–Schwarz. Pass strongly on the cuto
 side and in norm on the bump-kernel side. No amplified Hilbert space `𝒦` is
 introduced. No finite averaged operator is assumed to be a projection.
 
-Planned modules: `ComparisonKernel`, `ContinuousAveraging`.
+Implemented module: `ComparisonKernel`. Planned module: `ContinuousAveraging`.
 
 ## Section 6: sphere and crossing
 
-Prove the literal sphere-overlap statement for Hausdorff surface measure,
-including its finiteness, positivity and Lebesgue-nullity. If an alternative
-boundary measure is temporarily used, record that divergence explicitly and
-do not mark the literal surface-measure lemma proved.
+`SphereGeometry` proves the literal sphere-overlap statement for Hausdorff
+surface measure, including finiteness, positivity and Lebesgue-nullity.
 
 Fubini discards every shifted boundary component except zero. Choose good
 parameters in the two ambient open sides; do not assume that a conull set
@@ -123,7 +122,9 @@ meets a prescribed ray. Dominated convergence gives strictly ordered cutoff
 limits. The invariant constant witnesses strictness. Apply the already proved
 moving-comparison obstruction after proving that `M_t` has the common limit.
 
-Planned modules: `SphereGeometry`, `BoundaryLimits`, `BallMain`.
+`BoundaryLimits` and the sphere obstruction are assembled conditionally on
+explicit spectral data and the averaged gap; their dependency node remains
+pending. Planned modules: `ContinuousAveraging`, `BoundaryLimits`, `BallMain`.
 
 ## Sections 7 and 8: remaining domains
 
@@ -156,3 +157,11 @@ Planned modules: `EdgeGeometry`, `PolygonGeometry`, `Affine`, `Main`.
 The development CI checks implemented sources. It does not certify completion.
 `check_blueprint.py --require-complete` must remain unsuccessful until the full
 manifest is discharged.
+
+## Verified supporting checkpoint
+
+The current 13/25 inventory has twenty-three public supporting results accepted
+by official Comparator and Lean's default kernel. Modular, public and standalone
+builds and all 15 linters pass; all 597 axiom reports use standard axioms only.
+See [the audit](../reviews/comparison-sphere-progress.md). This acceptance does
+not certify the twelve pending full-paper obligations.

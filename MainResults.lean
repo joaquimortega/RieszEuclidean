@@ -9,7 +9,7 @@ theorems. Its wrapper proofs use the checked modular library, so the reference
 needs neither theorem placeholders nor warning suppressions.
 -/
 noncomputable section
-open MeasureTheory Filter Topology
+open MeasureTheory Filter Topology Metric
 open scoped ENNReal
 namespace RieszEuclidean.Results
 
@@ -258,4 +258,77 @@ theorem bump_kernel_projection {d : ℕ} {δ r : ℝ} {Γ : Set (Euclidean d)}
   ⟨continuous_bumpKernel hΓ hδ b hb hs, fun v w =>
     ⟨integrable_bumpKernel_product hΓ hr b hs hi v w,
       integral_bumpKernel_product hΓ hr b hs hn v w⟩⟩
+/-- An actual exponential Riesz basis gives one normalized bump and a strict projection gap
+uniform throughout its translation hull. -/
+theorem uniform_hull_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω)
+    (hB : HasExponentialRieszBasis Ω Λ) :
+    ∃ (δ r : ℝ), 0 < δ ∧ 0 < r ∧ ∃ (hr : 2 * r < δ)
+      (Γ : SeparatedConfiguration d δ) (b : SchwartzMap (Euclidean d) ℂ)
+      (hs : ∀ x, r ≤ ‖x‖ → b x = 0) (hn : ‖b.toLp 2 volume‖ = 1),
+      Γ.carrier = Λ ∧ HasCompactSupport b ∧
+      (∀ x, (b x).im = 0 ∧ 0 ≤ (b x).re) ∧
+      ∃ γ : ℝ, 0 ≤ γ ∧ γ < 1 ∧ ∀ Δ : SeparatedConfiguration d δ,
+        Δ ∈ SeparatedConfiguration.hull Γ →
+        ‖(fourierProjection Ω hΩ).op -
+          (isometryRangeProjection (bumpSynthesis Δ.separated hr b hs hn)).op‖ ≤ γ :=
+  exists_riesz_basis_uniform_hull_gap hΩ hb hB
+/-- The actual stationary comparison integral is an orthogonal projection and has
+a finite explicit Lipschitz bound in its real parameter. -/
+theorem stationary_comparison {d : ℕ} {δ r M : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ)
+    [MeasurableSpace (SeparatedConfiguration.hull Γ)]
+    [BorelSpace (SeparatedConfiguration.hull Γ)]
+    [CompactSpace (SeparatedConfiguration.hull Γ)]
+    (μ : Measure (SeparatedConfiguration.hull Γ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ z : Euclidean d,
+      MeasurePreserving (SeparatedConfiguration.hullTranslate hδ Γ z) μ μ)
+    (hr : 2 * r ≤ δ) (b : Euclidean d → ℂ)
+    (hbc : Continuous b) (hcompact : HasCompactSupport b)
+    (hs : ∀ x, r ≤ ‖x‖ → b x = 0) (hM : 0 ≤ M) (hb : ∀ x, ‖b x‖ ≤ M)
+    (hn : (∫ x, ‖b x‖ ^ 2) = 1) :
+    let A := SeparatedConfiguration.stationaryComparison hδ Γ μ hμ hr b hbc hcompact hs hM hb
+    (∀ t, IsSelfAdjoint (A t) ∧ (A t).comp (A t) = A t) ∧
+      (∀ t s, ‖A t - A s‖ ≤
+        (2 * Real.pi * ∫ y : Euclidean d, ‖y‖ * stationaryEnvelope r M y) * ‖t - s‖) ∧
+      ∀ t f, A t f = ∫ y, exponential t y •
+        SeparatedConfiguration.comparisonIntegrand hδ Γ μ hμ hr b hbc hcompact hs hM hb y f := by
+  dsimp only
+  exact ⟨fun t =>
+    ⟨SeparatedConfiguration.stationaryComparison_isSelfAdjoint hδ Γ μ hμ hr b hbc hcompact hs hM hb t,
+      SeparatedConfiguration.stationaryComparison_idempotent hδ Γ μ hμ hr b hbc hcompact hs hM hb hn t⟩,
+    SeparatedConfiguration.norm_stationaryComparison_sub_le hδ Γ μ hμ hr b hbc hcompact hs hM hb,
+    SeparatedConfiguration.stationaryComparison_apply hδ Γ μ hμ hr b hbc hcompact hs hM hb⟩
+/-- The literal codimension-one Hausdorff measure on a sphere is finite, nonzero,
+and null on every nontrivially translated sphere. -/
+theorem sphere_surface_measure {d : ℕ} (hd : 2 ≤ d)
+    (a : Euclidean d) {r : ℝ} (hr : 0 < r) :
+    IsFiniteMeasure (sphereSurfaceMeasure a r) ∧
+      0 < sphereSurfaceMeasure a r (sphere a r) ∧
+      sphereSurfaceMeasure a r (sphere a r)ᶜ = 0 ∧
+      volume (sphere a r) = 0 ∧
+      (∀ θ : Euclidean d, θ ≠ 0 →
+        sphereSurfaceMeasure a r (sphere a r ∩ translate θ (sphere a r)) = 0) ∧
+      (∀ θ : Euclidean d, θ ≠ 0 →
+        sphereSurfaceMeasure a r (translate θ (sphere a r)) = 0) :=
+  sphere_boundary_measure_properties hd a hr
+/-- The sphere boundary construction contradicts a continuous common comparison,
+conditional on the explicitly stated spectral identities and uniform gap. -/
+theorem sphere_cutoff_obstruction {d : ℕ} {H : Type}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (hd : 2 ≤ d) (a : Euclidean d) {r : ℝ} (hr : 0 < r)
+    {G : Set (Euclidean d)} (hG : volume Gᶜ = 0)
+    (σ : H → Measure (Euclidean d)) (hfinite : ∀ f, IsFiniteMeasure (σ f))
+    (μ : Measure (Euclidean d)) [SFinite μ] (hdom : ∀ f, σ f ≪ μ)
+    (P : G → H →L[ℂ] H)
+    (hP : ∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t)
+    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (ball a r) t θ‖ ^ 2 ∂σ f)
+    (hdiff : ∀ s t f, ‖P s f - P t f‖ ^ 2 =
+      ∫ θ, ‖cutoffSymbol (ball a r) s θ - cutoffSymbol (ball a r) t θ‖ ^ 2 ∂σ f)
+    (u : H) (hu : ‖u‖ = 1) (hσu : σ u = Measure.dirac 0)
+    (M : Euclidean d → H →L[ℂ] H) (hM : Continuous M)
+    (hMs : ∀ t, IsSelfAdjoint (M t)) (hMi : ∀ t, (M t).comp (M t) = M t)
+    {γ : ℝ} (hγ : γ < 1) (hgap : ∀ t : G, ‖P t - M t‖ ≤ γ) : False :=
+  sphere_cutoffs_continuous_comparison_obstruction hd a hr hG σ hfinite μ hdom P hP hnorm hdiff
+    u hu hσu M hM hMs hMi hγ hgap
 end RieszEuclidean.Results

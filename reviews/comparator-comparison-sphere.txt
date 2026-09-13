@@ -1,0 +1,15 @@
+Running as unit: run-p1658198-i1658498.service; invocation ID: a284e5e4f9524ed7a6af09ca7cfc5244
+Building MainResults
+Build completed successfully.
+Exporting #[RieszEuclidean.Results.projection_gap, RieszEuclidean.Results.strict_inclusion_obstruction, RieszEuclidean.Results.weak_limit_separation, RieszEuclidean.Results.affine_invariance, RieszEuclidean.Results.fourier_parseval, RieszEuclidean.Results.euclidean_fourier_cutoff, RieszEuclidean.Results.schwartz_density, RieszEuclidean.Results.euclidean_fourier_analysis, RieszEuclidean.Results.initial_bumps, RieszEuclidean.Results.compact_configuration_space, RieszEuclidean.Results.hull_invariant_probability, RieszEuclidean.Results.stationary_koopman, RieszEuclidean.Results.beurling_iff_vague, RieszEuclidean.Results.integrated_spectral_norm, RieszEuclidean.Results.continuous_fejer, RieszEuclidean.Results.finite_filter_symbol, RieszEuclidean.Results.spectral_control_measure, RieszEuclidean.Results.stationary_cutoffs, RieszEuclidean.Results.bump_kernel_projection, RieszEuclidean.Results.uniform_hull_gap, RieszEuclidean.Results.stationary_comparison, RieszEuclidean.Results.sphere_surface_measure, RieszEuclidean.Results.sphere_cutoff_obstruction, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight] from MainResults
+Building RieszEuclideanStandalone
+Build completed successfully.
+Exporting #[RieszEuclidean.Results.projection_gap, RieszEuclidean.Results.strict_inclusion_obstruction, RieszEuclidean.Results.weak_limit_separation, RieszEuclidean.Results.affine_invariance, RieszEuclidean.Results.fourier_parseval, RieszEuclidean.Results.euclidean_fourier_cutoff, RieszEuclidean.Results.schwartz_density, RieszEuclidean.Results.euclidean_fourier_analysis, RieszEuclidean.Results.initial_bumps, RieszEuclidean.Results.compact_configuration_space, RieszEuclidean.Results.hull_invariant_probability, RieszEuclidean.Results.stationary_koopman, RieszEuclidean.Results.beurling_iff_vague, RieszEuclidean.Results.integrated_spectral_norm, RieszEuclidean.Results.continuous_fejer, RieszEuclidean.Results.finite_filter_symbol, RieszEuclidean.Results.spectral_control_measure, RieszEuclidean.Results.stationary_cutoffs, RieszEuclidean.Results.bump_kernel_projection, RieszEuclidean.Results.uniform_hull_gap, RieszEuclidean.Results.stationary_comparison, RieszEuclidean.Results.sphere_surface_measure, RieszEuclidean.Results.sphere_cutoff_obstruction, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight] from RieszEuclideanStandalone
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 4min 53.577s
+CPU time consumed: 4min 58.989s
+Memory peak: 3.3G (swap: 0B)

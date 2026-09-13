@@ -20,7 +20,11 @@
     "RieszEuclidean.Results.finite_filter_symbol",
     "RieszEuclidean.Results.spectral_control_measure",
     "RieszEuclidean.Results.stationary_cutoffs",
-    "RieszEuclidean.Results.bump_kernel_projection"
+    "RieszEuclidean.Results.bump_kernel_projection",
+    "RieszEuclidean.Results.uniform_hull_gap",
+    "RieszEuclidean.Results.stationary_comparison",
+    "RieszEuclidean.Results.sphere_surface_measure",
+    "RieszEuclidean.Results.sphere_cutoff_obstruction"
   ],
   "permitted_axioms": [
     "propext",

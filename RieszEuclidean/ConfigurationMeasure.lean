@@ -1,3 +1,5 @@
+import Mathlib.MeasureTheory.Constructions.Polish.Basic
+import Mathlib.Topology.EMetricSpace.Paracompact
 import RieszEuclidean.SeparatedConfigurations
 import Mathlib.MeasureTheory.Measure.Count
 namespace RieszEuclidean
@@ -13,6 +15,7 @@ theorem configurationMeasure_apply {d : ℕ} (Γ : Set (Euclidean d))
 /-- The counting measure of a separated configuration is finite on compact regions. -/
 theorem configurationMeasure_compact_lt_top {d : ℕ} {δ : ℝ} {Γ K : Set (Euclidean d)}
     (h : Separated δ Γ) (hδ : 0 < δ) (hK : IsCompact K) : configurationMeasure Γ K < ⊤ := by
+  letI : T0Space (Euclidean d) := MetricSpace.instT0Space
   rw [configurationMeasure_apply Γ hK.measurableSet, Measure.count_apply_lt_top]
   have hf := (h.finite_inter_compact hδ hK).preimage (f := fun x : Γ => (x : Euclidean d)) Subtype.val_injective.injOn
   simpa only [Set.preimage_inter, Subtype.coe_preimage_self, Set.univ_inter] using hf

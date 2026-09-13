@@ -134,6 +134,9 @@ theorem continuous_hull_pullback {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
       Lp.compMeasurePreserving (hullTranslate hδ Γ p.1) (hμ p.1) p.2) := by
   letI : CompactSpace (hull Γ) := isCompact_iff_compactSpace.mp (isCompact_hull hδ Γ)
   letI := TopologicalSpace.metrizableSpaceMetric (hull Γ)
+  letI : IsLocallyFiniteMeasure μ := IsFiniteMeasure.toIsLocallyFiniteMeasure μ
+  letI : μ.Regular := Measure.Regular.of_sigmaCompactSpace_of_isLocallyFiniteMeasure μ
+  letI : μ.InnerRegularCompactLTTop := Measure.Regular.instInnerRegularCompactLTTop
   let T : Euclidean d → C(hull Γ, hull Γ) := fun z =>
     ⟨hullTranslate hδ Γ z,
       (continuous_hullTranslate hδ Γ).comp (continuous_const.prodMk continuous_id)⟩

@@ -18,11 +18,12 @@ sources:
   relationship: formalizes
   note: Development in progress; source fingerprint and all obligations are in blueprint/manifest.json.
 status:
-  scope: Ten of 25 blueprint obligations are proved, including Euclidean Fourier analysis,
+  scope: Thirteen of 25 blueprint obligations are proved, including Euclidean Fourier analysis,
     initial bump projections, the compact hull, stationary probability and Koopman system,
     and continuous Fejer approximation. Given representing spectral measures, the control
     measure and actual stationary cutoff family are proved. Bochner existence is postponed.
-    Comparison operators, averaging, boundary geometry and unconditional main theorems remain pending.
+    The comparison kernel, sphere geometry, and conditional boundary/sphere results are now implemented;
+    continuous averaging, planar geometry and unconditional main theorems remain pending.
   sorry_count: 0
   sorry_in_definitions: 0
   sorry_count_note: Counts refer to implemented modules only. Pending blueprint nodes are not implemented
@@ -57,15 +58,13 @@ alignment:
     status: pending full analytic and geometric construction
 review:
   status: in-progress
-  notes: The current blueprint has 10 proved nodes and 15 pending obligations. Modular,
-    public-reference and standalone builds pass. All 15 linters pass for 517 modular
-    declarations plus 433 generated, 22 public declarations plus 5 generated, and
-    539 standalone declarations plus 438 generated. All 434 transitive axiom reports
-    use only standard Lean axioms. Official Comparator accepted all nineteen supporting
-    results and Lean's default kernel accepted the standalone solution with exit 0.
-    Bochner existence remains postponed; representing spectral measures are explicit
-    hypotheses. Final geometric nonexistence theorems remain unproved. Exact verified
-    inputs and scope are recorded in reviews/fejer-cutoffs-progress.md.
+  notes: The current blueprint has 13 proved nodes and 12 pending obligations. Official
+    Comparator and Lean's default kernel accepted all twenty-three public supporting
+    results. Modular, public and standalone builds and all 15 linters pass. All 597
+    transitive axiom reports use only standard Lean axioms. Exact scope and inputs
+    are recorded in reviews/comparison-sphere-progress.md. Bochner existence remains
+    postponed; representing spectral measures are explicit hypotheses. The full
+    geometric nonexistence theorems are not certified by this checkpoint.
 classification:
   msc2020:
   - 42C15
@@ -261,37 +260,39 @@ techniques:
   - RieszEuclidean/FiniteFilters.lean
   - RieszEuclidean/StationaryCutoffs.lean
 - name: Covariant comparison kernel and averaged forms
-  status: kernel identities and fixed-configuration spatial continuity proved; stationary operators and averaging pending
+  status: kernel identities, configuration continuity and stationary operator identities proved; averaging pending
   description: The actual subtype-indexed bump series has at most one active term under
     the support and separation assumptions. This gives summability, uniform bounds,
     finite propagation, covariance and Hermitian symmetry. Translated bump orthogonality
     proves product integrability and the projection integral identity. Local finite sums
-    prove joint spatial continuity for each fixed configuration. Continuity in the
-    configuration variable and the stationary operators M_t remain under development.
-    The planned averaged scalar argument introduces no amplified Hilbert space.
+    prove joint spatial continuity, including the configuration variable. The stationary
+    operators M_t are self-adjoint, idempotent and operator-norm Lipschitz. The averaged
+    scalar argument remains pending and introduces no amplified Hilbert space.
   files:
   - RieszEuclidean/BumpKernel.lean
   - RieszEuclidean/BumpKernelProjection.lean
   - RieszEuclidean/BumpKernelContinuity.lean
 - name: Geometric boundary crossing
-  status: planned; not yet formalized
-  description: Prove sphere surface-measure overlap nullity and same-direction edge crossing, construct
-    the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
-    triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
+  status: sphere geometry proved; boundary limits and crossing remain conditional/pending
+  description: Literal finite-positive Hausdorff sphere surface measure and translated-overlap nullity
+    are proved. Boundary-cutoff limits and the sphere obstruction are assembled conditional on explicit
+    spectral data and the averaged gap. Continuous averaging, same-direction edge crossing and the full
+    ball, triangle, unpaired/odd polygon, ellipsoid and general-boundary conclusions remain pending.
 comparator:
-  status: nineteen supporting results verified; full-paper results pending
+  status: twenty-three supporting results verified; full-paper results pending
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-fejer-cutoffs.txt
-  input_hashes: reviews/comparator-fejer-cutoffs-hashes.json
-  verified_scope: Nineteen supporting results covering the initial Fourier and bump construction,
-    affine transport, compact hull and invariant probability, Koopman representation and
-    Beurling-vague equivalence, integrated spectral norm, continuous Fejer approximation,
-    exact finite-filter symbols, the probability control measure, simultaneous stationary
-    cutoffs and the bump-kernel projection identity. Spectral measure existence is an
-    explicit hypothesis in the control and cutoff statements. No general Bochner existence
-    or geometric nonexistence theorem is certified.
+  verification_log: reviews/comparator-comparison-sphere.txt
+  input_hashes: reviews/comparator-comparison-sphere-hashes.json
+  verified_scope: Twenty-three supporting results covering Euclidean Fourier and bump
+    constructions, affine transport, compact hull and invariant probability, Koopman
+    representation, Beurling-vague equivalence, spectral norm and control measure,
+    continuous Fejer approximation, finite filters, stationary cutoffs, bump-kernel
+    projection identity, the uniform hull gap, actual stationary comparison projections,
+    literal Hausdorff sphere measure and the conditional sphere cutoff obstruction.
+    Spectral measure existence and the averaged gap remain explicit where required.
+    No general Bochner existence or unconditional geometric nonexistence theorem is certified.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice
