@@ -10,3 +10,9 @@ require mathlib from git
 @[default_target]
 lean_lib RieszEuclidean where
   leanOptions := #[⟨`warningAsError, true⟩]
+
+lean_lib MainResults where
+  leanOptions := #[⟨`warningAsError, true⟩]
+
+lean_lib RieszEuclideanStandalone where
+  leanOptions := #[⟨`warningAsError, true⟩]

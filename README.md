@@ -72,3 +72,31 @@ Run the build, all default environment linters (including slow tests), the
 blueprint checker and the transitive axiom checker. Compiler warnings are errors.
 Fix the code when linting fails; do not add `nolint` annotations or disable a
 linter. The blueprint checker rejects such suppressions in project proof sources.
+
+## Compact statements and standalone verification
+
+`MainResults.lean` currently states four proved supporting results with concrete
+basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
+assembled from the modular source with Mathlib imports only. Neither file yet
+contains the pending geometric nonexistence theorems.
+
+Regenerate after source edits with `python3 scripts/build_standalone.py`.
+The generator resets Lean's auxiliary-proof naming cache at each file boundary,
+matching separate compilation; it does not change declarations or kernel checks.
+Before committing, also run:
+
+```sh
+lake build MainResults RieszEuclideanStandalone
+lake env lean -DwarningAsError=true scripts/LintMainResults.lean
+lake env lean -DwarningAsError=true scripts/LintStandalone.lean
+python3 scripts/build_standalone.py --check
+python3 -m pip install -r requirements-validation.txt
+python3 scripts/check_metadata.py
+```
+
+Use a virtual environment for the Python validation dependencies if required by
+your system. The official metadata schema is vendored under `schema/`.
+Pinned Comparator build/run instructions are in `standalone/TOOLS.md`; actual
+verification scope and results are recorded in `reviews/standalone-validation.md`.
+Comparator checks source correspondence and kernel acceptance, not mathematical
+fidelity to the paper. The final main-theorem check remains a completion gate.

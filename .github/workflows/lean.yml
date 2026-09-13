@@ -14,8 +14,19 @@ jobs:
         with:
           auto-config: false
           build: true
+      - name: Build compact reference and standalone solution
+        run: lake build MainResults RieszEuclideanStandalone
       - name: Run all default environment linters
-        run: lake env lean -DwarningAsError=true scripts/Lint.lean
+        run: |
+          lake env lean -DwarningAsError=true scripts/Lint.lean
+          lake env lean -DwarningAsError=true scripts/LintMainResults.lean
+          lake env lean -DwarningAsError=true scripts/LintStandalone.lean
+      - name: Check standalone source correspondence
+        run: python3 scripts/build_standalone.py --check
+      - name: Validate formalization metadata
+        run: |
+          python3 -m pip install -r requirements-validation.txt
+          python3 scripts/check_metadata.py
       - name: Check blueprint and source scope
         run: python3 scripts/check_blueprint.py
       - name: Audit implemented theorem axioms

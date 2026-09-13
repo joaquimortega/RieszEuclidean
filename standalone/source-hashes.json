@@ -1,0 +1,10 @@
+{
+  "RieszEuclidean/Basic.lean": "45d89f6d1e318439eaecca48afffd2529c8c403dbf7bed878be3036235cfe2ae",
+  "RieszEuclidean/L2Transport.lean": "301cef59b8659c1c363e3435ea82acdef03d55636e9b6afbb294ffb02917cb58",
+  "RieszEuclidean/Affine.lean": "35c2391c553d950022745fe6acb37d46c13fb5f1ba572bb99f26144e21659cfc",
+  "RieszEuclidean/ProjectionGap.lean": "8a889b2ef52f76f6ce13750dda5a7db0864f187ce48960f406b6313e0b811c78",
+  "RieszEuclidean/MovingComparison.lean": "68faa0ba0d885e39b62a3336b37baee64ff17a15de25973e56ea44653bc2501c",
+  "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad",
+  "MainResults.lean": "eccd474c462a12ef76df1ae75ce0b58d38b10e63d586b40b96bc87433162c03b",
+  "RieszEuclideanStandalone.lean": "68055241ff11d788056e72af437246439002ea7707a3d3de70999042e334e14a"
+}

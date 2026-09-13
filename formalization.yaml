@@ -1,6 +1,7 @@
+# yaml-language-server: $schema=./schema/formalization-v0.4.schema.json
 version: v0.4
 project:
-  name: 'Riesz bases directly in Euclidean space'
+  name: Riesz bases directly in Euclidean space
   description: Standalone Lean development of the direct Euclidean argument in RieszEuclidean.tex.
   authors:
   - Joaquim Ortega-Cerdà
@@ -17,30 +18,132 @@ sources:
   relationship: formalizes
   note: Development in progress; source fingerprint and all obligations are in blueprint/manifest.json.
 status:
-  scope: >-
-    Concrete definitions, projection-gap lemmas, elementary weak-limit lemmas and
-    the conditional moving-comparison obstruction, and full affine transport of
-    actual exponential synthesis are implemented. The full
-    Euclidean constructions and unconditional main theorems remain pending.
+  scope: Concrete definitions, projection-gap lemmas, elementary weak-limit lemmas and the conditional
+    moving-comparison obstruction, and full affine transport of actual exponential synthesis are implemented.
+    The full Euclidean constructions and unconditional main theorems remain pending.
   sorry_count: 0
   sorry_in_definitions: 0
-  sorry_count_note: >-
-    Counts refer to implemented modules only. Pending blueprint nodes are not
-    implemented by placeholders. Zero holes does not certify completion.
+  sorry_count_note: Counts refer to implemented modules only. Pending blueprint nodes are not implemented
+    by placeholders. Zero holes does not certify completion.
   axioms:
   - propext
   - Classical.choice
   - Quot.sound
   main_results: []
 fidelity:
-  divergences: >-
-    No alternate lattice proof is substituted for the Euclidean proof. The basis
-    predicate uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)).
-    Mathlib conjugates the first inner-product argument. The complete source
-    scope, including all geometric extensions, remains the objective.
+  divergences: No alternate lattice proof is substituted for the Euclidean proof. The basis predicate
+    uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)). Mathlib conjugates the first inner-product
+    argument. The complete source scope, including all geometric extensions, remains the objective.
 alignment:
   namespace: RieszEuclidean
   complete_mapping: blueprint/manifest.json
+  statements:
+  - source: Lemma 2.1
+    lean: RieszEuclidean.OrthProjection.gap_iff_rangeIso
+    status: proved
+  - source: Lemma 2.2
+    lean: RieszEuclidean.OrthProjection.nested_not_both_gap
+    status: proved
+  - source: Section 8 affine transport
+    lean: RieszEuclidean.exists_exponentialRieszBasis_affine_iff
+    status: proved
+  - source: Theorems 1.1 and 7.1, Corollary 8.1, polygon and general-boundary remarks
+    status: pending full analytic and geometric construction
 review:
   status: in-progress
-  notes: Implementing-agent checks and Lean compilation; no independent review claimed.
+  notes: All 15 default environment linters pass with no suppressed warnings. The 12 audited implemented
+    theorem reports use only standard Lean axioms. Independent GitHub builds of the scaffold and affine
+    modules passed. The full-paper completion gate remains intentionally failing while 20 obligations
+    are pending. Comparator results for the final geometric main theorems are not yet available.
+classification:
+  msc2020:
+  - 42C15
+  - 42A55
+  - 46E20
+automation:
+  methods:
+  - method: agent
+    framework: OpenAI Codex
+    tool_setup: Lean 4.19.0, pinned Mathlib sources, Lake compilation, all default environment linters,
+      explicit axiom audits, blueprint consistency checks and GitHub Actions builds. Reuse of author-authorized
+      code is tracked in PROVENANCE.md.
+    prompting_notes: The author requested a standalone formalization of RieszEuclidean.tex, authorized
+      recycling the earlier Disc code, required linter fixes without suppressions before commits, and
+      requested Comparator and formalization.yaml.
+  notes: Single implementing assistant in this development. No independent agent or external human review
+    is claimed. The author directs the mathematical scope. No cost, model-version or total-time figures
+    are reconstructed.
+techniques:
+- name: Concrete Euclidean exponential synthesis
+  status: implemented definitions
+  description: EuclideanSpace over Fin d, restricted Lebesgue L² and a continuous linear equivalence from
+    ℓ² of the actual frequency set. Standard coordinate vectors must equal exp(2πi inner(ξ,x)) almost
+    everywhere. No lattice or rounded frequencies occur.
+  files:
+  - RieszEuclidean/Basic.lean
+- name: Projection gap and moving comparison
+  status: proved conditional operator lemmas
+  description: The norm gap below one is equivalent to an invertible restriction between projection ranges.
+    Strictly included ranges cannot both satisfy this gap relative to one projection. Uniform gaps survive
+    simultaneous strong limits, and norm convergence of the comparison family supplies the common boundary
+    projection. Construction of the paper-specific families remains open.
+  files:
+  - RieszEuclidean/ProjectionGap.lean
+  - RieszEuclidean/MovingComparison.lean
+- name: Beurling local matching
+  status: elementary lemmas proved; compact hull pending
+  description: Weak convergence is defined by two-sided matching on every bounded ball. The proof uses
+    metric triangle inequalities to retain the original separation constant. Real translation invariance
+    is proved without identifying sets with lattice patterns.
+  files:
+  - RieszEuclidean/Basic.lean
+  - RieszEuclidean/WeakLimits.lean
+- name: Affine transport of actual synthesis
+  status: proved
+  description: A measurable equivalence with finite nonzero constant Jacobian induces an L² equivalence.
+    Unit-modulus coefficient weights and reindexing give an ℓ² isometry. For an arbitrary invertible affine
+    map, the inverse absolute determinant gives the measure factor and the real adjoint gives the transpose
+    frequency map. The 2π phase identity transports the exact synthesis columns.
+  files:
+  - RieszEuclidean/L2Transport.lean
+  - RieszEuclidean/Affine.lean
+- name: Euclidean Fourier and bump projections
+  status: planned; not yet formalized
+  description: Extend Euclidean Fourier inversion and Parseval to L², construct a normalized smooth bump
+    with Fourier factor bounded away from zero on the domain, and prove the exact synthesis-to-projection
+    gap.
+- name: Stationary compact hull and scalar Bochner measures
+  status: planned; not yet formalized
+  description: Prove compactness of the separated-set hull, continuity of the real action and an invariant
+    probability measure from continuous box averages. Construct finite spectral measures on ℝⁿ from continuous
+    positive-definite correlations, their common control measure and the Dirac spectrum of the invariant
+    constant.
+- name: Continuous cutoffs, kernels and averaged forms
+  status: planned; not yet formalized
+  description: Continuous Fejér kernels and dominated convergence give cutoff projections. A compactly
+    supported covariant bump kernel gives orthogonal projections M_t continuous in norm. Apply the original
+    gap to compactly supported test functions and integrate scalar pairings; no amplified Hilbert space
+    is introduced.
+- name: Geometric boundary crossing
+  status: planned; not yet formalized
+  description: Prove sphere surface-measure overlap nullity and same-direction edge crossing, construct
+    the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
+    triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
+comparator:
+  status: supporting results verified; final main theorems pending
+  reference: MainResults.lean
+  solution: RieszEuclideanStandalone.lean
+  configuration: standalone/comparator.json
+  verification_log: reviews/comparator-current.txt
+  input_hashes: reviews/comparator-input-hashes.json
+  verified_scope: Four foundational and affine results; no geometric nonexistence theorem.
+  kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
+  plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
+    and a self-contained full solution file; run the official Comparator with only propext, Classical.choice
+    and Quot.sound permitted. A statement specification can use proved wrapper bodies instead of sorry
+    placeholders so no compiler warnings need suppression. Tool setup and source generation are distinct
+    from Comparator verification.
+  upstream: https://github.com/leanprover/comparator
+acknowledgements: Built on Lean and Mathlib; projection and affine helpers are recycled from the author-authorized
+  Disc formalization. Metadata follows the mathlib-initiative formalization.yaml v0.4 standard. Original
+  weak-limit credit belongs to Beurling; the manuscript cites Rudin for Bochner.
