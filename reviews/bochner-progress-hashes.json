@@ -157,5 +157,5 @@
   "lean-toolchain": "55e97be96000b5e9e290c9e74482e5e317861499a5540353ce845471bded8cea",
   "lakefile.lean": "ef5e897b38a13e34d12551e78421e6aebc80ba77d027527f34ea6f58a697bb34",
   "lake-manifest.json": "0cdeba95f1c81316472b9e4fc2e0425182a1eb06035b07887f637abab8744df8",
-  ".github/workflows/lean.yml": "dc3c733cfe55e2d6b5eb16326b8bd04709cad8b9b6e7b8210d8fe890dafb492b"
+  ".github/workflows/lean.yml": "99718b958cecc1e0ceeb845611d47e9d93009eebf6aa30315d2f2c38eea7bc3d"
 }
