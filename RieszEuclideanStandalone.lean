@@ -2,31 +2,47 @@ import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.Analysis.Distribution.FourierSchwartz
 import Mathlib.Analysis.InnerProductSpace.Adjoint
+import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.InnerProductSpace.Orthonormal
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.l2Space
+import Mathlib.Analysis.Normed.Module.WeakDual
 import Mathlib.Analysis.Normed.Operator.Banach
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 import Mathlib.Analysis.Normed.Order.Lattice
 import Mathlib.Analysis.NormedSpace.OperatorNorm.Completeness
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.Exponential
+import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.Data.Set.Card
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.MeasureTheory.Function.ContinuousMapDense
 import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Group.Integral
+import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Integral.Bochner.Set
+import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
+import Mathlib.MeasureTheory.Measure.HasOuterApproxClosed
+import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+import Mathlib.MeasureTheory.Measure.Real
+import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 import Mathlib.Tactic.Abel
+import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 import Mathlib.Topology.Algebra.Group.Pointwise
+import Mathlib.Topology.ContinuousMap.Compact
+import Mathlib.Topology.ContinuousMap.Ordered
 import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Topology.MetricSpace.Bounded
 import Mathlib.Topology.MetricSpace.Closeds
+import Mathlib.Topology.MetricSpace.Polish
 import Mathlib.Topology.Metrizable.Basic
 import Mathlib.Topology.Metrizable.CompletelyMetrizable
 import Mathlib.Topology.Metrizable.Real
@@ -394,6 +410,351 @@ theorem exists_exponentialRieszBasis_affine_iff (a : (Euclidean d)) (A : (Euclid
     have h := hasExponentialRieszBasis_affine_pullback (-A.symm a) A.symm
       ((planeAffine a A) '' D) Λ (hD.symm ▸ hΛ)
     exact ⟨_, h⟩
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/EuclideanBoxes.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory Set
+open scoped ENNReal
+namespace RieszEuclidean
+/-- The real coordinate cube with half-side length `R`, inside Euclidean space. -/
+def euclideanBox (d : ℕ) (R : ℝ) : Set (Euclidean d) :=
+  (EuclideanSpace.measurableEquiv (Fin d)) ⁻¹' Metric.closedBall 0 R
+/-- Coordinate boxes are measurable. -/
+theorem measurableSet_euclideanBox (d : ℕ) (R : ℝ) : MeasurableSet (euclideanBox d R) :=
+  Metric.isClosed_closedBall.measurableSet.preimage (EuclideanSpace.measurableEquiv (Fin d)).measurable
+/-- The Lebesgue volume of the coordinate cube is its side length to the dimension. -/
+theorem volume_euclideanBox (d : ℕ) {R : ℝ} (hR : 0 ≤ R) :
+    volume (euclideanBox d R) = ENNReal.ofReal ((2 * R) ^ d) := by
+  rw [euclideanBox, (EuclideanSpace.volume_preserving_measurableEquiv (Fin d)).measure_preimage
+    Metric.isClosed_closedBall.measurableSet.nullMeasurableSet]
+  simpa using Real.volume_pi_closedBall (0 : Fin d → ℝ) hR
+/-- Positive-side coordinate cubes have finite positive volume. -/
+theorem volume_euclideanBox_pos_lt_top (d : ℕ) {R : ℝ} (hR : 0 < R) :
+    0 < volume (euclideanBox d R) ∧ volume (euclideanBox d R) < ⊤ := by
+  rw [volume_euclideanBox d hR.le]
+  constructor
+  · exact ENNReal.ofReal_pos.mpr (pow_pos (by positivity) _)
+  · exact ENNReal.ofReal_lt_top
+/-- Normalized Lebesgue measure on a real coordinate box. -/
+noncomputable def boxProbabilityMeasure (d : ℕ) (R : ℝ) : Measure (Euclidean d) :=
+  (volume (euclideanBox d R))⁻¹ • volume.restrict (euclideanBox d R)
+/-- Every positive-side box gives a probability measure. -/
+theorem boxProbabilityMeasure_isProbability (d : ℕ) {R : ℝ} (hR : 0 < R) :
+    IsProbabilityMeasure (boxProbabilityMeasure d R) := by
+  obtain ⟨hp, hf⟩ := volume_euclideanBox_pos_lt_top d hR
+  constructor
+  simp only [boxProbabilityMeasure, Measure.smul_apply, Measure.restrict_apply_univ,
+    smul_eq_mul]
+  exact ENNReal.inv_mul_cancel hp.ne' hf.ne
+end RieszEuclidean
+
+/- Source: RieszEuclidean/CompactMeans.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Set Metric Topology
+namespace RieszEuclidean
+/-- Positive normalized functionals in the weak-star unit ball. -/
+def meanFunctionals (X : Type*) [TopologicalSpace X] [CompactSpace X] :
+    Set (WeakDual ℝ C(X, ℝ)) :=
+  {L | ‖WeakDual.toNormedDual L‖ ≤ 1 ∧ L 1 = 1 ∧ ∀ f : C(X, ℝ), 0 ≤ f → 0 ≤ L f}
+/-- Normalization and positivity are closed conditions in the weak-star topology. -/
+theorem isClosed_normalized_positive (X : Type*) [TopologicalSpace X] :
+    IsClosed {L : WeakDual ℝ C(X, ℝ) | L 1 = 1 ∧ ∀ f : C(X, ℝ), 0 ≤ f → 0 ≤ L f} := by
+  apply IsClosed.inter
+  · exact isClosed_eq (WeakDual.eval_continuous 1) continuous_const
+  · convert (isClosed_iInter fun (f : C(X, ℝ)) => isClosed_iInter fun (_ : 0 ≤ f) =>
+      isClosed_le (show Continuous (fun _ : WeakDual ℝ C(X, ℝ) => (0 : ℝ)) from continuous_const)
+        (WeakDual.eval_continuous (𝕜 := ℝ) f)) using 1
+    ext L
+    simp only [mem_iInter, mem_setOf_eq]
+    rfl
+/-- The normalized positive functionals form a compact set. -/
+theorem isCompact_meanFunctionals (X : Type*) [TopologicalSpace X] [CompactSpace X] :
+    IsCompact (meanFunctionals X) := by
+  have hc := (WeakDual.isCompact_closedBall ℝ (0 : NormedSpace.Dual ℝ C(X, ℝ)) 1).inter_right
+    (isClosed_normalized_positive X)
+  simpa [meanFunctionals, Set.preimage, Metric.mem_closedBall, dist_zero_right] using hc
+/-- Evaluation at a point is a normalized positive functional. -/
+theorem evaluation_mem_meanFunctionals {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    (x : X) : NormedSpace.Dual.toWeakDual (ContinuousMap.evalCLM ℝ x) ∈ meanFunctionals X := by
+  refine ⟨?_, rfl, fun f hf => hf x⟩
+  change ‖(ContinuousMap.evalCLM ℝ x : C(X, ℝ) →L[ℝ] ℝ)‖ ≤ 1
+  apply ContinuousLinearMap.opNorm_le_bound _ (by norm_num : (0 : ℝ) ≤ 1)
+  intro f
+  simpa using f.norm_coe_le_norm x
+/-- Any sequence of normalized positive functionals has a weak-star cluster point
+that remains normalized and positive. -/
+theorem meanFunctionals_clusterPt {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    (A : ℕ → WeakDual ℝ C(X, ℝ)) (hA : ∀ n, A n ∈ meanFunctionals X) :
+    ∃ L ∈ meanFunctionals X, ClusterPt L (Filter.map A Filter.atTop) := by
+  exact isCompact_meanFunctionals X (Filter.tendsto_principal.mpr (Filter.Eventually.of_forall hA))
+/-- An asymptotically vanishing difference of evaluations vanishes at every weak-star
+cluster point. -/
+theorem mean_clusterPt_eq_of_tendsto_sub {X : Type*} [TopologicalSpace X]
+    {A : ℕ → WeakDual ℝ C(X, ℝ)} {L : WeakDual ℝ C(X, ℝ)}
+    (hL : ClusterPt L (Filter.map A Filter.atTop)) (f g : C(X, ℝ))
+    (hfg : Filter.Tendsto (fun n => A n f - A n g) Filter.atTop (nhds 0)) : L f = L g := by
+  have hc : Continuous (fun M : WeakDual ℝ C(X, ℝ) => M f - M g) :=
+    (WeakDual.eval_continuous f).sub (WeakDual.eval_continuous g)
+  have hp := (show MapClusterPt L Filter.atTop A from hL).continuousAt_comp hc.continuousAt
+  have hz : ClusterPt (L f - L g) (nhds (0 : ℝ)) := hp.clusterPt.mono hfg
+  exact sub_eq_zero.mp (eq_of_nhds_neBot hz)
+/-- A compact weak-star limit preserves every asymptotic invariance identity at once. -/
+theorem exists_invariant_mean_of_averages {X I : Type*} [TopologicalSpace X] [CompactSpace X]
+    (A : ℕ → WeakDual ℝ C(X, ℝ)) (hA : ∀ n, A n ∈ meanFunctionals X)
+    (T : I → C(X, ℝ) → C(X, ℝ))
+    (hT : ∀ i f, Filter.Tendsto (fun n => A n (T i f) - A n f) Filter.atTop (nhds 0)) :
+    ∃ L ∈ meanFunctionals X, ∀ i f, L (T i f) = L f := by
+  obtain ⟨L, hL, hc⟩ := meanFunctionals_clusterPt A hA
+  exact ⟨L, hL, fun i f => mean_clusterPt_eq_of_tendsto_sub hc (T i f) f (hT i f)⟩
+end RieszEuclidean
+
+/- Source: RieszEuclidean/BoxAverages.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+/-- Continuous observables along a continuous orbit are integrable over a normalized box. -/
+theorem integrable_box_observable {d : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {R : ℝ} (hR : 0 < R) (a : C(Euclidean d, X)) (f : C(X, ℝ)) :
+    Integrable (fun y => f (a y)) (boxProbabilityMeasure d R) := by
+  letI := boxProbabilityMeasure_isProbability d hR
+  exact (integrable_const ‖f‖).mono' (f.continuous.comp a.continuous).aestronglyMeasurable
+    (Filter.Eventually.of_forall fun y => f.norm_coe_le_norm (a y))
+/-- Box averaging as a real linear functional. -/
+noncomputable def boxAverageLinear {d : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {R : ℝ} (hR : 0 < R) (a : C(Euclidean d, X)) : C(X, ℝ) →ₗ[ℝ] ℝ where
+  toFun f := ∫ y, f (a y) ∂boxProbabilityMeasure d R
+  map_add' f g := integral_add (integrable_box_observable hR a f) (integrable_box_observable hR a g)
+  map_smul' r f := integral_smul r (fun y => f (a y))
+/-- Averaging over a probability box is bounded by the supremum norm. -/
+theorem norm_boxAverageLinear_le {d : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {R : ℝ} (hR : 0 < R) (a : C(Euclidean d, X)) (f : C(X, ℝ)) :
+    ‖boxAverageLinear hR a f‖ ≤ ‖f‖ := by
+  letI := boxProbabilityMeasure_isProbability d hR
+  have h := norm_integral_le_of_norm_le_const
+    (μ := boxProbabilityMeasure d R) (Filter.Eventually.of_forall fun y => f.norm_coe_le_norm (a y))
+  simpa [boxAverageLinear] using h
+/-- The actual continuous box average, viewed as a bounded functional. -/
+noncomputable def boxAverage {d : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {R : ℝ} (hR : 0 < R) (a : C(Euclidean d, X)) : C(X, ℝ) →L[ℝ] ℝ :=
+  (boxAverageLinear hR a).mkContinuous 1 (fun f => by simpa using norm_boxAverageLinear_le hR a f)
+/-- The functional evaluates to the normalized Lebesgue box integral. -/
+theorem boxAverage_apply {d : ℕ} {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    {R : ℝ} (hR : 0 < R) (a : C(Euclidean d, X)) (f : C(X, ℝ)) :
+    boxAverage hR a f = ∫ y, f (a y) ∂boxProbabilityMeasure d R := rfl
+/-- Actual box averages belong to the compact set of normalized positive functionals. -/
+theorem boxAverage_mem_meanFunctionals {d : ℕ} {X : Type*}
+    [TopologicalSpace X] [CompactSpace X] {R : ℝ} (hR : 0 < R) (a : C(Euclidean d, X)) :
+    NormedSpace.Dual.toWeakDual (boxAverage hR a) ∈ meanFunctionals X := by
+  letI := boxProbabilityMeasure_isProbability d hR
+  refine ⟨?_, ?_, ?_⟩
+  · apply ContinuousLinearMap.opNorm_le_bound _ (by norm_num : (0 : ℝ) ≤ 1)
+    intro f
+    simpa [boxAverage] using norm_boxAverageLinear_le hR a f
+  · change (∫ _ : Euclidean d, (1 : ℝ) ∂boxProbabilityMeasure d R) = 1
+    simp
+  · intro f hf
+    exact integral_nonneg (fun y => hf (a y))
+end RieszEuclidean
+
+/- Source: RieszEuclidean/BoxBoundary.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Set MeasureTheory Filter
+open scoped symmDiff
+namespace RieszEuclidean
+/-- The coordinate supremum norm controls translation of coordinate boxes. -/
+noncomputable def boxNorm {d : ℕ} (x : Euclidean d) : ℝ :=
+  ‖EuclideanSpace.measurableEquiv (Fin d) x‖
+/-- Membership in a coordinate cube is a bound on the coordinate supremum norm. -/
+theorem mem_euclideanBox_iff {d : ℕ} (x : Euclidean d) (R : ℝ) :
+    x ∈ euclideanBox d R ↔ boxNorm x ≤ R := by
+  simp [euclideanBox, boxNorm, Metric.mem_closedBall, dist_zero_right]
+/-- The coordinate supremum norm is nonnegative. -/
+theorem boxNorm_nonneg {d : ℕ} (x : Euclidean d) : 0 ≤ boxNorm x := norm_nonneg _
+/-- Triangle inequality for the coordinate supremum norm. -/
+theorem boxNorm_add_le {d : ℕ} (x y : Euclidean d) :
+    boxNorm (x + y) ≤ boxNorm x + boxNorm y := norm_add_le _ _
+/-- Negation preserves the coordinate supremum norm. -/
+@[simp] theorem boxNorm_neg {d : ℕ} (x : Euclidean d) : boxNorm (-x) = boxNorm x := norm_neg _
+/-- Increasing the half-side length enlarges a coordinate cube. -/
+theorem euclideanBox_mono {d : ℕ} {R S : ℝ} (h : R ≤ S) :
+    euclideanBox d R ⊆ euclideanBox d S := by
+  intro x hx
+  exact (mem_euclideanBox_iff x S).mpr (((mem_euclideanBox_iff x R).mp hx).trans h)
+/-- A smaller concentric box lies in a translated box. -/
+theorem innerBox_subset_translate {d : ℕ} (R : ℝ) (z : Euclidean d) :
+    euclideanBox d (R - boxNorm z) ⊆ translate z (euclideanBox d R) := by
+  intro x hx
+  apply (mem_euclideanBox_iff (x + z) R).mpr
+  have h := (mem_euclideanBox_iff x _).mp hx
+  linarith [boxNorm_add_le x z]
+/-- A translated box lies in a larger concentric box. -/
+theorem translateBox_subset_outer {d : ℕ} (R : ℝ) (z : Euclidean d) :
+    translate z (euclideanBox d R) ⊆ euclideanBox d (R + boxNorm z) := by
+  intro x hx
+  apply (mem_euclideanBox_iff x _).mpr
+  have h := (mem_euclideanBox_iff (x + z) R).mp hx
+  have ht := boxNorm_add_le (x + z) (-z)
+  simp only [add_neg_cancel_right, boxNorm_neg] at ht
+  linarith
+/-- The symmetric difference between a box and its translate lies in a thin box shell. -/
+theorem box_symmDiff_subset_shell {d : ℕ} (R : ℝ) (z : Euclidean d) :
+    euclideanBox d R ∆ translate z (euclideanBox d R) ⊆
+      euclideanBox d (R + boxNorm z) \ euclideanBox d (R - boxNorm z) := by
+  have hi : euclideanBox d (R - boxNorm z) ⊆ euclideanBox d R :=
+    euclideanBox_mono (by linarith [boxNorm_nonneg z])
+  have ho : euclideanBox d R ⊆ euclideanBox d (R + boxNorm z) :=
+    euclideanBox_mono (by linarith [boxNorm_nonneg z])
+  rintro x (hx | hx)
+  · exact ⟨ho hx.1, fun h => hx.2 (innerBox_subset_translate R z h)⟩
+  · exact ⟨translateBox_subset_outer R z hx.1, fun h => hx.2 (hi h)⟩
+/-- The real-valued volume of a coordinate cube. -/
+theorem volume_real_euclideanBox (d : ℕ) {R : ℝ} (hR : 0 ≤ R) :
+    volume.real (euclideanBox d R) = (2 * R) ^ d := by
+  rw [measureReal_def, volume_euclideanBox d hR]
+  exact ENNReal.toReal_ofReal (pow_nonneg (mul_nonneg (by norm_num) hR) _)
+/-- A shell-volume bound for the symmetric difference with a fixed translate. -/
+theorem volume_real_box_symmDiff_le {d : ℕ} (R : ℝ) (z : Euclidean d)
+    (hR : boxNorm z ≤ R) :
+    volume.real (euclideanBox d R ∆ translate z (euclideanBox d R)) ≤
+      (2 * (R + boxNorm z)) ^ d - (2 * (R - boxNorm z)) ^ d := by
+  have ho : 0 ≤ R + boxNorm z := by linarith [boxNorm_nonneg z]
+  have hi : 0 ≤ R - boxNorm z := sub_nonneg.mpr hR
+  have hf : volume (euclideanBox d (R + boxNorm z)) ≠ ⊤ := by
+    rw [volume_euclideanBox d ho]
+    exact ENNReal.ofReal_ne_top
+  have hin : euclideanBox d (R - boxNorm z) ⊆ euclideanBox d (R + boxNorm z) :=
+    euclideanBox_mono (by linarith [boxNorm_nonneg z])
+  calc
+    _ ≤ volume.real (euclideanBox d (R + boxNorm z) \ euclideanBox d (R - boxNorm z)) :=
+      measureReal_mono (box_symmDiff_subset_shell R z) (measure_ne_top_of_subset diff_subset hf)
+    _ = _ := by
+      rw [measureReal_diff hin (measurableSet_euclideanBox d _) hf,
+        volume_real_euclideanBox d ho, volume_real_euclideanBox d hi]
+/-- The relative volume of a fixed-thickness coordinate-box shell tends to zero. -/
+theorem box_shell_ratio_tendsto_zero (d : ℕ) (c : ℝ) :
+    Tendsto (fun R : ℝ => ((2 * (R + c)) ^ d - (2 * (R - c)) ^ d) / (2 * R) ^ d)
+      atTop (nhds 0) := by
+  have hc : Tendsto (fun R : ℝ => c / R) atTop (nhds 0) := tendsto_id.const_div_atTop c
+  have h : Tendsto (fun R : ℝ => (1 + c / R) ^ d - (1 - c / R) ^ d) atTop (nhds 0) := by
+    have h1 : Tendsto (fun _ : ℝ => (1 : ℝ)) atTop (nhds 1) := tendsto_const_nhds
+    simpa using ((h1.add hc).pow d).sub ((h1.sub hc).pow d)
+  apply h.congr'
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with R hR
+  have hp : 1 + c / R = (R + c) / R := by field_simp
+  have hm : 1 - c / R = (R - c) / R := by field_simp
+  rw [hp, hm, div_pow, div_pow, ← sub_div]
+  simp only [mul_pow]
+  field_simp
+  ring
+/-- The relative symmetric-difference volume of a box and a fixed translate vanishes. -/
+theorem box_symmDiff_ratio_tendsto_zero {d : ℕ} (z : Euclidean d) :
+    Tendsto (fun R : ℝ => volume.real (euclideanBox d R ∆ translate z (euclideanBox d R)) /
+      (2 * R) ^ d) atTop (nhds 0) := by
+  apply squeeze_zero' ?_ ?_ (box_shell_ratio_tendsto_zero d (boxNorm z))
+  · filter_upwards [eventually_ge_atTop (0 : ℝ)] with R hR
+    exact div_nonneg ENNReal.toReal_nonneg (pow_nonneg (by positivity) _)
+  · filter_upwards [eventually_ge_atTop (boxNorm z)] with R hR
+    have hR0 : 0 ≤ R := (boxNorm_nonneg z).trans hR
+    exact div_le_div_of_nonneg_right (volume_real_box_symmDiff_le R z hR)
+      (pow_nonneg (by positivity) _)
+end RieszEuclidean
+
+/- Source: RieszEuclidean/IntegralSymmDiff.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory Set
+open scoped symmDiff
+namespace RieszEuclidean
+/-- A bounded observable changes its set integral by at most its bound times the
+symmetric-difference volume. -/
+theorem norm_setIntegral_sub_le_symmDiff {α : Type*} [MeasurableSpace α]
+    {μ : Measure α} {s t : Set α} (hs : MeasurableSet s) (ht : MeasurableSet t)
+    {f : α → ℝ} (hfs : IntegrableOn f s μ) (hft : IntegrableOn f t μ)
+    {C : ℝ} (hC : ∀ x, ‖f x‖ ≤ C) (hfin : μ (s ∆ t) < ⊤) :
+    ‖(∫ x in s, f x ∂μ) - ∫ x in t, f x ∂μ‖ ≤ C * μ.real (s ∆ t) := by
+  have hm := hs.symmDiff ht
+  have hi : Integrable ((s ∆ t).indicator (fun _ => C)) μ :=
+    (integrableOn_const.mpr (Or.inr hfin)).integrable_indicator hm
+  have hb : ∀ x, ‖s.indicator f x - t.indicator f x‖ ≤ (s ∆ t).indicator (fun _ => C) x := by
+    intro x
+    by_cases hxs : x ∈ s <;> by_cases hxt : x ∈ t
+    · simp [Set.symmDiff_def, hxs, hxt]
+    · simpa [Set.symmDiff_def, hxs, hxt] using hC x
+    · simpa [Set.symmDiff_def, hxs, hxt] using hC x
+    · simp [Set.symmDiff_def, hxs, hxt]
+  rw [← integral_indicator hs, ← integral_indicator ht,
+    ← integral_sub (hfs.integrable_indicator hs) (hft.integrable_indicator ht)]
+  calc
+    _ ≤ ∫ x, (s ∆ t).indicator (fun _ => C) x ∂μ :=
+      norm_integral_le_of_norm_le hi (Filter.Eventually.of_forall hb)
+    _ = _ := by rw [integral_indicator_const C hm, smul_eq_mul, mul_comm]
+end RieszEuclidean
+
+/- Source: RieszEuclidean/BoxTranslationIntegral.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory Set Filter
+open scoped symmDiff
+namespace RieszEuclidean
+/-- Translation preserves measurability of configurations and integration regions. -/
+theorem measurableSet_translate_region {d : ℕ} {s : Set (Euclidean d)}
+    (hs : MeasurableSet s) (z : Euclidean d) : MeasurableSet (translate z s) :=
+  hs.preimage (measurable_id.add_const z)
+/-- Lebesgue volume is invariant under real translations of regions. -/
+theorem volume_translate_region {d : ℕ} {s : Set (Euclidean d)}
+    (hs : MeasurableSet s) (z : Euclidean d) : volume (translate z s) = volume s :=
+  (measurePreserving_add_right volume z).measure_preimage hs.nullMeasurableSet
+/-- Change of variables for a translated observable on a region. -/
+theorem setIntegral_add_right_region {d : ℕ} (g : Euclidean d → ℝ)
+    (s : Set (Euclidean d)) (z : Euclidean d) :
+    (∫ y in s, g (y + z)) = ∫ y in translate (-z) s, g y := by
+  have h := (measurePreserving_add_right (volume : Measure (Euclidean d)) (-z)).setIntegral_preimage_emb
+    (MeasurableEquiv.addRight (-z)).measurableEmbedding (fun y => g (y + z)) s
+  simpa [translate, add_assoc] using h.symm
+/-- The box probability integral is normalized by the exact coordinate-box volume. -/
+theorem boxProbability_integral_eq {d : ℕ} {R : ℝ} (hR : 0 ≤ R) (g : Euclidean d → ℝ) :
+    (∫ y, g y ∂boxProbabilityMeasure d R) = ((2 * R) ^ d)⁻¹ * ∫ y in euclideanBox d R, g y := by
+  rw [boxProbabilityMeasure, integral_smul_measure, ENNReal.toReal_inv,
+    ← measureReal_def, volume_real_euclideanBox d hR, smul_eq_mul]
+/-- A globally bounded continuous observable is integrable on every finite-volume region. -/
+theorem integrableOn_bounded_observable {d : ℕ} {g : Euclidean d → ℝ} (hg : Continuous g)
+    {C : ℝ} (hC : ∀ x, ‖g x‖ ≤ C) {s : Set (Euclidean d)} (hs : volume s < ⊤) :
+    IntegrableOn g s volume :=
+  (integrableOn_const.mpr (Or.inr hs) : IntegrableOn (fun _ => C) s volume).mono'
+    hg.aestronglyMeasurable (Eventually.of_forall hC)
+/-- Translation error of a bounded observable is controlled by relative symmetric difference. -/
+theorem norm_box_translation_error_le {d : ℕ} {g : Euclidean d → ℝ} (hg : Continuous g)
+    {C : ℝ} (hC : ∀ x, ‖g x‖ ≤ C) (z : Euclidean d) {R : ℝ} (hR : 0 < R) :
+    ‖(∫ y, g (y + z) ∂boxProbabilityMeasure d R) - ∫ y, g y ∂boxProbabilityMeasure d R‖ ≤
+      C * (volume.real (euclideanBox d R ∆ translate (-z) (euclideanBox d R)) / (2 * R) ^ d) := by
+  have hs := measurableSet_euclideanBox d R
+  have ht := measurableSet_translate_region hs (-z)
+  have hfs := (volume_euclideanBox_pos_lt_top d hR).2
+  have hft : volume (translate (-z) (euclideanBox d R)) < ⊤ := by
+    rwa [volume_translate_region hs (-z)]
+  have hfd : volume (translate (-z) (euclideanBox d R) ∆ euclideanBox d R) < ⊤ :=
+    (measure_mono symmDiff_subset_union).trans_lt (measure_union_lt_top hft hfs)
+  have hb := norm_setIntegral_sub_le_symmDiff ht hs
+    (integrableOn_bounded_observable hg hC hft) (integrableOn_bounded_observable hg hC hfs) hC hfd
+  rw [symmDiff_comm] at hb
+  rw [boxProbability_integral_eq hR.le, boxProbability_integral_eq hR.le,
+    ← mul_sub, norm_mul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr (pow_pos (by positivity) _)),
+    setIntegral_add_right_region]
+  calc
+    _ ≤ ((2 * R) ^ d)⁻¹ *
+        (C * volume.real (euclideanBox d R ∆ translate (-z) (euclideanBox d R))) :=
+      mul_le_mul_of_nonneg_left hb (inv_nonneg.mpr (pow_nonneg (by positivity) _))
+    _ = _ := by ring
+/-- Actual normalized continuous-box averages have vanishing error under every fixed translation. -/
+theorem box_translation_error_tendsto_zero {d : ℕ} {g : Euclidean d → ℝ} (hg : Continuous g)
+    {C : ℝ} (hC : ∀ x, ‖g x‖ ≤ C) (z : Euclidean d) :
+    Tendsto (fun R : ℝ => (∫ y, g (y + z) ∂boxProbabilityMeasure d R) -
+      ∫ y, g y ∂boxProbabilityMeasure d R) atTop (nhds 0) := by
+  apply tendsto_zero_iff_norm_tendsto_zero.mpr
+  refine squeeze_zero' (Eventually.of_forall fun R => norm_nonneg _) ?_
+    (by simpa using (box_symmDiff_ratio_tendsto_zero (-z)).const_mul C)
+  · filter_upwards [eventually_gt_atTop (0 : ℝ)] with R hR
+    exact norm_box_translation_error_le hg hC z hR
 
 end RieszEuclidean
 
@@ -2722,6 +3083,178 @@ theorem fourierDomainEmbedding_restriction {d : ℕ} (Ω : Set (Euclidean d)) (h
   rw [LinearIsometryEquiv.apply_symm_apply, domainExtension_restriction, fourierProjection_transform]
 end RieszEuclidean
 
+/- Source: RieszEuclidean/PositiveFunctionalMeasure.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory Set CompactlySupportedContinuousMap
+open scoped CompactlySupported
+namespace RieszEuclidean
+/-- A normalized positive functional on a compact space represents a probability measure. -/
+theorem rieszMeasure_isProbability {X : Type*} [TopologicalSpace X] [T2Space X]
+    [CompactSpace X] [MeasurableSpace X] [BorelSpace X]
+    {Λ : C_c(X, ℝ) →ₗ[ℝ] ℝ} (hΛ : ∀ f, 0 ≤ f → 0 ≤ Λ f) (h1 : Λ (ContinuousMap.liftCompactlySupported (ContinuousMap.const X 1)) = 1) :
+    IsProbabilityMeasure (RealRMK.rieszMeasure hΛ) := by
+  have hi := RealRMK.integral_rieszMeasure hΛ (ContinuousMap.liftCompactlySupported (ContinuousMap.const X 1))
+  have hm : ((RealRMK.rieszMeasure hΛ) univ).toReal = 1 := by
+    rw [h1] at hi
+    change (∫ _ : X, (1 : ℝ) ∂RealRMK.rieszMeasure hΛ) = 1 at hi
+    simpa using hi
+  have hf : (RealRMK.rieszMeasure hΛ) univ ≠ ⊤ := by
+    intro he
+    simp [he] at hm
+  exact ⟨(ENNReal.toReal_eq_toReal hf (by simp)).mp (by simpa using hm)⟩
+/-- Invariance of a normalized positive functional implies invariance of its measure. -/
+theorem rieszMeasure_measurePreserving {X : Type*} [TopologicalSpace X] [T2Space X]
+    [CompactSpace X] [HasOuterApproxClosed X] [MeasurableSpace X] [BorelSpace X]
+    {Λ : C_c(X, ℝ) →ₗ[ℝ] ℝ} (hΛ : ∀ f, 0 ≤ f → 0 ≤ Λ f)
+    (h1 : Λ (ContinuousMap.liftCompactlySupported (ContinuousMap.const X 1)) = 1)
+    (T : C(X, X))
+    (hInv : ∀ f : C_c(X, ℝ),
+      Λ (ContinuousMap.liftCompactlySupported (f.toContinuousMap.comp T)) = Λ f) :
+    MeasurePreserving T (RealRMK.rieszMeasure hΛ) (RealRMK.rieszMeasure hΛ) := by
+  letI := rieszMeasure_isProbability hΛ h1
+  refine ⟨T.continuous.measurable, ?_⟩
+  apply ext_of_forall_integral_eq_of_IsFiniteMeasure
+  intro f
+  rw [integral_map T.continuous.measurable.aemeasurable f.continuous.aestronglyMeasurable]
+  let g : C_c(X, ℝ) := ContinuousMap.liftCompactlySupported f.toContinuousMap
+  calc
+    (∫ x, f (T x) ∂RealRMK.rieszMeasure hΛ) =
+        Λ (ContinuousMap.liftCompactlySupported (g.toContinuousMap.comp T)) :=
+      RealRMK.integral_rieszMeasure hΛ
+        (ContinuousMap.liftCompactlySupported (g.toContinuousMap.comp T))
+    _ = Λ g := hInv g
+    _ = ∫ x, f x ∂RealRMK.rieszMeasure hΛ := (RealRMK.integral_rieszMeasure hΛ g).symm
+end RieszEuclidean
+
+/- Source: RieszEuclidean/MeanRepresentation.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory CompactlySupportedContinuousMap
+open scoped CompactlySupported
+namespace RieszEuclidean
+/-- Restrict a continuous-function functional to compactly supported functions. -/
+def meanToFunctional {X : Type*} [TopologicalSpace X]
+    (L : WeakDual ℝ C(X, ℝ)) : C_c(X, ℝ) →ₗ[ℝ] ℝ where
+  toFun f := L f.toContinuousMap
+  map_add' f g := L.map_add f.toContinuousMap g.toContinuousMap
+  map_smul' r f := L.map_smul r f.toContinuousMap
+/-- Normalized positive averages with vanishing translation defects supply an invariant
+probability measure. Actual continuous-box averages must satisfy the hypotheses separately. -/
+theorem exists_invariant_probability_of_averages {X I : Type*}
+    [TopologicalSpace X] [T2Space X] [CompactSpace X] [HasOuterApproxClosed X]
+    [MeasurableSpace X] [BorelSpace X]
+    (A : ℕ → WeakDual ℝ C(X, ℝ)) (hA : ∀ n, A n ∈ meanFunctionals X)
+    (T : I → C(X, X))
+    (hT : ∀ i f, Filter.Tendsto (fun n => A n (f.comp (T i)) - A n f)
+      Filter.atTop (nhds 0)) :
+    ∃ μ : Measure X, IsProbabilityMeasure μ ∧ ∀ i, MeasurePreserving (T i) μ μ := by
+  obtain ⟨L, hL, hInv⟩ := exists_invariant_mean_of_averages A hA (fun i f => f.comp (T i)) hT
+  have hpos : ∀ f, 0 ≤ f → 0 ≤ meanToFunctional L f := fun f hf => hL.2.2 f.toContinuousMap hf
+  have h1 : meanToFunctional L (ContinuousMap.liftCompactlySupported (ContinuousMap.const X 1)) = 1 :=
+    hL.2.1
+  refine ⟨RealRMK.rieszMeasure hpos, rieszMeasure_isProbability hpos h1, fun i => ?_⟩
+  apply rieszMeasure_measurePreserving hpos h1 (T i)
+  intro f
+  exact hInv i f.toContinuousMap
+end RieszEuclidean
+
+/- Source: RieszEuclidean/InvariantProbability.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory Filter
+namespace RieszEuclidean
+/-- A jointly continuous additive Euclidean action on a nonempty compact metrizable
+Borel space has an invariant probability measure, constructed from continuous box averages. -/
+theorem exists_invariant_probability_euclidean_action {d : ℕ} {X : Type*}
+    [TopologicalSpace X] [T2Space X] [CompactSpace X] [HasOuterApproxClosed X]
+    [MeasurableSpace X] [BorelSpace X]
+    (T : Euclidean d → C(X, X))
+    (hT : Continuous (fun p : Euclidean d × X => T p.1 p.2))
+    (hadd : ∀ z y x, T z (T y x) = T (y + z) x) (x₀ : X) :
+    ∃ μ : Measure X, IsProbabilityMeasure μ ∧ ∀ z, MeasurePreserving (T z) μ μ := by
+  let a : C(Euclidean d, X) :=
+    ⟨fun y => T y x₀, hT.comp (continuous_id.prodMk continuous_const)⟩
+  let A : ℕ → WeakDual ℝ C(X, ℝ) := fun n =>
+    NormedSpace.Dual.toWeakDual (boxAverage (show 0 < (n : ℝ) + 1 by positivity) a)
+  apply exists_invariant_probability_of_averages A
+  · intro n
+    exact boxAverage_mem_meanFunctionals (show 0 < (n : ℝ) + 1 by positivity) a
+  · intro z f
+    have hR : Tendsto (fun n : ℕ => (n : ℝ) + 1) atTop atTop :=
+      tendsto_atTop_add_const_right _ _ tendsto_natCast_atTop_atTop
+    have he := (box_translation_error_tendsto_zero (f.continuous.comp a.continuous)
+      (fun y => f.norm_coe_le_norm (a y)) z).comp hR
+    change Tendsto (fun n : ℕ =>
+      (∫ y, f (T z (T y x₀)) ∂boxProbabilityMeasure d ((n : ℝ) + 1)) -
+      ∫ y, f (T y x₀) ∂boxProbabilityMeasure d ((n : ℝ) + 1)) atTop (nhds 0)
+    simpa only [a, ContinuousMap.coe_mk, hadd] using he
+end RieszEuclidean
+
+/- Source: RieszEuclidean/TranslationHull.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Set Topology
+namespace RieszEuclidean.SeparatedConfiguration
+/-- The real translation orbit of a configuration. -/
+def orbit {d : ℕ} {δ : ℝ} (Γ : SeparatedConfiguration d δ) : Set (SeparatedConfiguration d δ) :=
+  Set.range (fun z : Euclidean d => translate z Γ)
+/-- The compact hull used to construct stationary measures. -/
+def hull {d : ℕ} {δ : ℝ} (Γ : SeparatedConfiguration d δ) : Set (SeparatedConfiguration d δ) :=
+  closure (orbit Γ)
+/-- A configuration belongs to its own orbit closure. -/
+theorem mem_hull {d : ℕ} {δ : ℝ} (Γ : SeparatedConfiguration d δ) : Γ ∈ hull Γ := by
+  apply subset_closure
+  exact ⟨0, translate_zero Γ⟩
+/-- The translation hull is compact for positive separation. -/
+theorem isCompact_hull {d : ℕ} {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration d δ) :
+    IsCompact (hull Γ) := by
+  letI := compactSpace (d := d) hδ
+  exact isClosed_closure.isCompact
+/-- Each real translation maps the hull into itself. -/
+theorem translate_mem_hull {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ) (z : Euclidean d)
+    {Δ : SeparatedConfiguration d δ} (hΔ : Δ ∈ hull Γ) : translate z Δ ∈ hull Γ := by
+  have hc : Continuous (translate z : SeparatedConfiguration d δ → SeparatedConfiguration d δ) :=
+    (continuous_translate hδ).comp (continuous_const.prodMk continuous_id)
+  have hm : MapsTo (translate z) (orbit Γ) (orbit Γ) := by
+    rintro _ ⟨y, rfl⟩
+    exact ⟨z + y, (translate_add z y Γ).symm⟩
+  exact hm.closure hc hΔ
+/-- Restrict a real translation to the compact orbit closure. -/
+def hullTranslate {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ) (z : Euclidean d) : hull Γ → hull Γ :=
+  fun Δ => ⟨translate z Δ, translate_mem_hull hδ Γ z Δ.property⟩
+/-- The restricted action remains jointly continuous. -/
+theorem continuous_hullTranslate {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ) :
+    Continuous (fun p : Euclidean d × hull Γ => hullTranslate hδ Γ p.1 p.2) := by
+  apply Continuous.subtype_mk
+  exact (continuous_translate hδ).comp
+    (continuous_fst.prodMk (continuous_subtype_val.comp continuous_snd))
+end RieszEuclidean.SeparatedConfiguration
+
+/- Source: RieszEuclidean/HullInvariantMeasure.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory TopologicalSpace
+namespace RieszEuclidean.SeparatedConfiguration
+/-- The paper's compact translation hull carries a translation-invariant Borel
+probability measure obtained from continuous Euclidean box averages. -/
+theorem exists_hull_invariant_probability {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ)
+    [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)] :
+    ∃ μ : Measure (hull Γ), IsProbabilityMeasure μ ∧
+      ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ := by
+  letI : CompactSpace (hull Γ) := isCompact_iff_compactSpace.mp (isCompact_hull hδ Γ)
+  letI := metrizableSpaceMetric (hull Γ)
+  let T : Euclidean d → C(hull Γ, hull Γ) := fun z =>
+    ⟨hullTranslate hδ Γ z,
+      (continuous_hullTranslate hδ Γ).comp (continuous_const.prodMk continuous_id)⟩
+  apply exists_invariant_probability_euclidean_action T (continuous_hullTranslate hδ Γ)
+  · intro z y x
+    apply Subtype.ext
+    change translate z (translate y (x : SeparatedConfiguration d δ)) =
+      translate (y + z) (x : SeparatedConfiguration d δ)
+    rw [translate_add, add_comm z y]
+  · exact ⟨Γ, mem_hull Γ⟩
+end RieszEuclidean.SeparatedConfiguration
+
 /- Source: RieszEuclidean/RangeIso.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 noncomputable section
@@ -2897,7 +3430,7 @@ run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 # Implemented result statements and concrete definitions
 
 This compact Comparator reference covers proved foundational, Fourier, affine
-and configuration-space results. It does not contain or certify the unfinished geometric main
+configuration-space results and invariant probability measures. It does not contain or certify the unfinished geometric main
 theorems. Its wrapper proofs use the checked modular library, so the reference
 needs neither theorem placeholders nor warning suppressions.
 -/
@@ -3026,4 +3559,12 @@ theorem compact_configuration_space (d : ℕ) {δ : ℝ} (hδ : 0 < δ) :
   ⟨SeparatedConfiguration.compactSpace hδ, inferInstance,
     fun _ _ => SeparatedConfiguration.tendsto_iff_weaklyConverges hδ,
     SeparatedConfiguration.continuous_translate hδ⟩
+/-- The actual translation hull has an invariant Borel probability measure,
+constructed by continuous Euclidean box averaging. -/
+theorem hull_invariant_probability {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ)
+    [MeasurableSpace (SeparatedConfiguration.hull Γ)] [BorelSpace (SeparatedConfiguration.hull Γ)] :
+    ∃ μ : Measure (SeparatedConfiguration.hull Γ), IsProbabilityMeasure μ ∧
+      ∀ z : Euclidean d, MeasurePreserving (SeparatedConfiguration.hullTranslate hδ Γ z) μ μ :=
+  SeparatedConfiguration.exists_hull_invariant_probability hδ Γ
 end RieszEuclidean.Results

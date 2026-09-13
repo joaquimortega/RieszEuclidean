@@ -54,11 +54,14 @@ alignment:
     status: pending full analytic and geometric construction
 review:
   status: in-progress
-  notes: All 15 default environment linters pass without suppression for the implemented modular
-    project. The hull lemma is proved, with 8 of 25 blueprint nodes proved and 17 pending.
-    The expanded 160-declaration transitive axiom audit uses only standard Lean axioms. The official Comparator verified ten supporting results, including the compact metrizable
-    configuration space and its jointly continuous real action.
-    Final geometric nonexistence theorems remain unproved.
+  notes: All 15 default environment linters pass without suppression for 296 modular
+    declarations and 362 generated declarations, 14 public declarations and 5 generated
+    declarations, and 310 standalone declarations and 367 generated declarations.
+    All 213 transitive axiom reports use only standard Lean axioms. The official Comparator
+    accepted eleven supporting results and the Lean kernel accepted the standalone proof.
+    The blueprint has 8 proved nodes and 17 pending. The stationary node still requires
+    vague-convergence equivalence and the Koopman construction. Final geometric nonexistence
+    theorems remain unproved.
 classification:
   msc2020:
   - 42C15
@@ -157,7 +160,7 @@ techniques:
   - RieszEuclidean/RangeIso.lean
   - RieszEuclidean/InitialGap.lean
 - name: Stationary compact hull and scalar Bochner measures
-  status: compact metrizable configuration space proved; stationary and spectral measures pending
+  status: invariant probability on the translation hull proved; Koopman action and vague equivalence pending
   description: Simultaneous Hausdorff subsequence extraction on integer-radius compact windows
     is proved, together with inclusion and interior compatibility of the window limits.
     Hausdorff convergence preserves separation and gives uniform two-sided point matching.
@@ -169,8 +172,15 @@ techniques:
     Closedness, countability, finiteness in compact regions and uniform counting bounds
     are proved for separated configurations. The configuration counting measure is finite on
     compact sets. Local matching is preserved under convergent translation vectors.
-    Equivalence with vague counting-measure convergence remains pending. Construct an invariant
-    probability measure from continuous box averages. Construct finite spectral measures on ℝⁿ from continuous
+    The compact orbit closure carries the restricted continuous action. Actual Euclidean
+    boxes have volume (2R)^d, and normalized box averages are positive and have norm at most
+    one. A fixed translation changes a box only within a fixed-thickness shell whose
+    relative volume tends to zero. Integral symmetric-difference bounds yield vanishing
+    translation error. Banach-Alaoglu supplies an invariant weak-star cluster functional;
+    Riesz-Markov-Kakutani gives an invariant probability measure. The full construction
+    is proved for continuous Euclidean actions and specialized to the paper's translation
+    hull. Vague-convergence equivalence and strong continuity of the Koopman action remain
+    pending. Construct finite spectral measures on ℝⁿ from continuous
     positive-definite correlations, their common control measure and the Dirac spectrum of the invariant
     constant.
   files:
@@ -178,6 +188,17 @@ techniques:
   - RieszEuclidean/DistanceProfile.lean
   - RieszEuclidean/ConfigurationTopology.lean
   - RieszEuclidean/ConfigurationMeasure.lean
+  - RieszEuclidean/TranslationHull.lean
+  - RieszEuclidean/PositiveFunctionalMeasure.lean
+  - RieszEuclidean/CompactMeans.lean
+  - RieszEuclidean/MeanRepresentation.lean
+  - RieszEuclidean/EuclideanBoxes.lean
+  - RieszEuclidean/BoxAverages.lean
+  - RieszEuclidean/BoxBoundary.lean
+  - RieszEuclidean/IntegralSymmDiff.lean
+  - RieszEuclidean/BoxTranslationIntegral.lean
+  - RieszEuclidean/InvariantProbability.lean
+  - RieszEuclidean/HullInvariantMeasure.lean
 - name: Continuous cutoffs, kernels and averaged forms
   status: planned; not yet formalized
   description: Continuous Fejér kernels and dominated convergence give cutoff projections. A compactly
@@ -190,13 +211,13 @@ techniques:
     the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
     triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
 comparator:
-  status: ten supporting results verified; full-paper main theorems pending
+  status: eleven supporting results verified; full-paper results pending
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-hull-compactness.txt
-  input_hashes: reviews/comparator-hull-compactness-hashes.json
-  verified_scope: Ten supporting results, including the initial Fourier construction, normalized bumps with the initial projection gap, and the compact metrizable configuration space with exact Beurling convergence and jointly continuous translations; no geometric nonexistence theorem.
+  verification_log: reviews/comparator-invariant-measure-aligned.txt
+  input_hashes: reviews/comparator-invariant-measure-hashes.json
+  verified_scope: Eleven supporting results, including the initial Fourier construction, normalized bumps with the initial projection gap, and the compact metrizable configuration space with exact Beurling convergence and jointly continuous translations, together with an invariant probability measure constructed from continuous Euclidean box averages; no geometric nonexistence theorem.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice

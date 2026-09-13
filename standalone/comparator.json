@@ -11,7 +11,8 @@
     "RieszEuclidean.Results.schwartz_density",
     "RieszEuclidean.Results.euclidean_fourier_analysis",
     "RieszEuclidean.Results.initial_bumps",
-    "RieszEuclidean.Results.compact_configuration_space"
+    "RieszEuclidean.Results.compact_configuration_space",
+    "RieszEuclidean.Results.hull_invariant_probability"
   ],
   "permitted_axioms": [
     "propext",

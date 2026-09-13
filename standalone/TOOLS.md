@@ -80,7 +80,8 @@ this setup is not a claim of current-master hardening for adversarial inputs.
 
 Successful completion prints `Lean default kernel accepts the solution` and
 `Your solution is okay!`. See `reviews/standalone-validation.md` for the actual outcome. The accepted
-ten-result configuration includes the hull lemma; final geometric nonexistence
+eleven-result configuration includes the hull lemma and the invariant probability
+measure from continuous Euclidean box averages; final geometric nonexistence
 statements are still pending.
 
 For the initial local run, the three pinned binaries were copied from the

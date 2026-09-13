@@ -83,7 +83,7 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states ten proved supporting results with concrete
+`MainResults.lean` currently states eleven proved supporting results with concrete
 basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
 assembled from the modular source with Mathlib imports only. The analytic results include Schwartz Parseval, Schwartz density, and existence
 of the unitary Fourier transform with its measurable-domain cutoffs. Neither file yet
@@ -122,3 +122,15 @@ The official Comparator accepted all ten supporting results, including the hull
 lemma, and the Lean kernel accepted the standalone proof. The log and verified
 input hashes are in `reviews/comparator-hull-compactness.txt` and
 `reviews/comparator-hull-compactness-hashes.json`.
+
+The translation hull now has an invariant Borel probability measure constructed
+from actual continuous Euclidean box averages. Their translation errors tend to
+zero by the relative shell-volume estimate. A common weak-star cluster point
+and Riesz-Markov-Kakutani representation give the invariant measure. Equivalence
+with vague convergence and strong continuity of the Koopman action remain pending.
+
+The new invariant-measure theorem is the eleventh result in the Comparator
+reference. The official Comparator and Lean kernel accepted all eleven results.
+The exact verified inputs are recorded in
+`reviews/comparator-invariant-measure-hashes.json`, and the successful run is in
+`reviews/comparator-invariant-measure-aligned.txt`.

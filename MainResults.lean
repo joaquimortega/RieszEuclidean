@@ -4,7 +4,7 @@ import RieszEuclidean
 # Implemented result statements and concrete definitions
 
 This compact Comparator reference covers proved foundational, Fourier, affine
-and configuration-space results. It does not contain or certify the unfinished geometric main
+configuration-space results and invariant probability measures. It does not contain or certify the unfinished geometric main
 theorems. Its wrapper proofs use the checked modular library, so the reference
 needs neither theorem placeholders nor warning suppressions.
 -/
@@ -133,4 +133,12 @@ theorem compact_configuration_space (d : ℕ) {δ : ℝ} (hδ : 0 < δ) :
   ⟨SeparatedConfiguration.compactSpace hδ, inferInstance,
     fun _ _ => SeparatedConfiguration.tendsto_iff_weaklyConverges hδ,
     SeparatedConfiguration.continuous_translate hδ⟩
+/-- The actual translation hull has an invariant Borel probability measure,
+constructed by continuous Euclidean box averaging. -/
+theorem hull_invariant_probability {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ)
+    [MeasurableSpace (SeparatedConfiguration.hull Γ)] [BorelSpace (SeparatedConfiguration.hull Γ)] :
+    ∃ μ : Measure (SeparatedConfiguration.hull Γ), IsProbabilityMeasure μ ∧
+      ∀ z : Euclidean d, MeasurePreserving (SeparatedConfiguration.hullTranslate hδ Γ z) μ μ :=
+  SeparatedConfiguration.exists_hull_invariant_probability hδ Γ
 end RieszEuclidean.Results

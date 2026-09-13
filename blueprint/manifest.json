@@ -15,7 +15,7 @@
       "source_labels": [
         "eq:riesz"
       ],
-      "scope": "Concrete Euclidean L\u00b2, synthesis, translation and weak-convergence definitions",
+      "scope": "Concrete Euclidean L², synthesis, translation and weak-convergence definitions",
       "file": "RieszEuclidean/Basic.lean",
       "declarations": []
     },
@@ -77,7 +77,7 @@
       "source_labels": [
         "eq:P"
       ],
-      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection, with L\u00b9\u2229L\u00b2 agreement, translation commutation and the stated convolution kernel",
+      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection, with L¹∩L² agreement, translation commutation and the stated convolution kernel",
       "file": "RieszEuclidean/FourierL2.lean",
       "declarations": [
         "RieszEuclidean.integral_fourier_mul",
@@ -131,7 +131,7 @@
         "RieszEuclidean.fourierProjection_translation_integrable",
         "RieszEuclidean.fourierProjection_translation"
       ],
-      "progress": "Verified unitary Euclidean Fourier transform, integral agreement on L\u00b9\u2229L\u00b2 for both signs, orthogonal domain cutoff, Fourier-support range characterization, convolution formula for L\u00b9\u2229L\u00b2 inputs, and translation commutation on all L\u00b2 for finite-measure domains.",
+      "progress": "Verified unitary Euclidean Fourier transform, integral agreement on L¹∩L² for both signs, orthogonal domain cutoff, Fourier-support range characterization, convolution formula for L¹∩L² inputs, and translation commutation on all L² for finite-measure domains.",
       "partial_files": [
         "RieszEuclidean/SchwartzDensity.lean",
         "RieszEuclidean/FourierExtension.lean",
@@ -323,8 +323,75 @@
         "eq:U"
       ],
       "scope": "Equivalence with vague counting-measure convergence; invariant probability measure from continuous boxes; strongly continuous Koopman action",
-      "file": null,
-      "declarations": []
+      "file": "RieszEuclidean/TranslationHull.lean",
+      "declarations": [
+        "RieszEuclidean.SeparatedConfiguration.orbit",
+        "RieszEuclidean.SeparatedConfiguration.hull",
+        "RieszEuclidean.SeparatedConfiguration.mem_hull",
+        "RieszEuclidean.SeparatedConfiguration.isCompact_hull",
+        "RieszEuclidean.SeparatedConfiguration.translate_mem_hull",
+        "RieszEuclidean.SeparatedConfiguration.hullTranslate",
+        "RieszEuclidean.SeparatedConfiguration.continuous_hullTranslate",
+        "RieszEuclidean.rieszMeasure_isProbability",
+        "RieszEuclidean.rieszMeasure_measurePreserving",
+        "RieszEuclidean.meanFunctionals",
+        "RieszEuclidean.isClosed_normalized_positive",
+        "RieszEuclidean.isCompact_meanFunctionals",
+        "RieszEuclidean.evaluation_mem_meanFunctionals",
+        "RieszEuclidean.meanFunctionals_clusterPt",
+        "RieszEuclidean.mean_clusterPt_eq_of_tendsto_sub",
+        "RieszEuclidean.exists_invariant_mean_of_averages",
+        "RieszEuclidean.meanToFunctional",
+        "RieszEuclidean.exists_invariant_probability_of_averages",
+        "RieszEuclidean.euclideanBox",
+        "RieszEuclidean.measurableSet_euclideanBox",
+        "RieszEuclidean.volume_euclideanBox",
+        "RieszEuclidean.volume_euclideanBox_pos_lt_top",
+        "RieszEuclidean.boxProbabilityMeasure",
+        "RieszEuclidean.boxProbabilityMeasure_isProbability",
+        "RieszEuclidean.integrable_box_observable",
+        "RieszEuclidean.boxAverageLinear",
+        "RieszEuclidean.norm_boxAverageLinear_le",
+        "RieszEuclidean.boxAverage",
+        "RieszEuclidean.boxAverage_apply",
+        "RieszEuclidean.boxAverage_mem_meanFunctionals",
+        "RieszEuclidean.boxNorm",
+        "RieszEuclidean.mem_euclideanBox_iff",
+        "RieszEuclidean.boxNorm_nonneg",
+        "RieszEuclidean.boxNorm_add_le",
+        "RieszEuclidean.boxNorm_neg",
+        "RieszEuclidean.euclideanBox_mono",
+        "RieszEuclidean.innerBox_subset_translate",
+        "RieszEuclidean.translateBox_subset_outer",
+        "RieszEuclidean.box_symmDiff_subset_shell",
+        "RieszEuclidean.volume_real_euclideanBox",
+        "RieszEuclidean.volume_real_box_symmDiff_le",
+        "RieszEuclidean.box_shell_ratio_tendsto_zero",
+        "RieszEuclidean.box_symmDiff_ratio_tendsto_zero",
+        "RieszEuclidean.norm_setIntegral_sub_le_symmDiff",
+        "RieszEuclidean.measurableSet_translate_region",
+        "RieszEuclidean.volume_translate_region",
+        "RieszEuclidean.setIntegral_add_right_region",
+        "RieszEuclidean.boxProbability_integral_eq",
+        "RieszEuclidean.integrableOn_bounded_observable",
+        "RieszEuclidean.norm_box_translation_error_le",
+        "RieszEuclidean.box_translation_error_tendsto_zero",
+        "RieszEuclidean.exists_invariant_probability_euclidean_action",
+        "RieszEuclidean.SeparatedConfiguration.exists_hull_invariant_probability"
+      ],
+      "partial_files": [
+        "RieszEuclidean/PositiveFunctionalMeasure.lean",
+        "RieszEuclidean/CompactMeans.lean",
+        "RieszEuclidean/MeanRepresentation.lean",
+        "RieszEuclidean/EuclideanBoxes.lean",
+        "RieszEuclidean/BoxAverages.lean",
+        "RieszEuclidean/BoxBoundary.lean",
+        "RieszEuclidean/IntegralSymmDiff.lean",
+        "RieszEuclidean/BoxTranslationIntegral.lean",
+        "RieszEuclidean/InvariantProbability.lean",
+        "RieszEuclidean/HullInvariantMeasure.lean"
+      ],
+      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. Equivalence with vague counting-measure convergence and the strongly continuous Koopman action remain pending."
     },
     {
       "id": "bochner",
@@ -351,7 +418,7 @@
         "eq:multiplier-norm",
         "eq:control-null"
       ],
-      "scope": "Control measure, Dirac constant spectrum, and L\u00b9 integrated filter calculus",
+      "scope": "Control measure, Dirac constant spectrum, and L¹ integrated filter calculus",
       "file": null,
       "declarations": []
     },
@@ -452,7 +519,7 @@
       "source_labels": [
         "thm:ball"
       ],
-      "scope": "Unconditional nonexistence for every d \u2265 2 and every positive-radius ball",
+      "scope": "Unconditional nonexistence for every d ≥ 2 and every positive-radius ball",
       "file": null,
       "declarations": []
     },
@@ -526,7 +593,7 @@
       "source_labels": [
         "sec:ellipsoids"
       ],
-      "scope": "Determinant-correct L\u00b2 pullback, 2\u03c0 phases and transpose frequency transport",
+      "scope": "Determinant-correct L² pullback, 2π phases and transpose frequency transport",
       "file": "RieszEuclidean/Affine.lean",
       "declarations": [
         "RieszEuclidean.planeAffine_map",
@@ -602,6 +669,17 @@
     "RieszEuclidean/WindowCompatibility.lean": "f89303a522774658d63472501d8c01c5093cfb9642c85c09f4148c32c9fcbb81",
     "RieszEuclidean/WindowWeakLimit.lean": "ba96050e0b58c705b547abcb2942a6cbeb7c9ce6d06187b02cfa0db2c94a7997",
     "RieszEuclidean/DistanceProfile.lean": "ba9e9472672e9e01fa72933f3c428578ed948299126e60c94fb8f4405cccfc4f",
-    "RieszEuclidean/ConfigurationTopology.lean": "a771694d54c81a8eaf16513004cbbeb51b2b7fe9054c439609d6bc03da175df6"
+    "RieszEuclidean/ConfigurationTopology.lean": "6b1dde596c9d111f31ce845ea4654da48f6572f58a53e6b0045fbb557dd1fff5",
+    "RieszEuclidean/TranslationHull.lean": "d55e8e4782ae0f8b97a951f8e45c31132609ff1bcc8f6da5037e2061cde680e8",
+    "RieszEuclidean/PositiveFunctionalMeasure.lean": "8e1a20f9e4f28d15f6fe79dde16a7163ff61301237d338bc3a7f518e0d03d39c",
+    "RieszEuclidean/CompactMeans.lean": "6397cf7e9a16513b91de4c75d7cc83b08a1935cf40e9e8dd417d87f3450bb6ed",
+    "RieszEuclidean/MeanRepresentation.lean": "c98ba8a678096ef123d0111e4ef92d912f54b8b8af89f95a3a5f14bb42826eab",
+    "RieszEuclidean/EuclideanBoxes.lean": "f044398c6b8909088a28368679cef23d89bde7bab28c331fb9a289b1fd69ad0d",
+    "RieszEuclidean/BoxAverages.lean": "a497b8c26e00aa2cf9420a1b34f974fdfa4469dc3912bdbbeb390591b3d477b9",
+    "RieszEuclidean/BoxBoundary.lean": "b4325829c9803b6139655a042e5736e6a505eca641de43983871451ca15912a2",
+    "RieszEuclidean/IntegralSymmDiff.lean": "2ea1172a43cdcb4e2f33c94a8efaae6bcb53bde936269c02bba6dbad3c81a6f2",
+    "RieszEuclidean/BoxTranslationIntegral.lean": "eba1aa503805b629183ee6afbcd66b7d732bb6a199188d813257b88d36c9d85e",
+    "RieszEuclidean/InvariantProbability.lean": "0f8a6da2bcde0701a01c29f91c618ba1e95c74c141c75f67661aac88f4553458",
+    "RieszEuclidean/HullInvariantMeasure.lean": "ca19e26fd0181d71de1e6f49aa6119a235eb304c151c3f8f0f6be089c465258f"
   }
 }

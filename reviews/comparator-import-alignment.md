@@ -18,3 +18,18 @@ The range completeness proof explicitly selects the metric T₀ instance. A sepa
 compilation under the full standalone import set passes all 15 linters and yields
 exactly equal type, universe parameters and proof value for range_completeSpace.
 The official rerun is logged in comparator-initial-gap-aligned.txt.
+
+The first eleven-result run failed at the configuration-space metrizable instance.
+Direct Lean environment inspection showed that the modular proof selected the
+second-countable regular-space route, while the combined imports selected
+complete metrizability through `PolishSpace.instENNReal`. Importing
+`Mathlib.Topology.MetricSpace.Polish` in `ConfigurationTopology` makes that same
+standard instance available to both compilations. The failed run is preserved
+in `comparator-invariant-measure.txt`; the aligned rerun is separate.
+
+A broader direct environment comparison also found that the new real-functional
+helpers used the normed-field route to the real normed-space instance, whereas
+the standalone imports supplied `RCLike.toInnerProductSpaceReal`.
+`CompactMeans`, `PositiveFunctionalMeasure`, and `IntegralSymmDiff` explicitly
+import the standard inner-product-space basics to align inference. This fixes
+proof export identity without changing their mathematical statements.

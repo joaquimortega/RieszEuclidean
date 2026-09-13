@@ -2,6 +2,7 @@ import RieszEuclidean.DistanceProfile
 import RieszEuclidean.MovingTranslations
 import Mathlib.Topology.Metrizable.Real
 import Mathlib.Topology.Metrizable.Urysohn
+import Mathlib.Topology.MetricSpace.Polish
 open Filter TopologicalSpace Metric EMetric Set Topology
 open scoped ENNReal
 namespace RieszEuclidean

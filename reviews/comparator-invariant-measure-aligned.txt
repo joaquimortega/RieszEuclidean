@@ -1,0 +1,16 @@
+Running as unit: run-p1523419-i1523719.service
+Building MainResults
+Build completed successfully.
+Exporting #[RieszEuclidean.Results.projection_gap, RieszEuclidean.Results.strict_inclusion_obstruction, RieszEuclidean.Results.weak_limit_separation, RieszEuclidean.Results.affine_invariance, RieszEuclidean.Results.fourier_parseval, RieszEuclidean.Results.euclidean_fourier_cutoff, RieszEuclidean.Results.schwartz_density, RieszEuclidean.Results.euclidean_fourier_analysis, RieszEuclidean.Results.initial_bumps, RieszEuclidean.Results.compact_configuration_space, RieszEuclidean.Results.hull_invariant_probability, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight] from MainResults
+Building RieszEuclideanStandalone
+✔ [2589/2590] Built RieszEuclideanStandalone
+Build completed successfully.
+Exporting #[RieszEuclidean.Results.projection_gap, RieszEuclidean.Results.strict_inclusion_obstruction, RieszEuclidean.Results.weak_limit_separation, RieszEuclidean.Results.affine_invariance, RieszEuclidean.Results.fourier_parseval, RieszEuclidean.Results.euclidean_fourier_cutoff, RieszEuclidean.Results.schwartz_density, RieszEuclidean.Results.euclidean_fourier_analysis, RieszEuclidean.Results.initial_bumps, RieszEuclidean.Results.compact_configuration_space, RieszEuclidean.Results.hull_invariant_probability, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight] from RieszEuclideanStandalone
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 8min 35.237s
+CPU time consumed: 10min 59.673s
+Memory peak: 3.2G (swap: 0B)
