@@ -1,0 +1,4 @@
+-- Found 0 errors in 73 declarations (plus 179 automatically generated ones) in RieszEuclidean with 15 linters
+
+
+-- All linting checks passed!

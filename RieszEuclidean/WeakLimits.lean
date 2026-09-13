@@ -52,7 +52,6 @@ theorem WeaklyConverges.separated {δ : ℝ} {Γ : ℕ → Set (Euclidean d)}
     (hsep : ∀ j, Separated δ (Γ j)) : Separated δ Γ₀ := by
   intro x hx y hy hxy
   by_contra hbad
-  have hlt : dist x y < δ := lt_of_not_ge hbad
   have hdist : 0 < dist x y := dist_pos.mpr hxy
   let ε : ℝ := min (dist x y / 4) ((δ - dist x y) / 4)
   have hε : 0 < ε := lt_min (by positivity) (by linarith)

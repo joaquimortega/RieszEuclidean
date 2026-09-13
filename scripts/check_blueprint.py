@@ -80,6 +80,7 @@ def main():
     for path in sorted((ROOT / 'RieszEuclidean').glob('*.lean')):
         text = uncomment(path.read_text())
         assert not re.search(r'\b(?:sorry|admit|axiom|unsafe)\b', text), f'Untrusted source token: {path}'
+        assert not re.search(r'\bnolint\b|set_option\s+linter\.[\w.]+\s+false', text), f'Linter suppression: {path}'
         for imp in re.findall(r'^import\s+(\S+)', text, re.M):
             assert imp == 'RieszEuclidean' or imp.startswith(('RieszEuclidean.', 'Mathlib.')), f'External project import: {imp}'
         if path.stem != 'ProofAudit':

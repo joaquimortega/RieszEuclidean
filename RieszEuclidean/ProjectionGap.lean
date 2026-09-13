@@ -11,6 +11,7 @@ variable (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
 
 /-- A bounded orthogonal projection; closed range follows from idempotence. -/
 structure OrthProjection where
+  /-- The bounded complex linear operator underlying the projection. -/
   op : H →L[ℂ] H
   idempotent : op.comp op = op
   symmetric : ∀ x y : H, inner (𝕜 := ℂ) (op x) y = inner (𝕜 := ℂ) x (op y)
@@ -18,11 +19,14 @@ structure OrthProjection where
 namespace OrthProjection
 variable {H}
 
+/-- The range submodule of the projection. -/
 def range (P : OrthProjection H) : Submodule ℂ H := LinearMap.range P.op
 
+/-- The restriction of P to the range of Q is a continuous linear equivalence. -/
 def RangeIso (P Q : OrthProjection H) : Prop :=
   ∃ e : Q.range ≃L[ℂ] P.range, ∀ x : Q.range, (e x : H) = P.op x
 
+/-- Pointwise norm convergence of a sequence of bounded operators. -/
 def StronglyConverges (P : ℕ → H →L[ℂ] H) (R : H →L[ℂ] H) : Prop :=
   ∀ x, Filter.Tendsto (fun n => P n x) Filter.atTop (nhds (R x))
 

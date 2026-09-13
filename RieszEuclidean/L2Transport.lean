@@ -14,6 +14,7 @@ variable {α β : Type} [MeasurableSpace α] [MeasurableSpace β]
   {μ : Measure α} {ν : Measure β} {c : ℝ≥0∞}
   (f : α → β) (hf : Measurable f) (hmap : Measure.map f μ = c • ν) (hc : c ≠ ∞)
 
+/-- The a.e. pullback of an L² function under a map with finite constant Jacobian. -/
 def scaledL2PullbackValue (g : Lp ℂ 2 ν) : Lp ℂ 2 μ :=
   (((Lp.memLp g).smul_measure hc).comp_measurePreserving ⟨hf, hmap⟩).toLp (g ∘ f)
 
@@ -28,6 +29,7 @@ theorem scaledL2PullbackValue_norm (g : Lp ℂ 2 ν) :
     eLpNorm_smul_measure_of_ne_top (by norm_num : (2 : ℝ≥0∞) ≠ ∞)]
   rw [smul_eq_mul, ENNReal.toReal_mul, Lp.norm_def]
 
+/-- Pullback assembled as a complex linear map on L² equivalence classes. -/
 def scaledL2PullbackLinear : Lp ℂ 2 ν →ₗ[ℂ] Lp ℂ 2 μ where
   toFun := scaledL2PullbackValue f hf hmap hc
   map_add' g k := by
@@ -104,6 +106,7 @@ end Equiv
 section Sequences
 variable {ι κ : Type} (e : ι ≃ κ) (w : ι → ℂ) (hw : ∀ i, ‖w i‖ = 1)
 
+/-- Reindex a square-summable family and multiply its coordinates by unit phases. -/
 def weightedReindexValue (g : SeqL2 κ) : SeqL2 ι :=
   ⟨fun i => w i * g (e i), memℓp_gen (by
     simpa only [norm_mul, hw, one_mul] using

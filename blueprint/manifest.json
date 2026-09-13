@@ -379,10 +379,10 @@
   ],
   "proof_source_sha256": {
     "RieszEuclidean/Affine.lean": "35c2391c553d950022745fe6acb37d46c13fb5f1ba572bb99f26144e21659cfc",
-    "RieszEuclidean/Basic.lean": "8be85368b381d1c3b58b176fb74d05b89fcd565612bba9c9fa5ac598f9151aa3",
-    "RieszEuclidean/L2Transport.lean": "fcb919dd7667c8343d1b8a972bbaab81b7f6e34207b30a351bc707929e51e10f",
+    "RieszEuclidean/Basic.lean": "45d89f6d1e318439eaecca48afffd2529c8c403dbf7bed878be3036235cfe2ae",
+    "RieszEuclidean/L2Transport.lean": "301cef59b8659c1c363e3435ea82acdef03d55636e9b6afbb294ffb02917cb58",
     "RieszEuclidean/MovingComparison.lean": "68faa0ba0d885e39b62a3336b37baee64ff17a15de25973e56ea44653bc2501c",
-    "RieszEuclidean/ProjectionGap.lean": "993bae408f3264d72e9939e8c247fabb48bb423e1c9084c15a18ca55fbf43ce2",
-    "RieszEuclidean/WeakLimits.lean": "1f94129348dc17b72938e495f97a91255ee0f828bdae7ae1baa87f7f482db92f"
+    "RieszEuclidean/ProjectionGap.lean": "8a889b2ef52f76f6ce13750dda5a7db0864f187ce48960f406b6313e0b811c78",
+    "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad"
   }
 }

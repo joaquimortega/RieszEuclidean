@@ -14,6 +14,8 @@ jobs:
         with:
           auto-config: false
           build: true
+      - name: Run all default environment linters
+        run: lake env lean -DwarningAsError=true scripts/Lint.lean
       - name: Check blueprint and source scope
         run: python3 scripts/check_blueprint.py
       - name: Audit implemented theorem axioms

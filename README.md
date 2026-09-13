@@ -21,6 +21,7 @@ git clone https://github.com/joaquimortega/RieszEuclidean.git
 cd RieszEuclidean
 lake exe cache get
 lake build
+lake env lean -DwarningAsError=true scripts/Lint.lean
 python3 scripts/check_blueprint.py
 python3 scripts/check_axioms.py
 ```
@@ -64,3 +65,10 @@ latexmk -pdf -interaction=nonstopmode -halt-on-error \
 The paper credits weak limits to Beurling and cites Rudin, *Fourier Analysis on
 Groups*, §1.4.3, for Bochner's theorem. Mathematical references are not extra
 Lean axioms; their needed conclusions must be proved or obtained from Mathlib.
+
+## Before each commit
+
+Run the build, all default environment linters (including slow tests), the
+blueprint checker and the transitive axiom checker. Compiler warnings are errors.
+Fix the code when linting fails; do not add `nolint` annotations or disable a
+linter. The blueprint checker rejects such suppressions in project proof sources.

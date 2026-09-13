@@ -16,10 +16,14 @@ open MeasureTheory
 open scoped ENNReal
 namespace RieszEuclidean
 
+/-- Finite-dimensional Euclidean space with its standard inner product and Lebesgue measure. -/
 abbrev Euclidean (d : ℕ) := EuclideanSpace ℝ (Fin d)
+/-- The coefficient Hilbert space of square-summable complex families. -/
 abbrev SeqL2 (ι : Type) := lp (fun _ : ι => ℂ) 2
+/-- Complex L² for Lebesgue measure restricted to the actual domain. -/
 abbrev DomainL2 {d : ℕ} (Ω : Set (Euclidean d)) := Lp ℂ 2 (volume.restrict Ω)
 
+/-- The paper's exponential with the positive 2π Fourier convention. -/
 def exponential {d : ℕ} (ξ x : Euclidean d) : ℂ :=
   Complex.exp (2 * (Real.pi : ℂ) * Complex.I * (inner (𝕜 := ℝ) ξ x : ℂ))
 
