@@ -45,8 +45,10 @@
   "RieszEuclidean/HullInvariantMeasure.lean": "ca19e26fd0181d71de1e6f49aa6119a235eb304c151c3f8f0f6be089c465258f",
   "RieszEuclidean/RangeIso.lean": "bfcac709a843ba2360fc91f7d64d52fa41c6a445d65c01854655ffa76f0bda15",
   "RieszEuclidean/InitialGap.lean": "bdf60edbf37170b363a7776afd195dda454f613316393a5c9b0d99a238360b87",
+  "RieszEuclidean/Koopman.lean": "89bae7b8fce0c5ef0a6e98148c0e0c504fb526298cb29538107ec480f10d6b8e",
   "RieszEuclidean/MovingComparison.lean": "cffeda724230c8c541a0935658fccda408a025d5bb2f86399b5924c207babc29",
+  "RieszEuclidean/VagueConvergence.lean": "e2885a9b3a9ae992496db5dcb5669c95f603c8393dfdbbed9f7c7233274cf657",
   "RieszEuclidean/WeakPointLimits.lean": "487dfa943d654798fbc4d979c134f569a70e9d0a4d92225d806659e37719d935",
-  "MainResults.lean": "05be4250db71612fed0c0de473f82c8aec5e506596126e062a4244b71eb55cd4",
-  "RieszEuclideanStandalone.lean": "5b97b97eeb844875d90da4988b6ba64876f81b2b22b08c3bd6f7136f75e08c74"
+  "MainResults.lean": "a565510d32da1b2c1eb55205c01e85d5663c0e7d86a9c6f7db7b90831d19aa77",
+  "RieszEuclideanStandalone.lean": "16f45dee2556e51147a165440cff4b11b019f694c641cd682f7288f50b156500"
 }

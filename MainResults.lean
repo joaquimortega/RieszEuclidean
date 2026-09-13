@@ -141,4 +141,38 @@ theorem hull_invariant_probability {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
     ∃ μ : Measure (SeparatedConfiguration.hull Γ), IsProbabilityMeasure μ ∧
       ∀ z : Euclidean d, MeasurePreserving (SeparatedConfiguration.hullTranslate hδ Γ z) μ μ :=
   SeparatedConfiguration.exists_hull_invariant_probability hδ Γ
+/-- The invariant hull measure gives the paper's strongly continuous unitary
+representation, on a separable Hilbert space with an invariant unit constant. -/
+theorem stationary_koopman {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ)
+    [MeasurableSpace (SeparatedConfiguration.hull Γ)] [BorelSpace (SeparatedConfiguration.hull Γ)]
+    (μ : Measure (SeparatedConfiguration.hull Γ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ z : Euclidean d, MeasurePreserving (SeparatedConfiguration.hullTranslate hδ Γ z) μ μ) :
+    ∃ U : Euclidean d → (Lp ℂ 2 μ ≃ₗᵢ[ℂ] Lp ℂ 2 μ),
+      (∀ z f, (U z f : SeparatedConfiguration.hull Γ → ℂ) =ᵐ[μ]
+        fun x => f (SeparatedConfiguration.hullTranslate hδ Γ (-z) x)) ∧
+      (∀ z y f, U z (U y f) = U (z + y) f) ∧
+      (∀ f, U 0 f = f) ∧
+      (∀ f, Continuous (fun z => U z f)) ∧
+      TopologicalSpace.SeparableSpace (Lp ℂ 2 μ) ∧
+      ‖Lp.const 2 μ (1 : ℂ)‖ = 1 ∧
+      ∀ z, U z (Lp.const 2 μ (1 : ℂ)) = Lp.const 2 μ (1 : ℂ) := by
+  refine ⟨SeparatedConfiguration.hullKoopmanUnitary hδ Γ μ hμ, ?_,
+    SeparatedConfiguration.hullKoopmanUnitary_add hδ Γ μ hμ,
+    SeparatedConfiguration.hullKoopmanUnitary_zero hδ Γ μ hμ,
+    SeparatedConfiguration.strongContinuous_hullKoopmanUnitary hδ Γ μ hμ,
+    SeparatedConfiguration.separableSpace_hullLp hδ Γ μ, norm_stationary_one,
+    fun z => SeparatedConfiguration.hullKoopmanUnitary_const hδ Γ μ hμ z 1⟩
+  intro z f
+  rw [SeparatedConfiguration.hullKoopmanUnitary_apply]
+  exact Lp.coeFn_compMeasurePreserving f (hμ (-z))
+/-- Beurling weak convergence is precisely vague counting-measure convergence
+for configurations sharing a positive separation bound. -/
+theorem beurling_iff_vague {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    {Γ : ℕ → Set (Euclidean d)} {Δ : Set (Euclidean d)}
+    (hΓ : ∀ n, Separated δ (Γ n)) (hΔ : Separated δ Δ) :
+    WeaklyConverges Γ Δ ↔ ∀ f : CompactlySupportedContinuousMap (Euclidean d) ℝ,
+      Filter.Tendsto (fun n => ∫ x, f x ∂configurationMeasure (Γ n)) Filter.atTop
+        (nhds (∫ x, f x ∂configurationMeasure Δ)) :=
+  weaklyConverges_iff_vague hδ hΓ hΔ
 end RieszEuclidean.Results

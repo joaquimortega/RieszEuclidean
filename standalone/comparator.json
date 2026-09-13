@@ -12,7 +12,9 @@
     "RieszEuclidean.Results.euclidean_fourier_analysis",
     "RieszEuclidean.Results.initial_bumps",
     "RieszEuclidean.Results.compact_configuration_space",
-    "RieszEuclidean.Results.hull_invariant_probability"
+    "RieszEuclidean.Results.hull_invariant_probability",
+    "RieszEuclidean.Results.stationary_koopman",
+    "RieszEuclidean.Results.beurling_iff_vague"
   ],
   "permitted_axioms": [
     "propext",

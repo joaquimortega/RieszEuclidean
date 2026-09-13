@@ -35,7 +35,8 @@ fidelity:
     uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)). Mathlib conjugates the first inner-product
     argument. Hull compactness uses Hausdorff limits on compact Euclidean windows and countable
     extended-distance probes instead of counting-measure extraction. The lemma and its exact
-    Beurling convergence topology are preserved; vague-convergence equivalence remains pending.
+    Beurling convergence topology are preserved. Vague-convergence equivalence is proved
+    using finite point matchings, compactly supported distinguishing bumps, and compactness.
     The complete source scope, including all geometric extensions, remains the objective.
 alignment:
   namespace: RieszEuclidean
@@ -54,14 +55,14 @@ alignment:
     status: pending full analytic and geometric construction
 review:
   status: in-progress
-  notes: All 15 default environment linters pass without suppression for 296 modular
-    declarations and 362 generated declarations, 14 public declarations and 5 generated
-    declarations, and 310 standalone declarations and 367 generated declarations.
-    All 213 transitive axiom reports use only standard Lean axioms. The official Comparator
-    accepted eleven supporting results and the Lean kernel accepted the standalone proof.
-    The blueprint has 8 proved nodes and 17 pending. The stationary node still requires
-    vague-convergence equivalence and the Koopman construction. Final geometric nonexistence
-    theorems remain unproved.
+  notes: The stationary-system node is complete. All 15 modular linters pass for
+    328 declarations and 371 generated declarations; all 15 public-result linters pass
+    for 16 declarations and 5 generated declarations. The standalone build and all
+    245 transitive axiom reports pass. All 15 standalone linters pass for 344 declarations
+    and 376 generated declarations. Standard imports were aligned for exact export identity;
+    the official Comparator accepted all thirteen supporting results and the Lean kernel
+    accepted the standalone solution with exit code 0.
+    The blueprint has 9 proved nodes and 16 pending.  Final geometric nonexistence theorems remain unproved.
 classification:
   msc2020:
   - 42C15
@@ -160,7 +161,7 @@ techniques:
   - RieszEuclidean/RangeIso.lean
   - RieszEuclidean/InitialGap.lean
 - name: Stationary compact hull and scalar Bochner measures
-  status: invariant probability on the translation hull proved; Koopman action and vague equivalence pending
+  status: stationary system and vague equivalence proved; scalar Bochner measures pending
   description: Simultaneous Hausdorff subsequence extraction on integer-radius compact windows
     is proved, together with inclusion and interior compatibility of the window limits.
     Hausdorff convergence preserves separation and gives uniform two-sided point matching.
@@ -179,8 +180,12 @@ techniques:
     translation error. Banach-Alaoglu supplies an invariant weak-star cluster functional;
     Riesz-Markov-Kakutani gives an invariant probability measure. The full construction
     is proved for continuous Euclidean actions and specialized to the paper's translation
-    hull. Vague-convergence equivalence and strong continuity of the Koopman action remain
-    pending. Construct finite spectral measures on ℝⁿ from continuous
+    hull. The Koopman operators use pullback by T_{-z} to realize the manuscript
+    convention U_z f(Γ)=f(Γ+z). They form a strongly continuous unitary representation
+    on the separable stationary L² space, with invariant unit constant. Finite injective
+    point matchings control test integrals and prove weak-to-vague convergence. Compactly
+    supported bumps separate configurations; the continuous counting-test map is then an
+    embedding by compactness, proving the converse. Construct finite spectral measures on ℝⁿ from continuous
     positive-definite correlations, their common control measure and the Dirac spectrum of the invariant
     constant.
   files:
@@ -199,6 +204,8 @@ techniques:
   - RieszEuclidean/BoxTranslationIntegral.lean
   - RieszEuclidean/InvariantProbability.lean
   - RieszEuclidean/HullInvariantMeasure.lean
+  - RieszEuclidean/Koopman.lean
+  - RieszEuclidean/VagueConvergence.lean
 - name: Continuous cutoffs, kernels and averaged forms
   status: planned; not yet formalized
   description: Continuous Fejér kernels and dominated convergence give cutoff projections. A compactly
@@ -211,13 +218,13 @@ techniques:
     the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
     triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
 comparator:
-  status: eleven supporting results verified; full-paper results pending
+  status: thirteen supporting results verified; full-paper results pending
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-invariant-measure-aligned.txt
-  input_hashes: reviews/comparator-invariant-measure-hashes.json
-  verified_scope: Eleven supporting results, including the initial Fourier construction, normalized bumps with the initial projection gap, and the compact metrizable configuration space with exact Beurling convergence and jointly continuous translations, together with an invariant probability measure constructed from continuous Euclidean box averages; no geometric nonexistence theorem.
+  verification_log: reviews/comparator-stationary-system.txt
+  input_hashes: reviews/comparator-stationary-system-hashes.json
+  verified_scope: Thirteen supporting results, including the initial Fourier construction, normalized bumps with the initial projection gap, and the compact metrizable configuration space with exact Beurling convergence and jointly continuous translations, together with an invariant probability measure constructed from continuous Euclidean box averages, the strongly continuous unitary Koopman representation with invariant unit constant and separable stationary Hilbert space, and equivalence between Beurling and vague counting-measure convergence; no geometric nonexistence theorem.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice

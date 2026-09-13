@@ -315,7 +315,7 @@
     },
     {
       "id": "stationary-measure",
-      "status": "pending",
+      "status": "proved",
       "dependencies": [
         "hull-compactness"
       ],
@@ -377,7 +377,39 @@
         "RieszEuclidean.norm_box_translation_error_le",
         "RieszEuclidean.box_translation_error_tendsto_zero",
         "RieszEuclidean.exists_invariant_probability_euclidean_action",
-        "RieszEuclidean.SeparatedConfiguration.exists_hull_invariant_probability"
+        "RieszEuclidean.SeparatedConfiguration.exists_hull_invariant_probability",
+        "RieszEuclidean.koopmanIsometry",
+        "RieszEuclidean.continuous_koopman",
+        "RieszEuclidean.koopmanIsometry_comp",
+        "RieszEuclidean.koopmanIsometry_inverse",
+        "RieszEuclidean.koopmanUnitary",
+        "RieszEuclidean.koopmanIsometry_const",
+        "RieszEuclidean.norm_stationary_one",
+        "RieszEuclidean.SeparatedConfiguration.hullPullbackUnitary",
+        "RieszEuclidean.SeparatedConfiguration.hullPullbackUnitary_apply",
+        "RieszEuclidean.SeparatedConfiguration.hull_pullback_add",
+        "RieszEuclidean.SeparatedConfiguration.hull_pullback_zero",
+        "RieszEuclidean.SeparatedConfiguration.continuous_hull_pullback",
+        "RieszEuclidean.SeparatedConfiguration.strongContinuous_hullPullbackUnitary",
+        "RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary",
+        "RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary_apply",
+        "RieszEuclidean.SeparatedConfiguration.strongContinuous_hullKoopmanUnitary",
+        "RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary_add",
+        "RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary_zero",
+        "RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary_const",
+        "RieszEuclidean.SeparatedConfiguration.separableSpace_hullLp",
+        "RieszEuclidean.integral_count_eq_sum",
+        "RieszEuclidean.integral_count_eq_sum_of_injective",
+        "RieszEuclidean.configurationMeasure_integral_eq_sum",
+        "RieszEuclidean.configurationMeasure_integral_matching_bound",
+        "RieszEuclidean.WeaklyConverges.tendsto_configurationMeasure_integral",
+        "RieszEuclidean.exists_configurationMeasure_distinguishing_test",
+        "RieszEuclidean.SeparatedConfiguration.countingProfile",
+        "RieszEuclidean.SeparatedConfiguration.countingProfile_injective",
+        "RieszEuclidean.SeparatedConfiguration.continuous_countingProfile",
+        "RieszEuclidean.SeparatedConfiguration.countingProfile_isEmbedding",
+        "RieszEuclidean.SeparatedConfiguration.tendsto_iff_vague",
+        "RieszEuclidean.weaklyConverges_iff_vague"
       ],
       "partial_files": [
         "RieszEuclidean/PositiveFunctionalMeasure.lean",
@@ -391,7 +423,7 @@
         "RieszEuclidean/InvariantProbability.lean",
         "RieszEuclidean/HullInvariantMeasure.lean"
       ],
-      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. Equivalence with vague counting-measure convergence and the strongly continuous Koopman action remain pending."
+      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. The Koopman operators are constructed with the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}. They are unitaries, obey the additive group law, and form a strongly continuous representation on the separable stationary L² space. Constants are invariant and the constant one has norm one. Finite injective point matching controls compactly supported test integrals. Weak convergence therefore implies vague convergence. A compactly supported bump distinguishes different configurations, so the continuous counting-test map is injective; compactness makes it an embedding and proves the converse. All mathematical components of this node compile and pass all 15 integrated linters. The standalone compiles and the complete 245-declaration transitive axiom audit uses only standard Lean axioms."
     },
     {
       "id": "bochner",
@@ -680,6 +712,8 @@
     "RieszEuclidean/IntegralSymmDiff.lean": "2ea1172a43cdcb4e2f33c94a8efaae6bcb53bde936269c02bba6dbad3c81a6f2",
     "RieszEuclidean/BoxTranslationIntegral.lean": "eba1aa503805b629183ee6afbcd66b7d732bb6a199188d813257b88d36c9d85e",
     "RieszEuclidean/InvariantProbability.lean": "0f8a6da2bcde0701a01c29f91c618ba1e95c74c141c75f67661aac88f4553458",
-    "RieszEuclidean/HullInvariantMeasure.lean": "ca19e26fd0181d71de1e6f49aa6119a235eb304c151c3f8f0f6be089c465258f"
+    "RieszEuclidean/HullInvariantMeasure.lean": "ca19e26fd0181d71de1e6f49aa6119a235eb304c151c3f8f0f6be089c465258f",
+    "RieszEuclidean/Koopman.lean": "89bae7b8fce0c5ef0a6e98148c0e0c504fb526298cb29538107ec480f10d6b8e",
+    "RieszEuclidean/VagueConvergence.lean": "e2885a9b3a9ae992496db5dcb5669c95f603c8393dfdbbed9f7c7233274cf657"
   }
 }

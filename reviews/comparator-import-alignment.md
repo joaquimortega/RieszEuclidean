@@ -33,3 +33,10 @@ the standalone imports supplied `RCLike.toInnerProductSpaceReal`.
 `CompactMeans`, `PositiveFunctionalMeasure`, and `IntegralSymmDiff` explicitly
 import the standard inner-product-space basics to align inference. This fixes
 proof export identity without changing their mathematical statements.
+
+For the stationary-system expansion, direct comparison found alternate routes to
+measurable singleton and countably generated Borel instances in the new counting
+integral and L² separability proofs. Explicit standard-Borel and paracompactness
+imports align these routes. `VagueConvergence` also imports `RCLike.Basic` so its
+positivity proof uses the same real characteristic-zero instance as the standalone.
+The mathematical statements and permitted axioms are unchanged.

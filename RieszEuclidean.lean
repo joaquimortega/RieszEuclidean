@@ -48,3 +48,5 @@ import RieszEuclidean.IntegralSymmDiff
 import RieszEuclidean.BoxTranslationIntegral
 import RieszEuclidean.InvariantProbability
 import RieszEuclidean.HullInvariantMeasure
+import RieszEuclidean.Koopman
+import RieszEuclidean.VagueConvergence

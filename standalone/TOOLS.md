@@ -79,9 +79,10 @@ Comparator interface. The reference and solution are trusted repository files;
 this setup is not a claim of current-master hardening for adversarial inputs.
 
 Successful completion prints `Lean default kernel accepts the solution` and
-`Your solution is okay!`. See `reviews/standalone-validation.md` for the actual outcome. The accepted
-eleven-result configuration includes the hull lemma and the invariant probability
-measure from continuous Euclidean box averages; final geometric nonexistence
+`Your solution is okay!`. See `reviews/comparator-stationary-system.txt` for the latest accepted run. The accepted
+thirteen-result configuration includes the hull lemma, invariant probability
+measure from continuous Euclidean box averages, Koopman representation, and
+Beurling–vague convergence equivalence; final geometric nonexistence
 statements are still pending.
 
 For the initial local run, the three pinned binaries were copied from the
