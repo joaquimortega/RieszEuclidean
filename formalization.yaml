@@ -120,8 +120,11 @@ techniques:
     gives cutoff commutation first on L¹∩L², then density extends it to all L². A lower
     synthesis-column bound and a uniform phase estimate prove frequency separation. Smooth
     radial bumps are converted to Schwartz functions and normalized in actual Euclidean L².
-    The Fourier lower bound, translated orthonormal family and synthesis-to-projection gap
-    remain pending.
+    A phase perturbation estimate gives a positive uniform Fourier lower bound after choosing
+    the radius small enough. Separation makes distinct translated supports disjoint, proving
+    orthonormality in actual Euclidean L². Orthogonal-family summation constructs isometric
+    synthesis V, and V composed with its adjoint is the orthogonal range projection.
+    The synthesis-to-Fourier-projection isomorphism and initial gap remain pending.
   files:
   - RieszEuclidean/FourierL2.lean
   - RieszEuclidean/SchwartzDensity.lean
@@ -132,6 +135,9 @@ techniques:
   - RieszEuclidean/FourierTranslations.lean
   - RieszEuclidean/Separation.lean
   - RieszEuclidean/Bumps.lean
+  - RieszEuclidean/BumpFourier.lean
+  - RieszEuclidean/BumpTranslates.lean
+  - RieszEuclidean/BumpSynthesis.lean
 - name: Stationary compact hull and scalar Bochner measures
   status: planned; not yet formalized
   description: Prove compactness of the separated-set hull, continuity of the real action and an invariant

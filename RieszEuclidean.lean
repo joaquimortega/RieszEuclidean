@@ -15,3 +15,6 @@ import RieszEuclidean.FourierTranslations
 
 import RieszEuclidean.Separation
 import RieszEuclidean.Bumps
+import RieszEuclidean.BumpFourier
+import RieszEuclidean.BumpTranslates
+import RieszEuclidean.BumpSynthesis

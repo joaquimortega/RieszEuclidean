@@ -2,6 +2,7 @@ import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.Analysis.Distribution.FourierSchwartz
 import Mathlib.Analysis.InnerProductSpace.Adjoint
+import Mathlib.Analysis.InnerProductSpace.Orthonormal
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.l2Space
 import Mathlib.Analysis.Normed.Operator.Banach
@@ -648,6 +649,230 @@ theorem exists_normalized_schwartz_bump {d : ℕ} {r : ℝ} (hr : 0 < r) :
   · change (N⁻¹ • b 0).re > 0
     rw [hb]
     simpa using inv_pos.mpr hN
+end RieszEuclidean
+
+/- Source: RieszEuclidean/Separation.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+/-! Uniform separation of the frequencies of an exponential Riesz basis. -/
+
+noncomputable section
+open MeasureTheory
+namespace RieszEuclidean
+/-- Invertible synthesis uniformly separates distinct coordinate columns. -/
+theorem synthesis_columns_separated {ι H : Type} [DecidableEq ι] [NormedAddCommGroup H] [NormedSpace ℂ H]
+    (S : SeqL2 ι ≃L[ℂ] H) :
+    ∃ c : ℝ, 0 < c ∧ ∀ i j : ι, i ≠ j →
+      c ≤ ‖S (lp.single 2 i 1) - S (lp.single 2 j 1)‖ := by
+  classical
+  let K := ‖S.symm.toContinuousLinearMap‖ + 1
+  have hK : 0 < K := by dsimp [K]; positivity
+  refine ⟨1 / K, one_div_pos.mpr hK, ?_⟩
+  intro i j hij
+  have hc : 1 ≤ ‖lp.single (E := fun _ : ι => ℂ) 2 i 1 - lp.single 2 j 1‖ := by
+    have h := lp.norm_apply_le_norm (by norm_num : (2 : ENNReal) ≠ 0)
+      (lp.single (E := fun _ : ι => ℂ) 2 i 1 - lp.single 2 j 1) i
+    simpa [lp.single_apply, hij, hij.symm] using h
+  have hb := S.symm.toContinuousLinearMap.le_opNorm
+    (S (lp.single 2 i 1) - S (lp.single 2 j 1))
+  have heq : S.symm (S (lp.single 2 i 1) - S (lp.single 2 j 1)) =
+      lp.single 2 i 1 - lp.single 2 j 1 := by simp
+  change ‖S.symm (S (lp.single 2 i 1) - S (lp.single 2 j 1))‖ ≤ _ at hb
+  rw [heq] at hb
+  apply (div_le_iff₀ hK).mpr
+  have hnonneg := norm_nonneg (S (lp.single 2 i 1) - S (lp.single 2 j 1))
+  dsimp [K]
+  nlinarith
+/-- A real phase difference has the same norm after multiplication by i. -/
+theorem imaginary_phase_sub_norm (a b : ℝ) :
+    ‖(a : ℂ) * Complex.I - (b : ℂ) * Complex.I‖ = |a - b| := by
+  rw [← sub_mul, norm_mul, Complex.norm_I, mul_one, ← Complex.ofReal_sub]
+  exact Complex.norm_real (a - b)
+/-- A uniform local estimate for complex exponentials of real phases. -/
+theorem phase_exp_sub_le {a b : ℝ} (h : |a - b| < 1) :
+    ‖Complex.exp ((a : ℂ) * Complex.I) - Complex.exp ((b : ℂ) * Complex.I)‖ ≤
+      2 * |a - b| := by
+  have hb : ‖Complex.exp ((b : ℂ) * Complex.I)‖ = 1 := by simp [Complex.norm_exp]
+  have hd : ‖(a : ℂ) * Complex.I - (b : ℂ) * Complex.I‖ < 1 := by
+    rwa [imaginary_phase_sub_norm]
+  have he := Complex.locally_lipschitz_exp (r := 1) zero_le_one le_rfl
+    ((b : ℂ) * Complex.I) ((a : ℂ) * Complex.I) hd
+  simpa only [hb, imaginary_phase_sub_norm, one_add_one_eq_two, mul_one] using he
+/-- Rewrite the paper's exponential as the exponential of a real phase times i. -/
+theorem exponential_eq_phase {d : ℕ} (ξ x : Euclidean d) :
+    exponential ξ x = Complex.exp ((2 * Real.pi * inner (𝕜 := ℝ) ξ x : ℝ) * Complex.I) := by
+  unfold exponential
+  congr 1
+  push_cast
+  ring
+/-- Quantitative uniform continuity of exponential columns on a bounded domain. -/
+theorem exponential_sub_le_on_ball {d : ℕ} (ξ η x : Euclidean d) {R : ℝ}
+    (hx : ‖x‖ ≤ R) (hsmall : 2 * Real.pi * ‖ξ - η‖ * R < 1) :
+    ‖exponential ξ x - exponential η x‖ ≤ 4 * Real.pi * R * ‖ξ - η‖ := by
+  have hphase : |2 * Real.pi * inner (𝕜 := ℝ) ξ x - 2 * Real.pi * inner (𝕜 := ℝ) η x| ≤
+      2 * Real.pi * ‖ξ - η‖ * R := by
+    calc
+      _ = 2 * Real.pi * |inner (𝕜 := ℝ) (ξ - η) x| := by
+        rw [← mul_sub, ← inner_sub_left, abs_mul, abs_of_nonneg (by positivity : 0 ≤ 2 * Real.pi)]
+      _ ≤ 2 * Real.pi * (‖ξ - η‖ * ‖x‖) :=
+        mul_le_mul_of_nonneg_left (abs_real_inner_le_norm _ _) (by positivity)
+      _ ≤ 2 * Real.pi * ‖ξ - η‖ * R := by
+        rw [← mul_assoc]
+        exact mul_le_mul_of_nonneg_left hx (by positivity)
+  rw [exponential_eq_phase, exponential_eq_phase]
+  calc
+    _ ≤ 2 * |2 * Real.pi * inner (𝕜 := ℝ) ξ x - 2 * Real.pi * inner (𝕜 := ℝ) η x| :=
+      phase_exp_sub_le (hphase.trans_lt hsmall)
+    _ ≤ 2 * (2 * Real.pi * ‖ξ - η‖ * R) := mul_le_mul_of_nonneg_left hphase (by norm_num)
+    _ = _ := by ring
+/-- Every exponential Riesz basis on a bounded measurable domain has separated frequencies. -/
+theorem riesz_frequencies_separated {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω)
+    (hB : HasExponentialRieszBasis Ω Λ) : ∃ δ : ℝ, 0 < δ ∧ Separated δ Λ := by
+  classical
+  obtain ⟨S, hS⟩ := hB
+  obtain ⟨c, hc, hcols⟩ := synthesis_columns_separated S
+  obtain ⟨R, hR, hbound⟩ := hb.exists_pos_norm_le
+  haveI : IsFiniteMeasure (volume.restrict Ω) := ⟨by simpa using hb.measure_lt_top (μ := volume)⟩
+  let M : ℝ := (measureUnivNNReal (volume.restrict Ω) : ℝ) ^ (2 : ENNReal).toReal⁻¹
+  let K : ℝ := M * (4 * Real.pi * R)
+  have hK : 0 ≤ K := by dsimp [K]; positivity
+  let A : ℝ := 2 * Real.pi * R
+  have hA : 0 ≤ A := by dsimp [A]; positivity
+  let δ := min (1 / (A + 1)) (c / (K + 1))
+  have hδ : 0 < δ := lt_min (one_div_pos.mpr (by linarith)) (div_pos hc (by linarith))
+  refine ⟨δ, hδ, ?_⟩
+  intro ξ hξ η hη hne
+  by_contra! hdist
+  have hdist' : ‖ξ - η‖ < δ := by simpa only [dist_eq_norm] using hdist
+  have hn := norm_nonneg (ξ - η)
+  have hsmall : 2 * Real.pi * ‖ξ - η‖ * R < 1 := by
+    have h := (lt_div_iff₀ (show 0 < A + 1 by linarith)).mp
+      (hdist'.trans_le (min_le_left _ _))
+    dsimp [A] at h
+    nlinarith
+  let i : Λ := ⟨ξ, hξ⟩
+  let j : Λ := ⟨η, hη⟩
+  have hij : i ≠ j := fun h => hne (congrArg Subtype.val h)
+  have hlower := hcols i j hij
+  have hae : ∀ᵐ x ∂volume.restrict Ω,
+      ‖((S (lp.single 2 i 1) - S (lp.single 2 j 1) : DomainL2 Ω) : Euclidean d → ℂ) x‖ ≤
+        4 * Real.pi * R * ‖ξ - η‖ := by
+    filter_upwards [Lp.coeFn_sub (S (lp.single 2 i 1)) (S (lp.single 2 j 1)),
+      hS i, hS j, ae_restrict_mem hΩ] with x hsub hi hj hx
+    simp only [hsub, Pi.sub_apply, hi, hj]
+    exact exponential_sub_le_on_ball ξ η x (hbound x hx) hsmall
+  have hupper := Lp.norm_le_of_ae_bound (by positivity : 0 ≤ 4 * Real.pi * R * ‖ξ - η‖) hae
+  change ‖S (lp.single 2 i 1) - S (lp.single 2 j 1)‖ ≤ M * (4 * Real.pi * R * ‖ξ - η‖) at hupper
+  have h := (lt_div_iff₀ (show 0 < K + 1 by linarith)).mp
+    (hdist'.trans_le (min_le_right _ _))
+  dsimp [K] at h
+  nlinarith
+end RieszEuclidean
+
+/- Source: RieszEuclidean/BumpFourier.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+/-- Integral form of the positive-sign Fourier transform in the paper's notation. -/
+theorem inverseFourier_exponential {d : ℕ} (b : Euclidean d → ℂ) (x : Euclidean d) :
+    Real.fourierIntegralInv b x = ∫ ξ, exponential ξ x * b ξ := by
+  rw [Real.fourierIntegralInv_eq']
+  simp only [exponential_eq_phase, smul_eq_mul]
+/-- The real part is the norm for a nonnegative real-valued bump. -/
+theorem bump_norm_eq_re {d : ℕ} (b : Euclidean d → ℂ)
+    (hp : ∀ x, (b x).im = 0 ∧ 0 ≤ (b x).re) (x : Euclidean d) :
+    ‖b x‖ = (b x).re := by
+  have he : b x = ((b x).re : ℂ) := by
+    apply Complex.ext <;> simp [hp x]
+  rw [he, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg (hp x).2]
+  rfl
+/-- A small phase variation bounds the Fourier perturbation by the bump mass. -/
+theorem bump_fourier_near_mass {d : ℕ} (b : SchwartzMap (Euclidean d) ℂ)
+    (hp : ∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) (x : Euclidean d)
+    {c : ℝ} (hc : ∀ ξ, b ξ ≠ 0 → ‖exponential ξ x - 1‖ ≤ c) :
+    ‖Real.fourierIntegralInv b x - ∫ ξ, b ξ‖ ≤ c * ∫ ξ, (b ξ).re := by
+  have hcont : Continuous (fun ξ => exponential ξ x) := by
+    unfold exponential
+    fun_prop
+  have hi : Integrable (fun ξ => exponential ξ x * b ξ) :=
+    b.integrable.bdd_mul hcont.aestronglyMeasurable ⟨1, fun ξ => (exponential_norm ξ x).le⟩
+  rw [inverseFourier_exponential, ← integral_sub hi b.integrable]
+  calc
+    _ ≤ ∫ ξ, c * (b ξ).re := norm_integral_le_of_norm_le (b.integrable.re.const_mul c)
+      (Filter.Eventually.of_forall (fun ξ => by
+        by_cases hz : b ξ = 0
+        · simp [hz]
+        · rw [show exponential ξ x * b ξ - b ξ = (exponential ξ x - 1) * b ξ by ring,
+            norm_mul, bump_norm_eq_re b hp]
+          exact mul_le_mul_of_nonneg_right (hc ξ hz) (hp ξ).2))
+    _ = _ := integral_const_mul _ _
+/-- A half-mass perturbation leaves a quantitative Fourier lower bound. -/
+theorem bump_fourier_lower {d : ℕ} (b : SchwartzMap (Euclidean d) ℂ)
+    (hp : ∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) (x : Euclidean d)
+    (hc : ∀ ξ, b ξ ≠ 0 → ‖exponential ξ x - 1‖ ≤ 1 / 2) :
+    (∫ ξ, (b ξ).re) / 2 ≤ ‖Real.fourierIntegralInv b x‖ := by
+  have he := bump_fourier_near_mass b hp x hc
+  have hm : (∫ ξ, (b ξ).re) ≤ ‖∫ ξ, b ξ‖ := by
+    rw [show (∫ ξ, (b ξ).re) = (∫ ξ, b ξ).re from integral_re b.integrable]
+    exact Complex.re_le_norm _
+  have ht' : ‖∫ ξ, b ξ‖ ≤ ‖Real.fourierIntegralInv b x - ∫ ξ, b ξ‖ +
+      ‖Real.fourierIntegralInv b x‖ := by
+    simpa only [sub_add_cancel, norm_sub_rev] using
+      norm_add_le ((∫ ξ, b ξ) - Real.fourierIntegralInv b x) (Real.fourierIntegralInv b x)
+  linarith
+/-- Small spatial support makes the Fourier lower bound uniform on a bounded ball. -/
+theorem bump_fourier_lower_on_ball {d : ℕ} (b : SchwartzMap (Euclidean d) ℂ)
+    (hp : ∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re)
+    {r R : ℝ} (hR : 0 ≤ R) (hs : ∀ ξ, r ≤ ‖ξ‖ → b ξ = 0)
+    (hsmall : 4 * Real.pi * R * r ≤ 1 / 2)
+    {x : Euclidean d} (hx : ‖x‖ ≤ R) :
+    (∫ ξ, (b ξ).re) / 2 ≤ ‖Real.fourierIntegralInv b x‖ := by
+  apply bump_fourier_lower b hp x
+  intro ξ hξ
+  have hr : ‖ξ‖ < r := lt_of_not_ge (fun h => hξ (hs ξ h))
+  have hb : 4 * Real.pi * R * ‖ξ‖ ≤ 1 / 2 :=
+    (mul_le_mul_of_nonneg_left hr.le (by positivity)).trans hsmall
+  have hphase : 2 * Real.pi * ‖ξ - 0‖ * R < 1 := by
+    simp only [sub_zero]
+    nlinarith
+  have he := exponential_sub_le_on_ball ξ 0 x hx hphase
+  simp only [exponential, inner_zero_left, Complex.ofReal_zero, mul_zero,
+    Complex.exp_zero, sub_zero] at he
+  exact he.trans hb
+/-- A continuous nonnegative bump positive at zero has positive total mass. -/
+theorem bump_integral_re_pos {d : ℕ} (b : SchwartzMap (Euclidean d) ℂ)
+    (hp : ∀ x, 0 ≤ (b x).re) (h0 : 0 < (b 0).re) :
+    0 < ∫ x, (b x).re := by
+  exact integral_pos_of_integrable_nonneg_nonzero
+    (Complex.continuous_re.comp b.continuous) b.integrable.re hp h0.ne'
+/-- Choose a normalized bump with disjoint-translate radius and nonvanishing Fourier transform. -/
+theorem exists_bump_fourier_lower {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : Bornology.IsBounded Ω) {δ : ℝ} (hδ : 0 < δ) :
+    ∃ r : ℝ, 0 < r ∧ 2 * r < δ ∧
+      ∃ b : SchwartzMap (Euclidean d) ℂ,
+        HasCompactSupport b ∧ ‖b.toLp 2 volume‖ = 1 ∧
+        (∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) ∧
+        (∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) ∧
+        ∃ c : ℝ, 0 < c ∧ ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖ := by
+  obtain ⟨R, hR, hbound⟩ := hΩ.exists_pos_norm_le
+  let A := 4 * Real.pi * R
+  let r := min (δ / 4) (1 / (4 * (A + 1)))
+  have hr : 0 < r := lt_min (by positivity) (by positivity)
+  have hrδ : 2 * r < δ := by
+    have h := min_le_left (δ / 4) (1 / (4 * (A + 1)))
+    change r ≤ δ / 4 at h
+    linarith
+  have hsmall : 4 * Real.pi * R * r ≤ 1 / 2 := by
+    have h := min_le_right (δ / 4) (1 / (4 * (A + 1)))
+    change r ≤ 1 / (4 * (A + 1)) at h
+    have ht := (le_div_iff₀ (show 0 < 4 * (A + 1) by positivity)).mp h
+    change A * r ≤ 1 / 2
+    nlinarith
+  obtain ⟨b, hs, hn, hp, hz, h0⟩ := exists_normalized_schwartz_bump (d := d) hr
+  refine ⟨r, hr, hrδ, b, hs, hn, hp, hz, (∫ ξ, (b ξ).re) / 2, ?_, ?_⟩
+  · exact half_pos (bump_integral_re_pos b (fun ξ => (hp ξ).2) h0)
+  · intro x hx
+    exact bump_fourier_lower_on_ball b hp hR.le hz hsmall (hbound x hx)
 end RieszEuclidean
 
 /- Source: RieszEuclidean/FourierExtension.lean -/
@@ -1390,6 +1615,98 @@ theorem fourierProjection_translation {d : ℕ} (Ω : Set (Euclidean d))
       (g.integrable.congr (g.coeFn_toLp 2 volume).symm)
 end RieszEuclidean
 
+/- Source: RieszEuclidean/BumpTranslates.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+/-- Separated centres force distinct small bump translates to have disjoint supports. -/
+theorem bump_translates_disjoint {d : ℕ} {δ r : ℝ} {Λ : Set (Euclidean d)}
+    (hΛ : Separated δ Λ) (hr : 2 * r < δ) (b : Euclidean d → ℂ)
+    (hs : ∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) {i j : Λ} (hij : i ≠ j) (x : Euclidean d) :
+    b (x - i) = 0 ∨ b (x - j) = 0 := by
+  by_contra! h
+  have hi : ‖x - i‖ < r := lt_of_not_ge (fun hn => h.1 (hs _ hn))
+  have hj : ‖x - j‖ < r := lt_of_not_ge (fun hn => h.2 (hs _ hn))
+  have hdist := hΛ i.property j.property (fun he => hij (Subtype.ext he))
+  have ht := dist_triangle (i : Euclidean d) x (j : Euclidean d)
+  rw [dist_comm (i : Euclidean d) x, dist_eq_norm x (i : Euclidean d),
+    dist_eq_norm x (j : Euclidean d)] at ht
+  linarith
+/-- The L² translate has the expected bump representative. -/
+theorem translated_bump_coe {d : ℕ} (b : SchwartzMap (Euclidean d) ℂ) (t : Euclidean d) :
+    (translationL2 (-t) (b.toLp 2 volume) : Euclidean d → ℂ) =ᵐ[volume]
+      fun x => b (x - t) := by
+  have hae := (measurePreserving_add_right volume (-t)).quasiMeasurePreserving.ae
+    (b.coeFn_toLp 2 volume)
+  exact (translationL2_coe (-t) (b.toLp 2 volume)).trans (by simpa only [sub_eq_add_neg] using hae)
+/-- Unit bumps around separated centres form an orthonormal family in actual Euclidean L². -/
+theorem translated_bumps_orthonormal {d : ℕ} {δ r : ℝ} {Λ : Set (Euclidean d)}
+    (hΛ : Separated δ Λ) (hr : 2 * r < δ) (b : SchwartzMap (Euclidean d) ℂ)
+    (hs : ∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) (hn : ‖b.toLp 2 volume‖ = 1) :
+    Orthonormal ℂ (fun i : Λ => translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) := by
+  refine ⟨fun i => by simpa only [LinearIsometry.norm_map] using hn, ?_⟩
+  intro i j hij
+  rw [L2.inner_def]
+  apply integral_eq_zero_of_ae
+  filter_upwards [translated_bump_coe b i, translated_bump_coe b j] with x hi hj
+  rw [hi, hj]
+  rcases bump_translates_disjoint hΛ hr b hs hij x with h | h <;> simp [h]
+end RieszEuclidean
+
+/- Source: RieszEuclidean/BumpSynthesis.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory
+namespace RieszEuclidean
+/-- An orthonormal family defines isometric synthesis of square-summable coefficients. -/
+def orthonormalSynthesis {ι H : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    [CompleteSpace H] {v : ι → H} (hv : Orthonormal ℂ v) : SeqL2 ι →ₗᵢ[ℂ] H :=
+  hv.orthogonalFamily.linearIsometry
+/-- Synthesis sends a coordinate vector to its designated family member. -/
+theorem orthonormalSynthesis_single {ι H : Type} [DecidableEq ι]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    {v : ι → H} (hv : Orthonormal ℂ v) (i : ι) :
+    orthonormalSynthesis hv (lp.single 2 i 1) = v i := by
+  simp [orthonormalSynthesis]
+/-- Concrete isometric synthesis for the separated translates of a normalized bump. -/
+def bumpSynthesis {d : ℕ} {δ r : ℝ} {Λ : Set (Euclidean d)}
+    (hΛ : Separated δ Λ) (hr : 2 * r < δ) (b : SchwartzMap (Euclidean d) ℂ)
+    (hs : ∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) (hn : ‖b.toLp 2 volume‖ = 1) :
+    SeqL2 Λ →ₗᵢ[ℂ] FullL2 d :=
+  orthonormalSynthesis (translated_bumps_orthonormal hΛ hr b hs hn)
+/-- Orthogonal projection onto the closed range of a linear isometry. -/
+def isometryRangeProjection {H K : Type} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    [CompleteSpace H] [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
+    (e : H →ₗᵢ[ℂ] K) : OrthProjection K where
+  op := e.toContinuousLinearMap.comp e.toContinuousLinearMap.adjoint
+  idempotent := by
+    have he := e.toContinuousLinearMap.norm_map_iff_adjoint_comp_self.mp e.norm_map
+    calc
+      _ = e.toContinuousLinearMap.comp
+          ((e.toContinuousLinearMap.adjoint.comp e.toContinuousLinearMap).comp
+            e.toContinuousLinearMap.adjoint) := by rw [ContinuousLinearMap.comp_assoc, ContinuousLinearMap.comp_assoc]
+      _ = _ := by rw [he]; rfl
+  symmetric x y := by
+    change inner (𝕜 := ℂ) (e.toContinuousLinearMap (e.toContinuousLinearMap.adjoint x)) y =
+      inner (𝕜 := ℂ) x (e.toContinuousLinearMap (e.toContinuousLinearMap.adjoint y))
+    rw [← ContinuousLinearMap.adjoint_inner_right, ContinuousLinearMap.adjoint_inner_left]
+/-- The constructed projection has exactly the synthesis range. -/
+theorem isometryRangeProjection_range {H K : Type} [NormedAddCommGroup H]
+    [InnerProductSpace ℂ H] [CompleteSpace H] [NormedAddCommGroup K]
+    [InnerProductSpace ℂ K] [CompleteSpace K] (e : H →ₗᵢ[ℂ] K) :
+    (isometryRangeProjection e).range = LinearMap.range e.toLinearMap := by
+  have he := e.toContinuousLinearMap.norm_map_iff_adjoint_comp_self.mp e.norm_map
+  ext x
+  constructor
+  · rintro ⟨y, rfl⟩
+    exact ⟨e.toContinuousLinearMap.adjoint y, rfl⟩
+  · rintro ⟨y, rfl⟩
+    refine ⟨e y, ?_⟩
+    change e (e.toContinuousLinearMap.adjoint (e y)) = e y
+    have hy := DFunLike.congr_fun he y
+    exact congrArg e hy
+end RieszEuclidean
+
 /- Source: RieszEuclidean/MovingComparison.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 /-!
@@ -1449,124 +1766,6 @@ theorem moving_comparison_obstruction [CompleteSpace H]
         hplus hMplus hgapplus).trans_lt hγ⟩
 
 end RieszEuclidean.OrthProjection
-
-/- Source: RieszEuclidean/Separation.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-/-! Uniform separation of the frequencies of an exponential Riesz basis. -/
-
-noncomputable section
-open MeasureTheory
-namespace RieszEuclidean
-/-- Invertible synthesis uniformly separates distinct coordinate columns. -/
-theorem synthesis_columns_separated {ι H : Type} [DecidableEq ι] [NormedAddCommGroup H] [NormedSpace ℂ H]
-    (S : SeqL2 ι ≃L[ℂ] H) :
-    ∃ c : ℝ, 0 < c ∧ ∀ i j : ι, i ≠ j →
-      c ≤ ‖S (lp.single 2 i 1) - S (lp.single 2 j 1)‖ := by
-  classical
-  let K := ‖S.symm.toContinuousLinearMap‖ + 1
-  have hK : 0 < K := by dsimp [K]; positivity
-  refine ⟨1 / K, one_div_pos.mpr hK, ?_⟩
-  intro i j hij
-  have hc : 1 ≤ ‖lp.single (E := fun _ : ι => ℂ) 2 i 1 - lp.single 2 j 1‖ := by
-    have h := lp.norm_apply_le_norm (by norm_num : (2 : ENNReal) ≠ 0)
-      (lp.single (E := fun _ : ι => ℂ) 2 i 1 - lp.single 2 j 1) i
-    simpa [lp.single_apply, hij, hij.symm] using h
-  have hb := S.symm.toContinuousLinearMap.le_opNorm
-    (S (lp.single 2 i 1) - S (lp.single 2 j 1))
-  have heq : S.symm (S (lp.single 2 i 1) - S (lp.single 2 j 1)) =
-      lp.single 2 i 1 - lp.single 2 j 1 := by simp
-  change ‖S.symm (S (lp.single 2 i 1) - S (lp.single 2 j 1))‖ ≤ _ at hb
-  rw [heq] at hb
-  apply (div_le_iff₀ hK).mpr
-  have hnonneg := norm_nonneg (S (lp.single 2 i 1) - S (lp.single 2 j 1))
-  dsimp [K]
-  nlinarith
-/-- A real phase difference has the same norm after multiplication by i. -/
-theorem imaginary_phase_sub_norm (a b : ℝ) :
-    ‖(a : ℂ) * Complex.I - (b : ℂ) * Complex.I‖ = |a - b| := by
-  rw [← sub_mul, norm_mul, Complex.norm_I, mul_one, ← Complex.ofReal_sub]
-  exact Complex.norm_real (a - b)
-/-- A uniform local estimate for complex exponentials of real phases. -/
-theorem phase_exp_sub_le {a b : ℝ} (h : |a - b| < 1) :
-    ‖Complex.exp ((a : ℂ) * Complex.I) - Complex.exp ((b : ℂ) * Complex.I)‖ ≤
-      2 * |a - b| := by
-  have hb : ‖Complex.exp ((b : ℂ) * Complex.I)‖ = 1 := by simp [Complex.norm_exp]
-  have hd : ‖(a : ℂ) * Complex.I - (b : ℂ) * Complex.I‖ < 1 := by
-    rwa [imaginary_phase_sub_norm]
-  have he := Complex.locally_lipschitz_exp (r := 1) zero_le_one le_rfl
-    ((b : ℂ) * Complex.I) ((a : ℂ) * Complex.I) hd
-  simpa only [hb, imaginary_phase_sub_norm, one_add_one_eq_two, mul_one] using he
-/-- Rewrite the paper's exponential as the exponential of a real phase times i. -/
-theorem exponential_eq_phase {d : ℕ} (ξ x : Euclidean d) :
-    exponential ξ x = Complex.exp ((2 * Real.pi * inner (𝕜 := ℝ) ξ x : ℝ) * Complex.I) := by
-  unfold exponential
-  congr 1
-  push_cast
-  ring
-/-- Quantitative uniform continuity of exponential columns on a bounded domain. -/
-theorem exponential_sub_le_on_ball {d : ℕ} (ξ η x : Euclidean d) {R : ℝ}
-    (hx : ‖x‖ ≤ R) (hsmall : 2 * Real.pi * ‖ξ - η‖ * R < 1) :
-    ‖exponential ξ x - exponential η x‖ ≤ 4 * Real.pi * R * ‖ξ - η‖ := by
-  have hphase : |2 * Real.pi * inner (𝕜 := ℝ) ξ x - 2 * Real.pi * inner (𝕜 := ℝ) η x| ≤
-      2 * Real.pi * ‖ξ - η‖ * R := by
-    calc
-      _ = 2 * Real.pi * |inner (𝕜 := ℝ) (ξ - η) x| := by
-        rw [← mul_sub, ← inner_sub_left, abs_mul, abs_of_nonneg (by positivity : 0 ≤ 2 * Real.pi)]
-      _ ≤ 2 * Real.pi * (‖ξ - η‖ * ‖x‖) :=
-        mul_le_mul_of_nonneg_left (abs_real_inner_le_norm _ _) (by positivity)
-      _ ≤ 2 * Real.pi * ‖ξ - η‖ * R := by
-        rw [← mul_assoc]
-        exact mul_le_mul_of_nonneg_left hx (by positivity)
-  rw [exponential_eq_phase, exponential_eq_phase]
-  calc
-    _ ≤ 2 * |2 * Real.pi * inner (𝕜 := ℝ) ξ x - 2 * Real.pi * inner (𝕜 := ℝ) η x| :=
-      phase_exp_sub_le (hphase.trans_lt hsmall)
-    _ ≤ 2 * (2 * Real.pi * ‖ξ - η‖ * R) := mul_le_mul_of_nonneg_left hphase (by norm_num)
-    _ = _ := by ring
-/-- Every exponential Riesz basis on a bounded measurable domain has separated frequencies. -/
-theorem riesz_frequencies_separated {d : ℕ} {Ω Λ : Set (Euclidean d)}
-    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω)
-    (hB : HasExponentialRieszBasis Ω Λ) : ∃ δ : ℝ, 0 < δ ∧ Separated δ Λ := by
-  classical
-  obtain ⟨S, hS⟩ := hB
-  obtain ⟨c, hc, hcols⟩ := synthesis_columns_separated S
-  obtain ⟨R, hR, hbound⟩ := hb.exists_pos_norm_le
-  haveI : IsFiniteMeasure (volume.restrict Ω) := ⟨by simpa using hb.measure_lt_top (μ := volume)⟩
-  let M : ℝ := (measureUnivNNReal (volume.restrict Ω) : ℝ) ^ (2 : ENNReal).toReal⁻¹
-  let K : ℝ := M * (4 * Real.pi * R)
-  have hK : 0 ≤ K := by dsimp [K]; positivity
-  let A : ℝ := 2 * Real.pi * R
-  have hA : 0 ≤ A := by dsimp [A]; positivity
-  let δ := min (1 / (A + 1)) (c / (K + 1))
-  have hδ : 0 < δ := lt_min (one_div_pos.mpr (by linarith)) (div_pos hc (by linarith))
-  refine ⟨δ, hδ, ?_⟩
-  intro ξ hξ η hη hne
-  by_contra! hdist
-  have hdist' : ‖ξ - η‖ < δ := by simpa only [dist_eq_norm] using hdist
-  have hn := norm_nonneg (ξ - η)
-  have hsmall : 2 * Real.pi * ‖ξ - η‖ * R < 1 := by
-    have h := (lt_div_iff₀ (show 0 < A + 1 by linarith)).mp
-      (hdist'.trans_le (min_le_left _ _))
-    dsimp [A] at h
-    nlinarith
-  let i : Λ := ⟨ξ, hξ⟩
-  let j : Λ := ⟨η, hη⟩
-  have hij : i ≠ j := fun h => hne (congrArg Subtype.val h)
-  have hlower := hcols i j hij
-  have hae : ∀ᵐ x ∂volume.restrict Ω,
-      ‖((S (lp.single 2 i 1) - S (lp.single 2 j 1) : DomainL2 Ω) : Euclidean d → ℂ) x‖ ≤
-        4 * Real.pi * R * ‖ξ - η‖ := by
-    filter_upwards [Lp.coeFn_sub (S (lp.single 2 i 1)) (S (lp.single 2 j 1)),
-      hS i, hS j, ae_restrict_mem hΩ] with x hsub hi hj hx
-    simp only [hsub, Pi.sub_apply, hi, hj]
-    exact exponential_sub_le_on_ball ξ η x (hbound x hx) hsmall
-  have hupper := Lp.norm_le_of_ae_bound (by positivity : 0 ≤ 4 * Real.pi * R * ‖ξ - η‖) hae
-  change ‖S (lp.single 2 i 1) - S (lp.single 2 j 1)‖ ≤ M * (4 * Real.pi * R * ‖ξ - η‖) at hupper
-  have h := (lt_div_iff₀ (show 0 < K + 1 by linarith)).mp
-    (hdist'.trans_le (min_le_right _ _))
-  dsimp [K] at h
-  nlinarith
-end RieszEuclidean
 
 /- Source: RieszEuclidean/WeakLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})

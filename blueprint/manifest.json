@@ -165,11 +165,29 @@
         "RieszEuclidean.riesz_frequencies_separated",
         "RieszEuclidean.exists_schwartz_bump",
         "RieszEuclidean.bump_toLp_ne_zero",
-        "RieszEuclidean.exists_normalized_schwartz_bump"
+        "RieszEuclidean.exists_normalized_schwartz_bump",
+        "RieszEuclidean.inverseFourier_exponential",
+        "RieszEuclidean.bump_norm_eq_re",
+        "RieszEuclidean.bump_fourier_near_mass",
+        "RieszEuclidean.bump_fourier_lower",
+        "RieszEuclidean.bump_fourier_lower_on_ball",
+        "RieszEuclidean.bump_integral_re_pos",
+        "RieszEuclidean.exists_bump_fourier_lower",
+        "RieszEuclidean.bump_translates_disjoint",
+        "RieszEuclidean.translated_bump_coe",
+        "RieszEuclidean.translated_bumps_orthonormal",
+        "RieszEuclidean.orthonormalSynthesis",
+        "RieszEuclidean.orthonormalSynthesis_single",
+        "RieszEuclidean.bumpSynthesis",
+        "RieszEuclidean.isometryRangeProjection",
+        "RieszEuclidean.isometryRangeProjection_range"
       ],
-      "progress": "Frequency separation and normalized nonnegative smooth compact bumps are proved. The Fourier lower bound, translated orthonormal family and initial projection gap remain pending.",
+      "progress": "Frequency separation, normalized bumps, radius selection, uniform Fourier lower bound, orthonormal translates, isometric synthesis and its range projection are proved. The synthesis-to-Fourier-projection isomorphism and initial gap remain pending.",
       "partial_files": [
-        "RieszEuclidean/Bumps.lean"
+        "RieszEuclidean/Bumps.lean",
+        "RieszEuclidean/BumpFourier.lean",
+        "RieszEuclidean/BumpTranslates.lean",
+        "RieszEuclidean/BumpSynthesis.lean"
       ]
     },
     {
@@ -466,6 +484,9 @@
     "RieszEuclidean/FourierKernel.lean": "982155c2bace338ec8ca28009f28abfb58ab68d659bc48e1dc0ff89f7d6b978e",
     "RieszEuclidean/FourierTranslations.lean": "3d208c81d9a46fd13df0485736675190f6a917185361239969395733337b112c",
     "RieszEuclidean/Separation.lean": "94ed43c38cfeb481b1a529d4b5a89d3fd26a6fea1cb2263b0182b65b7002ea8f",
-    "RieszEuclidean/Bumps.lean": "b8d43bec27cf438b44819c05ccc95544131db1c02deef30c9d79b2169cfa0159"
+    "RieszEuclidean/Bumps.lean": "b8d43bec27cf438b44819c05ccc95544131db1c02deef30c9d79b2169cfa0159",
+    "RieszEuclidean/BumpFourier.lean": "ac7c19daa5f750404c410db8d231e0ccd8ffdf2cd7936998a7938be92df00f0e",
+    "RieszEuclidean/BumpTranslates.lean": "e07fd60b7ac6f4f483da786fbad422f88932660685fc670e5356b1dd99a2f8cd",
+    "RieszEuclidean/BumpSynthesis.lean": "ad4975c8b11ee0434afda5414e52528f9e1881c78d4b887c4ba746b1d9528b52"
   }
 }

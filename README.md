@@ -13,8 +13,9 @@ averaging of scalar inner products, and a norm-continuous comparison projection.
 It does not replace this route with the earlier lattice proof.
 
 Frequency separation and normalized nonnegative smooth compact bumps are now proved.
-The Fourier lower bound for these bumps, the translated orthonormal family and
-the initial projection gap remain pending.
+Radius selection, the positive uniform Fourier lower bound and the translated
+orthonormal family are also proved, together with isometric synthesis and the
+projection onto its range. The initial projection gap remains pending.
 
 ## Build from a standalone clone
 
