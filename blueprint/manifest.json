@@ -236,7 +236,7 @@
     },
     {
       "id": "hull-compactness",
-      "status": "pending",
+      "status": "proved",
       "dependencies": [
         "weak-preliminaries"
       ],
@@ -244,8 +244,60 @@
         "lem:hull"
       ],
       "scope": "Compact metrizable configuration space with jointly continuous real translations",
-      "file": null,
-      "declarations": []
+      "file": "RieszEuclidean/ConfigurationTopology.lean",
+      "declarations": [
+        "RieszEuclidean.Separated.finite_inter_compact",
+        "RieszEuclidean.Separated.countable",
+        "RieszEuclidean.Separated.isClosed",
+        "RieszEuclidean.compact_uniform_separated_count",
+        "RieszEuclidean.WeaklyConverges.moving_translate",
+        "RieszEuclidean.configurationMeasure",
+        "RieszEuclidean.configurationMeasure_apply",
+        "RieszEuclidean.configurationMeasure_compact_lt_top",
+        "RieszEuclidean.configurationMeasure_finiteOnCompacts",
+        "RieszEuclidean.configurationMeasure_eq_encard",
+        "RieszEuclidean.configurationMeasure_eq_ncard",
+        "RieszEuclidean.configurationMeasure_uniform_compact_bound",
+        "RieszEuclidean.compactRestriction",
+        "RieszEuclidean.compactRestriction_subsequence",
+        "RieszEuclidean.compactRestrictions_diagonal",
+        "RieszEuclidean.WeaklyConverges.mem_of_tendsto",
+        "RieszEuclidean.hausdorff_eventually_matching",
+        "RieszEuclidean.hausdorff_mem_of_tendsto",
+        "RieszEuclidean.hausdorff_separated",
+        "RieszEuclidean.compactRestriction_limit_mono",
+        "RieszEuclidean.compactRestriction_limit_interior",
+        "RieszEuclidean.windowLimitSet",
+        "RieszEuclidean.weaklyConverges_of_window_limits",
+        "RieszEuclidean.separated_weak_subsequence",
+        "RieszEuclidean.WeaklyConverges.tendsto_infEdist",
+        "RieszEuclidean.SeparatedConfiguration",
+        "RieszEuclidean.SeparatedConfiguration.ext",
+        "RieszEuclidean.SeparatedConfiguration.profile",
+        "RieszEuclidean.SeparatedConfiguration.profile_injective",
+        "RieszEuclidean.SeparatedConfiguration.profile_isEmbedding",
+        "RieszEuclidean.SeparatedConfiguration.tendsto_of_weaklyConverges",
+        "RieszEuclidean.SeparatedConfiguration.seqCompactSpace",
+        "RieszEuclidean.SeparatedConfiguration.compactSpace",
+        "RieszEuclidean.SeparatedConfiguration.weaklyConverges_of_tendsto",
+        "RieszEuclidean.SeparatedConfiguration.translate",
+        "RieszEuclidean.SeparatedConfiguration.continuous_translate",
+        "RieszEuclidean.SeparatedConfiguration.tendsto_iff_weaklyConverges",
+        "RieszEuclidean.SeparatedConfiguration.translate_zero",
+        "RieszEuclidean.SeparatedConfiguration.translate_add"
+      ],
+      "progress": "A compact metrizable space of closed separated configurations, including the empty set, is constructed. Its sequential convergence is equivalent to the exact Beurling local matching definition, and real translations act jointly continuously. Sequential extraction uses compatible Hausdorff limits on compact Euclidean windows; metrizability uses extended-distance probes on a countable dense set. This replaces the counting-measure extraction proof of the same hull lemma; equivalence with vague convergence is not claimed by this node.",
+      "supporting_files": [
+        "RieszEuclidean/SeparatedConfigurations.lean",
+        "RieszEuclidean/MovingTranslations.lean",
+        "RieszEuclidean/ConfigurationMeasure.lean",
+        "RieszEuclidean/LocalExtraction.lean",
+        "RieszEuclidean/WeakPointLimits.lean",
+        "RieszEuclidean/HausdorffMatching.lean",
+        "RieszEuclidean/WindowCompatibility.lean",
+        "RieszEuclidean/WindowWeakLimit.lean",
+        "RieszEuclidean/DistanceProfile.lean"
+      ]
     },
     {
       "id": "bump-strong-limits",
@@ -270,7 +322,7 @@
       "source_labels": [
         "eq:U"
       ],
-      "scope": "Invariant probability measure from continuous boxes; strongly continuous Koopman action",
+      "scope": "Equivalence with vague counting-measure convergence; invariant probability measure from continuous boxes; strongly continuous Koopman action",
       "file": null,
       "declarations": []
     },
@@ -540,6 +592,16 @@
     "RieszEuclidean/DomainExtension.lean": "3deefd2e6caee23508d9b420c16b75e531cf81a5573bac8fe3100693b0854300",
     "RieszEuclidean/FourierRange.lean": "08d020e28f05c87f6ff973573131949378c42c1bc45014c7786f449d2bd73899",
     "RieszEuclidean/RangeIso.lean": "bfcac709a843ba2360fc91f7d64d52fa41c6a445d65c01854655ffa76f0bda15",
-    "RieszEuclidean/InitialGap.lean": "bdf60edbf37170b363a7776afd195dda454f613316393a5c9b0d99a238360b87"
+    "RieszEuclidean/InitialGap.lean": "bdf60edbf37170b363a7776afd195dda454f613316393a5c9b0d99a238360b87",
+    "RieszEuclidean/SeparatedConfigurations.lean": "71dcd01c05fa8e1f3ec6bbada271a46522aaf72d4fbd4914f51e7deaecc6bf76",
+    "RieszEuclidean/MovingTranslations.lean": "cf50d58897c2c071b45014600d6c1dd2b6b8c6c4efe21d3c4048ffa62b347c8c",
+    "RieszEuclidean/ConfigurationMeasure.lean": "98eb35f60560208c7d99494bb6b0f6bb0629ecd3a718e679d024e06e9ad501ea",
+    "RieszEuclidean/LocalExtraction.lean": "fe6b186fc3b531565916b05eb7d73417d2b540bf056ad4a119cfa8168ef462a1",
+    "RieszEuclidean/WeakPointLimits.lean": "487dfa943d654798fbc4d979c134f569a70e9d0a4d92225d806659e37719d935",
+    "RieszEuclidean/HausdorffMatching.lean": "a0bc8e0e97df049de0e93f455b9f001697c0b31142e6844f992e84451ad36791",
+    "RieszEuclidean/WindowCompatibility.lean": "f89303a522774658d63472501d8c01c5093cfb9642c85c09f4148c32c9fcbb81",
+    "RieszEuclidean/WindowWeakLimit.lean": "ba96050e0b58c705b547abcb2942a6cbeb7c9ce6d06187b02cfa0db2c94a7997",
+    "RieszEuclidean/DistanceProfile.lean": "ba9e9472672e9e01fa72933f3c428578ed948299126e60c94fb8f4405cccfc4f",
+    "RieszEuclidean/ConfigurationTopology.lean": "a771694d54c81a8eaf16513004cbbeb51b2b7fe9054c439609d6bc03da175df6"
   }
 }

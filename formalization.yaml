@@ -33,7 +33,10 @@ status:
 fidelity:
   divergences: No alternate lattice proof is substituted for the Euclidean proof. The basis predicate
     uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)). Mathlib conjugates the first inner-product
-    argument. The complete source scope, including all geometric extensions, remains the objective.
+    argument. Hull compactness uses Hausdorff limits on compact Euclidean windows and countable
+    extended-distance probes instead of counting-measure extraction. The lemma and its exact
+    Beurling convergence topology are preserved; vague-convergence equivalence remains pending.
+    The complete source scope, including all geometric extensions, remains the objective.
 alignment:
   namespace: RieszEuclidean
   complete_mapping: blueprint/manifest.json
@@ -51,10 +54,11 @@ alignment:
     status: pending full analytic and geometric construction
 review:
   status: in-progress
-  notes: All 15 default environment linters pass with no suppressed warnings. The 12 audited implemented
-    theorem reports use only standard Lean axioms. Independent GitHub builds of the scaffold and affine
-    modules passed. The full-paper completion gate remains intentionally failing while 20 obligations
-    are pending. Comparator results for the final geometric main theorems are not yet available.
+  notes: All 15 default environment linters pass without suppression for the implemented modular
+    project. The hull lemma is proved, with 8 of 25 blueprint nodes proved and 17 pending.
+    The expanded 160-declaration transitive axiom audit uses only standard Lean axioms. The official Comparator verified ten supporting results, including the compact metrizable
+    configuration space and its jointly continuous real action.
+    Final geometric nonexistence theorems remain unproved.
 classification:
   msc2020:
   - 42C15
@@ -91,7 +95,7 @@ techniques:
   - RieszEuclidean/ProjectionGap.lean
   - RieszEuclidean/MovingComparison.lean
 - name: Beurling local matching
-  status: elementary lemmas proved; compact hull pending
+  status: compact metrizable configuration space and continuous real action proved
   description: Weak convergence is defined by two-sided matching on every bounded ball. The proof uses
     metric triangle inequalities to retain the original separation constant. Real translation invariance
     is proved without identifying sets with lattice patterns.
@@ -153,11 +157,27 @@ techniques:
   - RieszEuclidean/RangeIso.lean
   - RieszEuclidean/InitialGap.lean
 - name: Stationary compact hull and scalar Bochner measures
-  status: planned; not yet formalized
-  description: Prove compactness of the separated-set hull, continuity of the real action and an invariant
+  status: compact metrizable configuration space proved; stationary and spectral measures pending
+  description: Simultaneous Hausdorff subsequence extraction on integer-radius compact windows
+    is proved, together with inclusion and interior compatibility of the window limits.
+    Hausdorff convergence preserves separation and gives uniform two-sided point matching.
+    The window limits assemble into a Beurling weak limit, proving subsequence extraction
+    for every uniformly separated sequence while preserving its separation constant.
+    Extended distances at a countable dense set induce a metrizable topology; its convergence
+    is equivalent to Beurling local matching. Sequential compactness yields compactness, and
+    moving-translation convergence yields joint continuity of the real action.
+    Closedness, countability, finiteness in compact regions and uniform counting bounds
+    are proved for separated configurations. The configuration counting measure is finite on
+    compact sets. Local matching is preserved under convergent translation vectors.
+    Equivalence with vague counting-measure convergence remains pending. Construct an invariant
     probability measure from continuous box averages. Construct finite spectral measures on ℝⁿ from continuous
     positive-definite correlations, their common control measure and the Dirac spectrum of the invariant
     constant.
+  files:
+  - RieszEuclidean/WindowWeakLimit.lean
+  - RieszEuclidean/DistanceProfile.lean
+  - RieszEuclidean/ConfigurationTopology.lean
+  - RieszEuclidean/ConfigurationMeasure.lean
 - name: Continuous cutoffs, kernels and averaged forms
   status: planned; not yet formalized
   description: Continuous Fejér kernels and dominated convergence give cutoff projections. A compactly
@@ -170,13 +190,13 @@ techniques:
     the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
     triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
 comparator:
-  status: nine supporting results verified; full-paper main theorems pending
+  status: ten supporting results verified; full-paper main theorems pending
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-initial-gap-aligned.txt
-  input_hashes: reviews/comparator-initial-gap-hashes.json
-  verified_scope: Nine supporting results, including the initial Fourier construction and existence of normalized bumps with the initial projection gap; no geometric nonexistence theorem.
+  verification_log: reviews/comparator-hull-compactness.txt
+  input_hashes: reviews/comparator-hull-compactness-hashes.json
+  verified_scope: Ten supporting results, including the initial Fourier construction, normalized bumps with the initial projection gap, and the compact metrizable configuration space with exact Beurling convergence and jointly continuous translations; no geometric nonexistence theorem.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice

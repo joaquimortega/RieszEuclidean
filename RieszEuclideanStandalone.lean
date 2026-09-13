@@ -12,10 +12,12 @@ import Mathlib.Analysis.NormedSpace.OperatorNorm.Completeness
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Analysis.SpecificLimits.Normed
+import Mathlib.Data.Set.Card
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.MeasureTheory.Function.ContinuousMapDense
 import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 import Mathlib.MeasureTheory.Function.L2Space
+import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 import Mathlib.Tactic.Abel
@@ -23,7 +25,13 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Topology.Algebra.Group.Pointwise
 import Mathlib.Topology.EMetricSpace.Paracompact
+import Mathlib.Topology.MetricSpace.Bounded
+import Mathlib.Topology.MetricSpace.Closeds
+import Mathlib.Topology.Metrizable.Basic
 import Mathlib.Topology.Metrizable.CompletelyMetrizable
+import Mathlib.Topology.Metrizable.Real
+import Mathlib.Topology.Metrizable.Urysohn
+import Mathlib.Topology.Sequences
 
 /-!
 # Standalone Euclidean formalization: implemented components
@@ -1959,6 +1967,643 @@ theorem bump_synthesis_identity {d : ℕ} {Ω Λ : Set (Euclidean d)}
   exact bump_synthesis_coordinate hΩ b V hV S hS hc hl i
 end RieszEuclidean
 
+/- Source: RieszEuclidean/WeakLimits.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+/-! Elementary facts about Beurling weak limits. Hull compactness and the
+invariant probability measure remain separate blueprint obligations. -/
+noncomputable section
+namespace RieszEuclidean
+
+variable {d : ℕ}
+
+theorem Separated.translate {δ : ℝ} {Γ : Set (Euclidean d)}
+    (h : Separated δ Γ) (z : Euclidean d) : Separated δ (translate z Γ) := by
+  intro x hx y hy hxy
+  have hne : x + z ≠ y + z := fun heq => hxy (add_right_cancel heq)
+  simpa only [dist_add_right] using h hx hy hne
+
+/-- Constant sequences converge in the actual local matching definition. -/
+theorem weaklyConverges_const (Γ : Set (Euclidean d)) :
+    WeaklyConverges (fun _ => Γ) Γ := by
+  intro R hR ε hε
+  refine ⟨0, fun j hj => ⟨?_, ?_⟩⟩
+  · intro x hx _
+    exact ⟨x, hx, by simpa using hε⟩
+  · intro x hx _
+    exact ⟨x, hx, by simpa using hε⟩
+
+/-- Fixed translations preserve Beurling weak convergence. -/
+theorem WeaklyConverges.translate {Γ : ℕ → Set (Euclidean d)}
+    {Γ₀ : Set (Euclidean d)} (h : WeaklyConverges Γ Γ₀) (z : Euclidean d) :
+    WeaklyConverges (fun j => translate z (Γ j)) (translate z Γ₀) := by
+  intro R hR ε hε
+  obtain ⟨N, hN⟩ := h (R + ‖z‖) (by positivity) ε hε
+  refine ⟨N, fun j hj => ⟨?_, ?_⟩⟩
+  · intro x hx hxR
+    have hxz : ‖x + z‖ < R + ‖z‖ := (norm_add_le x z).trans_lt (by linarith)
+    obtain ⟨y, hy, hxy⟩ := (hN j hj).1 (x + z) hx hxz
+    refine ⟨y - z, ?_, ?_⟩
+    · simpa [translate] using hy
+    · simpa only [dist_eq_norm, show x - (y - z) = x + z - y by abel] using hxy
+  · intro y hy hyR
+    have hyz : ‖y + z‖ < R + ‖z‖ := (norm_add_le y z).trans_lt (by linarith)
+    obtain ⟨x, hx, hxy⟩ := (hN j hj).2 (y + z) hy hyz
+    refine ⟨x - z, ?_, ?_⟩
+    · simpa [translate] using hx
+    · simpa only [dist_eq_norm, show x - z - y = x - (y + z) by abel] using hxy
+
+/-- The common separation constant is retained by a weak limit. -/
+theorem WeaklyConverges.separated {δ : ℝ} {Γ : ℕ → Set (Euclidean d)}
+    {Γ₀ : Set (Euclidean d)} (h : WeaklyConverges Γ Γ₀)
+    (hsep : ∀ j, Separated δ (Γ j)) : Separated δ Γ₀ := by
+  intro x hx y hy hxy
+  by_contra hbad
+  have hdist : 0 < dist x y := dist_pos.mpr hxy
+  let ε : ℝ := min (dist x y / 4) ((δ - dist x y) / 4)
+  have hε : 0 < ε := lt_min (by positivity) (by linarith)
+  have hε₁ : ε ≤ dist x y / 4 := min_le_left _ _
+  have hε₂ : ε ≤ (δ - dist x y) / 4 := min_le_right _ _
+  let R : ℝ := max ‖x‖ ‖y‖ + 1
+  have hR : 0 < R := by dsimp [R]; linarith [le_max_left ‖x‖ ‖y‖, norm_nonneg x]
+  have hxR : ‖x‖ < R := by dsimp [R]; linarith [le_max_left ‖x‖ ‖y‖]
+  have hyR : ‖y‖ < R := by dsimp [R]; linarith [le_max_right ‖x‖ ‖y‖]
+  obtain ⟨N, hN⟩ := h R hR ε hε
+  obtain ⟨a, ha, hax⟩ := (hN N le_rfl).2 x hx hxR
+  obtain ⟨b, hb, hby⟩ := (hN N le_rfl).2 y hy hyR
+  have hab : a ≠ b := by
+    intro heq
+    subst b
+    have ht := dist_triangle x a y
+    rw [dist_comm x a] at ht
+    linarith
+  have hs := hsep N ha hb hab
+  have ht₁ := dist_triangle a x b
+  have ht₂ := dist_triangle x y b
+  rw [dist_comm y b] at ht₂
+  linarith
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/SeparatedConfigurations.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Set Metric
+namespace RieszEuclidean
+/-- Uniformly separated configurations have finitely many points in each compact region. -/
+theorem Separated.finite_inter_compact {d : ℕ} {δ : ℝ} {Γ K : Set (Euclidean d)}
+    (h : Separated δ Γ) (hδ : 0 < δ) (hK : IsCompact K) : (Γ ∩ K).Finite := by
+  classical
+  obtain ⟨t, ht, hcover⟩ := Metric.totallyBounded_iff.mp hK.totallyBounded (δ / 3) (by positivity)
+  have hc : ∀ x : ↥(Γ ∩ K), ∃ y : t, dist (x : Euclidean d) y < δ / 3 := by
+    intro x
+    obtain ⟨y, hy, hxy⟩ := Set.mem_iUnion₂.mp (hcover x.property.2)
+    exact ⟨⟨y, hy⟩, hxy⟩
+  choose f hf using hc
+  have hinj : Function.Injective f := by
+    intro x y hxy
+    by_contra hne
+    have hne' : (x : Euclidean d) ≠ y := fun he => hne (Subtype.ext he)
+    have hs := h x.property.1 y.property.1 hne'
+    have h1 := hf x
+    have h2 := hf y
+    rw [hxy] at h1
+    have htri := dist_triangle (x : Euclidean d) (f y) (y : Euclidean d)
+    rw [dist_comm (f y : Euclidean d) (y : Euclidean d)] at htri
+    linarith
+  letI := ht.fintype
+  haveI : Finite ↥(Γ ∩ K) := Finite.of_injective f hinj
+  exact Set.toFinite _
+/-- A uniformly separated Euclidean configuration is countable. -/
+theorem Separated.countable {d : ℕ} {δ : ℝ} {Γ : Set (Euclidean d)}
+    (h : Separated δ Γ) (hδ : 0 < δ) : Γ.Countable := by
+  have hc : (⋃ n : ℕ, Γ ∩ Metric.closedBall 0 (n : ℝ)).Countable :=
+    Set.countable_iUnion (fun n => (h.finite_inter_compact hδ (isCompact_closedBall 0 (n : ℝ))).countable)
+  apply hc.mono
+  intro x hx
+  obtain ⟨n, hn⟩ := exists_nat_ge ‖x‖
+  exact Set.mem_iUnion.mpr ⟨n, hx, by simpa using hn⟩
+/-- A configuration with a positive uniform separation constant is closed. -/
+theorem Separated.isClosed {d : ℕ} {δ : ℝ} {Γ : Set (Euclidean d)}
+    (h : Separated δ Γ) (hδ : 0 < δ) : IsClosed Γ := by
+  apply isClosed_of_closure_subset
+  intro x hx
+  obtain ⟨y, hy, hxy⟩ := Metric.mem_closure_iff.mp hx (δ / 3) (by positivity)
+  by_cases he : x = y
+  · simpa only [he] using hy
+  have hd : 0 < dist x y := dist_pos.mpr he
+  obtain ⟨z, hz, hxz⟩ := Metric.mem_closure_iff.mp hx
+    (min (dist x y / 2) (δ / 3)) (by positivity)
+  have hz1 : dist x z < dist x y / 2 := hxz.trans_le (min_le_left _ _)
+  have hne : y ≠ z := by
+    intro heq
+    rw [← heq] at hz1
+    linarith
+  have hs := h hy hz hne
+  have ht := dist_triangle y x z
+  rw [dist_comm y x] at ht
+  linarith
+/-- Separation gives one compact-region counting bound uniform over all configurations. -/
+theorem compact_uniform_separated_count {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    {K : Set (Euclidean d)} (hK : IsCompact K) :
+    ∃ N : ℕ, ∀ Γ : Set (Euclidean d), Separated δ Γ → (Γ ∩ K).ncard ≤ N := by
+  classical
+  obtain ⟨t, ht, hcover⟩ := Metric.totallyBounded_iff.mp hK.totallyBounded (δ / 3) (by positivity)
+  refine ⟨t.ncard, ?_⟩
+  intro Γ h
+  have hc : ∀ x : ↥(Γ ∩ K), ∃ y : t, dist (x : Euclidean d) y < δ / 3 := by
+    intro x
+    obtain ⟨y, hy, hxy⟩ := Set.mem_iUnion₂.mp (hcover x.property.2)
+    exact ⟨⟨y, hy⟩, hxy⟩
+  choose f hf using hc
+  have hinj : Function.Injective f := by
+    intro x y hxy
+    by_contra hne
+    have hne' : (x : Euclidean d) ≠ y := fun he => hne (Subtype.ext he)
+    have hs := h x.property.1 y.property.1 hne'
+    have h1 := hf x
+    have h2 := hf y
+    rw [hxy] at h1
+    have htri := dist_triangle (x : Euclidean d) (f y) (y : Euclidean d)
+    rw [dist_comm (f y : Euclidean d) (y : Euclidean d)] at htri
+    linarith
+  letI := ht.fintype
+  haveI : Finite ↥(Γ ∩ K) := Finite.of_injective f hinj
+  simpa only [Nat.card_coe_set_eq] using Nat.card_le_card_of_injective f hinj
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConfigurationMeasure.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+namespace RieszEuclidean
+open MeasureTheory
+/-- The counting measure of a Euclidean configuration, with one unit mass per point. -/
+noncomputable def configurationMeasure {d : ℕ} (Γ : Set (Euclidean d)) : Measure (Euclidean d) :=
+  Measure.map (fun x : Γ => (x : Euclidean d)) Measure.count
+/-- Counting a measurable region counts exactly its configuration preimage. -/
+theorem configurationMeasure_apply {d : ℕ} (Γ : Set (Euclidean d))
+    {K : Set (Euclidean d)} (hK : MeasurableSet K) :
+    configurationMeasure Γ K = Measure.count {x : Γ | (x : Euclidean d) ∈ K} := by
+  exact Measure.map_apply measurable_subtype_coe hK
+/-- The counting measure of a separated configuration is finite on compact regions. -/
+theorem configurationMeasure_compact_lt_top {d : ℕ} {δ : ℝ} {Γ K : Set (Euclidean d)}
+    (h : Separated δ Γ) (hδ : 0 < δ) (hK : IsCompact K) : configurationMeasure Γ K < ⊤ := by
+  rw [configurationMeasure_apply Γ hK.measurableSet, Measure.count_apply_lt_top]
+  have hf := (h.finite_inter_compact hδ hK).preimage (f := fun x : Γ => (x : Euclidean d)) Subtype.val_injective.injOn
+  simpa only [Set.preimage_inter, Subtype.coe_preimage_self, Set.univ_inter] using hf
+/-- Separated configurations define measures finite on all compact sets. -/
+theorem configurationMeasure_finiteOnCompacts {d : ℕ} {δ : ℝ} {Γ : Set (Euclidean d)}
+    (h : Separated δ Γ) (hδ : 0 < δ) : IsFiniteMeasureOnCompacts (configurationMeasure Γ) :=
+  ⟨fun _ hK => configurationMeasure_compact_lt_top h hδ hK⟩
+/-- Configuration measure agrees with the extended cardinality of the intersection. -/
+theorem configurationMeasure_eq_encard {d : ℕ} (Γ : Set (Euclidean d))
+    {K : Set (Euclidean d)} (hK : MeasurableSet K) :
+    configurationMeasure Γ K = ((Γ ∩ K).encard : ENNReal) := by
+  rw [configurationMeasure_apply Γ hK]
+  have hm : MeasurableSet {x : Γ | (x : Euclidean d) ∈ K} := measurable_subtype_coe hK
+  rw [Measure.count_apply hm]
+  have him : (fun x : Γ => (x : Euclidean d)) '' {x : Γ | (x : Euclidean d) ∈ K} = Γ ∩ K := by
+    ext x
+    simp only [Set.mem_image, Set.mem_setOf_eq, Set.mem_inter_iff]
+    constructor
+    · rintro ⟨y, hy, rfl⟩
+      exact ⟨y.property, hy⟩
+    · rintro ⟨hx, hk⟩
+      exact ⟨⟨x, hx⟩, hk, rfl⟩
+  have he := (Subtype.val_injective : Function.Injective (fun x : Γ => (x : Euclidean d))).encard_image
+    {x : Γ | (x : Euclidean d) ∈ K}
+  rw [him] at he
+  exact congrArg (fun n : ENat => (n : ENNReal)) he.symm
+/-- For a finite intersection the measure is its ordinary counting cardinality. -/
+theorem configurationMeasure_eq_ncard {d : ℕ} (Γ : Set (Euclidean d))
+    {K : Set (Euclidean d)} (hK : MeasurableSet K) (hf : (Γ ∩ K).Finite) :
+    configurationMeasure Γ K = ((Γ ∩ K).ncard : ENNReal) := by
+  rw [configurationMeasure_eq_encard Γ hK, hf.encard_eq_coe]
+  rfl
+/-- A common separation constant bounds the counting measures uniformly on each compact set. -/
+theorem configurationMeasure_uniform_compact_bound {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    {K : Set (Euclidean d)} (hK : IsCompact K) :
+    ∃ N : ℕ, ∀ Γ : Set (Euclidean d), Separated δ Γ → configurationMeasure Γ K ≤ N := by
+  obtain ⟨N, hN⟩ := compact_uniform_separated_count hδ hK
+  refine ⟨N, fun Γ hΓ => ?_⟩
+  rw [configurationMeasure_eq_ncard Γ hK.measurableSet (hΓ.finite_inter_compact hδ hK)]
+  exact_mod_cast hN Γ hΓ
+end RieszEuclidean
+
+/- Source: RieszEuclidean/LocalExtraction.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Filter TopologicalSpace
+namespace RieszEuclidean
+/-- Restrict a closed configuration to a compact region as a closed subset of that region. -/
+def compactRestriction {d : ℕ} (K Γ : Set (Euclidean d)) (hΓ : IsClosed Γ) : Closeds K :=
+  ⟨{x : K | (x : Euclidean d) ∈ Γ}, hΓ.preimage continuous_subtype_val⟩
+/-- On a fixed compact region a sequence of closed configurations has a Hausdorff-convergent subsequence. -/
+theorem compactRestriction_subsequence {d : ℕ} (K : Set (Euclidean d)) (hK : IsCompact K)
+    (Γ : ℕ → Set (Euclidean d)) (hΓ : ∀ n, IsClosed (Γ n)) :
+    ∃ C : Closeds K, ∃ φ : ℕ → ℕ, StrictMono φ ∧
+      Tendsto (fun n => compactRestriction K (Γ (φ n)) (hΓ (φ n))) atTop (nhds C) := by
+  letI : CompactSpace K := isCompact_iff_compactSpace.mp hK
+  exact CompactSpace.tendsto_subseq (fun n => compactRestriction K (Γ n) (hΓ n))
+/-- One subsequence converges on every integer-radius compact window simultaneously. -/
+theorem compactRestrictions_diagonal {d : ℕ}
+    (Γ : ℕ → Set (Euclidean d)) (hΓ : ∀ n, IsClosed (Γ n)) :
+    ∃ C : ∀ k : ℕ, Closeds (Metric.closedBall (0 : Euclidean d) (k + 1 : ℝ)),
+      ∃ φ : ℕ → ℕ, StrictMono φ ∧ ∀ k : ℕ,
+        Tendsto (fun n => compactRestriction (Metric.closedBall 0 (k + 1 : ℝ))
+          (Γ (φ n)) (hΓ (φ n))) atTop (nhds (C k)) := by
+  letI (k : ℕ) : CompactSpace (Metric.closedBall (0 : Euclidean d) (k + 1 : ℝ)) :=
+    isCompact_iff_compactSpace.mp (isCompact_closedBall 0 _)
+  obtain ⟨C, φ, hφ, hc⟩ := CompactSpace.tendsto_subseq
+    (fun n (k : ℕ) => compactRestriction (Metric.closedBall 0 (k + 1 : ℝ)) (Γ n) (hΓ n))
+  exact ⟨C, φ, hφ, fun k => ((continuous_apply k).tendsto C).comp hc⟩
+end RieszEuclidean
+
+/- Source: RieszEuclidean/HausdorffMatching.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Filter TopologicalSpace Metric EMetric
+namespace RieszEuclidean
+/-- Hausdorff convergence gives uniform two-sided matching of points. -/
+theorem hausdorff_eventually_matching {α : Type*} [MetricSpace α]
+    {C : ℕ → Closeds α} {D : Closeds α} (h : Tendsto C atTop (nhds D))
+    {ε : ℝ} (hε : 0 < ε) :
+    ∀ᶠ n in atTop,
+      (∀ x ∈ C n, ∃ y ∈ D, dist x y < ε) ∧
+      (∀ y ∈ D, ∃ x ∈ C n, dist y x < ε) := by
+  have he := (EMetric.tendsto_atTop.mp h) (ENNReal.ofReal ε) (by positivity)
+  obtain ⟨N, hN⟩ := he
+  filter_upwards [eventually_ge_atTop N] with n hn
+  have hd := hN n hn
+  constructor
+  · intro x hx
+    obtain ⟨y, hy, hxy⟩ := exists_edist_lt_of_hausdorffEdist_lt hx hd
+    exact ⟨y, hy, edist_lt_ofReal.mp hxy⟩
+  · intro y hy
+    have hd' : edist D (C n) < ENNReal.ofReal ε := by rwa [edist_comm]
+    obtain ⟨x, hx, hyx⟩ := exists_edist_lt_of_hausdorffEdist_lt hy hd'
+    exact ⟨x, hx, edist_lt_ofReal.mp hyx⟩
+/-- A convergent sequence of points in Hausdorff-convergent closed sets lies in the limit. -/
+theorem hausdorff_mem_of_tendsto {α : Type*} [MetricSpace α]
+    {C : ℕ → Closeds α} {D : Closeds α} (h : Tendsto C atTop (nhds D))
+    {x : ℕ → α} {y : α} (hx : ∀ n, x n ∈ C n)
+    (hy : Tendsto x atTop (nhds y)) : y ∈ D := by
+  apply (mem_iff_infEdist_zero_of_closed D.isClosed).mpr
+  have ht := (continuous_infEdist_hausdorffEdist.tendsto (y, D)).comp (hy.prodMk_nhds h)
+  have hz : (fun n => infEdist (x n) (C n)) = fun _ => 0 :=
+    funext fun n => infEdist_zero_of_mem (hx n)
+  change Tendsto (fun n => infEdist (x n) (C n)) atTop (nhds (infEdist y D)) at ht
+  rw [hz] at ht
+  exact tendsto_nhds_unique ht tendsto_const_nhds
+/-- Hausdorff limits preserve a common separation constant. -/
+theorem hausdorff_separated {α : Type*} [MetricSpace α] {δ : ℝ}
+    {C : ℕ → Closeds α} {D : Closeds α}
+    (h : Tendsto C atTop (nhds D))
+    (hs : ∀ n, ∀ ⦃x⦄, x ∈ C n → ∀ ⦃y⦄, y ∈ C n → x ≠ y → δ ≤ dist x y) :
+    ∀ ⦃x⦄, x ∈ D → ∀ ⦃y⦄, y ∈ D → x ≠ y → δ ≤ dist x y := by
+  intro x hx y hy hxy
+  by_contra hn
+  have hgap : 0 < δ - dist x y := sub_pos.mpr (lt_of_not_ge hn)
+  have hdist : 0 < dist x y := dist_pos.mpr hxy
+  let ε := min (dist x y / 3) ((δ - dist x y) / 3)
+  have hε : 0 < ε := lt_min (by positivity) (by positivity)
+  obtain ⟨N, hN⟩ := eventually_atTop.mp (hausdorff_eventually_matching h hε)
+  obtain ⟨a, ha, hxa⟩ := (hN N le_rfl).2 x hx
+  obtain ⟨b, hb, hyb⟩ := (hN N le_rfl).2 y hy
+  have he1 : ε ≤ dist x y / 3 := min_le_left _ _
+  have he2 : ε ≤ (δ - dist x y) / 3 := min_le_right _ _
+  have hab : a ≠ b := by
+    intro heq
+    have ht := dist_triangle x a y
+    rw [← heq] at hyb
+    rw [dist_comm a y] at ht
+    linarith
+  have hsep := hs N ha hb hab
+  have ht := dist_triangle a x b
+  have ht' := dist_triangle x y b
+  rw [dist_comm a x] at ht
+  linarith
+end RieszEuclidean
+
+/- Source: RieszEuclidean/WindowCompatibility.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Filter TopologicalSpace Metric
+namespace RieszEuclidean
+/-- Hausdorff limits on nested windows are compatible with inclusion. -/
+theorem compactRestriction_limit_mono {d : ℕ} {K L : Set (Euclidean d)}
+    (hKL : K ⊆ L) {Γ : ℕ → Set (Euclidean d)} (hΓ : ∀ n, IsClosed (Γ n))
+    {C : Closeds K} {D : Closeds L}
+    (hC : Tendsto (fun n => compactRestriction K (Γ n) (hΓ n)) atTop (nhds C))
+    (hD : Tendsto (fun n => compactRestriction L (Γ n) (hΓ n)) atTop (nhds D))
+    (x : K) (hx : x ∈ C) : (⟨x, hKL x.property⟩ : L) ∈ D := by
+  apply D.isClosed.closure_subset
+  rw [Metric.mem_closure_iff]
+  intro ε hε
+  have hc := hausdorff_eventually_matching hC (half_pos hε)
+  have hd := hausdorff_eventually_matching hD (half_pos hε)
+  obtain ⟨n, hcn, hdn⟩ := (hc.and hd).exists
+  obtain ⟨a, ha, hxa⟩ := hcn.2 x hx
+  let aL : L := ⟨a, hKL a.property⟩
+  have haL : aL ∈ compactRestriction L (Γ n) (hΓ n) := ha
+  obtain ⟨b, hb, hab⟩ := hdn.1 aL haL
+  refine ⟨b, hb, ?_⟩
+  have ht := dist_triangle (⟨x, hKL x.property⟩ : L) aL b
+  have hxa' : dist (⟨x, hKL x.property⟩ : L) aL < ε / 2 := hxa
+  linarith
+/-- A limit point inside a window is detected by the limit on that window. -/
+theorem compactRestriction_limit_interior {d : ℕ} {K L : Set (Euclidean d)}
+    {Γ : ℕ → Set (Euclidean d)} (hΓ : ∀ n, IsClosed (Γ n))
+    {C : Closeds K} {D : Closeds L}
+    (hC : Tendsto (fun n => compactRestriction K (Γ n) (hΓ n)) atTop (nhds C))
+    (hD : Tendsto (fun n => compactRestriction L (Γ n) (hΓ n)) atTop (nhds D))
+    (x : L) (hx : x ∈ D) (hxK : (x : Euclidean d) ∈ K)
+    {r : ℝ} (hr : 0 < r) (hball : Metric.ball (x : Euclidean d) r ⊆ K) :
+    (⟨x, hxK⟩ : K) ∈ C := by
+  apply C.isClosed.closure_subset
+  rw [Metric.mem_closure_iff]
+  intro ε hε
+  have hη : 0 < min r (ε / 2) := lt_min hr (half_pos hε)
+  have hc := hausdorff_eventually_matching hC (half_pos hε)
+  have hd := hausdorff_eventually_matching hD hη
+  obtain ⟨n, hcn, hdn⟩ := (hc.and hd).exists
+  obtain ⟨a, ha, hxa⟩ := hdn.2 x hx
+  have har : dist (a : Euclidean d) x < r := by
+    rw [dist_comm]
+    exact hxa.trans_le (min_le_left _ _)
+  let aK : K := ⟨a, hball har⟩
+  have haK : aK ∈ compactRestriction K (Γ n) (hΓ n) := ha
+  obtain ⟨b, hb, hab⟩ := hcn.1 aK haK
+  refine ⟨b, hb, ?_⟩
+  have ht := dist_triangle (⟨x, hxK⟩ : K) aK b
+  have hxa' : dist (⟨x, hxK⟩ : K) aK < ε / 2 :=
+    hxa.trans_le (min_le_right _ _)
+  linarith
+end RieszEuclidean
+
+/- Source: RieszEuclidean/WindowWeakLimit.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Filter TopologicalSpace Metric Set
+namespace RieszEuclidean
+/-- The ambient configuration assembled from the limits on compact windows. -/
+def windowLimitSet {d : ℕ}
+    (C : ∀ k : ℕ, Closeds (Metric.closedBall (0 : Euclidean d) (k + 1 : ℝ))) :
+    Set (Euclidean d) :=
+  {y | ∃ k, ∃ x ∈ C k, (x : Euclidean d) = y}
+/-- Simultaneous compact-window convergence implies Beurling weak convergence. -/
+theorem weaklyConverges_of_window_limits {d : ℕ}
+    {Γ : ℕ → Set (Euclidean d)} (hΓ : ∀ n, IsClosed (Γ n))
+    {C : ∀ k : ℕ, Closeds (Metric.closedBall (0 : Euclidean d) (k + 1 : ℝ))}
+    (hC : ∀ k : ℕ, Tendsto (fun n => compactRestriction (Metric.closedBall 0 (k + 1 : ℝ))
+      (Γ n) (hΓ n)) atTop (nhds (C k))) :
+    WeaklyConverges Γ (windowLimitSet C) := by
+  intro R _ ε hε
+  obtain ⟨k, hk⟩ := exists_nat_gt R
+  have hRk : R < (k + 1 : ℝ) := by linarith
+  obtain ⟨N, hN⟩ := eventually_atTop.mp (hausdorff_eventually_matching (hC k) hε)
+  refine ⟨N, fun n hn => ⟨?_, ?_⟩⟩
+  · intro x hx hnorm
+    have hxK : x ∈ Metric.closedBall (0 : Euclidean d) (k + 1 : ℝ) := by
+      simpa using (le_of_lt (hnorm.trans hRk))
+    obtain ⟨y, hy, hxy⟩ := (hN n hn).1 ⟨x, hxK⟩ hx
+    exact ⟨y, ⟨k, y, hy, rfl⟩, hxy⟩
+  · intro y hy hnorm
+    obtain ⟨j, x, hx, rfl⟩ := hy
+    have hxK : (x : Euclidean d) ∈ Metric.closedBall 0 (k + 1 : ℝ) := by
+      simpa using (le_of_lt (hnorm.trans hRk))
+    have hr : 0 < (k + 1 : ℝ) - ‖(x : Euclidean d)‖ := by linarith
+    have hb : Metric.ball (x : Euclidean d) ((k + 1 : ℝ) - ‖(x : Euclidean d)‖) ⊆
+        Metric.closedBall 0 (k + 1 : ℝ) := by
+      intro z hz
+      have ht := norm_sub_norm_le z (x : Euclidean d)
+      rw [← dist_eq_norm] at ht
+      have hz' := Metric.mem_ball.mp hz
+      have hnz : ‖z‖ ≤ (k + 1 : ℝ) := by linarith
+      simpa using hnz
+    have hxC := compactRestriction_limit_interior hΓ (hC k) (hC j) x hx hxK hr hb
+    obtain ⟨a, ha, hxa⟩ := (hN n hn).2 ⟨x, hxK⟩ hxC
+    refine ⟨a, ha, ?_⟩
+    change dist (a : Euclidean d) (x : Euclidean d) < ε
+    rw [dist_comm]
+    exact hxa
+/-- Every sequence with a common positive separation constant has a Beurling weakly
+convergent subsequence with the same separation constant. -/
+theorem separated_weak_subsequence {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : ℕ → Set (Euclidean d)) (hs : ∀ n, Separated δ (Γ n)) :
+    ∃ Γ₀ : Set (Euclidean d), Separated δ Γ₀ ∧
+      ∃ φ : ℕ → ℕ, StrictMono φ ∧ WeaklyConverges (fun n => Γ (φ n)) Γ₀ := by
+  have hc : ∀ n, IsClosed (Γ n) := fun n => (hs n).isClosed hδ
+  obtain ⟨C, φ, hφ, hC⟩ := compactRestrictions_diagonal Γ hc
+  have hw := weaklyConverges_of_window_limits (fun n => hc (φ n)) hC
+  exact ⟨windowLimitSet C, hw.separated (fun n => hs (φ n)), φ, hφ, hw⟩
+end RieszEuclidean
+
+/- Source: RieszEuclidean/DistanceProfile.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Filter TopologicalSpace Metric EMetric Set
+namespace RieszEuclidean
+/-- Beurling weak convergence implies convergence of extended distances to configurations. -/
+theorem WeaklyConverges.tendsto_infEdist {d : ℕ}
+    {Γ : ℕ → Set (Euclidean d)} {Γ₀ : Set (Euclidean d)}
+    (h : WeaklyConverges Γ Γ₀) (x : Euclidean d) :
+    Tendsto (fun n => infEdist x (Γ n)) atTop (nhds (infEdist x Γ₀)) := by
+  apply tendsto_order.mpr
+  constructor
+  · intro b hb
+    obtain ⟨r, hr, hbr, hri⟩ := ENNReal.lt_iff_exists_real_btwn.mp hb
+    obtain ⟨s, hs, hrs, hsi⟩ := ENNReal.lt_iff_exists_real_btwn.mp hri
+    have hrs' : r < s := (ENNReal.ofReal_lt_ofReal_iff_of_nonneg hr).mp hrs
+    obtain ⟨N, hN⟩ := h (‖x‖ + r + 1) (by positivity) (s - r) (by linarith)
+    filter_upwards [eventually_ge_atTop N] with n hn
+    apply hbr.trans_le
+    by_contra hbad
+    obtain ⟨y, hy, hxy⟩ := infEdist_lt_iff.mp (lt_of_not_ge hbad)
+    have hxy' : dist x y < r := edist_lt_ofReal.mp hxy
+    have hyR : ‖y‖ < ‖x‖ + r + 1 := by
+      have ht := norm_sub_norm_le y x
+      rw [← dist_eq_norm, dist_comm y x] at ht
+      linarith
+    obtain ⟨z, hz, hyz⟩ := (hN n hn).1 y hy hyR
+    have hxz : dist x z < s := by linarith [dist_triangle x y z]
+    have hi := infEdist_le_edist_of_mem (x := x) hz
+    have he : edist x z < ENNReal.ofReal s := edist_lt_ofReal.mpr hxz
+    exact (not_lt_of_ge (hsi.le.trans hi)) he
+  · intro b hb
+    obtain ⟨y, hy, hxy⟩ := infEdist_lt_iff.mp hb
+    obtain ⟨r, hr, hdr, hrb⟩ := ENNReal.lt_iff_exists_real_btwn.mp hxy
+    have hdr' : dist x y < r := edist_lt_ofReal.mp hdr
+    obtain ⟨N, hN⟩ := h (‖y‖ + 1) (by positivity) (r - dist x y) (by linarith)
+    filter_upwards [eventually_ge_atTop N] with n hn
+    obtain ⟨a, ha, hay⟩ := (hN n hn).2 y hy (by linarith)
+    have hxa : dist x a < r := by
+      have ht := dist_triangle x y a
+      rw [dist_comm y a] at ht
+      linarith
+    exact (infEdist_le_edist_of_mem ha).trans_lt ((edist_lt_ofReal.mpr hxa).trans hrb)
+end RieszEuclidean
+
+/- Source: RieszEuclidean/MovingTranslations.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Filter
+namespace RieszEuclidean
+/-- Local matching is preserved when the translation vectors also converge. -/
+theorem WeaklyConverges.moving_translate {d : ℕ} {Γ : ℕ → Set (Euclidean d)}
+    {Γ₀ : Set (Euclidean d)} (h : WeaklyConverges Γ Γ₀)
+    {z : ℕ → Euclidean d} {z₀ : Euclidean d} (hz : Tendsto z atTop (nhds z₀)) :
+    WeaklyConverges (fun j => RieszEuclidean.translate (z j) (Γ j)) (RieszEuclidean.translate z₀ Γ₀) := by
+  intro R hR ε hε
+  obtain ⟨N, hN⟩ := h (R + ‖z₀‖ + 1) (by positivity) (ε / 2) (by positivity)
+  have hz' := (Metric.tendsto_atTop.mp hz) (min 1 (ε / 2)) (by positivity)
+  obtain ⟨M, hM⟩ := hz'
+  refine ⟨max N M, fun j hj => ⟨?_, ?_⟩⟩
+  · intro x hx hxR
+    have hd := hM j ((le_max_right N M).trans hj)
+    have hdist : dist (z j) z₀ < 1 := hd.trans_le (min_le_left _ _)
+    have hze : dist (z j) z₀ < ε / 2 := hd.trans_le (min_le_right _ _)
+    have hnorm : ‖z j‖ < ‖z₀‖ + 1 := by
+      have ht := norm_sub_norm_le (z j) z₀
+      rw [← dist_eq_norm] at ht
+      linarith
+    have hxr : ‖x + z j‖ < R + ‖z₀‖ + 1 := (norm_add_le _ _).trans_lt (by linarith)
+    obtain ⟨y, hy, hxy⟩ := (hN j ((le_max_left N M).trans hj)).1 (x + z j) hx hxr
+    refine ⟨y - z₀, by simpa [RieszEuclidean.translate] using hy, ?_⟩
+    have ht' := dist_triangle (x + z₀) (x + z j) y
+    have heq : dist x (y - z₀) = dist (x + z₀) y := by
+      simp only [dist_eq_norm]; congr 1; abel
+    rw [heq]
+    rw [dist_add_left, dist_comm z₀ (z j)] at ht'
+    linarith
+  · intro y hy hyR
+    have hd := hM j ((le_max_right N M).trans hj)
+    have hze : dist (z j) z₀ < ε / 2 := hd.trans_le (min_le_right _ _)
+    have hyr : ‖y + z₀‖ < R + ‖z₀‖ + 1 := (norm_add_le _ _).trans_lt (by linarith)
+    obtain ⟨x, hx, hxy⟩ := (hN j ((le_max_left N M).trans hj)).2 (y + z₀) hy hyr
+    refine ⟨x - z j, by simpa [RieszEuclidean.translate] using hx, ?_⟩
+    have ht := dist_triangle x (y + z₀) (y + z j)
+    have heq : dist (x - z j) y = dist x (y + z j) := by
+      simp only [dist_eq_norm]; congr 1; abel
+    rw [heq]
+    rw [dist_add_left, dist_comm z₀ (z j)] at ht
+    linarith
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConfigurationTopology.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open Filter TopologicalSpace Metric EMetric Set Topology
+open scoped ENNReal
+namespace RieszEuclidean
+/-- Closed Euclidean configurations with a fixed separation bound. -/
+structure SeparatedConfiguration (d : ℕ) (δ : ℝ) where
+  /-- The underlying set of Euclidean points. -/
+  carrier : Set (Euclidean d)
+  /-- The configuration contains all of its finite limit points. -/
+  isClosed : IsClosed carrier
+  /-- Distinct points are at least the specified distance apart. -/
+  separated : Separated δ carrier
+namespace SeparatedConfiguration
+/-- The empty configuration is allowed for every separation bound. -/
+instance {d : ℕ} {δ : ℝ} : Nonempty (SeparatedConfiguration d δ) :=
+  ⟨⟨∅, isClosed_empty, by simp [Separated]⟩⟩
+/-- Configurations are equal when their underlying sets are equal. -/
+@[ext] theorem ext {d : ℕ} {δ : ℝ} {Γ Δ : SeparatedConfiguration d δ}
+    (h : Γ.carrier = Δ.carrier) : Γ = Δ := by
+  cases Γ
+  cases Δ
+  cases h
+  rfl
+/-- Countably many distance probes determine a closed configuration. -/
+noncomputable def profile {d : ℕ} {δ : ℝ} (Γ : SeparatedConfiguration d δ) : ℕ → ℝ≥0∞ :=
+  fun n => infEdist (denseSeq (Euclidean d) n) Γ.carrier
+/-- Equality of all distance probes implies equality of configurations. -/
+theorem profile_injective {d : ℕ} {δ : ℝ} :
+    Function.Injective (profile (d := d) (δ := δ)) := by
+  intro Γ Δ h
+  have he : (fun x => infEdist x Γ.carrier) = fun x => infEdist x Δ.carrier := by
+    apply Continuous.ext_on (denseRange_denseSeq (Euclidean d)) continuous_infEdist continuous_infEdist
+    rintro x ⟨n, rfl⟩
+    exact congrFun h n
+  have hc : Γ.carrier = Δ.carrier := by
+    ext x
+    rw [mem_iff_infEdist_zero_of_closed Γ.isClosed, mem_iff_infEdist_zero_of_closed Δ.isClosed]
+    rw [congrFun he x]
+  cases Γ
+  cases Δ
+  cases hc
+  rfl
+/-- The topology is induced by extended-distance probes on a dense sequence. -/
+instance {d : ℕ} {δ : ℝ} : TopologicalSpace (SeparatedConfiguration d δ) :=
+  TopologicalSpace.induced profile inferInstance
+/-- The distance profile is a topological embedding. -/
+theorem profile_isEmbedding {d : ℕ} {δ : ℝ} :
+    IsEmbedding (profile (d := d) (δ := δ)) := profile_injective.isEmbedding_induced
+/-- This countable probe topology is metrizable. -/
+instance {d : ℕ} {δ : ℝ} : MetrizableSpace (SeparatedConfiguration d δ) :=
+  profile_isEmbedding.metrizableSpace
+/-- Beurling weak convergence implies convergence in the configuration topology. -/
+theorem tendsto_of_weaklyConverges {d : ℕ} {δ : ℝ}
+    {Γ : ℕ → SeparatedConfiguration d δ} {Γ₀ : SeparatedConfiguration d δ}
+    (h : WeaklyConverges (fun n => (Γ n).carrier) Γ₀.carrier) :
+    Tendsto Γ atTop (nhds Γ₀) := by
+  apply profile_isEmbedding.tendsto_nhds_iff.mpr
+  apply tendsto_pi_nhds.mpr
+  intro n
+  exact h.tendsto_infEdist (denseSeq (Euclidean d) n)
+/-- Positive separation makes the configuration space sequentially compact. -/
+theorem seqCompactSpace {d : ℕ} {δ : ℝ} (hδ : 0 < δ) :
+    SeqCompactSpace (SeparatedConfiguration d δ) := by
+  refine ⟨?_⟩
+  intro Γ _
+  obtain ⟨Γ₀, hs, φ, hφ, hw⟩ := separated_weak_subsequence hδ
+    (fun n => (Γ n).carrier) (fun n => (Γ n).separated)
+  exact ⟨⟨Γ₀, hs.isClosed hδ, hs⟩, Set.mem_univ _, φ, hφ, tendsto_of_weaklyConverges hw⟩
+/-- With positive separation the configuration topology is compact. -/
+theorem compactSpace {d : ℕ} {δ : ℝ} (hδ : 0 < δ) :
+    CompactSpace (SeparatedConfiguration d δ) := by
+  letI := metrizableSpaceMetric (SeparatedConfiguration d δ)
+  exact UniformSpace.compactSpace_iff_seqCompactSpace.mpr (seqCompactSpace hδ)
+/-- Convergence in the distance-probe topology is exactly Beurling weak convergence. -/
+theorem weaklyConverges_of_tendsto {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    {Γ : ℕ → SeparatedConfiguration d δ} {Γ₀ : SeparatedConfiguration d δ}
+    (h : Tendsto Γ atTop (nhds Γ₀)) :
+    WeaklyConverges (fun n => (Γ n).carrier) Γ₀.carrier := by
+  intro R hR ε hε
+  by_contra hbad
+  simp only [not_exists, not_forall, _root_.not_imp, exists_prop] at hbad
+  obtain ⟨φ, hφ, hbadφ⟩ := extraction_of_frequently_atTop (frequently_atTop.mpr hbad)
+  obtain ⟨S, hs, ψ, hψ, hw⟩ := separated_weak_subsequence hδ
+    (fun n => (Γ (φ n)).carrier) (fun n => (Γ (φ n)).separated)
+  let Δ : SeparatedConfiguration d δ := ⟨S, hs.isClosed hδ, hs⟩
+  have ht : Tendsto (fun n => Γ (φ (ψ n))) atTop (nhds Δ) := tendsto_of_weaklyConverges hw
+  have ht' : Tendsto (fun n => Γ (φ (ψ n))) atTop (nhds Γ₀) :=
+    h.comp (hφ.comp hψ).tendsto_atTop
+  have he : Δ = Γ₀ := tendsto_nhds_unique ht ht'
+  change WeaklyConverges (fun n => (Γ (φ (ψ n))).carrier) Δ.carrier at hw
+  rw [he] at hw
+  obtain ⟨N, hN⟩ := hw R hR ε hε
+  exact hbadφ (ψ N) (hN N le_rfl)
+/-- Translate a separated closed configuration by a real Euclidean vector. -/
+def translate {d : ℕ} {δ : ℝ} (z : Euclidean d) (Γ : SeparatedConfiguration d δ) :
+    SeparatedConfiguration d δ where
+  carrier := RieszEuclidean.translate z Γ.carrier
+  isClosed := Γ.isClosed.preimage (continuous_id.add continuous_const)
+  separated := Γ.separated.translate z
+/-- Real translations act jointly continuously on the configuration space. -/
+theorem continuous_translate {d : ℕ} {δ : ℝ} (hδ : 0 < δ) :
+    Continuous (fun p : Euclidean d × SeparatedConfiguration d δ => translate p.1 p.2) := by
+  apply SeqContinuous.continuous
+  intro p p₀ hp
+  apply tendsto_of_weaklyConverges
+  have hc := weaklyConverges_of_tendsto hδ ((continuous_snd.tendsto p₀).comp hp)
+  exact hc.moving_translate ((continuous_fst.tendsto p₀).comp hp)
+/-- The chosen topology has precisely the paper's sequential convergence. -/
+theorem tendsto_iff_weaklyConverges {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    {Γ : ℕ → SeparatedConfiguration d δ} {Γ₀ : SeparatedConfiguration d δ} :
+    Tendsto Γ atTop (nhds Γ₀) ↔ WeaklyConverges (fun n => (Γ n).carrier) Γ₀.carrier :=
+  ⟨weaklyConverges_of_tendsto hδ, tendsto_of_weaklyConverges⟩
+/-- Zero translation fixes each configuration. -/
+@[simp] theorem translate_zero {d : ℕ} {δ : ℝ} (Γ : SeparatedConfiguration d δ) :
+    translate 0 Γ = Γ := ext (RieszEuclidean.translate_zero Γ.carrier)
+/-- Successive real translations agree with translation by their sum. -/
+@[simp] theorem translate_add {d : ℕ} {δ : ℝ} (y z : Euclidean d)
+    (Γ : SeparatedConfiguration d δ) : translate y (translate z Γ) = translate (y + z) Γ :=
+  ext (RieszEuclidean.translate_add y z Γ.carrier)
+end SeparatedConfiguration
+end RieszEuclidean
+
 /- Source: RieszEuclidean/DomainExtension.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 noncomputable section
@@ -2217,81 +2862,33 @@ theorem moving_comparison_obstruction [CompleteSpace H]
 
 end RieszEuclidean.OrthProjection
 
-/- Source: RieszEuclidean/WeakLimits.lean -/
+/- Source: RieszEuclidean/WeakPointLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-/-! Elementary facts about Beurling weak limits. Hull compactness and the
-invariant probability measure remain separate blueprint obligations. -/
-noncomputable section
+open Filter Metric Set
 namespace RieszEuclidean
-
-variable {d : ℕ}
-
-theorem Separated.translate {δ : ℝ} {Γ : Set (Euclidean d)}
-    (h : Separated δ Γ) (z : Euclidean d) : Separated δ (translate z Γ) := by
-  intro x hx y hy hxy
-  have hne : x + z ≠ y + z := fun heq => hxy (add_right_cancel heq)
-  simpa only [dist_add_right] using h hx hy hne
-
-/-- Constant sequences converge in the actual local matching definition. -/
-theorem weaklyConverges_const (Γ : Set (Euclidean d)) :
-    WeaklyConverges (fun _ => Γ) Γ := by
-  intro R hR ε hε
-  refine ⟨0, fun j hj => ⟨?_, ?_⟩⟩
-  · intro x hx _
-    exact ⟨x, hx, by simpa using hε⟩
-  · intro x hx _
-    exact ⟨x, hx, by simpa using hε⟩
-
-/-- Fixed translations preserve Beurling weak convergence. -/
-theorem WeaklyConverges.translate {Γ : ℕ → Set (Euclidean d)}
-    {Γ₀ : Set (Euclidean d)} (h : WeaklyConverges Γ Γ₀) (z : Euclidean d) :
-    WeaklyConverges (fun j => translate z (Γ j)) (translate z Γ₀) := by
-  intro R hR ε hε
-  obtain ⟨N, hN⟩ := h (R + ‖z‖) (by positivity) ε hε
-  refine ⟨N, fun j hj => ⟨?_, ?_⟩⟩
-  · intro x hx hxR
-    have hxz : ‖x + z‖ < R + ‖z‖ := (norm_add_le x z).trans_lt (by linarith)
-    obtain ⟨y, hy, hxy⟩ := (hN j hj).1 (x + z) hx hxz
-    refine ⟨y - z, ?_, ?_⟩
-    · simpa [translate] using hy
-    · simpa only [dist_eq_norm, show x - (y - z) = x + z - y by abel] using hxy
-  · intro y hy hyR
-    have hyz : ‖y + z‖ < R + ‖z‖ := (norm_add_le y z).trans_lt (by linarith)
-    obtain ⟨x, hx, hxy⟩ := (hN j hj).2 (y + z) hy hyz
-    refine ⟨x - z, ?_, ?_⟩
-    · simpa [translate] using hx
-    · simpa only [dist_eq_norm, show x - z - y = x - (y + z) by abel] using hxy
-
-/-- The common separation constant is retained by a weak limit. -/
-theorem WeaklyConverges.separated {δ : ℝ} {Γ : ℕ → Set (Euclidean d)}
-    {Γ₀ : Set (Euclidean d)} (h : WeaklyConverges Γ Γ₀)
-    (hsep : ∀ j, Separated δ (Γ j)) : Separated δ Γ₀ := by
-  intro x hx y hy hxy
-  by_contra hbad
-  have hdist : 0 < dist x y := dist_pos.mpr hxy
-  let ε : ℝ := min (dist x y / 4) ((δ - dist x y) / 4)
-  have hε : 0 < ε := lt_min (by positivity) (by linarith)
-  have hε₁ : ε ≤ dist x y / 4 := min_le_left _ _
-  have hε₂ : ε ≤ (δ - dist x y) / 4 := min_le_right _ _
-  let R : ℝ := max ‖x‖ ‖y‖ + 1
-  have hR : 0 < R := by dsimp [R]; linarith [le_max_left ‖x‖ ‖y‖, norm_nonneg x]
-  have hxR : ‖x‖ < R := by dsimp [R]; linarith [le_max_left ‖x‖ ‖y‖]
-  have hyR : ‖y‖ < R := by dsimp [R]; linarith [le_max_right ‖x‖ ‖y‖]
-  obtain ⟨N, hN⟩ := h R hR ε hε
-  obtain ⟨a, ha, hax⟩ := (hN N le_rfl).2 x hx hxR
-  obtain ⟨b, hb, hby⟩ := (hN N le_rfl).2 y hy hyR
-  have hab : a ≠ b := by
-    intro heq
-    subst b
-    have ht := dist_triangle x a y
-    rw [dist_comm x a] at ht
+/-- A convergent sequence of configuration points belongs to the closed weak limit. -/
+theorem WeaklyConverges.mem_of_tendsto {d : ℕ} {Γ : ℕ → Set (Euclidean d)}
+    {Γ₀ : Set (Euclidean d)} (h : WeaklyConverges Γ Γ₀) (hc : IsClosed Γ₀)
+    {x : ℕ → Euclidean d} {x₀ : Euclidean d}
+    (hx : ∀ j, x j ∈ Γ j) (ht : Tendsto x atTop (nhds x₀)) : x₀ ∈ Γ₀ := by
+  apply hc.closure_subset
+  rw [Metric.mem_closure_iff]
+  intro ε hε
+  obtain ⟨N, hN⟩ := h (‖x₀‖ + 1) (by positivity) (ε / 2) (by positivity)
+  obtain ⟨M, hM⟩ := Metric.tendsto_atTop.mp ht (min 1 (ε / 2)) (by positivity)
+  let j := max N M
+  have hd := hM j (le_max_right _ _)
+  have hd1 : dist (x j) x₀ < 1 := hd.trans_le (min_le_left _ _)
+  have hdε : dist (x j) x₀ < ε / 2 := hd.trans_le (min_le_right _ _)
+  have hr : ‖x j‖ < ‖x₀‖ + 1 := by
+    have hn := norm_sub_norm_le (x j) x₀
+    rw [← dist_eq_norm] at hn
     linarith
-  have hs := hsep N ha hb hab
-  have ht₁ := dist_triangle a x b
-  have ht₂ := dist_triangle x y b
-  rw [dist_comm y b] at ht₂
+  obtain ⟨y, hy, hxy⟩ := (hN j (le_max_left _ _)).1 (x j) (hx j) hr
+  refine ⟨y, hy, ?_⟩
+  have htri := dist_triangle x₀ (x j) y
+  rw [dist_comm x₀ (x j)] at htri
   linarith
-
 end RieszEuclidean
 
 /- Source: MainResults.lean -/
@@ -2299,8 +2896,8 @@ run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 /-!
 # Implemented result statements and concrete definitions
 
-This compact Comparator reference currently covers the foundational and affine
-results only. It does not contain or certify the unfinished geometric main
+This compact Comparator reference covers proved foundational, Fourier, affine
+and configuration-space results. It does not contain or certify the unfinished geometric main
 theorems. Its wrapper proofs use the checked modular library, so the reference
 needs neither theorem placeholders nor warning suppressions.
 -/
@@ -2416,4 +3013,17 @@ theorem initial_bumps {d : ℕ} {Ω Λ : Set (Euclidean d)}
           (∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
           ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 :=
   exists_initial_bump_gap hΩ hb hB
+/-- The separated configuration space is compact metrizable, realizes Beurling weak
+convergence, and carries a jointly continuous real translation action. -/
+theorem compact_configuration_space (d : ℕ) {δ : ℝ} (hδ : 0 < δ) :
+    CompactSpace (SeparatedConfiguration d δ) ∧
+    TopologicalSpace.MetrizableSpace (SeparatedConfiguration d δ) ∧
+    (∀ (Γ : ℕ → SeparatedConfiguration d δ) (Γ₀ : SeparatedConfiguration d δ),
+      Filter.Tendsto Γ Filter.atTop (nhds Γ₀) ↔
+        WeaklyConverges (fun n => (Γ n).carrier) Γ₀.carrier) ∧
+    Continuous (fun p : Euclidean d × SeparatedConfiguration d δ =>
+      SeparatedConfiguration.translate p.1 p.2) :=
+  ⟨SeparatedConfiguration.compactSpace hδ, inferInstance,
+    fun _ _ => SeparatedConfiguration.tendsto_iff_weaklyConverges hδ,
+    SeparatedConfiguration.continuous_translate hδ⟩
 end RieszEuclidean.Results

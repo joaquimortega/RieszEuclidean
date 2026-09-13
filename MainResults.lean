@@ -3,8 +3,8 @@ import RieszEuclidean
 /-!
 # Implemented result statements and concrete definitions
 
-This compact Comparator reference currently covers the foundational and affine
-results only. It does not contain or certify the unfinished geometric main
+This compact Comparator reference covers proved foundational, Fourier, affine
+and configuration-space results. It does not contain or certify the unfinished geometric main
 theorems. Its wrapper proofs use the checked modular library, so the reference
 needs neither theorem placeholders nor warning suppressions.
 -/
@@ -120,4 +120,17 @@ theorem initial_bumps {d : ℕ} {Ω Λ : Set (Euclidean d)}
           (∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
           ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 :=
   exists_initial_bump_gap hΩ hb hB
+/-- The separated configuration space is compact metrizable, realizes Beurling weak
+convergence, and carries a jointly continuous real translation action. -/
+theorem compact_configuration_space (d : ℕ) {δ : ℝ} (hδ : 0 < δ) :
+    CompactSpace (SeparatedConfiguration d δ) ∧
+    TopologicalSpace.MetrizableSpace (SeparatedConfiguration d δ) ∧
+    (∀ (Γ : ℕ → SeparatedConfiguration d δ) (Γ₀ : SeparatedConfiguration d δ),
+      Filter.Tendsto Γ Filter.atTop (nhds Γ₀) ↔
+        WeaklyConverges (fun n => (Γ n).carrier) Γ₀.carrier) ∧
+    Continuous (fun p : Euclidean d × SeparatedConfiguration d δ =>
+      SeparatedConfiguration.translate p.1 p.2) :=
+  ⟨SeparatedConfiguration.compactSpace hδ, inferInstance,
+    fun _ _ => SeparatedConfiguration.tendsto_iff_weaklyConverges hδ,
+    SeparatedConfiguration.continuous_translate hδ⟩
 end RieszEuclidean.Results

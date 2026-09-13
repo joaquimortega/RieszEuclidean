@@ -27,3 +27,13 @@ import RieszEuclidean.DomainExtension
 import RieszEuclidean.FourierRange
 import RieszEuclidean.RangeIso
 import RieszEuclidean.InitialGap
+import RieszEuclidean.SeparatedConfigurations
+import RieszEuclidean.MovingTranslations
+import RieszEuclidean.ConfigurationMeasure
+import RieszEuclidean.LocalExtraction
+import RieszEuclidean.WeakPointLimits
+import RieszEuclidean.HausdorffMatching
+import RieszEuclidean.WindowCompatibility
+import RieszEuclidean.WindowWeakLimit
+import RieszEuclidean.DistanceProfile
+import RieszEuclidean.ConfigurationTopology

@@ -47,3 +47,20 @@ translation commutation. See `fourier-module-validation.md`.
 
 The nine-result initial-gap checkpoint passes official Comparator and Lean kernel
 verification. See initial-gap-validation.md and comparator-initial-gap-aligned.txt.
+
+## Hull compactness checkpoint
+
+The expanded ten-result configuration passed the official Comparator with exit 0.
+The Lean default kernel accepted the standalone solution. This adds compactness,
+metrizability, exact Beurling sequential convergence and joint continuity of real
+translations to the earlier nine supporting results.
+
+- Log: `comparator-hull-compactness.txt`.
+- Verified inputs and log hashes: `comparator-hull-compactness-hashes.json`.
+- Runtime: 4min 18.774s; peak memory: 3G.
+- All 15 linters passed in the modular project (243 declarations plus 320 generated),
+  the reference (13 plus 5), and the standalone file (256 plus 325).
+- All 160 transitive axiom reports use only standard Lean axioms.
+
+The full-paper geometric main theorems remain pending; 8 of 25 blueprint nodes
+are proved. See `hull-compactness-validation.md` for proof scope and fidelity.

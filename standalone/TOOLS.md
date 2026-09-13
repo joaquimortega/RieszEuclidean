@@ -79,9 +79,9 @@ Comparator interface. The reference and solution are trusted repository files;
 this setup is not a claim of current-master hardening for adversarial inputs.
 
 Successful completion prints `Lean default kernel accepts the solution` and
-`Your solution is okay!`. See `reviews/standalone-validation.md` for the actual outcome. A successful
-configuration covers nine implemented supporting results; final geometric
-nonexistence statements are still pending.
+`Your solution is okay!`. See `reviews/standalone-validation.md` for the actual outcome. The accepted
+ten-result configuration includes the hull lemma; final geometric nonexistence
+statements are still pending.
 
 For the initial local run, the three pinned binaries were copied from the
 author-authorized previous project to `/tmp/riesz-euclidean-comparator-bin`.

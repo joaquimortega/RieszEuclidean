@@ -10,7 +10,8 @@
     "RieszEuclidean.Results.euclidean_fourier_cutoff",
     "RieszEuclidean.Results.schwartz_density",
     "RieszEuclidean.Results.euclidean_fourier_analysis",
-    "RieszEuclidean.Results.initial_bumps"
+    "RieszEuclidean.Results.initial_bumps",
+    "RieszEuclidean.Results.compact_configuration_space"
   ],
   "permitted_axioms": [
     "propext",

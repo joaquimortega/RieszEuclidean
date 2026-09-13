@@ -15,8 +15,10 @@ It does not replace this route with the earlier lattice proof.
 Frequency separation and normalized nonnegative smooth compact bumps are now proved.
 Radius selection, the positive uniform Fourier lower bound and the translated
 orthonormal family are also proved, together with isometric synthesis and the
-projection onto its range. The initial projection gap is proved. This completes
-7 of 25 blueprint obligations; the hull, spectral and geometric arguments remain pending.
+projection onto its range. The initial projection gap and the
+compact metrizable configuration space with its jointly continuous translation action
+are proved. This completes 8 of 25 blueprint obligations; the stationary-measure,
+spectral and geometric arguments remain pending.
 
 ## Build from a standalone clone
 
@@ -81,7 +83,7 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states nine proved supporting results with concrete
+`MainResults.lean` currently states ten proved supporting results with concrete
 basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
 assembled from the modular source with Mathlib imports only. The analytic results include Schwartz Parseval, Schwartz density, and existence
 of the unitary Fourier transform with its measurable-domain cutoffs. Neither file yet
@@ -107,3 +109,16 @@ Pinned Comparator build/run instructions are in `standalone/TOOLS.md`; actual
 verification scope and results are recorded in `reviews/standalone-validation.md`.
 Comparator checks source correspondence and kernel acceptance, not mathematical
 fidelity to the paper. The final main-theorem check remains a completion gate.
+
+The hull lemma is proved: configurations with a common positive separation constant,
+including the empty configuration, form a compact metrizable space. Its sequential
+convergence is precisely Beurling's two-sided local matching, and real translations
+act jointly continuously. The proof uses compatible Hausdorff limits on compact
+Euclidean windows and distance probes on a countable dense set. This is an alternate
+direct Euclidean proof of the manuscript's counting-measure argument; equivalence
+with vague convergence remains an explicit pending obligation.
+
+The official Comparator accepted all ten supporting results, including the hull
+lemma, and the Lean kernel accepted the standalone proof. The log and verified
+input hashes are in `reviews/comparator-hull-compactness.txt` and
+`reviews/comparator-hull-compactness-hashes.json`.
