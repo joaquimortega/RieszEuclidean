@@ -14,3 +14,4 @@ import RieszEuclidean.FourierKernel
 import RieszEuclidean.FourierTranslations
 
 import RieszEuclidean.Separation
+import RieszEuclidean.Bumps

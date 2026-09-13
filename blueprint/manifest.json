@@ -162,9 +162,15 @@
         "RieszEuclidean.phase_exp_sub_le",
         "RieszEuclidean.exponential_eq_phase",
         "RieszEuclidean.exponential_sub_le_on_ball",
-        "RieszEuclidean.riesz_frequencies_separated"
+        "RieszEuclidean.riesz_frequencies_separated",
+        "RieszEuclidean.exists_schwartz_bump",
+        "RieszEuclidean.bump_toLp_ne_zero",
+        "RieszEuclidean.exists_normalized_schwartz_bump"
       ],
-      "progress": "Frequency separation is proved for every exponential Riesz basis on a bounded measurable Euclidean domain. The bump construction and initial projection gap remain pending."
+      "progress": "Frequency separation and normalized nonnegative smooth compact bumps are proved. The Fourier lower bound, translated orthonormal family and initial projection gap remain pending.",
+      "partial_files": [
+        "RieszEuclidean/Bumps.lean"
+      ]
     },
     {
       "id": "hull-compactness",
@@ -459,6 +465,7 @@
     "RieszEuclidean/FourierAgreement.lean": "82c90e9ab3d10f9ac2d26bf0d7b4c6715cd8fc47c3252fa8cd19a4109d29783e",
     "RieszEuclidean/FourierKernel.lean": "982155c2bace338ec8ca28009f28abfb58ab68d659bc48e1dc0ff89f7d6b978e",
     "RieszEuclidean/FourierTranslations.lean": "3d208c81d9a46fd13df0485736675190f6a917185361239969395733337b112c",
-    "RieszEuclidean/Separation.lean": "94ed43c38cfeb481b1a529d4b5a89d3fd26a6fea1cb2263b0182b65b7002ea8f"
+    "RieszEuclidean/Separation.lean": "94ed43c38cfeb481b1a529d4b5a89d3fd26a6fea1cb2263b0182b65b7002ea8f",
+    "RieszEuclidean/Bumps.lean": "b8d43bec27cf438b44819c05ccc95544131db1c02deef30c9d79b2169cfa0159"
   }
 }

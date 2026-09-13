@@ -108,7 +108,7 @@ techniques:
   - RieszEuclidean/L2Transport.lean
   - RieszEuclidean/Affine.lean
 - name: Euclidean Fourier and bump projections
-  status: initial Fourier constructions proved; bumps pending
+  status: initial Fourier constructions and normalized bumps proved; initial gap pending
   description: Bilinear Fubini and Schwartz inversion prove Parseval. Compact-support smooth
     approximation and an explicit L² estimate prove Schwartz density. The Fourier isometry on
     this dense subspace extends continuously; norm preservation and closed dense range give
@@ -117,8 +117,11 @@ techniques:
     the Fourier cutoff. Schwartz test pairings and uniqueness for locally integrable functions
     prove L¹∩L² integral agreement for both signs. Fourier transposition with phased domain
     indicators gives the convolution kernel for every L¹∩L² input. Haar translation invariance
-    gives cutoff commutation first on L¹∩L², then density extends it to all L². Normalized
-    bumps and the synthesis-to-projection gap remain pending.
+    gives cutoff commutation first on L¹∩L², then density extends it to all L². A lower
+    synthesis-column bound and a uniform phase estimate prove frequency separation. Smooth
+    radial bumps are converted to Schwartz functions and normalized in actual Euclidean L².
+    The Fourier lower bound, translated orthonormal family and synthesis-to-projection gap
+    remain pending.
   files:
   - RieszEuclidean/FourierL2.lean
   - RieszEuclidean/SchwartzDensity.lean
@@ -127,6 +130,8 @@ techniques:
   - RieszEuclidean/FourierAgreement.lean
   - RieszEuclidean/FourierKernel.lean
   - RieszEuclidean/FourierTranslations.lean
+  - RieszEuclidean/Separation.lean
+  - RieszEuclidean/Bumps.lean
 - name: Stationary compact hull and scalar Bochner measures
   status: planned; not yet formalized
   description: Prove compactness of the separated-set hull, continuity of the real action and an invariant

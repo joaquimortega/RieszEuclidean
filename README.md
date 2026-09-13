@@ -12,6 +12,10 @@ in ℝⁿ. It uses Beurling weak limits, smooth orthonormal bumps, continuous bo
 averaging of scalar inner products, and a norm-continuous comparison projection.
 It does not replace this route with the earlier lattice proof.
 
+Frequency separation and normalized nonnegative smooth compact bumps are now proved.
+The Fourier lower bound for these bumps, the translated orthonormal family and
+the initial projection gap remain pending.
+
 ## Build from a standalone clone
 
 Install [elan](https://github.com/leanprover/elan), then run:

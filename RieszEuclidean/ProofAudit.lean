@@ -69,3 +69,6 @@ import RieszEuclidean
 #print axioms RieszEuclidean.exponential_eq_phase
 #print axioms RieszEuclidean.exponential_sub_le_on_ball
 #print axioms RieszEuclidean.riesz_frequencies_separated
+#print axioms RieszEuclidean.exists_schwartz_bump
+#print axioms RieszEuclidean.bump_toLp_ne_zero
+#print axioms RieszEuclidean.exists_normalized_schwartz_bump
