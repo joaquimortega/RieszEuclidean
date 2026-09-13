@@ -77,7 +77,7 @@
       "source_labels": [
         "eq:P"
       ],
-      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection",
+      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection, with L\u00b9\u2229L\u00b2 agreement, translation commutation and the stated convolution kernel",
       "file": "RieszEuclidean/FourierL2.lean",
       "declarations": [
         "RieszEuclidean.integral_fourier_mul",
@@ -86,9 +86,35 @@
         "RieszEuclidean.schwartz_parseval",
         "RieszEuclidean.schwartz_toL2_inner",
         "RieszEuclidean.schwartz_fourier_inner",
-        "RieszEuclidean.schwartz_fourier_norm"
+        "RieszEuclidean.schwartz_fourier_norm",
+        "RieszEuclidean.compactSchwartz",
+        "RieszEuclidean.local_approx_support",
+        "RieszEuclidean.smooth_compact_uniform_approx",
+        "RieszEuclidean.eLpNorm_two_le_of_support",
+        "RieszEuclidean.compact_exists_schwartz_eLpNorm_lt",
+        "RieszEuclidean.memLp_exists_schwartz_eLpNorm_lt",
+        "RieszEuclidean.schwartz_toL2_denseRange",
+        "RieszEuclidean.schwartzL2_dense",
+        "RieszEuclidean.fourierL2CLM_subtype",
+        "RieszEuclidean.fourierL2CLM_norm",
+        "RieszEuclidean.fourierL2_dense",
+        "RieszEuclidean.fourierL2_surjective",
+        "RieszEuclidean.fourierL2Equiv_schwartz",
+        "RieszEuclidean.fourierL2Equiv_symm_schwartz",
+        "RieszEuclidean.paperFourierL2",
+        "RieszEuclidean.paperFourierL2_schwartz",
+        "RieszEuclidean.domainCutoff_coe",
+        "RieszEuclidean.domainCutoff_norm_le",
+        "RieszEuclidean.domainProjection",
+        "RieszEuclidean.fourierProjection",
+        "RieszEuclidean.fourierProjection_transform"
       ],
-      "progress": "Fourier transposition, conjugation, Schwartz Parseval pairing and preservation of actual L\u00b2 inner products and norms proved. Schwartz density, unitary L\u00b2 extension and cutoff projection remain pending."
+      "progress": "Parseval, Schwartz density, unitary positive-sign extension, Schwartz integral agreement and the actual orthogonal cutoff projection are proved. L\u00b9\u2229L\u00b2 integral agreement, translation commutation and the convolution-kernel formula remain pending.",
+      "partial_files": [
+        "RieszEuclidean/SchwartzDensity.lean",
+        "RieszEuclidean/FourierExtension.lean",
+        "RieszEuclidean/CutoffProjection.lean"
+      ]
     },
     {
       "id": "separation-and-bumps",
@@ -393,6 +419,9 @@
     "RieszEuclidean/MovingComparison.lean": "68faa0ba0d885e39b62a3336b37baee64ff17a15de25973e56ea44653bc2501c",
     "RieszEuclidean/ProjectionGap.lean": "45b35ad9515668b6a13dde054593c8db63fa2cb9d3655c5feef0f084b768cc95",
     "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad",
-    "RieszEuclidean/FourierL2.lean": "45ba96a77e8d8387a865b629c90f2e4c7bd55c7cbc8435288612c1680ab5d2af"
+    "RieszEuclidean/FourierL2.lean": "45ba96a77e8d8387a865b629c90f2e4c7bd55c7cbc8435288612c1680ab5d2af",
+    "RieszEuclidean/SchwartzDensity.lean": "6330b8b4e23361d2be904a8693522a0e7791cd59bc8c2d6bf82046d5e7ceb655",
+    "RieszEuclidean/FourierExtension.lean": "bb4932648e07a23df20700ccc56acac82391a9d892b487f1b73f6f88812592ad",
+    "RieszEuclidean/CutoffProjection.lean": "8052509c77e1174ca7108c9867293ae0793409d31a0c8a35834ad91a233ce336"
   }
 }

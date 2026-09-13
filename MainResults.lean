@@ -58,4 +58,24 @@ theorem fourier_parseval {d : ℕ} (f g : SchwartzMap (Space d) ℂ) :
     (∫ x, Real.fourierIntegral f x * starRingEnd ℂ (Real.fourierIntegral g x)) =
       ∫ x, f x * starRingEnd ℂ (g x) := schwartz_parseval f g
 
+/-- Existence of the actual Euclidean unitary Fourier map and its measurable-domain cutoffs. -/
+theorem euclidean_fourier_cutoff (d : ℕ) :
+    ∃ U : Lp ℂ 2 (volume : Measure (Euclidean d)) ≃ₗᵢ[ℂ]
+        Lp ℂ 2 (volume : Measure (Euclidean d)),
+      (∀ f : SchwartzMap (Euclidean d) ℂ,
+        (U (f.toLp 2 volume) : Euclidean d → ℂ) =ᵐ[volume] Real.fourierIntegralInv f) ∧
+      ∀ Ω : Set (Euclidean d), MeasurableSet Ω →
+        ∃ P : OrthProjection (Lp ℂ 2 (volume : Measure (Euclidean d))),
+          ∀ f, (U (P.op f) : Euclidean d → ℂ) =ᵐ[volume]
+            Ω.indicator (U f : Euclidean d → ℂ) := by
+  refine ⟨paperFourierL2 d, paperFourierL2_schwartz d, ?_⟩
+  intro Ω hΩ
+  refine ⟨fourierProjection Ω hΩ, ?_⟩
+  intro f
+  rw [fourierProjection_transform]
+  exact domainCutoff_coe Ω hΩ _
+/-- Schwartz functions are dense in Euclidean L². -/
+theorem schwartz_density (d : ℕ) :
+    DenseRange (fun f : SchwartzMap (Euclidean d) ℂ => f.toLp 2 volume) :=
+  schwartz_toL2_denseRange d
 end RieszEuclidean.Results

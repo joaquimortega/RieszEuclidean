@@ -36,3 +36,7 @@ This verifies the four supporting results only; the full-paper gate remains open
 The newer five-result run includes Schwartz Parseval and passed. See
 `fourier-progress.md`, `comparator-fourier.txt`, and
 `comparator-fourier-hashes.json`. Earlier logs and hashes above are historical.
+
+The latest seven-result verification includes Schwartz density and unitary
+Fourier/cutoff existence. See `unitary-cutoff-validation.md` for current scope
+and `comparator-unitary-cutoff-hashes.json` for verified inputs.

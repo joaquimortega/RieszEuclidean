@@ -1,12 +1,15 @@
+import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 import Mathlib.Analysis.Distribution.FourierSchwartz
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.l2Space
 import Mathlib.Analysis.Normed.Operator.Banach
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
+import Mathlib.Analysis.NormedSpace.OperatorNorm.Completeness
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import Mathlib.MeasureTheory.Function.ContinuousMapDense
 import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
@@ -452,6 +455,227 @@ theorem schwartz_fourier_norm {d : ℕ} (f : SchwartzMap (Euclidean d) ℂ) :
 
 end RieszEuclidean
 
+/- Source: RieszEuclidean/SchwartzDensity.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open scoped ContDiff
+open Metric Set Function MeasureTheory
+open scoped ENNReal
+namespace RieszEuclidean
+
+/-- Smooth compactly supported functions are Schwartz functions. -/
+def compactSchwartz {d : ℕ} (f : Euclidean d → ℂ)
+    (hf : ContDiff ℝ ∞ f) (hs : HasCompactSupport f) :
+    SchwartzMap (Euclidean d) ℂ where
+  toFun := f
+  smooth' := hf
+  decay' k n := by
+    have hc : Continuous (fun x => ‖x‖ ^ k * ‖iteratedFDeriv ℝ n f x‖) :=
+      (continuous_norm.pow k).mul (hf.continuous_iteratedFDeriv (by exact_mod_cast le_top)).norm
+    have hcs : HasCompactSupport (fun x => ‖x‖ ^ k * ‖iteratedFDeriv ℝ n f x‖) :=
+      (hs.iteratedFDeriv n).norm.mul_left
+    obtain ⟨C, hC⟩ := hcs.exists_bound_of_continuous hc
+    exact ⟨C, fun x => (le_abs_self _).trans (hC x)⟩
+
+
+/-- Local mollifier estimates preserve compact support within a fixed thickening. -/
+theorem local_approx_support {d : ℕ} {f g : Euclidean d → ℂ} {r : ℝ}
+    (hr1 : r ≤ 1)
+    (hg : ∀ a δ, (∀ x ∈ ball a r, dist (f x) (f a) ≤ δ) → dist (g a) (f a) ≤ δ) :
+    support g ⊆ cthickening 1 (tsupport f) := by
+  intro a ha
+  by_contra hnot
+  have hfzero (x : Euclidean d) (hx : dist a x ≤ 1) : f x = 0 := by
+    by_contra hxne
+    exact hnot (mem_cthickening_of_dist_le a x 1 (tsupport f)
+      (subset_tsupport f hxne) hx)
+  have hfa : f a = 0 := hfzero a (by simp)
+  have hga := hg a 0 (fun x hx => by
+    have hfx := hfzero x ((by simpa [dist_comm] using hx : dist a x < r).le.trans hr1)
+    simp [hfx, hfa])
+  have : g a = 0 := by simpa [hfa] using hga
+  exact ha this
+
+/-- Uniform smooth approximation with all supports in one compact neighbourhood. -/
+theorem smooth_compact_uniform_approx {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : Continuous f) (hs : HasCompactSupport f) {ε : ℝ} (hε : 0 < ε) :
+    ∃ g : Euclidean d → ℂ, ContDiff ℝ ∞ g ∧ HasCompactSupport g ∧
+      support g ⊆ cthickening 1 (tsupport f) ∧ ∀ x, dist (g x) (f x) < ε := by
+  obtain ⟨δ, hδ, hu⟩ := Metric.uniformContinuous_iff.mp
+    (hs.uniformContinuous_of_continuous hf) (ε / 2) (half_pos hε)
+  obtain ⟨g, hg, hbound⟩ :=
+    hf.exists_contDiff_dist_le_of_forall_mem_ball_dist_le (lt_min one_pos hδ)
+  have hsupp := local_approx_support (min_le_left 1 δ) hbound
+  refine ⟨g, hg, HasCompactSupport.of_support_subset_isCompact
+    hs.cthickening hsupp, hsupp, fun x => ?_⟩
+  apply (hbound x (ε / 2) ?_).trans_lt (half_lt_self hε)
+  intro y hy
+  apply (hu ?_).le
+  exact (mem_ball.mp hy).trans_le (min_le_right 1 δ)
+
+
+/-- A uniform bound on a finite support gives the usual L² estimate. -/
+theorem eLpNorm_two_le_of_support {d : ℕ} {f : Euclidean d → ℂ}
+    {K : Set (Euclidean d)} (hK : MeasurableSet K) (hs : support f ⊆ K)
+    {C : ℝ} (hC : ∀ x, ‖f x‖ ≤ C) :
+    eLpNorm f 2 volume ≤ volume K ^ (1 / (2 : ℝ)) * ENNReal.ofReal C := by
+  have heq : K.indicator f = f := indicator_eq_self.mpr hs
+  rw [← heq, eLpNorm_indicator_eq_eLpNorm_restrict hK]
+  simpa using (eLpNorm_le_of_ae_bound (p := 2) (μ := volume.restrict K)
+    (Filter.Eventually.of_forall hC))
+/-- Continuous compactly supported functions admit Schwartz approximation in L². -/
+theorem compact_exists_schwartz_eLpNorm_lt {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : Continuous f) (hs : HasCompactSupport f) {ε : ℝ≥0∞} (hε : ε ≠ 0) :
+    ∃ g : SchwartzMap (Euclidean d) ℂ, eLpNorm (f - (g : Euclidean d → ℂ)) 2 volume < ε := by
+  let K := Metric.cthickening 1 (tsupport f)
+  have hK : IsCompact K := hs.cthickening
+  have hfinite : volume K ^ (1 / (2 : ℝ)) ≠ ⊤ :=
+    ENNReal.rpow_ne_top_of_nonneg (by positivity) hK.measure_lt_top.ne
+  obtain ⟨η, hη, hηε⟩ := ENNReal.exists_nnreal_pos_mul_lt hfinite hε
+  obtain ⟨g, hg, hgs, hsupport, happrox⟩ :=
+    smooth_compact_uniform_approx hf hs (show 0 < (η : ℝ) from hη)
+  refine ⟨compactSchwartz g hg hgs, ?_⟩
+  have hfs : support f ⊆ K :=
+    (subset_tsupport f).trans (Metric.self_subset_cthickening (tsupport f))
+  have hdiff : support (f - g) ⊆ K :=
+    (support_sub f g).trans (union_subset hfs hsupport)
+  have hb := eLpNorm_two_le_of_support hK.measurableSet hdiff
+    (C := (η : ℝ)) (fun x => by
+      simpa only [Pi.sub_apply, ← dist_eq_norm, dist_comm] using (happrox x).le)
+  exact hb.trans_lt (by simpa only [ENNReal.ofReal_coe_nnreal, mul_comm] using hηε)
+
+/-- Schwartz functions approximate every Euclidean L² function in the L² seminorm. -/
+theorem memLp_exists_schwartz_eLpNorm_lt {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : MemLp f 2 volume) {ε : ℝ≥0∞} (hε : ε ≠ 0) :
+    ∃ g : SchwartzMap (Euclidean d) ℂ,
+      eLpNorm (f - (g : Euclidean d → ℂ)) 2 volume < ε := by
+  obtain ⟨η, hη, hηε⟩ := ENNReal.exists_nnreal_pos_mul_lt (a := 2) (by norm_num) hε
+  have hη0 : (η : ℝ≥0∞) ≠ 0 := by exact_mod_cast hη.ne'
+  obtain ⟨c, hcs, hfc, hc, hcm⟩ :=
+    hf.exists_hasCompactSupport_eLpNorm_sub_le (by norm_num) hη0
+  obtain ⟨g, hcg⟩ := compact_exists_schwartz_eLpNorm_lt hc hcs hη0
+  refine ⟨g, ?_⟩
+  have hsum := eLpNorm_add_le (hf.aestronglyMeasurable.sub hcm.aestronglyMeasurable)
+    (hcm.aestronglyMeasurable.sub g.continuous.aestronglyMeasurable) (by norm_num : (1 : ℝ≥0∞) ≤ 2)
+  have heq : (f - c) + (c - (g : Euclidean d → ℂ)) = f - (g : Euclidean d → ℂ) := by abel
+  rw [heq] at hsum
+  calc
+    eLpNorm (f - (g : Euclidean d → ℂ)) 2 volume
+        ≤ eLpNorm (f - c) 2 volume + eLpNorm (c - (g : Euclidean d → ℂ)) 2 volume := hsum
+    _ ≤ (η : ℝ≥0∞) + η := add_le_add hfc hcg.le
+    _ < ε := by simpa only [mul_two] using hηε
+
+/-- The Schwartz embedding has dense range in the actual Euclidean L² space. -/
+theorem schwartz_toL2_denseRange (d : ℕ) :
+    DenseRange (fun g : SchwartzMap (Euclidean d) ℂ => g.toLp 2 volume) := by
+  rw [Metric.denseRange_iff]
+  intro f ε hε
+  obtain ⟨g, hg⟩ := memLp_exists_schwartz_eLpNorm_lt (Lp.memLp f)
+    (show ENNReal.ofReal ε ≠ 0 by positivity)
+  refine ⟨g, ?_⟩
+  rw [Lp.dist_def]
+  have heq : eLpNorm ((f : Euclidean d → ℂ) - (g.toLp 2 volume : Euclidean d → ℂ)) 2 volume =
+      eLpNorm ((f : Euclidean d → ℂ) - (g : Euclidean d → ℂ)) 2 volume := by
+    apply eLpNorm_congr_ae
+    filter_upwards [g.coeFn_toLp 2 volume] with x hx
+    simp only [Pi.sub_apply, hx]
+  rw [heq]
+  exact ENNReal.toReal_lt_of_lt_ofReal hg
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/FourierExtension.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory
+namespace RieszEuclidean
+/-- Ambient Euclidean L² space. -/
+abbrev FullL2 (d : ℕ) := Lp ℂ 2 (volume : Measure (Euclidean d))
+/-- The Schwartz subspace with its inherited L² norm. -/
+def schwartzL2 (d : ℕ) : Submodule ℂ (FullL2 d) :=
+  LinearMap.range (SchwartzMap.toLpCLM ℂ ℂ 2 (volume : Measure (Euclidean d))).toLinearMap
+/-- Identify Schwartz functions with their actual L² representatives. -/
+def schwartzL2Equiv (d : ℕ) : SchwartzMap (Euclidean d) ℂ ≃ₗ[ℂ] schwartzL2 d :=
+  LinearEquiv.ofInjective (SchwartzMap.toLpCLM ℂ ℂ 2 volume).toLinearMap
+    (SchwartzMap.injective_toLp 2 volume)
+/-- Fourier transform restricted to the dense Schwartz subspace. -/
+def schwartzFourierIsometry (d : ℕ) : schwartzL2 d ≃ₗᵢ[ℂ] schwartzL2 d where
+  toLinearEquiv := (schwartzL2Equiv d).symm.trans
+    ((SchwartzMap.fourierTransformCLE ℂ).toLinearEquiv.trans (schwartzL2Equiv d))
+  norm_map' x := by
+    obtain ⟨f, rfl⟩ := (schwartzL2Equiv d).surjective x
+    simpa [schwartzL2Equiv] using schwartz_fourier_norm f
+/-- The inclusion of the Schwartz subspace into L² has dense range. -/
+theorem schwartzL2_dense (d : ℕ) : DenseRange (schwartzL2 d).subtypeL := by
+  rw [Metric.denseRange_iff]
+  intro x ε hε
+  obtain ⟨f, hf⟩ := Metric.denseRange_iff.mp (schwartz_toL2_denseRange d) x ε hε
+  exact ⟨schwartzL2Equiv d f, hf⟩
+/-- Continuous extension of the negative-sign Fourier transform to Euclidean L². -/
+def fourierL2CLM (d : ℕ) : FullL2 d →L[ℂ] FullL2 d :=
+  ((schwartzL2 d).subtypeL.comp
+    (schwartzFourierIsometry d).toContinuousLinearEquiv.toContinuousLinearMap).extend
+    (schwartzL2 d).subtypeL (schwartzL2_dense d)
+    (schwartzL2 d).subtypeₗᵢ.isometry.isUniformInducing
+/-- The extension agrees with Fourier on the Schwartz subspace. -/
+theorem fourierL2CLM_subtype (d : ℕ) (x : schwartzL2 d) :
+    fourierL2CLM d x = (schwartzFourierIsometry d x : FullL2 d) :=
+  ContinuousLinearMap.extend_eq _ _ _ _ x
+/-- The extended Fourier transform preserves the L² norm. -/
+theorem fourierL2CLM_norm (d : ℕ) (x : FullL2 d) : ‖fourierL2CLM d x‖ = ‖x‖ := by
+  refine (schwartzL2_dense d).induction_on (p := fun y => ‖fourierL2CLM d y‖ = ‖y‖) x ?_ ?_
+  · exact isClosed_eq ((fourierL2CLM d).continuous.norm) continuous_norm
+  · intro y
+    change ‖fourierL2CLM d (y : FullL2 d)‖ = ‖(y : FullL2 d)‖
+    rw [fourierL2CLM_subtype]
+    exact (schwartzFourierIsometry d).norm_map y
+/-- The extended transform as a linear isometry. -/
+def fourierL2Isometry (d : ℕ) : FullL2 d →ₗᵢ[ℂ] FullL2 d where
+  toLinearMap := (fourierL2CLM d).toLinearMap
+  norm_map' := fourierL2CLM_norm d
+/-- The extended transform has dense range, by Schwartz inversion. -/
+theorem fourierL2_dense (d : ℕ) : DenseRange (fourierL2Isometry d) := by
+  rw [Metric.denseRange_iff]
+  intro x ε hε
+  obtain ⟨y, hy⟩ := Metric.denseRange_iff.mp (schwartzL2_dense d) x ε hε
+  refine ⟨((schwartzFourierIsometry d).symm y : FullL2 d), ?_⟩
+  change dist x (fourierL2CLM d _) < ε
+  rw [fourierL2CLM_subtype, LinearIsometryEquiv.apply_symm_apply]
+  exact hy
+/-- Completeness closes the isometric range, so the Fourier extension is onto. -/
+theorem fourierL2_surjective (d : ℕ) : Function.Surjective (fourierL2Isometry d) := by
+  apply Set.range_eq_univ.mp
+  rw [← (fourierL2Isometry d).isometry.isClosedEmbedding.isClosed_range.closure_eq]
+  exact (fourierL2_dense d).closure_eq
+/-- Unitary negative-sign Euclidean Fourier transform on L². -/
+def fourierL2Equiv (d : ℕ) : FullL2 d ≃ₗᵢ[ℂ] FullL2 d :=
+  LinearIsometryEquiv.ofSurjective (fourierL2Isometry d) (fourierL2_surjective d)
+/-- The unitary extension has the exact Schwartz Fourier values. -/
+theorem fourierL2Equiv_schwartz (d : ℕ) (f : SchwartzMap (Euclidean d) ℂ) :
+    fourierL2Equiv d (f.toLp 2 volume) =
+      (SchwartzMap.fourierTransformCLE ℂ f).toLp 2 volume := by
+  change fourierL2CLM d (f.toLp 2 volume) = _
+  have h := fourierL2CLM_subtype d (schwartzL2Equiv d f)
+  simpa [schwartzFourierIsometry, schwartzL2Equiv] using h
+/-- The inverse extension agrees with inverse Fourier on Schwartz functions. -/
+theorem fourierL2Equiv_symm_schwartz (d : ℕ) (f : SchwartzMap (Euclidean d) ℂ) :
+    (fourierL2Equiv d).symm (f.toLp 2 volume) =
+      ((SchwartzMap.fourierTransformCLE ℂ).symm f).toLp 2 volume := by
+  apply (fourierL2Equiv d).injective
+  rw [LinearIsometryEquiv.apply_symm_apply, fourierL2Equiv_schwartz,
+    ContinuousLinearEquiv.apply_symm_apply]
+/-- The paper's positive-sign Fourier transform, defined on all of Euclidean L². -/
+def paperFourierL2 (d : ℕ) : FullL2 d ≃ₗᵢ[ℂ] FullL2 d := (fourierL2Equiv d).symm
+/-- Exact positive-sign integral formula on the dense Schwartz subspace. -/
+theorem paperFourierL2_schwartz (d : ℕ) (f : SchwartzMap (Euclidean d) ℂ) :
+    (paperFourierL2 d (f.toLp 2 volume) : Euclidean d → ℂ) =ᵐ[volume]
+      Real.fourierIntegralInv f := by
+  rw [paperFourierL2, fourierL2Equiv_symm_schwartz]
+  exact (((SchwartzMap.fourierTransformCLE ℂ).symm f).coeFn_toLp 2 volume).trans
+    (Filter.Eventually.of_forall (fun x => congrFun
+      (SchwartzMap.fourierTransformCLE_symm_apply ℂ f) x))
+end RieszEuclidean
+
 /- Source: RieszEuclidean/ProjectionGap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 /-! Blueprint: blueprint/README.md#projection-gap. -/
@@ -751,6 +975,79 @@ theorem gap_le_of_strong_limit (P : ℕ → H →L[ℂ] H) (R M : H →L[ℂ] H)
 end OrthProjection
 end RieszEuclidean
 
+/- Source: RieszEuclidean/CutoffProjection.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Set
+namespace RieszEuclidean
+/-- Multiplication by the domain indicator on actual L² classes. -/
+def domainCutoff {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) : FullL2 d := ((Lp.memLp f).indicator hΩ).toLp (Ω.indicator f)
+/-- The cutoff has the expected almost-everywhere representative. -/
+theorem domainCutoff_coe {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) : (domainCutoff Ω hΩ f : Euclidean d → ℂ) =ᵐ[volume] Ω.indicator f :=
+  MemLp.coeFn_toLp _
+/-- Indicator multiplication contracts the L² norm. -/
+theorem domainCutoff_norm_le {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) : ‖domainCutoff Ω hΩ f‖ ≤ ‖f‖ := by
+  apply Lp.norm_le_norm_of_ae_le
+  filter_upwards [domainCutoff_coe Ω hΩ f] with x hx
+  rw [hx]
+  exact norm_indicator_le_norm_self _ _
+/-- The domain cutoff as a complex linear map. -/
+def domainCutoffLM {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    FullL2 d →ₗ[ℂ] FullL2 d where
+  toFun := domainCutoff Ω hΩ
+  map_add' f g := by
+    apply Lp.ext
+    filter_upwards [domainCutoff_coe Ω hΩ (f + g), domainCutoff_coe Ω hΩ f,
+      domainCutoff_coe Ω hΩ g, Lp.coeFn_add f g,
+      Lp.coeFn_add (domainCutoff Ω hΩ f) (domainCutoff Ω hΩ g)] with x h1 h2 h3 h4 h5
+    simp only [h1, h5, Pi.add_apply, h2, h3]
+    by_cases hx : x ∈ Ω
+    · simpa only [indicator_of_mem hx, Pi.add_apply] using h4
+    · simp only [indicator_of_not_mem hx, add_zero]
+  map_smul' c f := by
+    apply Lp.ext
+    filter_upwards [domainCutoff_coe Ω hΩ (c • f), domainCutoff_coe Ω hΩ f,
+      Lp.coeFn_smul c f, Lp.coeFn_smul c (domainCutoff Ω hΩ f)] with x h1 h2 h3 h4
+    simp only [h1, h4, Pi.smul_apply, h2, RingHom.id_apply]
+    by_cases hx : x ∈ Ω <;> simp [hx, h3]
+/-- The domain cutoff is a bounded complex linear operator. -/
+def domainCutoffCLM {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    FullL2 d →L[ℂ] FullL2 d :=
+  (domainCutoffLM Ω hΩ).mkContinuous 1 (fun f => by simpa using domainCutoff_norm_le Ω hΩ f)
+/-- Multiplication by a measurable indicator is an orthogonal projection. -/
+def domainProjection {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    OrthProjection (FullL2 d) where
+  op := domainCutoffCLM Ω hΩ
+  idempotent := by
+    ext f
+    filter_upwards [domainCutoff_coe Ω hΩ (domainCutoff Ω hΩ f),
+      domainCutoff_coe Ω hΩ f] with x h1 h2
+    change (domainCutoff Ω hΩ (domainCutoff Ω hΩ f) : Euclidean d → ℂ) x =
+      (domainCutoff Ω hΩ f : Euclidean d → ℂ) x
+    rw [h1, h2]
+    by_cases hx : x ∈ Ω <;> simp [hx, h2]
+  symmetric f g := by
+    rw [L2.inner_def, L2.inner_def]
+    apply integral_congr_ae
+    filter_upwards [domainCutoff_coe Ω hΩ f, domainCutoff_coe Ω hΩ g] with x hf hg
+    change inner (𝕜 := ℂ) ((domainCutoff Ω hΩ f : Euclidean d → ℂ) x) (g x) =
+      inner (𝕜 := ℂ) (f x) ((domainCutoff Ω hΩ g : Euclidean d → ℂ) x)
+    rw [hf, hg]
+    by_cases hx : x ∈ Ω <;> simp [hx]
+/-- The paper's Euclidean Fourier cutoff P = F⁻¹ 1_Ω F. -/
+def fourierProjection {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    OrthProjection (FullL2 d) := (domainProjection Ω hΩ).conjugate (paperFourierL2 d)
+/-- Fourier transforms the cutoff projection into multiplication by the domain indicator. -/
+theorem fourierProjection_transform {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) :
+    paperFourierL2 d ((fourierProjection Ω hΩ).op f) =
+      domainCutoff Ω hΩ (paperFourierL2 d f) := by
+  exact (paperFourierL2 d).apply_symm_apply _
+end RieszEuclidean
+
 /- Source: RieszEuclidean/MovingComparison.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 /-!
@@ -948,4 +1245,24 @@ theorem fourier_parseval {d : ℕ} (f g : SchwartzMap (Space d) ℂ) :
     (∫ x, Real.fourierIntegral f x * starRingEnd ℂ (Real.fourierIntegral g x)) =
       ∫ x, f x * starRingEnd ℂ (g x) := schwartz_parseval f g
 
+/-- Existence of the actual Euclidean unitary Fourier map and its measurable-domain cutoffs. -/
+theorem euclidean_fourier_cutoff (d : ℕ) :
+    ∃ U : Lp ℂ 2 (volume : Measure (Euclidean d)) ≃ₗᵢ[ℂ]
+        Lp ℂ 2 (volume : Measure (Euclidean d)),
+      (∀ f : SchwartzMap (Euclidean d) ℂ,
+        (U (f.toLp 2 volume) : Euclidean d → ℂ) =ᵐ[volume] Real.fourierIntegralInv f) ∧
+      ∀ Ω : Set (Euclidean d), MeasurableSet Ω →
+        ∃ P : OrthProjection (Lp ℂ 2 (volume : Measure (Euclidean d))),
+          ∀ f, (U (P.op f) : Euclidean d → ℂ) =ᵐ[volume]
+            Ω.indicator (U f : Euclidean d → ℂ) := by
+  refine ⟨paperFourierL2 d, paperFourierL2_schwartz d, ?_⟩
+  intro Ω hΩ
+  refine ⟨fourierProjection Ω hΩ, ?_⟩
+  intro f
+  rw [fourierProjection_transform]
+  exact domainCutoff_coe Ω hΩ _
+/-- Schwartz functions are dense in Euclidean L². -/
+theorem schwartz_density (d : ℕ) :
+    DenseRange (fun f : SchwartzMap (Euclidean d) ℂ => f.toLp 2 volume) :=
+  schwartz_toL2_denseRange d
 end RieszEuclidean.Results

@@ -108,10 +108,19 @@ techniques:
   - RieszEuclidean/L2Transport.lean
   - RieszEuclidean/Affine.lean
 - name: Euclidean Fourier and bump projections
-  status: Schwartz Parseval pairing proved; L² extension and bumps pending
-  description: Fourier transposition, conjugation and the Schwartz Parseval pairing are proved in FourierL2.lean. Extend Euclidean Fourier inversion and Parseval to L², construct a normalized smooth bump
-    with Fourier factor bounded away from zero on the domain, and prove the exact synthesis-to-projection
-    gap.
+  status: unitary Fourier transform and cutoff proved; L¹∩L² agreement, kernel and bumps pending
+  description: Bilinear Fubini and Schwartz inversion prove Parseval. Compact-support smooth
+    approximation and an explicit L² estimate prove Schwartz density. The Fourier isometry on
+    this dense subspace extends continuously; norm preservation and closed dense range give
+    a unitary map. Its inverse supplies the positive-sign convention. Indicator multiplication
+    on actual L² representatives is an orthogonal projection, and unitary conjugation gives
+    the Fourier cutoff. L¹∩L² integral agreement, translation commutation, the convolution
+    kernel, normalized bumps and the synthesis-to-projection gap remain pending.
+  files:
+  - RieszEuclidean/FourierL2.lean
+  - RieszEuclidean/SchwartzDensity.lean
+  - RieszEuclidean/FourierExtension.lean
+  - RieszEuclidean/CutoffProjection.lean
 - name: Stationary compact hull and scalar Bochner measures
   status: planned; not yet formalized
   description: Prove compactness of the separated-set hull, continuity of the real action and an invariant
@@ -130,13 +139,13 @@ techniques:
     the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
     triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
 comparator:
-  status: five supporting results verified; final main theorems pending
+  status: seven supporting results verified; full-paper main theorems pending
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-fourier.txt
-  input_hashes: reviews/comparator-fourier-hashes.json
-  verified_scope: Four foundational and affine results plus Schwartz Parseval; no geometric nonexistence theorem.
+  verification_log: reviews/comparator-unitary-cutoff.txt
+  input_hashes: reviews/comparator-unitary-cutoff-hashes.json
+  verified_scope: Seven supporting results, including Schwartz density and unitary Fourier/cutoff existence; no geometric nonexistence theorem.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice

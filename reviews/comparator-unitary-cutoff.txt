@@ -1,0 +1,15 @@
+Running as unit: run-p1443213-i1443513.service; invocation ID: f99daff9cad34dc7aefee27bfc91ddeb
+Building MainResults
+Build completed successfully.
+Exporting #[RieszEuclidean.Results.projection_gap, RieszEuclidean.Results.strict_inclusion_obstruction, RieszEuclidean.Results.weak_limit_separation, RieszEuclidean.Results.affine_invariance, RieszEuclidean.Results.fourier_parseval, RieszEuclidean.Results.euclidean_fourier_cutoff, RieszEuclidean.Results.schwartz_density, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight] from MainResults
+Building RieszEuclideanStandalone
+Build completed successfully.
+Exporting #[RieszEuclidean.Results.projection_gap, RieszEuclidean.Results.strict_inclusion_obstruction, RieszEuclidean.Results.weak_limit_separation, RieszEuclidean.Results.affine_invariance, RieszEuclidean.Results.fourier_parseval, RieszEuclidean.Results.euclidean_fourier_cutoff, RieszEuclidean.Results.schwartz_density, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight] from RieszEuclideanStandalone
+Running Lean default kernel on solution.
+Lean default kernel accepts the solution
+Your solution is okay!
+Finished with result: success
+Main processes terminated with: code=exited, status=0/SUCCESS
+Service runtime: 4min 5.950s
+CPU time consumed: 4min 11.335s
+Memory peak: 2.8G (swap: 0B)

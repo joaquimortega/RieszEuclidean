@@ -6,7 +6,9 @@
     "RieszEuclidean.Results.strict_inclusion_obstruction",
     "RieszEuclidean.Results.weak_limit_separation",
     "RieszEuclidean.Results.affine_invariance",
-    "RieszEuclidean.Results.fourier_parseval"
+    "RieszEuclidean.Results.fourier_parseval",
+    "RieszEuclidean.Results.euclidean_fourier_cutoff",
+    "RieszEuclidean.Results.schwartz_density"
   ],
   "permitted_axioms": [
     "propext",

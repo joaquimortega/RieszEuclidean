@@ -6,3 +6,6 @@ import RieszEuclidean.WeakLimits
 import RieszEuclidean.L2Transport
 import RieszEuclidean.Affine
 import RieszEuclidean.FourierL2
+import RieszEuclidean.SchwartzDensity
+import RieszEuclidean.FourierExtension
+import RieszEuclidean.CutoffProjection
