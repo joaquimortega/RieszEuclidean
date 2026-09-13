@@ -16,23 +16,70 @@ sources:
   id: https://github.com/joaquimortega/RieszEuclidean/blob/main/paper/RieszEuclidean.tex
   type: article
   relationship: formalizes
-  note: Development in progress; source fingerprint and all obligations are in blueprint/manifest.json.
+  note: Complete formalization; source fingerprint and all obligations are in blueprint/manifest.json.
 status:
-  scope: Thirteen of 25 blueprint obligations are proved, including Euclidean Fourier analysis,
+  scope: All 25 blueprint obligations are proved, including Euclidean Fourier analysis,
     initial bump projections, the compact hull, stationary probability and Koopman system,
     and continuous Fejer approximation. Given representing spectral measures, the control
-    measure and actual stationary cutoff family are proved. Bochner existence is postponed.
-    The comparison kernel, sphere geometry, and conditional boundary/sphere results are now implemented;
-    continuous averaging, planar geometry and unconditional main theorems remain pending.
+    measure and actual stationary cutoff family are proved. Scalar spectral measures are constructed
+    for strongly continuous unitary representations on separable complex Hilbert spaces, the exact
+    Bochner scope used by the manuscript. The modules implement the actual averaging gap and ball,
+    triangle, ellipsoid, general-boundary and finite irredundant supporting-halfspace polygon
+    conclusions with nonzero normals and nonempty faces, together
+    with physical translation spectra and the interval/rectangle remarks. The
+    unconditional wrappers discharge the stationary representation hypotheses. The independent
+    public-statement and transitive-axiom audit is complete.
   sorry_count: 0
   sorry_in_definitions: 0
-  sorry_count_note: Counts refer to implemented modules only. Pending blueprint nodes are not implemented
-    by placeholders. Zero holes does not certify completion.
+  sorry_count_note: All proof modules and public results are audited. No theorem is implemented
+    by a placeholder; the zero count is confirmed alongside kernel and axiom checks.
   axioms:
   - propext
   - Classical.choice
   - Quot.sound
-  main_results: []
+  main_results:
+  - declaration: RieszEuclidean.exists_unitary_spectralMeasures
+    file: RieszEuclidean/BochnerExistence.lean
+    sorry_count: 0
+    axioms: [propext, Classical.choice, Quot.sound]
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
+  - declaration: RieszEuclidean.not_hasExponentialRieszBasis_ball
+    file: RieszEuclidean/BallEllipsoidTheorems.lean
+    sorry_count: 0
+    axioms: [propext, Classical.choice, Quot.sound]
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
+  - declaration: RieszEuclidean.not_exists_exponentialRieszBasis_ellipsoid
+    file: RieszEuclidean/BallEllipsoidTheorems.lean
+    sorry_count: 0
+    axioms: [propext, Classical.choice, Quot.sound]
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
+  - declaration: RieszEuclidean.noncollinear_triangle_no_exponentialRieszBasis
+    file: RieszEuclidean/UnconditionalGeometry.lean
+    sorry_count: 0
+    axioms: [propext, Classical.choice, Quot.sound]
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
+  - declaration: RieszEuclidean.SeparatedConfiguration.no_exponentialRieszBasis_of_general_boundary
+    file: RieszEuclidean/UnconditionalGeometry.lean
+    sorry_count: 0
+    axioms: [propext, Classical.choice, Quot.sound]
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
+  - declaration: RieszEuclidean.SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_nonzero_normals
+    file: RieszEuclidean/UnconditionalGeometry.lean
+    sorry_count: 0
+    axioms: [propext, Classical.choice, Quot.sound]
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
+  - declaration: RieszEuclidean.SeparatedConfiguration.unpairedMaximalSide_no_exponentialRieszBasis
+    file: RieszEuclidean/UnconditionalGeometry.lean
+    sorry_count: 0
+    axioms: [propext, Classical.choice, Quot.sound]
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
 fidelity:
   divergences: No alternate lattice proof is substituted for the Euclidean proof. The basis predicate
     uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)). Mathlib conjugates the first inner-product
@@ -55,16 +102,16 @@ alignment:
     lean: RieszEuclidean.exists_exponentialRieszBasis_affine_iff
     status: proved
   - source: Theorems 1.1 and 7.1, Corollary 8.1, polygon and general-boundary remarks
-    status: pending full analytic and geometric construction
+    status: proved and independently audited
 review:
-  status: in-progress
-  notes: The current blueprint has 13 proved nodes and 12 pending obligations. Official
-    Comparator and Lean's default kernel accepted all twenty-three public supporting
-    results. Modular, public and standalone builds and all 15 linters pass. All 597
+  status: complete
+  notes: All 25 blueprint nodes are proved. At published
+    commit 0fb31ee, official Comparator and Lean's default kernel accepted all twenty-three public supporting
+    results. Modular, public and standalone builds and all 15 linters passed. All 597
     transitive axiom reports use only standard Lean axioms. Exact scope and inputs
-    are recorded in reviews/comparison-sphere-progress.md. Bochner existence remains
-    postponed; representing spectral measures are explicit hypotheses. The full
-    geometric nonexistence theorems are not certified by this checkpoint.
+    are recorded in reviews/comparison-sphere-progress.md. Official Comparator and Lean's
+    default kernel accept the 37-target unconditional reference. The 931-declaration
+    transitive axiom audit uses only standard Lean axioms.
 classification:
   msc2020:
   - 42C15
@@ -97,7 +144,7 @@ techniques:
   description: The norm gap below one is equivalent to an invertible restriction between projection ranges.
     Strictly included ranges cannot both satisfy this gap relative to one projection. Uniform gaps survive
     simultaneous strong limits, and norm convergence of the comparison family supplies the common boundary
-    projection. Construction of the paper-specific families remains open.
+    projection. The paper-specific families and their final contradiction are proved downstream.
   files:
   - RieszEuclidean/ProjectionGap.lean
   - RieszEuclidean/MovingComparison.lean
@@ -164,7 +211,7 @@ techniques:
   - RieszEuclidean/RangeIso.lean
   - RieszEuclidean/InitialGap.lean
 - name: Stationary compact hull and scalar Bochner measures
-  status: stationary system and vague equivalence proved; scalar Bochner measures pending
+  status: stationary system, vague equivalence and scalar Bochner measures proved
   description: Simultaneous Hausdorff subsequence extraction on integer-radius compact windows
     is proved, together with inclusion and interior compatibility of the window limits.
     Hausdorff convergence preserves separation and gives uniform two-sided point matching.
@@ -204,8 +251,10 @@ techniques:
     measure existence. Separability gives a dense sequence of normalized vectors. Positive
     summable weights form a probability control measure; homogeneity, the parallelogram
     estimate and vector approximation prove domination of every spectral measure. The
-    spectral norm identity proves the uniform symbol operator bound. Both results retain
-    the supplied representing family; general Bochner measure existence is postponed.
+    spectral norm identity proves the uniform symbol operator bound. Normalized windows
+    in the original Hilbert space, scalar Hilbert-basis coordinates and bounded vague
+    limits construct the supplied representing family for every vector of a separable
+    strongly continuous unitary representation.
   files:
   - RieszEuclidean/WindowWeakLimit.lean
   - RieszEuclidean/DistanceProfile.lean
@@ -225,6 +274,12 @@ techniques:
   - RieszEuclidean/Koopman.lean
   - RieszEuclidean/VagueConvergence.lean
   - RieszEuclidean/Correlations.lean
+  - RieszEuclidean/BochnerCoordinateWindows.lean
+  - RieszEuclidean/BochnerMeasureLimit.lean
+  - RieszEuclidean/BochnerFourierLimit.lean
+  - RieszEuclidean/BochnerWindows.lean
+  - RieszEuclidean/BochnerApproximateMeasures.lean
+  - RieszEuclidean/BochnerExistence.lean
   - RieszEuclidean/SpectralMeasures.lean
   - RieszEuclidean/IntegratedUnitary.lean
   - RieszEuclidean/SpectralNorm.lean
@@ -233,7 +288,7 @@ techniques:
   - RieszEuclidean/ControlMeasure.lean
   - RieszEuclidean/SymbolBound.lean
 - name: Continuous Fejer approximation and stationary cutoffs
-  status: Fejer construction proved; cutoff construction proved given representing spectral measures
+  status: Fejer and stationary cutoff constructions proved
   description: Actual coordinate-box overlaps give compactly supported weights. Their Fourier
     transforms are normalized squared box transforms; Plancherel proves unit mass. Dilation
     reduces concentration to integrable tails. The Fourier symbol of the weighted domain
@@ -242,8 +297,8 @@ techniques:
     Scalar dominated convergence gives pointwise Cauchy finite filters. Uniform bounds
     construct a strong operator limit, and composition and adjoint identities prove
     self-adjointness and idempotence. A simultaneous family has spectral mass and difference
-    identities. All limits use real radii tending to infinity; representing measures and
-    common domination remain explicit hypotheses while Bochner existence is postponed.
+    identities. All limits use real radii tending to infinity. The proved unitary
+    spectral-measure family and control measure discharge the existence and domination inputs.
   files:
   - RieszEuclidean/FejerWeights.lean
   - RieszEuclidean/BoxOverlap.lean
@@ -260,39 +315,76 @@ techniques:
   - RieszEuclidean/FiniteFilters.lean
   - RieszEuclidean/StationaryCutoffs.lean
 - name: Covariant comparison kernel and averaged forms
-  status: kernel identities, configuration continuity and stationary operator identities proved; averaging pending
+  status: kernel identities, configuration continuity, stationary operators and actual averaging gap implemented
   description: The actual subtype-indexed bump series has at most one active term under
     the support and separation assumptions. This gives summability, uniform bounds,
     finite propagation, covariance and Hermitian symmetry. Translated bump orthogonality
     proves product integrability and the projection integral identity. Local finite sums
     prove joint spatial continuity, including the configuration variable. The stationary
-    operators M_t are self-adjoint, idempotent and operator-norm Lipschitz. The averaged
-    scalar argument remains pending and introduces no amplified Hilbert space.
+    operators M_t are self-adjoint, idempotent and operator-norm Lipschitz. Actual compactly
+    supported averaged tests, Fourier and bump scalar expansions, energy identities and
+    Cauchy-Schwarz estimates transfer the same gap to the stationary cutoff limit. This
+    introduces no amplified Hilbert space and retains the supplied spectral representations.
   files:
   - RieszEuclidean/BumpKernel.lean
   - RieszEuclidean/BumpKernelProjection.lean
   - RieszEuclidean/BumpKernelContinuity.lean
+  - RieszEuclidean/AveragedTests.lean
+  - RieszEuclidean/AveragedTestNorms.lean
+  - RieszEuclidean/AveragedGap.lean
+  - RieszEuclidean/AveragedFourierForm.lean
+  - RieszEuclidean/BumpBoxKernel.lean
+  - RieszEuclidean/AveragedBumpForm.lean
+  - RieszEuclidean/AveragedFourierExpansion.lean
+  - RieszEuclidean/AveragedCanonicalForms.lean
+  - RieszEuclidean/AveragedFiniteGap.lean
+  - RieszEuclidean/AveragedLimitGap.lean
+  - RieszEuclidean/StationaryAssemblyHelpers.lean
 - name: Geometric boundary crossing
-  status: sphere geometry proved; boundary limits and crossing remain conditional/pending
+  status: geometry and unconditional domain conclusions proved and audited
   description: Literal finite-positive Hausdorff sphere surface measure and translated-overlap nullity
-    are proved. Boundary-cutoff limits and the sphere obstruction are assembled conditional on explicit
-    spectral data and the averaged gap. Continuous averaging, same-direction edge crossing and the full
-    ball, triangle, unpaired/odd polygon, ellipsoid and general-boundary conclusions remain pending.
+    are proved. Boundary jumps, same-direction edge crossing and the actual averaging gap assemble the
+    ball, every noncollinear triangle, affine ellipsoid, general-boundary and finite irredundant
+    supporting-halfspace polygon with nonzero normals, nonempty faces and an unpaired maximal side
+    conclusions. The polygon presentation identifies supporting faces with maximal boundary segments and
+    yields the odd-side result. Physical translation spectra and the interval/rectangle overlap remarks are
+    formalized. The unconditional wrappers use the proved stationary hull spectral family.
+  files:
+  - RieszEuclidean/SphereAnalyticAssembly.lean
+  - RieszEuclidean/EllipsoidAnalyticAssembly.lean
+  - RieszEuclidean/EdgeGeometry.lean
+  - RieszEuclidean/TriangleCrossing.lean
+  - RieszEuclidean/TriangleBoundary.lean
+  - RieszEuclidean/TriangleSymbolLimits.lean
+  - RieszEuclidean/PolygonGeometry.lean
+  - RieszEuclidean/PolygonParity.lean
+  - RieszEuclidean/PolygonLocalGeometry.lean
+  - RieszEuclidean/PolygonSymbolLimits.lean
+  - RieszEuclidean/BoundaryJumpLimits.lean
+  - RieszEuclidean/TriangleCutoffObstruction.lean
+  - RieszEuclidean/TriangleAnalyticAssembly.lean
+  - RieszEuclidean/TriangleAffineAssembly.lean
+  - RieszEuclidean/GeneralBoundaryAssembly.lean
+  - RieszEuclidean/PolygonCutoffObstruction.lean
+  - RieszEuclidean/PolygonAnalyticAssembly.lean
+  - RieszEuclidean/PhysicalTranslationSpectrum.lean
+  - RieszEuclidean/IntervalRectangleRemarks.lean
+  - RieszEuclidean/PolygonPresentation.lean
 comparator:
-  status: twenty-three supporting results verified; full-paper results pending
+  status: thirty-seven supporting, conditional and unconditional results accepted
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-comparison-sphere.txt
-  input_hashes: reviews/comparator-comparison-sphere-hashes.json
-  verified_scope: Twenty-three supporting results covering Euclidean Fourier and bump
-    constructions, affine transport, compact hull and invariant probability, Koopman
-    representation, Beurling-vague equivalence, spectral norm and control measure,
-    continuous Fejer approximation, finite filters, stationary cutoffs, bump-kernel
-    projection identity, the uniform hull gap, actual stationary comparison projections,
-    literal Hausdorff sphere measure and the conditional sphere cutoff obstruction.
-    Spectral measure existence and the averaged gap remain explicit where required.
-    No general Bochner existence or unconditional geometric nonexistence theorem is certified.
+  verification_log: reviews/comparator-bochner.txt
+  input_hashes: reviews/comparator-bochner-hashes.json
+  verified_scope: Thirty-seven results covering the prior supporting interfaces, the actual
+    averaging gap, conditional geometric interfaces, scalar spectral-measure existence for
+    strongly continuous unitary representations on separable complex Hilbert spaces, and
+    unconditional ball, noncollinear-triangle, affine-ellipsoid, general-boundary and
+    supporting-halfspace polygon conclusions. The polygon results assume a finite irredundant
+    presentation with nonzero normals and nonempty faces, and cover an unpaired maximal side
+    and the odd-maximal-side consequence. The broader abstract positive-definite-function
+    form of Bochner's theorem is outside the claimed scope.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice

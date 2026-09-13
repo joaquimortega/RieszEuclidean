@@ -3,10 +3,10 @@ import RieszEuclidean
 /-!
 # Implemented result statements and concrete definitions
 
-This compact Comparator reference covers proved foundational, Fourier, affine
-configuration-space results and invariant probability measures. It does not contain or certify the unfinished geometric main
-theorems. Its wrapper proofs use the checked modular library, so the reference
-needs neither theorem placeholders nor warning suppressions.
+This compact Comparator reference states thirty-seven proved results, including
+spectral-measure existence for the stationary representation and unconditional
+geometric nonexistence conclusions. Wrapper proofs use the modular library
+without placeholders or warning suppressions.
 -/
 noncomputable section
 open MeasureTheory Filter Topology Metric
@@ -322,13 +322,238 @@ theorem sphere_cutoff_obstruction {d : ℕ} {H : Type}
     (μ : Measure (Euclidean d)) [SFinite μ] (hdom : ∀ f, σ f ≪ μ)
     (P : G → H →L[ℂ] H)
     (hP : ∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t)
-    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (ball a r) t θ‖ ^ 2 ∂σ f)
+    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (Metric.ball a r) t θ‖ ^ 2 ∂σ f)
     (hdiff : ∀ s t f, ‖P s f - P t f‖ ^ 2 =
-      ∫ θ, ‖cutoffSymbol (ball a r) s θ - cutoffSymbol (ball a r) t θ‖ ^ 2 ∂σ f)
+      ∫ θ, ‖cutoffSymbol (Metric.ball a r) s θ - cutoffSymbol (Metric.ball a r) t θ‖ ^ 2 ∂σ f)
     (u : H) (hu : ‖u‖ = 1) (hσu : σ u = Measure.dirac 0)
     (M : Euclidean d → H →L[ℂ] H) (hM : Continuous M)
     (hMs : ∀ t, IsSelfAdjoint (M t)) (hMi : ∀ t, (M t).comp (M t) = M t)
     {γ : ℝ} (hγ : γ < 1) (hgap : ∀ t : G, ‖P t - M t‖ ≤ γ) : False :=
   sphere_cutoffs_continuous_comparison_obstruction hd a hr hG σ hfinite μ hdom P hP hnorm hdiff
     u hu hσu M hM hMs hMi hγ hgap
+end RieszEuclidean.Results
+
+noncomputable section
+open MeasureTheory Filter Topology Metric
+open scoped ENNReal
+namespace RieszEuclidean.Results
+
+open SeparatedConfiguration
+
+/-- The actual stationary cutoff inherits the uniform Fourier-to-bump gap from
+the finite averaged filters. -/
+theorem stationary_cutoff_comparison_gap {d : ℕ} {δ r M γ : ℝ}
+    (hδ : 0 < δ) (Γ : SeparatedConfiguration d δ)
+    [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)] [CompactSpace (hull Γ)]
+    (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ)
+    (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤)
+    (hr : 2 * r < δ) (b : SchwartzMap (Euclidean d) ℂ)
+    (hcompact : HasCompactSupport b) (hs : ∀ x, r ≤ ‖x‖ → b x = 0)
+    (hn : ‖b.toLp 2 volume‖ = 1) (hM : 0 ≤ M) (hb : ∀ x, ‖b x‖ ≤ M)
+    (hγ : 0 ≤ γ)
+    (hgap : ∀ Δ : hull Γ, ‖(fourierProjection Ω hΩ).op -
+      (isometryRangeProjection (bumpSynthesis Δ.val.separated hr b hs hn)).op‖ ≤ γ)
+    (t : Euclidean d) (P : Lp ℂ 2 μ →L[ℂ] Lp ℂ 2 μ)
+    (hlim : ∀ f, Tendsto (fun R : ℝ => integratedUnitary (hullKoopmanUnitary hδ Γ μ hμ)
+      (finiteFilterKernel Ω t R) f) atTop (nhds (P f))) :
+    ‖P - stationaryComparison hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb t‖ ≤ γ := by
+  exact SeparatedConfiguration.norm_stationaryCutoff_sub_comparison_le hδ Γ μ hμ
+    Ω hΩ hfin hr b hcompact hs hn hM hb hγ hgap t P hlim
+
+/-- Conditional full ball conclusion, with the representing family
+stated explicitly. -/
+theorem ball_no_exponentialRieszBasis_of_hull_representations {d : ℕ}
+    (hd : 2 ≤ d) (a : Euclidean d) {ρ : ℝ} (hρ : 0 < ρ)
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration d δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean d), ∀ f,
+        RepresentsCorrelation (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (Λ : Set (Euclidean d)) : ¬HasExponentialRieszBasis (Metric.ball a ρ) Λ := by
+  exact SeparatedConfiguration.not_hasExponentialRieszBasis_ball_of_hull_representations
+    hd a hρ hrep Λ
+
+/-- Conditional full conclusion for every noncollinear planar vertex triangle. -/
+theorem noncollinear_triangle_no_exponentialRieszBasis_of_hull_representations
+    (a b c : Euclidean 2) (h : ¬ Collinear ℝ (Set.range ![a, b, c]))
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
+        ∀ f, RepresentsCorrelation
+          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (Λ : Set (Euclidean 2)) : ¬ HasExponentialRieszBasis (vertexTriangle a b c) Λ := by
+  exact RieszEuclidean.noncollinear_triangle_no_exponentialRieszBasis_of_hull_representations
+    a b c h hrep Λ
+
+/-- Conditional full conclusion for every invertible affine image of the unit Metric.ball. -/
+theorem ellipsoid_no_exponentialRieszBasis_of_hull_representations {d : ℕ}
+    (hd : 2 ≤ d) (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d)
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration d δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean d), ∀ f,
+        RepresentsCorrelation (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f)) :
+    ¬∃ Λ : Set (Euclidean d),
+      HasExponentialRieszBasis ((planeAffine a A) '' Metric.ball (0 : Euclidean d) 1) Λ := by
+  exact SeparatedConfiguration.not_exists_exponentialRieszBasis_ellipsoid_of_hull_representations
+    hd a A hrep
+
+/-- Conditional full conclusion under the manuscript's literal general
+boundary-measure criterion. -/
+theorem general_boundary_no_exponentialRieszBasis_of_hull_representations {d : ℕ}
+    (Ω : Set (Euclidean d)) (hΩ : IsOpen Ω ∧ Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω)
+    (hboundary : volume (frontier Ω) = 0)
+    (ν : Measure (Euclidean d)) [IsFiniteMeasure ν] (hν : ν ≠ 0)
+    (hsupport : ν (frontier Ω)ᶜ = 0)
+    (hoverlap : ∀ θ : Euclidean d, θ ≠ 0 →
+      ν (frontier Ω ∩ RieszEuclidean.translate θ (frontier Ω)) = 0)
+    (hsep : ∀ᵐ t ∂ν, ∀ V ∈ nhds t,
+      0 < volume (V ∩ Ω) ∧ 0 < volume (V ∩ (closure Ω)ᶜ))
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration d δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean d),
+        ∀ f, RepresentsCorrelation
+          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (Λ : Set (Euclidean d)) : ¬ HasExponentialRieszBasis Ω Λ := by
+  exact SeparatedConfiguration.no_exponentialRieszBasis_of_general_boundary_and_hull_representations
+    Ω hΩ hbounded hboundary ν hν hsupport hoverlap hsep hrep Λ
+
+/-- Conditional odd-polygon conclusion formulated using the actual number of
+maximal geometric sides and arbitrary nonzero supporting normals. -/
+theorem odd_maximal_sides_polygon_no_exponentialRieszBasis_of_hull_representations
+    {ι : Type*} [Fintype ι] (normal : ι → Euclidean 2) (offset : ι → ℝ)
+    (hn : ∀ i, normal i ≠ 0)
+    (hface : ∀ i, (strictSupportingFace normal offset i).Nonempty)
+    (hbounded : Bornology.IsBounded (strictHalfspaceIntersection normal offset))
+    (hodd : Odd (Nat.card {S : Set (Euclidean 2) //
+      IsMaximalBoundarySegment (strictHalfspaceIntersection normal offset) S}))
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
+        ∀ f, RepresentsCorrelation
+          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (Λ : Set (Euclidean 2)) :
+    ¬ HasExponentialRieszBasis (strictHalfspaceIntersection normal offset) Λ := by
+  exact SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_nonzero_normals_and_hull_representations
+    normal offset hn hface hbounded hodd hrep Λ
+
+/-- Conditional polygon conclusion for an explicitly geometrically unpaired
+maximal boundary side. -/
+theorem unpaired_maximal_side_polygon_no_exponentialRieszBasis_of_hull_representations
+    {ι : Type*} [Fintype ι] (normal : ι → Euclidean 2) (offset : ι → ℝ)
+    (hn : ∀ i, normal i ≠ 0)
+    (hface : ∀ i, (strictSupportingFace normal offset i).Nonempty)
+    (hbounded : Bornology.IsBounded (strictHalfspaceIntersection normal offset))
+    (S : Set (Euclidean 2))
+    (hS : IsMaximalBoundarySegment (strictHalfspaceIntersection normal offset) S)
+    (hunpaired : ∀ T : Set (Euclidean 2),
+      IsMaximalBoundarySegment (strictHalfspaceIntersection normal offset) T →
+      T ≠ S → ¬ BoundarySegmentsParallel S T)
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
+        ∀ f, RepresentsCorrelation
+          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (Λ : Set (Euclidean 2)) :
+    ¬ HasExponentialRieszBasis (strictHalfspaceIntersection normal offset) Λ := by
+  exact SeparatedConfiguration.unpairedMaximalSide_no_exponentialRieszBasis_of_hull_representations
+    normal offset hn hface hbounded S hS hunpaired hrep Λ
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+open SeparatedConfiguration
+
+/-- Every vector in a separable strongly continuous unitary representation of
+Euclidean translations has a finite positive representing spectral measure. -/
+theorem unitary_spectral_measures {d : ℕ} {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    [TopologicalSpace.SeparableSpace H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H) (hU : ∀ f, Continuous (fun x => U x f))
+    (hadd : ∀ z y f, U z (U y f) = U (z + y) f) :
+    ∃ σ : H → Measure (Euclidean d), ∀ f,
+      RepresentsCorrelation (unitaryCorrelation U f) (σ f) := by
+  exact exists_unitary_spectralMeasures U hU hadd
+
+/-- For every dimension at least two, no positive-radius Euclidean ball admits
+an exponential Riesz basis. -/
+theorem ball_no_exponentialRieszBasis {d : ℕ}
+    (hd : 2 ≤ d) (a : Euclidean d) {ρ : ℝ} (hρ : 0 < ρ)
+    (Λ : Set (Euclidean d)) : ¬ HasExponentialRieszBasis (Metric.ball a ρ) Λ := by
+  exact RieszEuclidean.not_hasExponentialRieszBasis_ball hd a hρ Λ
+
+/-- No noncollinear planar vertex triangle admits an exponential Riesz basis. -/
+theorem noncollinear_triangle_no_exponentialRieszBasis
+    (a b c : Euclidean 2) (h : ¬ Collinear ℝ (Set.range ![a, b, c]))
+    (Λ : Set (Euclidean 2)) : ¬ HasExponentialRieszBasis (vertexTriangle a b c) Λ := by
+  exact RieszEuclidean.noncollinear_triangle_no_exponentialRieszBasis a b c h Λ
+
+/-- For every dimension at least two, no invertible affine image of the unit
+ball admits an exponential Riesz basis. -/
+theorem ellipsoid_no_exponentialRieszBasis {d : ℕ}
+    (hd : 2 ≤ d) (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    ¬∃ Λ : Set (Euclidean d),
+      HasExponentialRieszBasis
+        ((planeAffine a A) '' Metric.ball (0 : Euclidean d) 1) Λ := by
+  exact RieszEuclidean.not_exists_exponentialRieszBasis_ellipsoid hd a A
+
+/-- The exact general boundary-measure criterion from the manuscript. -/
+theorem general_boundary_no_exponentialRieszBasis {d : ℕ}
+    (Ω : Set (Euclidean d)) (hΩ : IsOpen Ω ∧ Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω)
+    (hboundary : volume (frontier Ω) = 0)
+    (ν : Measure (Euclidean d)) [IsFiniteMeasure ν] (hν : ν ≠ 0)
+    (hsupport : ν (frontier Ω)ᶜ = 0)
+    (hoverlap : ∀ θ : Euclidean d, θ ≠ 0 →
+      ν (frontier Ω ∩ RieszEuclidean.translate θ (frontier Ω)) = 0)
+    (hsep : ∀ᵐ t ∂ν, ∀ V ∈ nhds t,
+      0 < volume (V ∩ Ω) ∧ 0 < volume (V ∩ (closure Ω)ᶜ))
+    (Λ : Set (Euclidean d)) : ¬ HasExponentialRieszBasis Ω Λ := by
+  exact SeparatedConfiguration.no_exponentialRieszBasis_of_general_boundary
+    Ω hΩ hbounded hboundary ν hν hsupport hoverlap hsep Λ
+
+/-- Every bounded irredundant planar halfspace polygon with an odd number of
+actual maximal sides has no exponential Riesz basis. -/
+theorem odd_maximal_sides_polygon_no_exponentialRieszBasis
+    {ι : Type*} [Fintype ι] (normal : ι → Euclidean 2) (offset : ι → ℝ)
+    (hn : ∀ i, normal i ≠ 0)
+    (hface : ∀ i, (strictSupportingFace normal offset i).Nonempty)
+    (hbounded : Bornology.IsBounded (strictHalfspaceIntersection normal offset))
+    (hodd : Odd (Nat.card {S : Set (Euclidean 2) //
+      IsMaximalBoundarySegment (strictHalfspaceIntersection normal offset) S}))
+    (Λ : Set (Euclidean 2)) :
+    ¬ HasExponentialRieszBasis (strictHalfspaceIntersection normal offset) Λ := by
+  exact SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_nonzero_normals
+    normal offset hn hface hbounded hodd Λ
+
+/-- Every bounded irredundant planar halfspace polygon with a geometrically
+unpaired maximal side has no exponential Riesz basis. -/
+theorem unpaired_maximal_side_polygon_no_exponentialRieszBasis
+    {ι : Type*} [Fintype ι] (normal : ι → Euclidean 2) (offset : ι → ℝ)
+    (hn : ∀ i, normal i ≠ 0)
+    (hface : ∀ i, (strictSupportingFace normal offset i).Nonempty)
+    (hbounded : Bornology.IsBounded (strictHalfspaceIntersection normal offset))
+    (S : Set (Euclidean 2))
+    (hS : IsMaximalBoundarySegment (strictHalfspaceIntersection normal offset) S)
+    (hunpaired : ∀ T : Set (Euclidean 2),
+      IsMaximalBoundarySegment (strictHalfspaceIntersection normal offset) T →
+      T ≠ S → ¬ BoundarySegmentsParallel S T)
+    (Λ : Set (Euclidean 2)) :
+    ¬ HasExponentialRieszBasis (strictHalfspaceIntersection normal offset) Λ := by
+  exact SeparatedConfiguration.unpairedMaximalSide_no_exponentialRieszBasis
+    normal offset hn hface hbounded S hS hunpaired Λ
+
 end RieszEuclidean.Results

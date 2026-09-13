@@ -3,9 +3,9 @@
 Lean formalization project for Joaquim Ortega-Cerdà's
 [`RieszEuclidean.tex`](paper/RieszEuclidean.tex).
 
-**Work in progress. The Euclidean nonexistence theorems are not yet formally
-proved in this repository.** The blueprint records the remaining analytic and
-geometric constructions; a successful build checks the implemented modules only.
+**The direct Euclidean formalization is complete: all 25 blueprint obligations,
+including the unconditional geometric nonexistence theorems and their independent
+public audit, are proved.**
 
 The intended proof keeps frequencies, translations, and scalar spectral measures
 in ℝⁿ. It uses Beurling weak limits, smooth orthonormal bumps, continuous box
@@ -17,10 +17,10 @@ Radius selection, the positive uniform Fourier lower bound and the translated
 orthonormal family are also proved, together with isometric synthesis and the
 projection onto its range. The initial projection gap and the
 compact metrizable configuration space with its jointly continuous translation action
-are proved. The current blueprint has 13 of 25 obligations proved (52%). Bochner existence
-is postponed; continuous averaging, planar geometry and the unconditional main
-theorems remain pending. See [development status](STATUS.md) for the current
-conditional results.
+are proved. All 25 obligations are proved. Scalar spectral
+measures are constructed for every vector in the separable stationary Koopman
+space, discharging the representation hypotheses in the averaging, cutoff and
+geometric arguments. See [development status](STATUS.md).
 
 ## Build from a standalone clone
 
@@ -41,16 +41,16 @@ All project-specific Lean sources are contained in this repository. No sibling
 checkout, absolute path, generated proof file, or private package is required.
 Mathlib and its transitive dependencies are fetched by Lake, not vendored into Git.
 
-The stronger completion gate is deliberately separate:
+The completion gate is:
 
 ```sh
 python3 scripts/check_blueprint.py --require-complete
 ```
 
-It must fail while any full-paper obligation remains open. The final theorem
-statements will use the concrete `HasExponentialRieszBasis` predicate, arbitrary
+CI requires this command to pass. The implemented
+theorems use the concrete `HasExponentialRieszBasis` predicate, arbitrary
 frequency sets, and the manuscript's dimensional and geometric hypotheses.
-Conditional projection lemmas do not discharge those theorems.
+The independent public audit is part of the completed blueprint.
 
 ## Documents
 
@@ -89,11 +89,12 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states twenty-three proved supporting results with concrete
-basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
-assembled from the modular source with Mathlib imports only. The analytic results include Schwartz Parseval, Schwartz density, and existence
-of the unitary Fourier transform with its measurable-domain cutoffs. Neither file yet
-contains the pending geometric nonexistence theorems.
+The final working `MainResults.lean` exposes 37 targets: the previously verified
+23 supporting results, the averaging and conditional geometric interfaces,
+Bochner existence and unconditional geometric conclusions. Official Comparator
+and Lean's default kernel accept all 37. The 931-declaration transitive axiom
+audit uses only standard Lean axioms. The archived `0fb31ee` audit
+certifies only its own twenty-three-result reference and inputs.
 
 Regenerate after source edits with `python3 scripts/build_standalone.py`.
 The generator resets Lean's auxiliary-proof naming cache at each file boundary,
@@ -113,8 +114,8 @@ Use a virtual environment for the Python validation dependencies if required by
 your system. The official metadata schema is vendored under `schema/`.
 Pinned Comparator build/run instructions are in `standalone/TOOLS.md`; actual
 verification scope and results are recorded in `reviews/standalone-validation.md`.
-Comparator checks source correspondence and kernel acceptance, not mathematical
-fidelity to the paper. The final main-theorem check remains a completion gate.
+Comparator checks source correspondence and kernel acceptance, while the
+blueprint and source reviews record fidelity to the paper.
 
 The hull lemma is proved: configurations with a common positive separation bound,
 including the empty configuration, form a compact metrizable space. Sequential
@@ -135,7 +136,8 @@ Riesz–Markov–Kakutani represents it by the required measure.
 stationary L² space, with the group law and invariant unit constant. It follows
 the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}.
 
-The integrated blueprint has **13 of 25 obligations (52%) proved**. This is a node count, not an estimate of remaining effort.
+The blueprint has **25 of 25 obligations proved**. This is a node count,
+not an estimate of remaining effort.
 
 The scalar calculus now includes kernel adjoints and convolution, the uniform
 Fourier-symbol operator bound, and a common probability control measure from a
@@ -145,21 +147,35 @@ symbol of the finite filter. Dominated convergence gives the simultaneous
 stationary cutoff family, with strong convergence, self-adjointness, idempotence
 and spectral norm and difference identities.
 
-General Bochner existence is postponed at the user's request. The control measure
-and cutoff theorems explicitly assume representing spectral measures; their
-full-paper nodes therefore remain pending. No spectral existence axiom is added.
+Scalar correlations of strongly continuous unitary representations on separable
+complex Hilbert spaces now have finite positive Euclidean representing measures.
+The construction uses scalar Hilbert-basis coordinates of windows in the original
+Hilbert space, explicit Fourier-density measures and a finite-measure vague limit.
+It adds no spectral-existence axiom, amplified Hilbert space or lattice reduction.
+This is the exact existence statement used by the manuscript, rather than a claim
+for every abstract positive-definite function.
 
 The actual bump kernel has proved bounds, finite propagation, covariance,
 Hermitian symmetry, product integrability, the projection integral identity and
 joint continuity in its spatial variables, including configuration continuity.
 The stationary comparison family is self-adjoint, idempotent and operator-norm
-Lipschitz. Continuous averaging, planar geometry and the unconditional main
-theorems remain under development.
+Lipschitz. The averaging and geometry modules prove the scalar averaging identities and
+transfers the original gap to the stationary cutoffs. It also implements the
+ball theorem, all noncollinear triangles, affine ellipsoids, the
+general boundary criterion, and finite irredundant supporting-halfspace polygons
+with an unpaired maximal side, including the odd-maximal-side consequence. Separate modules formalize physical translation
+spectra and the interval/rectangle boundary-overlap remarks.
 
-Official Comparator and Lean's default kernel accepted all twenty-three current
-supporting results. Modular, public and standalone builds and all 15 linters
-pass; all 597 transitive axiom reports use only standard Lean axioms.
+The Bochner modules supply the stationary hull spectral representations, and the
+unconditional wrappers discharge those hypotheses. The public statements and
+transitive axiom boundary have been independently checked.
+
+At published commit `0fb31ee`, official Comparator and Lean's default kernel
+accepted all twenty-three supporting results. Modular, public and standalone
+builds and all 15 linters passed; all 597 transitive axiom reports used only
+standard Lean axioms. The current 37-target Comparator run is recorded separately
+in `reviews/comparator-bochner.txt`.
 The earlier `ee0e4c5` checkpoint covered nineteen results and 10/25 nodes.
 See [development status](STATUS.md) and
-[the checkpoint audit](reviews/comparison-sphere-progress.md) for the current
+[the checkpoint audit](reviews/comparison-sphere-progress.md) for the archived
 scope, exact verified inputs and remaining obligations.

@@ -28,6 +28,6 @@ jobs:
           python3 -m pip install -r requirements-validation.txt
           python3 scripts/check_metadata.py
       - name: Check blueprint and source scope
-        run: python3 scripts/check_blueprint.py
+        run: python3 scripts/check_blueprint.py --require-complete
       - name: Audit implemented theorem axioms
         run: python3 scripts/check_axioms.py

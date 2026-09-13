@@ -24,7 +24,21 @@
     "RieszEuclidean.Results.uniform_hull_gap",
     "RieszEuclidean.Results.stationary_comparison",
     "RieszEuclidean.Results.sphere_surface_measure",
-    "RieszEuclidean.Results.sphere_cutoff_obstruction"
+    "RieszEuclidean.Results.sphere_cutoff_obstruction",
+    "RieszEuclidean.Results.stationary_cutoff_comparison_gap",
+    "RieszEuclidean.Results.ball_no_exponentialRieszBasis_of_hull_representations",
+    "RieszEuclidean.Results.noncollinear_triangle_no_exponentialRieszBasis_of_hull_representations",
+    "RieszEuclidean.Results.ellipsoid_no_exponentialRieszBasis_of_hull_representations",
+    "RieszEuclidean.Results.general_boundary_no_exponentialRieszBasis_of_hull_representations",
+    "RieszEuclidean.Results.odd_maximal_sides_polygon_no_exponentialRieszBasis_of_hull_representations",
+    "RieszEuclidean.Results.unpaired_maximal_side_polygon_no_exponentialRieszBasis_of_hull_representations",
+    "RieszEuclidean.Results.unitary_spectral_measures",
+    "RieszEuclidean.Results.ball_no_exponentialRieszBasis",
+    "RieszEuclidean.Results.noncollinear_triangle_no_exponentialRieszBasis",
+    "RieszEuclidean.Results.ellipsoid_no_exponentialRieszBasis",
+    "RieszEuclidean.Results.general_boundary_no_exponentialRieszBasis",
+    "RieszEuclidean.Results.odd_maximal_sides_polygon_no_exponentialRieszBasis",
+    "RieszEuclidean.Results.unpaired_maximal_side_polygon_no_exponentialRieszBasis"
   ],
   "permitted_axioms": [
     "propext",

@@ -105,7 +105,7 @@ theorem spectralMeasure_absolutelyContinuous_control
   simp only [Measure.smul_apply, smul_eq_mul,
     spectralControlMeasure_null_seq σ h E hE j, mul_zero]
 /-- Separability constructs the paper's probability control measure from unit spectral measures.
-The representing family is supplied explicitly while Bochner existence is postponed. -/
+The representing family is supplied explicitly. -/
 theorem exists_spectralControlMeasure [TopologicalSpace.SeparableSpace H]
     (U : Euclidean d → H ≃ₗᵢ[ℂ] H) (h0 : ∀ f, U 0 f = f)
     (σ : H → Measure (Euclidean d))

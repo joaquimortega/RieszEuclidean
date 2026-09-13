@@ -13,7 +13,9 @@ for the Euclidean manuscript. The library has no import from `DiskRiesz` and
 requires no access to the original repository.
 
 The manuscript is by Joaquim Ortega-Cerdà. Formalization and tooling are
-AI-assisted work directed by the author. No independent review is claimed.
+AI-assisted work directed by the author. Automated kernel/Comparator checks and
+AI-assisted source reviews are recorded in `reviews/`; no independent human
+review is claimed.
 No new redistribution license has been assigned by the assistant.
 
 `L2Transport.lean` extracts the general Pullback, Equiv and Sequences sections

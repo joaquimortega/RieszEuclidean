@@ -16,9 +16,11 @@ is proved from the basis property. Mathlib conjugates the first inner-product
 argument; correlation formulas must therefore use `inner f (U z f)`.
 
 The final statements cover every dimension `d ≥ 2`, arbitrary positive-radius
-balls and arbitrary frequency sets, noncollinear triangles, unpaired maximal
-polygon edges including odd side counts, and arbitrary invertible affine
-ellipsoids. The generic boundary-measure criterion is also a proof obligation.
+balls and arbitrary frequency sets, noncollinear triangles, finite irredundant
+supporting-halfspace polygons with nonzero normals and nonempty faces whose
+maximal sides include an unpaired one (in particular an odd number of sides),
+and arbitrary invertible affine ellipsoids. The generic boundary-measure
+criterion is also a proof obligation.
 
 ## Projection gap
 
@@ -71,12 +73,18 @@ to obtain a uniform hull gap.
 
 ## Section 4: Bochner measures and cutoffs
 
-General Euclidean Bochner existence for continuous positive-definite correlations
-is postponed at the user's request. Spectral measures stay on ℝⁿ. Uniqueness,
+Scalar correlations of strongly continuous unitary representations on separable
+complex Hilbert spaces now have finite positive representing measures on ℝⁿ.
+This is the exact Bochner existence used in the manuscript; it does not assert
+the theorem for every abstract continuous positive-definite scalar function. Uniqueness,
 finiteness, total mass, the parallelogram law and the invariant constant's Dirac
 spectrum are proved. A countable dense sequence of normalized vectors constructs
-one probability control measure and proves domination of every spectral measure,
-provided the representing family is supplied.
+one probability control measure and proves domination of every spectral measure.
+
+Existence uses normalized vector windows in the original Hilbert space. Scalar
+coordinates in a countable Hilbert basis have explicit physical Fourier-density
+measures; a bounded vague cluster limit represents the original correlation. No
+amplified Hilbert space or lattice is introduced.
 
 Integrated L¹ operators have proved adjoint and convolution formulas, spectral
 norm identities and the uniform symbol bound. Actual continuous box overlaps give
@@ -88,9 +96,8 @@ Boundary-nullity gives a measurable conull good-parameter set. Scalar dominated
 convergence, pointwise Cauchy limits of bounded operators and composition limits
 construct the simultaneous cutoff family for real radii tending to infinity.
 Self-adjointness, idempotence, spectral mass and two-parameter difference identities
-are proved. These statements retain the representing-measure hypotheses. Thus the
-continuous-Fejér node is proved, while scalar calculus and cutoffs remain pending
-on the postponed Bochner dependency.
+are proved. The unitary spectral-measure construction supplies their formerly
+explicit representing family, completing the scalar-calculus and cutoff nodes.
 
 ## Section 5: comparison and averaged scalar forms
 
@@ -98,8 +105,8 @@ The actual covariant bump kernel has proved uniform bounds, support where
 `‖v-w‖ ≤ 2r`, Hermitian symmetry, covariance, product integrability, the kernel
 projection identity and joint spatial continuity, including configuration
 continuity. The stationary comparison family `M_t` is self-adjoint,
-idempotent and operator-norm Lipschitz. The averaged scalar construction and
-its gap estimate remain pending.
+idempotent and operator-norm Lipschitz. The working batch implements the actual
+averaged scalar construction and its gap estimate.
 
 For each configuration use the actual compactly supported test function
 `|C_R|⁻¹ᐟ² 1_C_R(v) exp(-2πit·v) f(Γ-v)`. Tonelli proves the averaged energy
@@ -109,7 +116,10 @@ pointwise in the configuration, then Cauchy–Schwarz. Pass strongly on the cuto
 side and in norm on the bump-kernel side. No amplified Hilbert space `𝒦` is
 introduced. No finite averaged operator is assumed to be a projection.
 
-Implemented module: `ComparisonKernel`. Planned module: `ContinuousAveraging`.
+Implemented across the comparison-kernel and `Averaged*` modules, with
+`BumpBoxKernel.lean` and `StationaryAssemblyHelpers.lean`. The conclusion still
+can be stated with an explicit representing family, while the proved stationary
+spectral family discharges that hypothesis in the final result.
 
 ## Section 6: sphere and crossing
 
@@ -122,9 +132,10 @@ meets a prescribed ray. Dominated convergence gives strictly ordered cutoff
 limits. The invariant constant witnesses strictness. Apply the already proved
 moving-comparison obstruction after proving that `M_t` has the common limit.
 
-`BoundaryLimits` and the sphere obstruction are assembled conditionally on
-explicit spectral data and the averaged gap; their dependency node remains
-pending. Planned modules: `ContinuousAveraging`, `BoundaryLimits`, `BallMain`.
+Boundary jump limits and the sphere obstruction are assembled with the actual
+averaged gap. `SphereAnalyticAssembly.lean` isolates the representation hypothesis;
+`BallEllipsoidTheorems.lean` supplies it from Bochner existence and proves the
+unconditional ball theorem.
 
 ## Sections 7 and 8: remaining domains
 
@@ -132,15 +143,23 @@ For triangles and an unpaired maximal polygon edge, remove the other edges
 using their zero-length translated overlaps. Prove that all surviving edge
 components cross in the same normal direction. The jump may have nonzero
 tangential frequencies. For an odd polygon, prove that at most two maximal
-edges have a given unoriented direction and extract an unpaired edge.
-Specify the concrete polygon presentation and any fidelity limitation.
+edges have a given unoriented direction and extract an unpaired edge. The working
+modules implement these steps. `PolygonPresentation.lean` identifies supporting
+faces with maximal boundary segments and derives both the unpaired-maximal-side
+and odd-maximal-side formulations.
 
 **Implemented:** `L2Transport.lean` and `Affine.lean` prove the determinant factor,
 transpose frequency map and unit phases with the paper's `2π` convention.
-This transport can carry a future ball result
-to ellipsoids and standard triangles to all noncollinear triples.
+This transport carries the ball result to affine ellipsoids and the
+standard-triangle result to all noncollinear triples.
 
-Planned modules: `EdgeGeometry`, `PolygonGeometry`, `Affine`, `Main`.
+The triangle, polygon, ellipsoid and general-boundary assembly modules first
+isolate the supplied hull-representation hypothesis. The unconditional wrapper
+modules discharge it using the proved stationary spectral family.
+`PhysicalTranslationSpectrum.lean` constructs the concrete physical
+translation spectral measure and proves its boundary-symbol consequences;
+`IntervalRectangleRemarks.lean` formalizes why interval endpoints and opposite
+rectangle edges have positive translated boundary overlap.
 
 ## Completion criteria
 
@@ -154,14 +173,16 @@ Planned modules: `EdgeGeometry`, `PolygonGeometry`, `Affine`, `Main`.
    specifications, as in the original project's Comparator workflow.
 7. GitHub contains the verified sources, blueprint, scaffold and current manuscript.
 
-The development CI checks implemented sources. It does not certify completion.
-`check_blueprint.py --require-complete` must remain unsuccessful until the full
-manifest is discharged.
+The development CI builds and lints the modular, public and standalone sources,
+checks extraction and metadata, audits axioms, and requires the full manifest to
+be discharged with `check_blueprint.py --require-complete`.
 
-## Verified supporting checkpoint
+## Published supporting checkpoint and working batch
 
-The current 13/25 inventory has twenty-three public supporting results accepted
-by official Comparator and Lean's default kernel. Modular, public and standalone
-builds and all 15 linters pass; all 597 axiom reports use standard axioms only.
-See [the audit](../reviews/comparison-sphere-progress.md). This acceptance does
-not certify the twelve pending full-paper obligations.
+The published `0fb31ee` 13/25 inventory has twenty-three public supporting results
+accepted by official Comparator and Lean's default kernel. Modular, public and
+standalone builds and all 15 linters passed; all 597 axiom reports use standard
+axioms only. See [the archived audit](../reviews/comparison-sphere-progress.md).
+The current tree has all 25 nodes proved. Official Comparator and Lean's default
+kernel accept its 37-target reference, and the 931-declaration transitive axiom
+audit uses only standard Lean axioms.
