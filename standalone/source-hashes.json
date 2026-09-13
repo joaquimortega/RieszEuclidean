@@ -6,9 +6,12 @@
   "RieszEuclidean/SchwartzDensity.lean": "6330b8b4e23361d2be904a8693522a0e7791cd59bc8c2d6bf82046d5e7ceb655",
   "RieszEuclidean/FourierExtension.lean": "bb4932648e07a23df20700ccc56acac82391a9d892b487f1b73f6f88812592ad",
   "RieszEuclidean/ProjectionGap.lean": "45b35ad9515668b6a13dde054593c8db63fa2cb9d3655c5feef0f084b768cc95",
-  "RieszEuclidean/CutoffProjection.lean": "8052509c77e1174ca7108c9867293ae0793409d31a0c8a35834ad91a233ce336",
+  "RieszEuclidean/CutoffProjection.lean": "852b21a2371e7174983077167380ba2e7366b3790ccf8aff806fc262bbaad3d6",
+  "RieszEuclidean/FourierAgreement.lean": "82c90e9ab3d10f9ac2d26bf0d7b4c6715cd8fc47c3252fa8cd19a4109d29783e",
+  "RieszEuclidean/FourierKernel.lean": "982155c2bace338ec8ca28009f28abfb58ab68d659bc48e1dc0ff89f7d6b978e",
+  "RieszEuclidean/FourierTranslations.lean": "3d208c81d9a46fd13df0485736675190f6a917185361239969395733337b112c",
   "RieszEuclidean/MovingComparison.lean": "68faa0ba0d885e39b62a3336b37baee64ff17a15de25973e56ea44653bc2501c",
   "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad",
-  "MainResults.lean": "d7ded93079d38220ac716d1873f502264dfbaa6a3b7723012cbcf901449e2890",
-  "RieszEuclideanStandalone.lean": "ca584dfeb2b3b9c6808e902d7b4abee7a782eb9d62de37557847c94de19ae3be"
+  "MainResults.lean": "497c07e30ca3dcc907d4e5f248ee405500be3d984bb120f84d3863a97728c997",
+  "RieszEuclideanStandalone.lean": "4b41a7469883c4f335e87993d5ef5c45d3f69abcbdbc9c7c1ad3e3f254f581d4"
 }

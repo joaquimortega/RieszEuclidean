@@ -70,7 +70,7 @@
     },
     {
       "id": "fourier-l2",
-      "status": "pending",
+      "status": "proved",
       "dependencies": [
         "basic"
       ],
@@ -107,13 +107,38 @@
         "RieszEuclidean.domainCutoff_norm_le",
         "RieszEuclidean.domainProjection",
         "RieszEuclidean.fourierProjection",
-        "RieszEuclidean.fourierProjection_transform"
+        "RieszEuclidean.fourierProjection_transform",
+        "RieszEuclidean.domainCutoff_eq_self_iff",
+        "RieszEuclidean.fourierProjection_mem_range_iff",
+        "RieszEuclidean.schwartz_L2_inner",
+        "RieszEuclidean.fourierL2_pairing",
+        "RieszEuclidean.fourierL2Equiv_eq_integral",
+        "RieszEuclidean.inverseFourier_conj",
+        "RieszEuclidean.integral_inverseFourier_mul",
+        "RieszEuclidean.integral_inverseFourier_mul_conj",
+        "RieszEuclidean.paperFourierL2_pairing",
+        "RieszEuclidean.paperFourierL2_eq_integral",
+        "RieszEuclidean.domainCutoff_integrable",
+        "RieszEuclidean.fourierProjection_integral_transform",
+        "RieszEuclidean.fourierProjection_integral",
+        "RieszEuclidean.phaseIndicator_integrable",
+        "RieszEuclidean.inverseFourier_phaseIndicator",
+        "RieszEuclidean.integral_domain_inverseFourier",
+        "RieszEuclidean.fourierProjection_kernel",
+        "RieszEuclidean.translationL2_coe",
+        "RieszEuclidean.translationL2_integrable",
+        "RieszEuclidean.domainKernel_integral_translation",
+        "RieszEuclidean.fourierProjection_translation_integrable",
+        "RieszEuclidean.fourierProjection_translation"
       ],
-      "progress": "Parseval, Schwartz density, unitary positive-sign extension, Schwartz integral agreement and the actual orthogonal cutoff projection are proved. L\u00b9\u2229L\u00b2 integral agreement, translation commutation and the convolution-kernel formula remain pending.",
+      "progress": "Verified unitary Euclidean Fourier transform, integral agreement on L\u00b9\u2229L\u00b2 for both signs, orthogonal domain cutoff, Fourier-support range characterization, convolution formula for L\u00b9\u2229L\u00b2 inputs, and translation commutation on all L\u00b2 for finite-measure domains.",
       "partial_files": [
         "RieszEuclidean/SchwartzDensity.lean",
         "RieszEuclidean/FourierExtension.lean",
-        "RieszEuclidean/CutoffProjection.lean"
+        "RieszEuclidean/CutoffProjection.lean",
+        "RieszEuclidean/FourierAgreement.lean",
+        "RieszEuclidean/FourierKernel.lean",
+        "RieszEuclidean/FourierTranslations.lean"
       ]
     },
     {
@@ -422,6 +447,9 @@
     "RieszEuclidean/FourierL2.lean": "45ba96a77e8d8387a865b629c90f2e4c7bd55c7cbc8435288612c1680ab5d2af",
     "RieszEuclidean/SchwartzDensity.lean": "6330b8b4e23361d2be904a8693522a0e7791cd59bc8c2d6bf82046d5e7ceb655",
     "RieszEuclidean/FourierExtension.lean": "bb4932648e07a23df20700ccc56acac82391a9d892b487f1b73f6f88812592ad",
-    "RieszEuclidean/CutoffProjection.lean": "8052509c77e1174ca7108c9867293ae0793409d31a0c8a35834ad91a233ce336"
+    "RieszEuclidean/CutoffProjection.lean": "852b21a2371e7174983077167380ba2e7366b3790ccf8aff806fc262bbaad3d6",
+    "RieszEuclidean/FourierAgreement.lean": "82c90e9ab3d10f9ac2d26bf0d7b4c6715cd8fc47c3252fa8cd19a4109d29783e",
+    "RieszEuclidean/FourierKernel.lean": "982155c2bace338ec8ca28009f28abfb58ab68d659bc48e1dc0ff89f7d6b978e",
+    "RieszEuclidean/FourierTranslations.lean": "3d208c81d9a46fd13df0485736675190f6a917185361239969395733337b112c"
   }
 }

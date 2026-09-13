@@ -108,19 +108,25 @@ techniques:
   - RieszEuclidean/L2Transport.lean
   - RieszEuclidean/Affine.lean
 - name: Euclidean Fourier and bump projections
-  status: unitary Fourier transform and cutoff proved; L¹∩L² agreement, kernel and bumps pending
+  status: initial Fourier constructions proved; bumps pending
   description: Bilinear Fubini and Schwartz inversion prove Parseval. Compact-support smooth
     approximation and an explicit L² estimate prove Schwartz density. The Fourier isometry on
     this dense subspace extends continuously; norm preservation and closed dense range give
     a unitary map. Its inverse supplies the positive-sign convention. Indicator multiplication
     on actual L² representatives is an orthogonal projection, and unitary conjugation gives
-    the Fourier cutoff. L¹∩L² integral agreement, translation commutation, the convolution
-    kernel, normalized bumps and the synthesis-to-projection gap remain pending.
+    the Fourier cutoff. Schwartz test pairings and uniqueness for locally integrable functions
+    prove L¹∩L² integral agreement for both signs. Fourier transposition with phased domain
+    indicators gives the convolution kernel for every L¹∩L² input. Haar translation invariance
+    gives cutoff commutation first on L¹∩L², then density extends it to all L². Normalized
+    bumps and the synthesis-to-projection gap remain pending.
   files:
   - RieszEuclidean/FourierL2.lean
   - RieszEuclidean/SchwartzDensity.lean
   - RieszEuclidean/FourierExtension.lean
   - RieszEuclidean/CutoffProjection.lean
+  - RieszEuclidean/FourierAgreement.lean
+  - RieszEuclidean/FourierKernel.lean
+  - RieszEuclidean/FourierTranslations.lean
 - name: Stationary compact hull and scalar Bochner measures
   status: planned; not yet formalized
   description: Prove compactness of the separated-set hull, continuity of the real action and an invariant
@@ -139,13 +145,13 @@ techniques:
     the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
     triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
 comparator:
-  status: seven supporting results verified; full-paper main theorems pending
+  status: eight supporting results verified; full-paper main theorems pending
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-unitary-cutoff.txt
-  input_hashes: reviews/comparator-unitary-cutoff-hashes.json
-  verified_scope: Seven supporting results, including Schwartz density and unitary Fourier/cutoff existence; no geometric nonexistence theorem.
+  verification_log: reviews/comparator-fourier-complete.txt
+  input_hashes: reviews/comparator-fourier-complete-hashes.json
+  verified_scope: Eight supporting results, including the full initial Fourier construction with integral, kernel and translation semantics; no geometric nonexistence theorem.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice

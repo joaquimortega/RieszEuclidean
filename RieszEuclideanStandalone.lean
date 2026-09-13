@@ -1,4 +1,5 @@
 import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
+import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.Analysis.Distribution.FourierSchwartz
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.PiL2
@@ -1046,6 +1047,282 @@ theorem fourierProjection_transform {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : Me
     paperFourierL2 d ((fourierProjection Ω hΩ).op f) =
       domainCutoff Ω hΩ (paperFourierL2 d f) := by
   exact (paperFourierL2 d).apply_symm_apply _
+/-- A cutoff fixes precisely the L² functions vanishing outside its domain. -/
+theorem domainCutoff_eq_self_iff {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) : domainCutoff Ω hΩ f = f ↔ ∀ᵐ x ∂volume, x ∉ Ω → f x = 0 := by
+  constructor
+  · intro h
+    have hc := domainCutoff_coe Ω hΩ f
+    rw [h] at hc
+    filter_upwards [hc] with x hx hnot
+    simpa only [Set.indicator_of_not_mem hnot] using hx
+  · intro h
+    apply Lp.ext
+    filter_upwards [domainCutoff_coe Ω hΩ f, h] with x hx hz
+    rw [hx]
+    by_cases hmem : x ∈ Ω
+    · exact Set.indicator_of_mem hmem _
+    · simp only [Set.indicator_of_not_mem hmem, hz hmem]
+/-- The Fourier cutoff range is exactly the functions whose Fourier transform vanishes off Ω. -/
+theorem fourierProjection_mem_range_iff {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (f : FullL2 d) :
+    f ∈ (fourierProjection Ω hΩ).range ↔
+      ∀ᵐ x ∂volume, x ∉ Ω → paperFourierL2 d f x = 0 := by
+  rw [OrthProjection.mem_range_iff]
+  constructor
+  · intro h
+    have hF := congrArg (paperFourierL2 d) h
+    rw [fourierProjection_transform] at hF
+    exact (domainCutoff_eq_self_iff Ω hΩ _).mp hF
+  · intro h
+    apply (paperFourierL2 d).injective
+    rw [fourierProjection_transform]
+    exact (domainCutoff_eq_self_iff Ω hΩ _).mpr h
+end RieszEuclidean
+
+/- Source: RieszEuclidean/FourierAgreement.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+/-- Pairing an arbitrary L² function with a Schwartz test function. -/
+theorem schwartz_L2_inner {d : ℕ} (g : SchwartzMap (Euclidean d) ℂ) (f : FullL2 d) :
+    inner (𝕜 := ℂ) (g.toLp 2 volume) f = ∫ x, f x * starRingEnd ℂ (g x) := by
+  rw [L2.inner_def]
+  apply integral_congr_ae
+  filter_upwards [g.coeFn_toLp 2 volume] with x hx
+  simp only [hx, RCLike.inner_apply, mul_comm]
+/-- The extended transform satisfies the Fourier pairing identity against Schwartz tests. -/
+theorem fourierL2_pairing {d : ℕ} (f : FullL2 d) (g : SchwartzMap (Euclidean d) ℂ) :
+    (∫ x, fourierL2Equiv d f x * starRingEnd ℂ (g x)) =
+      ∫ x, f x * starRingEnd ℂ (Real.fourierIntegralInv g x) := by
+  have h := (fourierL2Equiv d).inner_map_map
+    (((SchwartzMap.fourierTransformCLE ℂ).symm g).toLp 2 volume) f
+  rw [fourierL2Equiv_schwartz, ContinuousLinearEquiv.apply_symm_apply,
+    schwartz_L2_inner, schwartz_L2_inner] at h
+  simpa only [SchwartzMap.fourierTransformCLE_symm_apply] using h
+/-- The negative-sign unitary transform equals the integral for L¹∩L² inputs. -/
+theorem fourierL2Equiv_eq_integral {d : ℕ} (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ)) :
+    (fourierL2Equiv d f : Euclidean d → ℂ) =ᵐ[volume] Real.fourierIntegral f := by
+  have hcont : Continuous (Real.fourierIntegral (f : Euclidean d → ℂ)) :=
+    VectorFourier.fourierIntegral_continuous Real.continuous_fourierChar
+      (continuous_fst.inner continuous_snd) hf
+  apply ae_eq_of_integral_contDiff_smul_eq
+    ((Lp.memLp (fourierL2Equiv d f)).locallyIntegrable (by norm_num)) hcont.locallyIntegrable
+  intro g hg hgs
+  let gC : SchwartzMap (Euclidean d) ℂ := compactSchwartz (fun x => (g x : ℂ))
+    (Complex.ofRealCLM.contDiff.comp hg) (hgs.comp_left Complex.ofReal_zero)
+  have h := (fourierL2_pairing f gC).trans (integral_fourier_mul_conj hf gC.integrable).symm
+  change (∫ x, fourierL2Equiv d f x * starRingEnd ℂ (g x : ℂ)) =
+    ∫ x, Real.fourierIntegral f x * starRingEnd ℂ (g x : ℂ) at h
+  simpa only [Complex.conj_ofReal, Complex.real_smul, mul_comm] using h
+/-- Conjugation exchanges inverse Fourier with forward Fourier. -/
+theorem inverseFourier_conj {d : ℕ} (f : Euclidean d → ℂ) (x : Euclidean d) :
+    Real.fourierIntegralInv (fun y => starRingEnd ℂ (f y)) x =
+      starRingEnd ℂ (Real.fourierIntegral f x) := by
+  rw [Real.fourierIntegralInv_eq, Real.fourierIntegral_eq, ← integral_conj]
+  congr 1
+  ext y
+  simp [Circle.smul_def, map_mul]
+/-- Transposition for the positive Fourier sign. -/
+theorem integral_inverseFourier_mul {d : ℕ} {f g : Euclidean d → ℂ}
+    (hf : Integrable f) (hg : Integrable g) :
+    (∫ x, Real.fourierIntegralInv f x * g x) = ∫ x, f x * Real.fourierIntegralInv g x := by
+  have h := VectorFourier.integral_fourierIntegral_smul_eq_flip
+    (L := -innerₗ (Euclidean d)) Real.continuous_fourierChar
+    (continuous_fst.inner continuous_snd).neg hf hg
+  have hflip : (-innerₗ (Euclidean d)).flip = -innerₗ (Euclidean d) := by
+    ext x y
+    change -inner (𝕜 := ℝ) y x = -inner (𝕜 := ℝ) x y
+    rw [real_inner_comm]
+  simpa only [Real.fourierIntegralInv, smul_eq_mul, hflip] using h
+/-- Conjugated pairing for the positive Fourier sign. -/
+theorem integral_inverseFourier_mul_conj {d : ℕ} {f g : Euclidean d → ℂ}
+    (hf : Integrable f) (hg : Integrable g) :
+    (∫ x, Real.fourierIntegralInv f x * starRingEnd ℂ (g x)) =
+      ∫ x, f x * starRingEnd ℂ (Real.fourierIntegral g x) := by
+  have hg' : Integrable (fun x => starRingEnd ℂ (g x)) :=
+    Complex.conjCLE.toContinuousLinearMap.integrable_comp hg
+  simpa only [inverseFourier_conj] using integral_inverseFourier_mul hf hg'
+/-- The positive-sign unitary satisfies the inverse pairing against Schwartz tests. -/
+theorem paperFourierL2_pairing {d : ℕ} (f : FullL2 d) (g : SchwartzMap (Euclidean d) ℂ) :
+    (∫ x, paperFourierL2 d f x * starRingEnd ℂ (g x)) =
+      ∫ x, f x * starRingEnd ℂ (Real.fourierIntegral g x) := by
+  have h := (paperFourierL2 d).inner_map_map
+    ((SchwartzMap.fourierTransformCLE ℂ g).toLp 2 volume) f
+  rw [paperFourierL2, fourierL2Equiv_symm_schwartz,
+    ContinuousLinearEquiv.symm_apply_apply, schwartz_L2_inner, schwartz_L2_inner] at h
+  simpa only [SchwartzMap.fourierTransformCLE_apply] using h
+/-- The paper's positive-sign Fourier map agrees with its integral on L¹∩L². -/
+theorem paperFourierL2_eq_integral {d : ℕ} (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ)) :
+    (paperFourierL2 d f : Euclidean d → ℂ) =ᵐ[volume] Real.fourierIntegralInv f := by
+  have hcont : Continuous (Real.fourierIntegralInv (f : Euclidean d → ℂ)) :=
+    VectorFourier.fourierIntegral_continuous Real.continuous_fourierChar
+      (continuous_fst.inner continuous_snd).neg hf
+  apply ae_eq_of_integral_contDiff_smul_eq
+    ((Lp.memLp (paperFourierL2 d f)).locallyIntegrable (by norm_num)) hcont.locallyIntegrable
+  intro g hg hgs
+  let gC : SchwartzMap (Euclidean d) ℂ := compactSchwartz (fun x => (g x : ℂ))
+    (Complex.ofRealCLM.contDiff.comp hg) (hgs.comp_left Complex.ofReal_zero)
+  have h := (paperFourierL2_pairing f gC).trans (integral_inverseFourier_mul_conj hf gC.integrable).symm
+  change (∫ x, paperFourierL2 d f x * starRingEnd ℂ (g x : ℂ)) =
+    ∫ x, Real.fourierIntegralInv f x * starRingEnd ℂ (g x : ℂ) at h
+  simpa only [Complex.conj_ofReal, Complex.real_smul, mul_comm] using h
+end RieszEuclidean
+
+/- Source: RieszEuclidean/FourierKernel.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Set
+namespace RieszEuclidean
+/-- Cutting an L² function to a finite-measure domain makes it integrable. -/
+theorem domainCutoff_integrable {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (hfin : volume Ω ≠ ⊤) (f : FullL2 d) :
+    Integrable (domainCutoff Ω hΩ f : Euclidean d → ℂ) := by
+  have h : Integrable (Ω.indicator (f : Euclidean d → ℂ)) volume :=
+    (integrable_indicator_iff hΩ).mpr (integrableOn_Lp_of_measure_ne_top f (by norm_num) hfin)
+  exact h.congr (domainCutoff_coe Ω hΩ f).symm
+/-- The Fourier cutoff is the integral transform of its finite-domain frequency restriction. -/
+theorem fourierProjection_integral_transform {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤) (f : FullL2 d) :
+    ((fourierProjection Ω hΩ).op f : Euclidean d → ℂ) =ᵐ[volume]
+      Real.fourierIntegral (domainCutoff Ω hΩ (paperFourierL2 d f)) := by
+  change (fourierL2Equiv d (domainCutoff Ω hΩ (paperFourierL2 d f)) : Euclidean d → ℂ) =ᵐ[volume] _
+  exact fourierL2Equiv_eq_integral _ (domainCutoff_integrable Ω hΩ hfin _)
+/-- The cutoff projection has an explicit finite-domain Fourier integral. -/
+theorem fourierProjection_integral {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤) (f : FullL2 d) :
+    ((fourierProjection Ω hΩ).op f : Euclidean d → ℂ) =ᵐ[volume]
+      fun v => ∫ x in Ω, Real.fourierChar (-inner (𝕜 := ℝ) x v) • paperFourierL2 d f x := by
+  filter_upwards [fourierProjection_integral_transform Ω hΩ hfin f] with v hv
+  rw [hv, Real.fourierIntegral_eq]
+  calc
+    _ = ∫ x, Ω.indicator
+        (fun x => Real.fourierChar (-inner (𝕜 := ℝ) x v) • paperFourierL2 d f x) x := by
+      apply integral_congr_ae
+      filter_upwards [domainCutoff_coe Ω hΩ (paperFourierL2 d f)] with x hx
+      rw [hx]
+      by_cases hmem : x ∈ Ω <;> simp [hmem]
+    _ = _ := integral_indicator hΩ
+/-- The inverse transform of the domain indicator, with the paper's normalization. -/
+def domainKernel {d : ℕ} (Ω : Set (Euclidean d)) (y : Euclidean d) : ℂ :=
+  ∫ x in Ω, (Real.fourierChar (-inner (𝕜 := ℝ) x y) : ℂ)
+/-- A domain indicator carrying a Fourier phase. -/
+def phaseIndicator {d : ℕ} (Ω : Set (Euclidean d)) (v : Euclidean d) : Euclidean d → ℂ :=
+  Ω.indicator (fun x => (Real.fourierChar (-inner (𝕜 := ℝ) x v) : ℂ))
+/-- The phased indicator is integrable when the domain has finite measure. -/
+theorem phaseIndicator_integrable {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤) (v : Euclidean d) :
+    Integrable (phaseIndicator Ω v) := by
+  have h1 : Integrable (Ω.indicator (fun _ : Euclidean d => (1 : ℂ))) :=
+    (integrable_indicator_iff hΩ).mpr (integrableOn_const.mpr (Or.inr hfin.lt_top))
+  have h := (Real.fourierIntegral_convergent_iff v).mpr h1
+  convert h using 1
+  ext x
+  by_cases hx : x ∈ Ω <;> simp [phaseIndicator, hx, Circle.smul_def]
+/-- Transforming the phased indicator gives the translated domain kernel. -/
+theorem inverseFourier_phaseIndicator {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (v w : Euclidean d) :
+    Real.fourierIntegralInv (phaseIndicator Ω v) w = domainKernel Ω (v - w) := by
+  rw [Real.fourierIntegralInv_eq, domainKernel, ← integral_indicator hΩ]
+  apply integral_congr_ae
+  filter_upwards with x
+  by_cases hx : x ∈ Ω
+  · simp only [phaseIndicator, Set.indicator_of_mem hx, Circle.smul_def, smul_eq_mul]
+    rw [← Circle.coe_mul, ← Real.fourierChar.map_add_eq_mul]
+    congr 2
+    rw [inner_sub_right]
+    ring
+  · simp [phaseIndicator, hx]
+/-- Fourier transposition gives the domain convolution kernel. -/
+theorem integral_domain_inverseFourier {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤) {f : Euclidean d → ℂ}
+    (hf : Integrable f) (v : Euclidean d) :
+    (∫ x in Ω, Real.fourierChar (-inner (𝕜 := ℝ) x v) • Real.fourierIntegralInv f x) =
+      ∫ w, domainKernel Ω (v - w) * f w := by
+  have h := integral_inverseFourier_mul hf (phaseIndicator_integrable Ω hΩ hfin v)
+  calc
+    _ = ∫ x, Real.fourierIntegralInv f x * phaseIndicator Ω v x := by
+      rw [← integral_indicator hΩ]
+      apply integral_congr_ae
+      filter_upwards with x
+      by_cases hx : x ∈ Ω <;> simp [phaseIndicator, hx, Circle.smul_def, mul_comm]
+    _ = _ := by simpa only [inverseFourier_phaseIndicator Ω hΩ v, mul_comm] using h
+/-- The paper's convolution-kernel formula, for all L¹∩L² inputs. -/
+theorem fourierProjection_kernel {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤) (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ)) :
+    ((fourierProjection Ω hΩ).op f : Euclidean d → ℂ) =ᵐ[volume]
+      fun v => ∫ w, domainKernel Ω (v - w) * f w := by
+  filter_upwards [fourierProjection_integral Ω hΩ hfin f] with v hv
+  rw [hv]
+  calc
+    _ = ∫ x in Ω, Real.fourierChar (-inner (𝕜 := ℝ) x v) • Real.fourierIntegralInv f x := by
+      apply integral_congr_ae
+      filter_upwards [ae_restrict_of_ae (paperFourierL2_eq_integral f hf)] with x hx
+      rw [hx]
+    _ = _ := integral_domain_inverseFourier Ω hΩ hfin hf v
+end RieszEuclidean
+
+/- Source: RieszEuclidean/FourierTranslations.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory
+namespace RieszEuclidean
+/-- Translation acts isometrically on actual Euclidean L² classes. -/
+def translationL2 {d : ℕ} (t : Euclidean d) : FullL2 d →ₗᵢ[ℂ] FullL2 d :=
+  Lp.compMeasurePreservingₗᵢ ℂ (fun x => x + t) (measurePreserving_add_right volume t)
+/-- The representative of translation is the translated representative almost everywhere. -/
+theorem translationL2_coe {d : ℕ} (t : Euclidean d) (f : FullL2 d) :
+    (translationL2 t f : Euclidean d → ℂ) =ᵐ[volume] fun x => f (x + t) :=
+  Lp.coeFn_compMeasurePreserving f (measurePreserving_add_right volume t)
+/-- Translation preserves L¹ integrability when applied to an L² class. -/
+theorem translationL2_integrable {d : ℕ} (t : Euclidean d) (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ)) :
+    Integrable (translationL2 t f : Euclidean d → ℂ) := by
+  have h := ((measurePreserving_add_right volume t).integrable_comp hf.aestronglyMeasurable).mpr hf
+  exact h.congr (translationL2_coe t f).symm
+/-- Translation of the input translates convolution by the same vector. -/
+theorem domainKernel_integral_translation {d : ℕ} (Ω : Set (Euclidean d))
+    (f : Euclidean d → ℂ) (t v : Euclidean d) :
+    (∫ w, domainKernel Ω (v - w) * f (w + t)) =
+      ∫ w, domainKernel Ω (v + t - w) * f w := by
+  have h := integral_add_right_eq_self (μ := volume)
+    (fun w => domainKernel Ω (v + t - w) * f w) t
+  simpa only [add_sub_add_right_eq_sub] using h
+/-- Fourier cutoffs commute with translation on L¹∩L². -/
+theorem fourierProjection_translation_integrable {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤) (t : Euclidean d)
+    (f : FullL2 d) (hf : Integrable (f : Euclidean d → ℂ)) :
+    (fourierProjection Ω hΩ).op (translationL2 t f) =
+      translationL2 t ((fourierProjection Ω hΩ).op f) := by
+  have ht := (measurePreserving_add_right volume t).quasiMeasurePreserving.ae
+    (fourierProjection_kernel Ω hΩ hfin f hf)
+  apply Lp.ext
+  filter_upwards [fourierProjection_kernel Ω hΩ hfin (translationL2 t f)
+    (translationL2_integrable t f hf), translationL2_coe t ((fourierProjection Ω hΩ).op f),
+    ht] with v hleft hright hkernel
+  rw [hleft, hright, hkernel]
+  calc
+    _ = ∫ w, domainKernel Ω (v - w) * f (w + t) := by
+      apply integral_congr_ae
+      filter_upwards [translationL2_coe t f] with w hw
+      rw [hw]
+    _ = _ := domainKernel_integral_translation Ω (f : Euclidean d → ℂ) t v
+/-- The actual Fourier cutoff commutes with every real translation on all of L². -/
+theorem fourierProjection_translation {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfin : volume Ω ≠ ⊤) (t : Euclidean d) (f : FullL2 d) :
+    (fourierProjection Ω hΩ).op (translationL2 t f) =
+      translationL2 t ((fourierProjection Ω hΩ).op f) := by
+  refine (schwartz_toL2_denseRange d).induction_on
+    (p := fun f => (fourierProjection Ω hΩ).op (translationL2 t f) =
+      translationL2 t ((fourierProjection Ω hΩ).op f)) f ?_ ?_
+  · exact isClosed_eq ((fourierProjection Ω hΩ).op.continuous.comp (translationL2 t).continuous)
+      ((translationL2 t).continuous.comp (fourierProjection Ω hΩ).op.continuous)
+  · intro g
+    exact fourierProjection_translation_integrable Ω hΩ hfin t _
+      (g.integrable.congr (g.coeFn_toLp 2 volume).symm)
 end RieszEuclidean
 
 /- Source: RieszEuclidean/MovingComparison.lean -/
@@ -1265,4 +1542,32 @@ theorem euclidean_fourier_cutoff (d : ℕ) :
 theorem schwartz_density (d : ℕ) :
     DenseRange (fun f : SchwartzMap (Euclidean d) ℂ => f.toLp 2 volume) :=
   schwartz_toL2_denseRange d
+/-- The complete initial Fourier construction, with integral, kernel and translation semantics. -/
+theorem euclidean_fourier_analysis (d : ℕ) :
+    ∃ U : Lp ℂ 2 (volume : Measure (Euclidean d)) ≃ₗᵢ[ℂ]
+        Lp ℂ 2 (volume : Measure (Euclidean d)),
+      (∀ f : Lp ℂ 2 (volume : Measure (Euclidean d)), Integrable (f : Euclidean d → ℂ) →
+        (U f : Euclidean d → ℂ) =ᵐ[volume] Real.fourierIntegralInv f) ∧
+      ∀ Ω : Set (Euclidean d), MeasurableSet Ω → volume Ω ≠ ⊤ →
+        ∃ P : OrthProjection (Lp ℂ 2 (volume : Measure (Euclidean d))),
+          (∀ f, (U (P.op f) : Euclidean d → ℂ) =ᵐ[volume]
+            Ω.indicator (U f : Euclidean d → ℂ)) ∧
+          (∀ f : Lp ℂ 2 (volume : Measure (Euclidean d)), Integrable (f : Euclidean d → ℂ) →
+            (P.op f : Euclidean d → ℂ) =ᵐ[volume] fun v =>
+              ∫ w, (∫ x in Ω, (Real.fourierChar (-inner (𝕜 := ℝ) x (v - w)) : ℂ)) * f w) ∧
+          ∀ (t : Euclidean d) (f g : Lp ℂ 2 (volume : Measure (Euclidean d))),
+            (g : Euclidean d → ℂ) =ᵐ[volume] (fun x => f (x + t)) →
+            (P.op g : Euclidean d → ℂ) =ᵐ[volume] fun x => P.op f (x + t) := by
+  refine ⟨paperFourierL2 d, fun f hf => paperFourierL2_eq_integral f hf, ?_⟩
+  intro Ω hΩ hfin
+  refine ⟨fourierProjection Ω hΩ, ?_, ?_, ?_⟩
+  · intro f
+    rw [fourierProjection_transform]
+    exact domainCutoff_coe Ω hΩ _
+  · intro f hf
+    exact fourierProjection_kernel Ω hΩ hfin f hf
+  · intro t f g hg
+    have heq : g = translationL2 t f := Lp.ext (hg.trans (translationL2_coe t f).symm)
+    rw [heq, fourierProjection_translation Ω hΩ hfin]
+    exact translationL2_coe t _
 end RieszEuclidean.Results

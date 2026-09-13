@@ -78,4 +78,32 @@ theorem euclidean_fourier_cutoff (d : ℕ) :
 theorem schwartz_density (d : ℕ) :
     DenseRange (fun f : SchwartzMap (Euclidean d) ℂ => f.toLp 2 volume) :=
   schwartz_toL2_denseRange d
+/-- The complete initial Fourier construction, with integral, kernel and translation semantics. -/
+theorem euclidean_fourier_analysis (d : ℕ) :
+    ∃ U : Lp ℂ 2 (volume : Measure (Euclidean d)) ≃ₗᵢ[ℂ]
+        Lp ℂ 2 (volume : Measure (Euclidean d)),
+      (∀ f : Lp ℂ 2 (volume : Measure (Euclidean d)), Integrable (f : Euclidean d → ℂ) →
+        (U f : Euclidean d → ℂ) =ᵐ[volume] Real.fourierIntegralInv f) ∧
+      ∀ Ω : Set (Euclidean d), MeasurableSet Ω → volume Ω ≠ ⊤ →
+        ∃ P : OrthProjection (Lp ℂ 2 (volume : Measure (Euclidean d))),
+          (∀ f, (U (P.op f) : Euclidean d → ℂ) =ᵐ[volume]
+            Ω.indicator (U f : Euclidean d → ℂ)) ∧
+          (∀ f : Lp ℂ 2 (volume : Measure (Euclidean d)), Integrable (f : Euclidean d → ℂ) →
+            (P.op f : Euclidean d → ℂ) =ᵐ[volume] fun v =>
+              ∫ w, (∫ x in Ω, (Real.fourierChar (-inner (𝕜 := ℝ) x (v - w)) : ℂ)) * f w) ∧
+          ∀ (t : Euclidean d) (f g : Lp ℂ 2 (volume : Measure (Euclidean d))),
+            (g : Euclidean d → ℂ) =ᵐ[volume] (fun x => f (x + t)) →
+            (P.op g : Euclidean d → ℂ) =ᵐ[volume] fun x => P.op f (x + t) := by
+  refine ⟨paperFourierL2 d, fun f hf => paperFourierL2_eq_integral f hf, ?_⟩
+  intro Ω hΩ hfin
+  refine ⟨fourierProjection Ω hΩ, ?_, ?_, ?_⟩
+  · intro f
+    rw [fourierProjection_transform]
+    exact domainCutoff_coe Ω hΩ _
+  · intro f hf
+    exact fourierProjection_kernel Ω hΩ hfin f hf
+  · intro t f g hg
+    have heq : g = translationL2 t f := Lp.ext (hg.trans (translationL2_coe t f).symm)
+    rw [heq, fourierProjection_translation Ω hΩ hfin]
+    exact translationL2_coe t _
 end RieszEuclidean.Results

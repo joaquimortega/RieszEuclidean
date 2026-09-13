@@ -75,7 +75,7 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states seven proved supporting results with concrete
+`MainResults.lean` currently states eight proved supporting results with concrete
 basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
 assembled from the modular source with Mathlib imports only. The analytic results include Schwartz Parseval, Schwartz density, and existence
 of the unitary Fourier transform with its measurable-domain cutoffs. Neither file yet

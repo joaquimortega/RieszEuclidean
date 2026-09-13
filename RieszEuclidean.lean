@@ -9,3 +9,6 @@ import RieszEuclidean.FourierL2
 import RieszEuclidean.SchwartzDensity
 import RieszEuclidean.FourierExtension
 import RieszEuclidean.CutoffProjection
+import RieszEuclidean.FourierAgreement
+import RieszEuclidean.FourierKernel
+import RieszEuclidean.FourierTranslations

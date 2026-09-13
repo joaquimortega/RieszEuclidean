@@ -40,3 +40,7 @@ The newer five-result run includes Schwartz Parseval and passed. See
 The latest seven-result verification includes Schwartz density and unitary
 Fourier/cutoff existence. See `unitary-cutoff-validation.md` for current scope
 and `comparator-unitary-cutoff-hashes.json` for verified inputs.
+
+The latest eight-result verification covers the full initial Fourier
+construction, including L¹∩L² integral agreement, the kernel formula and
+translation commutation. See `fourier-module-validation.md`.

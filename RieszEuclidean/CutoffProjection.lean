@@ -69,4 +69,35 @@ theorem fourierProjection_transform {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : Me
     paperFourierL2 d ((fourierProjection Ω hΩ).op f) =
       domainCutoff Ω hΩ (paperFourierL2 d f) := by
   exact (paperFourierL2 d).apply_symm_apply _
+/-- A cutoff fixes precisely the L² functions vanishing outside its domain. -/
+theorem domainCutoff_eq_self_iff {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) : domainCutoff Ω hΩ f = f ↔ ∀ᵐ x ∂volume, x ∉ Ω → f x = 0 := by
+  constructor
+  · intro h
+    have hc := domainCutoff_coe Ω hΩ f
+    rw [h] at hc
+    filter_upwards [hc] with x hx hnot
+    simpa only [Set.indicator_of_not_mem hnot] using hx
+  · intro h
+    apply Lp.ext
+    filter_upwards [domainCutoff_coe Ω hΩ f, h] with x hx hz
+    rw [hx]
+    by_cases hmem : x ∈ Ω
+    · exact Set.indicator_of_mem hmem _
+    · simp only [Set.indicator_of_not_mem hmem, hz hmem]
+/-- The Fourier cutoff range is exactly the functions whose Fourier transform vanishes off Ω. -/
+theorem fourierProjection_mem_range_iff {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (f : FullL2 d) :
+    f ∈ (fourierProjection Ω hΩ).range ↔
+      ∀ᵐ x ∂volume, x ∉ Ω → paperFourierL2 d f x = 0 := by
+  rw [OrthProjection.mem_range_iff]
+  constructor
+  · intro h
+    have hF := congrArg (paperFourierL2 d) h
+    rw [fourierProjection_transform] at hF
+    exact (domainCutoff_eq_self_iff Ω hΩ _).mp hF
+  · intro h
+    apply (paperFourierL2 d).injective
+    rw [fourierProjection_transform]
+    exact (domainCutoff_eq_self_iff Ω hΩ _).mpr h
 end RieszEuclidean

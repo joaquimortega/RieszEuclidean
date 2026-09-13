@@ -80,7 +80,7 @@ this setup is not a claim of current-master hardening for adversarial inputs.
 
 Successful completion prints `Lean default kernel accepts the solution` and
 `Your solution is okay!`. See `reviews/standalone-validation.md` for the actual outcome. A successful
-run covers only the seven implemented supporting results; final geometric
+run covers only the eight implemented supporting results; final geometric
 nonexistence statements are still pending.
 
 For the initial local run, the three pinned binaries were copied from the
