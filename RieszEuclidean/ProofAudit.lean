@@ -63,3 +63,9 @@ import RieszEuclidean
 #print axioms RieszEuclidean.domainKernel_integral_translation
 #print axioms RieszEuclidean.fourierProjection_translation_integrable
 #print axioms RieszEuclidean.fourierProjection_translation
+#print axioms RieszEuclidean.synthesis_columns_separated
+#print axioms RieszEuclidean.imaginary_phase_sub_norm
+#print axioms RieszEuclidean.phase_exp_sub_le
+#print axioms RieszEuclidean.exponential_eq_phase
+#print axioms RieszEuclidean.exponential_sub_le_on_ball
+#print axioms RieszEuclidean.riesz_frequencies_separated

@@ -12,3 +12,5 @@ import RieszEuclidean.CutoffProjection
 import RieszEuclidean.FourierAgreement
 import RieszEuclidean.FourierKernel
 import RieszEuclidean.FourierTranslations
+
+import RieszEuclidean.Separation
