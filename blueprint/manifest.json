@@ -1,0 +1,381 @@
+{
+  "project": "RieszEuclidean",
+  "repository": "https://github.com/joaquimortega/RieszEuclidean",
+  "complete": false,
+  "notice": "Proved entries certify only their stated scope; all pending nodes remain required for full formalization. No unproved main theorem is imported from a different proof route.",
+  "manuscript": {
+    "file": "paper/RieszEuclidean.tex",
+    "sha256": "be3b7b68e8a1abc9743a91407596b5a91aa8886dd2193e9a0d3505a7a833856c"
+  },
+  "nodes": [
+    {
+      "id": "basic",
+      "status": "proved",
+      "dependencies": [],
+      "source_labels": [
+        "eq:riesz"
+      ],
+      "scope": "Concrete Euclidean L², synthesis, translation and weak-convergence definitions",
+      "file": "RieszEuclidean/Basic.lean",
+      "declarations": []
+    },
+    {
+      "id": "projection-gap",
+      "status": "proved",
+      "dependencies": [],
+      "source_labels": [
+        "lem:projection-distance",
+        "lem:inclusion"
+      ],
+      "scope": "Abstract projection-distance equivalence and strict-inclusion obstruction",
+      "file": "RieszEuclidean/ProjectionGap.lean",
+      "declarations": [
+        "RieszEuclidean.OrthProjection.gap_iff_rangeIso",
+        "RieszEuclidean.OrthProjection.nested_not_both_gap"
+      ]
+    },
+    {
+      "id": "weak-preliminaries",
+      "status": "proved",
+      "dependencies": [
+        "basic"
+      ],
+      "source_labels": [
+        "eq:weak-sets"
+      ],
+      "scope": "Elementary local matching, fixed translations and preservation of separation",
+      "file": "RieszEuclidean/WeakLimits.lean",
+      "declarations": [
+        "RieszEuclidean.weaklyConverges_const",
+        "RieszEuclidean.WeaklyConverges.translate",
+        "RieszEuclidean.WeaklyConverges.separated"
+      ]
+    },
+    {
+      "id": "moving-comparison",
+      "status": "proved",
+      "dependencies": [
+        "projection-gap"
+      ],
+      "source_labels": [
+        "eq:boundary-distance"
+      ],
+      "scope": "Conditional limit transfer for two given operator families",
+      "file": "RieszEuclidean/MovingComparison.lean",
+      "declarations": [
+        "RieszEuclidean.OrthProjection.gap_le_of_two_strong_limits",
+        "RieszEuclidean.OrthProjection.gap_le_of_moving_comparison",
+        "RieszEuclidean.OrthProjection.moving_comparison_obstruction"
+      ]
+    },
+    {
+      "id": "fourier-l2",
+      "status": "pending",
+      "dependencies": [
+        "basic"
+      ],
+      "source_labels": [
+        "eq:P"
+      ],
+      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "separation-and-bumps",
+      "status": "pending",
+      "dependencies": [
+        "basic",
+        "projection-gap",
+        "fourier-l2"
+      ],
+      "source_labels": [
+        "lem:bumps",
+        "eq:bump",
+        "eq:bump-synthesis"
+      ],
+      "scope": "Derive frequency separation, construct bumps and prove the exact initial gap",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "hull-compactness",
+      "status": "pending",
+      "dependencies": [
+        "weak-preliminaries"
+      ],
+      "source_labels": [
+        "lem:hull"
+      ],
+      "scope": "Compact metrizable configuration space with jointly continuous real translations",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "bump-strong-limits",
+      "status": "pending",
+      "dependencies": [
+        "hull-compactness",
+        "separation-and-bumps"
+      ],
+      "source_labels": [
+        "lem:strong-Q"
+      ],
+      "scope": "Strong continuity of bump projections and the uniform gap on the actual hull",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "stationary-measure",
+      "status": "pending",
+      "dependencies": [
+        "hull-compactness"
+      ],
+      "source_labels": [
+        "eq:U"
+      ],
+      "scope": "Invariant probability measure from continuous boxes; strongly continuous Koopman action",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "bochner",
+      "status": "pending",
+      "dependencies": [
+        "stationary-measure"
+      ],
+      "source_labels": [
+        "eq:bochner"
+      ],
+      "scope": "Finite Euclidean scalar spectral measures with uniqueness",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "scalar-calculus",
+      "status": "pending",
+      "dependencies": [
+        "bochner"
+      ],
+      "source_labels": [
+        "eq:spectral-parallelogram",
+        "eq:constant-spectrum",
+        "eq:multiplier-norm",
+        "eq:control-null"
+      ],
+      "scope": "Control measure, Dirac constant spectrum, and L¹ integrated filter calculus",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "continuous-fejer",
+      "status": "pending",
+      "dependencies": [
+        "fourier-l2"
+      ],
+      "source_labels": [
+        "eq:fejer-weights",
+        "eq:fejer-coefficients"
+      ],
+      "scope": "Positive continuous-box kernels and approximate-identity convergence",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "cutoffs",
+      "status": "pending",
+      "dependencies": [
+        "scalar-calculus",
+        "continuous-fejer"
+      ],
+      "source_labels": [
+        "prop:cutoffs"
+      ],
+      "scope": "Construct good-parameter projections and prove scalar norm identities",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "comparison-kernel",
+      "status": "pending",
+      "dependencies": [
+        "separation-and-bumps",
+        "stationary-measure"
+      ],
+      "source_labels": [
+        "prop:M"
+      ],
+      "scope": "Construct the actual M_t and prove idempotence, self-adjointness and norm Lipschitz continuity",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "continuous-averaging",
+      "status": "pending",
+      "dependencies": [
+        "bump-strong-limits",
+        "comparison-kernel",
+        "cutoffs"
+      ],
+      "source_labels": [
+        "prop:distance"
+      ],
+      "scope": "Actual scalar averaged forms, measurable representatives and transfer of the same gap",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "sphere-geometry",
+      "status": "pending",
+      "dependencies": [
+        "basic"
+      ],
+      "source_labels": [
+        "lem:sphere"
+      ],
+      "scope": "Literal Hausdorff sphere measure: mass, nullity and nonzero translated overlaps",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "boundary-limits",
+      "status": "pending",
+      "dependencies": [
+        "cutoffs",
+        "sphere-geometry"
+      ],
+      "source_labels": [
+        "eq:boundary-fubini",
+        "eq:boundary-strong",
+        "eq:strict-inclusion"
+      ],
+      "scope": "Choose one clean point and construct the strictly included cutoff ranges",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "ball-main",
+      "status": "pending",
+      "dependencies": [
+        "boundary-limits",
+        "continuous-averaging",
+        "moving-comparison"
+      ],
+      "source_labels": [
+        "thm:ball"
+      ],
+      "scope": "Unconditional nonexistence for every d ≥ 2 and every positive-radius ball",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "general-boundary",
+      "status": "pending",
+      "dependencies": [
+        "cutoffs",
+        "continuous-averaging",
+        "moving-comparison"
+      ],
+      "source_labels": [
+        "rem:general-boundary"
+      ],
+      "scope": "Nonexistence under the literal boundary-measure criterion",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "edge-geometry",
+      "status": "pending",
+      "dependencies": [
+        "basic"
+      ],
+      "source_labels": [
+        "sec:triangles"
+      ],
+      "scope": "Translated edge nullity and same-normal-direction crossing",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "triangle-main",
+      "status": "pending",
+      "dependencies": [
+        "edge-geometry",
+        "cutoffs",
+        "continuous-averaging",
+        "moving-comparison",
+        "affine-transport"
+      ],
+      "source_labels": [
+        "thm:triangle"
+      ],
+      "scope": "Nonexistence for every noncollinear planar triangle and arbitrary frequencies",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "polygon-main",
+      "status": "pending",
+      "dependencies": [
+        "edge-geometry",
+        "cutoffs",
+        "continuous-averaging",
+        "moving-comparison"
+      ],
+      "source_labels": [
+        "rem:odd-polygons"
+      ],
+      "scope": "Unpaired maximal edges and odd-sided convex polygons with explicit geometric representation",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "affine-transport",
+      "status": "pending",
+      "dependencies": [
+        "basic"
+      ],
+      "source_labels": [
+        "sec:ellipsoids"
+      ],
+      "scope": "Determinant-correct L² pullback, 2π phases and transpose frequency transport",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "ellipsoid-main",
+      "status": "pending",
+      "dependencies": [
+        "ball-main",
+        "affine-transport"
+      ],
+      "source_labels": [
+        "cor:ellipsoid"
+      ],
+      "scope": "Unconditional nonexistence for every invertible affine ball image",
+      "file": null,
+      "declarations": []
+    },
+    {
+      "id": "public-statement-audit",
+      "status": "pending",
+      "dependencies": [
+        "ball-main",
+        "triangle-main",
+        "polygon-main",
+        "ellipsoid-main",
+        "general-boundary"
+      ],
+      "source_labels": [],
+      "scope": "Independent concrete statement comparison and transitive axiom audits",
+      "file": null,
+      "declarations": []
+    }
+  ],
+  "proof_source_sha256": {
+    "RieszEuclidean/Basic.lean": "8be85368b381d1c3b58b176fb74d05b89fcd565612bba9c9fa5ac598f9151aa3",
+    "RieszEuclidean/MovingComparison.lean": "68faa0ba0d885e39b62a3336b37baee64ff17a15de25973e56ea44653bc2501c",
+    "RieszEuclidean/ProjectionGap.lean": "993bae408f3264d72e9939e8c247fabb48bb423e1c9084c15a18ca55fbf43ce2",
+    "RieszEuclidean/WeakLimits.lean": "1f94129348dc17b72938e495f97a91255ee0f828bdae7ae1baa87f7f482db92f"
+  }
+}

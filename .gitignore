@@ -1,0 +1,6 @@
+.lake/
+*.olean
+*.ilean
+__pycache__/
+.local/
+paper/build/

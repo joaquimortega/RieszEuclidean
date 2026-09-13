@@ -1,0 +1,45 @@
+version: v0.4
+project:
+  name: 'Riesz bases directly in Euclidean space'
+  description: Standalone Lean development of the direct Euclidean argument in RieszEuclidean.tex.
+  authors:
+  - Joaquim Ortega-Cerdà
+  - OpenAI Codex (AI-assisted formalization)
+  responsible_maintainers:
+  - Joaquim Ortega-Cerdà
+  license: Not specified
+sources:
+- title: There are no Riesz bases of exponentials in balls and triangles
+  authors:
+  - Joaquim Ortega-Cerdà
+  id: https://github.com/joaquimortega/RieszEuclidean/blob/main/paper/RieszEuclidean.tex
+  type: article
+  relationship: formalizes
+  note: Development in progress; source fingerprint and all obligations are in blueprint/manifest.json.
+status:
+  scope: >-
+    Concrete definitions, projection-gap lemmas, elementary weak-limit lemmas and
+    the conditional moving-comparison obstruction are implemented. The full
+    Euclidean constructions and unconditional main theorems remain pending.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  sorry_count_note: >-
+    Counts refer to implemented modules only. Pending blueprint nodes are not
+    implemented by placeholders. Zero holes does not certify completion.
+  axioms:
+  - propext
+  - Classical.choice
+  - Quot.sound
+  main_results: []
+fidelity:
+  divergences: >-
+    No alternate lattice proof is substituted for the Euclidean proof. The basis
+    predicate uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)).
+    Mathlib conjugates the first inner-product argument. The complete source
+    scope, including all geometric extensions, remains the objective.
+alignment:
+  namespace: RieszEuclidean
+  complete_mapping: blueprint/manifest.json
+review:
+  status: in-progress
+  notes: Implementing-agent checks and Lean compilation; no independent review claimed.
