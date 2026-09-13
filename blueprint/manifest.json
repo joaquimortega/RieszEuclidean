@@ -15,7 +15,7 @@
       "source_labels": [
         "eq:riesz"
       ],
-      "scope": "Concrete Euclidean L², synthesis, translation and weak-convergence definitions",
+      "scope": "Concrete Euclidean L\u00b2, synthesis, translation and weak-convergence definitions",
       "file": "RieszEuclidean/Basic.lean",
       "declarations": []
     },
@@ -78,8 +78,17 @@
         "eq:P"
       ],
       "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection",
-      "file": null,
-      "declarations": []
+      "file": "RieszEuclidean/FourierL2.lean",
+      "declarations": [
+        "RieszEuclidean.integral_fourier_mul",
+        "RieszEuclidean.fourier_conj_eq_conj_inverse",
+        "RieszEuclidean.integral_fourier_mul_conj",
+        "RieszEuclidean.schwartz_parseval",
+        "RieszEuclidean.schwartz_toL2_inner",
+        "RieszEuclidean.schwartz_fourier_inner",
+        "RieszEuclidean.schwartz_fourier_norm"
+      ],
+      "progress": "Fourier transposition, conjugation, Schwartz Parseval pairing and preservation of actual L\u00b2 inner products and norms proved. Schwartz density, unitary L\u00b2 extension and cutoff projection remain pending."
     },
     {
       "id": "separation-and-bumps",
@@ -163,7 +172,7 @@
         "eq:multiplier-norm",
         "eq:control-null"
       ],
-      "scope": "Control measure, Dirac constant spectrum, and L¹ integrated filter calculus",
+      "scope": "Control measure, Dirac constant spectrum, and L\u00b9 integrated filter calculus",
       "file": null,
       "declarations": []
     },
@@ -264,7 +273,7 @@
       "source_labels": [
         "thm:ball"
       ],
-      "scope": "Unconditional nonexistence for every d ≥ 2 and every positive-radius ball",
+      "scope": "Unconditional nonexistence for every d \u2265 2 and every positive-radius ball",
       "file": null,
       "declarations": []
     },
@@ -338,7 +347,7 @@
       "source_labels": [
         "sec:ellipsoids"
       ],
-      "scope": "Determinant-correct L² pullback, 2π phases and transpose frequency transport",
+      "scope": "Determinant-correct L\u00b2 pullback, 2\u03c0 phases and transpose frequency transport",
       "file": "RieszEuclidean/Affine.lean",
       "declarations": [
         "RieszEuclidean.planeAffine_map",
@@ -382,7 +391,8 @@
     "RieszEuclidean/Basic.lean": "45d89f6d1e318439eaecca48afffd2529c8c403dbf7bed878be3036235cfe2ae",
     "RieszEuclidean/L2Transport.lean": "301cef59b8659c1c363e3435ea82acdef03d55636e9b6afbb294ffb02917cb58",
     "RieszEuclidean/MovingComparison.lean": "68faa0ba0d885e39b62a3336b37baee64ff17a15de25973e56ea44653bc2501c",
-    "RieszEuclidean/ProjectionGap.lean": "8a889b2ef52f76f6ce13750dda5a7db0864f187ce48960f406b6313e0b811c78",
-    "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad"
+    "RieszEuclidean/ProjectionGap.lean": "45b35ad9515668b6a13dde054593c8db63fa2cb9d3655c5feef0f084b768cc95",
+    "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad",
+    "RieszEuclidean/FourierL2.lean": "45ba96a77e8d8387a865b629c90f2e4c7bd55c7cbc8435288612c1680ab5d2af"
   }
 }

@@ -5,8 +5,13 @@
     "RieszEuclidean.Results.projection_gap",
     "RieszEuclidean.Results.strict_inclusion_obstruction",
     "RieszEuclidean.Results.weak_limit_separation",
-    "RieszEuclidean.Results.affine_invariance"
+    "RieszEuclidean.Results.affine_invariance",
+    "RieszEuclidean.Results.fourier_parseval"
   ],
-  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
   "enable_nanoda": false
 }

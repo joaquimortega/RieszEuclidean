@@ -8,7 +8,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 ALLOWED = {'propext', 'Classical.choice', 'Quot.sound'}
 manifest = json.loads((ROOT / 'blueprint/manifest.json').read_text())
-expected = {name for node in manifest['nodes'] if node['status'] == 'proved'
+expected = {name for node in manifest['nodes']
             for name in node['declarations']}
 result = subprocess.run(['lake', 'env', 'lean', 'RieszEuclidean/ProofAudit.lean'],
                         cwd=ROOT, capture_output=True, text=True)

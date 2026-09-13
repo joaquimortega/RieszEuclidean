@@ -13,3 +13,10 @@ import RieszEuclidean
 #print axioms RieszEuclidean.exponential_planeAffine
 #print axioms RieszEuclidean.hasExponentialRieszBasis_affine_pullback
 #print axioms RieszEuclidean.exists_exponentialRieszBasis_affine_iff
+#print axioms RieszEuclidean.integral_fourier_mul
+#print axioms RieszEuclidean.fourier_conj_eq_conj_inverse
+#print axioms RieszEuclidean.integral_fourier_mul_conj
+#print axioms RieszEuclidean.schwartz_parseval
+#print axioms RieszEuclidean.schwartz_toL2_inner
+#print axioms RieszEuclidean.schwartz_fourier_inner
+#print axioms RieszEuclidean.schwartz_fourier_norm

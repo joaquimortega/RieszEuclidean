@@ -30,3 +30,9 @@ The rebuilt file passes all default linters. The second real Comparator run pass
 `Lean default kernel accepts the solution` and `Your solution is okay!`.
 See `comparator-current.txt`. Runtime was 94.810 seconds with 1.6 GiB peak memory.
 This verifies the four supporting results only; the full-paper gate remains open.
+
+## Expanded Fourier checkpoint
+
+The newer five-result run includes Schwartz Parseval and passed. See
+`fourier-progress.md`, `comparator-fourier.txt`, and
+`comparator-fourier-hashes.json`. Earlier logs and hashes above are historical.

@@ -75,9 +75,9 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states four proved supporting results with concrete
+`MainResults.lean` currently states five proved supporting results with concrete
 basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
-assembled from the modular source with Mathlib imports only. Neither file yet
+assembled from the modular source with Mathlib imports only. The fifth result is the Euclidean Schwartz Parseval pairing. Neither file yet
 contains the pending geometric nonexistence theorems.
 
 Regenerate after source edits with `python3 scripts/build_standalone.py`.

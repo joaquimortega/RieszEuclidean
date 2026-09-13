@@ -32,3 +32,21 @@ These are implementation leads, not discharged proof obligations.
 
 The next central task is the Euclidean Fourier L²/bump construction. Affine
 transport and projection limits are already proved and should not be reimplemented.
+
+## Density construction verified in isolation
+
+A direct `compactSchwartz` construction now elaborates in the working scratch
+file `/tmp/CompactSchwartz.lean`. Given `ContDiff ℝ ∞ f` and
+`HasCompactSupport f`, its decay estimate uses
+`HasCompactSupport.iteratedFDeriv`, compact support of the norm and product,
+`ContDiff.continuous_iteratedFDeriv`, and
+`HasCompactSupport.exists_bound_of_continuous`. This supplies the embedding
+needed after compactly supported smooth approximation. It has not yet been
+integrated into the library or counted as completing density.
+
+For the next approximation step,
+`Continuous.exists_contDiff_dist_le_of_forall_mem_ball_dist_le` is stronger than
+uniform approximation alone: its local bound with delta zero forces the smooth
+approximant to vanish outside a thickening of the original compact support.
+This should preserve compact support while controlling the L² error on a fixed
+finite-measure thickening. This route remains to be implemented.

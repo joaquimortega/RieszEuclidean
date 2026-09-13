@@ -5,3 +5,4 @@ import RieszEuclidean.MovingComparison
 import RieszEuclidean.WeakLimits
 import RieszEuclidean.L2Transport
 import RieszEuclidean.Affine
+import RieszEuclidean.FourierL2

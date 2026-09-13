@@ -53,4 +53,9 @@ theorem affine_invariance {d : ℕ} (a : Space d) (A : Space d ≃L[ℝ] Space d
     (∃ Λ, HasBasis (affineImage a A Ω) Λ) ↔ ∃ Λ, HasBasis Ω Λ :=
   exists_exponentialRieszBasis_affine_iff a A Ω
 
+/-- The concrete Euclidean Schwartz Parseval pairing underlying the L² extension. -/
+theorem fourier_parseval {d : ℕ} (f g : SchwartzMap (Space d) ℂ) :
+    (∫ x, Real.fourierIntegral f x * starRingEnd ℂ (Real.fourierIntegral g x)) =
+      ∫ x, f x * starRingEnd ℂ (g x) := schwartz_parseval f g
+
 end RieszEuclidean.Results

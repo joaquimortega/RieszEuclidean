@@ -59,7 +59,7 @@ theorem mem_range_iff (P : OrthProjection H) (x : H) : x ∈ P.range ↔ P.op x 
 
 theorem inner_op_sub_op (P : OrthProjection H) (x y : H) :
     inner (𝕜 := ℂ) (P.op x) (y - P.op y) = 0 := by
-  rw [P.symmetric, map_sub, P.apply_idempotent, sub_self, inner_zero_right]
+  rw [P.symmetric, map_sub, P.apply_idempotent, _root_.sub_self, inner_zero_right]
 
 theorem norm_sq_decomposition (P : OrthProjection H) (x : H) :
     ‖P.op x‖ ^ 2 + ‖x - P.op x‖ ^ 2 = ‖x‖ ^ 2 := by
@@ -124,7 +124,7 @@ theorem rangeIso_of_gap [CompleteSpace H] (P Q : OrthProjection H)
     have hPx : P.op x = 0 := congrArg Subtype.val hx
     have hQx : Q.op x = x := (Q.mem_range_iff x).mp x.property
     have hbound := (P.op - Q.op).le_opNorm (x : H)
-    simp only [ContinuousLinearMap.sub_apply, hPx, hQx, zero_sub, norm_neg] at hbound
+    simp only [ContinuousLinearMap.sub_apply, hPx, hQx, _root_.zero_sub, norm_neg] at hbound
     have hxzero : ‖(x : H)‖ = 0 := by
       nlinarith [norm_nonneg (x : H)]
     exact Subtype.ext (norm_eq_zero.mp hxzero)
@@ -227,7 +227,7 @@ theorem gap_of_rangeIso (P Q : OrthProjection H) (h : RangeIso P Q) :
   apply ContinuousLinearMap.opNorm_le_bound _ hb
   intro x
   have h₁ := P.bound_on_kernel_of_complement_bound Q hb hQcomp (x - Q.op x)
-    (by rw [map_sub, Q.apply_idempotent, sub_self])
+    (by rw [map_sub, Q.apply_idempotent, _root_.sub_self])
   have h₂ := hPcomp (Q.op x) ⟨x, rfl⟩
   have h₁sq := pow_le_pow_left₀ (norm_nonneg _) h₁ 2
   have h₂sq := pow_le_pow_left₀ (norm_nonneg _) h₂ 2
