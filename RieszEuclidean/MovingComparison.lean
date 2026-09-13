@@ -5,9 +5,8 @@ import RieszEuclidean.ProjectionGap
 # Passing to a moving comparison projection
 
 This is the last analytic limit in Section 6 of the Euclidean manuscript.
-Unlike the lattice argument, the comparison projection depends on the parameter.
-The hypotheses here explicitly require both limiting families; construction of
-those families is a separate obligation recorded in the blueprint.
+The comparison projection depends on the parameter. The hypotheses specify
+both limiting families; their construction is recorded in the blueprint.
 -/
 noncomputable section
 namespace RieszEuclidean.OrthProjection

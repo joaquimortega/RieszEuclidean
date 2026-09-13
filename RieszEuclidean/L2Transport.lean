@@ -2,8 +2,7 @@ import RieszEuclidean.Basic
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 
-/-! General L² pullback and unit-phase reindexing, extracted from the old
-BallRounding module. No frequency rounding is imported or performed here. -/
+/-! General L² pullback and unit-phase reindexing. -/
 noncomputable section
 open MeasureTheory MeasureTheory.Measure Filter Topology
 open scoped ENNReal

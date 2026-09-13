@@ -1,8 +1,0 @@
-{
-  "RieszEuclidean/Correlations.lean": "4d9764bfdde7277c0a682f717d5cae296305370bfd722bcfb2630ff20a318d0d",
-  "RieszEuclidean/SpectralMeasures.lean": "b377cd44f84bd5e9271bfb1f0e3a5f76a980c697ddd0d4d5a899e1d01128a60d",
-  "RieszEuclidean/IntegratedUnitary.lean": "38ef236cd542314ae3c203308bc65a7dc1ec0f3a0816146153410b1f843bad77",
-  "RieszEuclidean/SpectralNorm.lean": "7ecc280e704ef3c34ec57b0928ced318bcb192f890119ee993686fa20b723ed5",
-  "RieszEuclideanStandalone.lean": "f0087ad1176e5726a412ec666b31b02b7ad74d536b268ec2be0ceb976ce02a0e",
-  "blueprint/manifest.json": "c32632c207613217133e6ce28203c08870d5cf4549c3425ed577203f26a259fe"
-}

@@ -1,8 +1,0 @@
-'RieszEuclidean.OrthProjection.gap_iff_rangeIso' depends on axioms: [propext, Classical.choice, Quot.sound]
-'RieszEuclidean.OrthProjection.nested_not_both_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
-'RieszEuclidean.weaklyConverges_const' depends on axioms: [propext, Classical.choice, Quot.sound]
-'RieszEuclidean.WeaklyConverges.translate' depends on axioms: [propext, Classical.choice, Quot.sound]
-'RieszEuclidean.WeaklyConverges.separated' depends on axioms: [propext, Classical.choice, Quot.sound]
-'RieszEuclidean.OrthProjection.gap_le_of_two_strong_limits' depends on axioms: [propext, Classical.choice, Quot.sound]
-'RieszEuclidean.OrthProjection.gap_le_of_moving_comparison' depends on axioms: [propext, Classical.choice, Quot.sound]
-'RieszEuclidean.OrthProjection.moving_comparison_obstruction' depends on axioms: [propext, Classical.choice, Quot.sound]

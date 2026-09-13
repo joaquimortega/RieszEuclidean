@@ -1,46 +1,36 @@
-# Development status
+# Formalization status
 
-The formalization has **25 of 25 blueprint obligations proved**. This counts
-completed nodes, not estimated effort.
+The formalization has **25 of 25 blueprint obligations proved**. No theorem is
+implemented by `sorry` or a new axiom.
 
-The Euclidean Fourier and initial bump constructions, compact configuration hull,
-invariant probability measure, stationary Koopman system and continuous Fejér
-construction are proved. The continuous filters use real radii tending to infinity.
+The completed construction includes Euclidean Fourier analysis, normalized bump
+projections and the initial gap, the compact configuration hull, an invariant
+probability measure, the strongly continuous stationary Koopman representation,
+continuous Fejér approximation, simultaneous spectral cutoffs, the covariant
+comparison kernel, and the averaged scalar gap.
 
-Scalar spectral measures are constructed for every vector of a strongly
-continuous unitary representation on a separable complex Hilbert space, and in
-particular for the stationary hull Koopman representation. Hilbert-basis
-coordinates of windows in the original space, explicit physical Fourier-density
-measures and a bounded vague limit give the construction. The common control
-measure, spectral calculus and stationary cutoffs now have all inputs discharged.
+For every vector of a strongly continuous unitary representation on a separable
+complex Hilbert space, the Bochner modules construct a finite positive Euclidean
+measure representing its scalar correlation. Hilbert-basis coordinates of
+windows, explicit Fourier-density measures, and a bounded vague limit give the
+construction. These measures supply the stationary spectral family and its common
+control measure.
 
-The actual comparison kernel has configuration continuity, and the stationary
-comparison family is self-adjoint, idempotent and operator-norm Lipschitz. The
-formalization implements the actual scalar averaging identities and gap,
-then assembles nonexistence results for positive-radius balls, all
-noncollinear triangles, affine ellipsoids, the general boundary-measure
-criterion, and finite irredundant supporting-halfspace polygons with nonzero
-normals, nonempty faces and an unpaired maximal side. The polygon presentation
-identifies maximal boundary segments geometrically and includes the odd-side
-consequence. Physical translation spectra and the interval/rectangle
-boundary-overlap remarks are also formalized.
+The unconditional results cover positive-radius balls, all noncollinear
+triangles, affine ellipsoids, the general boundary-measure criterion, and finite
+irredundant supporting-halfspace polygons with nonzero normals, nonempty faces,
+and an unpaired maximal side. The polygon presentation identifies maximal
+boundary segments geometrically and includes the odd-maximal-side consequence.
+Physical translation spectra and the interval/rectangle boundary-overlap remarks
+are formalized as well.
 
-The unconditional wrappers instantiate their formerly explicit representation
-hypotheses with the proved stationary spectral family. This is the exact Bochner
-scope needed by the paper; no theorem for every abstract positive-definite
-function is claimed.
+Official Comparator and Lean's default kernel accept all 37 public targets.
+Modular, public, and standalone builds and all 15 linters pass. A transitive audit
+of 931 project declarations reports only the standard Lean axioms `propext`,
+`Classical.choice`, and `Quot.sound`. The verification commands, inputs, hashes,
+and logs are recorded in [`reviews/bochner-progress.md`](reviews/bochner-progress.md).
 
-The published `0fb31ee` checkpoint has 13 of 25 nodes and twenty-three public
-supporting results. Official Comparator and Lean's default kernel accepted its
-standalone solution; all builds and all 15 linters passed, and its axiom audit
-covers 597 declarations with standard axioms only. See
-`reviews/comparison-sphere-progress.md` and
-`reviews/comparator-comparison-sphere-hashes.json` for the exact archived scope
-and inputs. Official Comparator and Lean's default kernel accept the expanded
-37-target reference, and its integrated module and standalone builds pass. The
-931-declaration transitive axiom audit uses only standard Lean axioms.
-The earlier nineteen-result audit is retained separately.
-
-No theorem is replaced by `sorry` or a new axiom. See `blueprint/manifest.json`
-for precise scopes and dependencies. The full-paper check
-`python3 scripts/check_blueprint.py --require-complete` passes and is enforced by CI.
+See [`blueprint/manifest.json`](blueprint/manifest.json) for the precise scopes,
+dependencies, declarations, and proof hashes. The full-project check
+`python3 scripts/check_blueprint.py --require-complete` passes and is enforced by
+CI.

@@ -1,26 +1,23 @@
-# Riesz bases directly in Euclidean space
+# Riesz bases in Euclidean space
 
 Lean formalization project for Joaquim Ortega-Cerdà's
 [`RieszEuclidean.tex`](paper/RieszEuclidean.tex).
 
-**The direct Euclidean formalization is complete: all 25 blueprint obligations,
-including the unconditional geometric nonexistence theorems and their independent
-public audit, are proved.**
+All **25 of 25 blueprint obligations** are proved. The formalization covers the
+Euclidean Fourier and bump constructions, the compact configuration hull and its
+invariant probability measure, the stationary Koopman representation, continuous
+box averaging and spectral cutoffs, the comparison projection, and the geometric
+boundary arguments.
 
-The intended proof keeps frequencies, translations, and scalar spectral measures
-in ℝⁿ. It uses Beurling weak limits, smooth orthonormal bumps, continuous box
-averaging of scalar inner products, and a norm-continuous comparison projection.
-It does not replace this route with the earlier lattice proof.
-
-Frequency separation and normalized nonnegative smooth compact bumps are now proved.
-Radius selection, the positive uniform Fourier lower bound and the translated
-orthonormal family are also proved, together with isometric synthesis and the
-projection onto its range. The initial projection gap and the
-compact metrizable configuration space with its jointly continuous translation action
-are proved. All 25 obligations are proved. Scalar spectral
-measures are constructed for every vector in the separable stationary Koopman
-space, discharging the representation hypotheses in the averaging, cutoff and
-geometric arguments. See [development status](STATUS.md).
+Scalar correlations of strongly continuous unitary representations on separable
+complex Hilbert spaces have finite positive Euclidean representing measures. This
+is the Bochner statement used for the stationary hull. The geometric conclusions
+cover positive-radius balls, all noncollinear triangles, affine ellipsoids, a
+general boundary-measure criterion, and polygons given by finite irredundant
+supporting-halfspace presentations with nonzero normals, nonempty faces, and an
+unpaired maximal side, including the odd-maximal-side consequence. Physical
+translation spectra and the interval/rectangle boundary-overlap remarks are also
+formalized.
 
 ## Build from a standalone clone
 
@@ -32,76 +29,38 @@ cd RieszEuclidean
 lake exe cache get
 lake build
 lake env lean -DwarningAsError=true scripts/Lint.lean
-python3 scripts/check_blueprint.py
+python3 scripts/check_blueprint.py --require-complete
 python3 scripts/check_axioms.py
 ```
 
 `lean-toolchain` and `lake-manifest.json` pin Lean and every Lake dependency.
 All project-specific Lean sources are contained in this repository. No sibling
 checkout, absolute path, generated proof file, or private package is required.
-Mathlib and its transitive dependencies are fetched by Lake, not vendored into Git.
+Mathlib and its transitive dependencies are fetched by Lake.
 
-The completion gate is:
+The public theorems use the concrete `HasExponentialRieszBasis` predicate,
+arbitrary frequency sets, and the manuscript's dimensional and geometric
+hypotheses. CI builds and lints the modular, public, and standalone sources,
+checks extraction and metadata, audits transitive axioms, and requires the full
+blueprint manifest to be discharged.
 
-```sh
-python3 scripts/check_blueprint.py --require-complete
-```
+## Verification
 
-CI requires this command to pass. The implemented
-theorems use the concrete `HasExponentialRieszBasis` predicate, arbitrary
-frequency sets, and the manuscript's dimensional and geometric hypotheses.
-The independent public audit is part of the completed blueprint.
+`MainResults.lean` exposes 37 audited targets covering the supporting interfaces,
+averaging, Bochner existence, conditional geometric interfaces, and unconditional
+geometric conclusions. `RieszEuclideanStandalone.lean` contains their extracted
+Mathlib-only proofs. Official Comparator and Lean's default kernel accept all 37
+targets. The transitive audit of 931 project declarations reports only `propext`,
+`Classical.choice`, and `Quot.sound`.
 
-## Documents
+The exact inputs, commands, hashes, and results are recorded in the
+[current verification record](reviews/bochner-progress.md). Pinned Comparator
+build and run instructions are in [`standalone/TOOLS.md`](standalone/TOOLS.md).
 
-- [Blueprint and proof plan](blueprint/README.md)
-- [Machine-readable obligations](blueprint/manifest.json)
-- [Current status](STATUS.md)
-- [Code provenance](PROVENANCE.md)
-- [Formalization metadata](formalization.yaml)
-- [Dependency caches and cloud sync](CACHE-SYNC.md)
-
-## Manuscript
-
-The canonical manuscript is `paper/RieszEuclidean.tex`; edit this file directly.
-In the author’s parent workspace, `RieszEuclidean.tex` is a relative symlink to
-this file, so edits through either path affect the same manuscript. The repository
-contains the real file and remains self-contained when cloned.
-
-With a TeX Live installation containing AMS packages, microtype, hyperref, and latexmk:
+Regenerate and verify the standalone source after proof edits with:
 
 ```sh
-mkdir -p paper/build
-latexmk -pdf -interaction=nonstopmode -halt-on-error \
-  -outdir=paper/build paper/RieszEuclidean.tex
-```
-
-The paper credits weak limits to Beurling and cites Rudin, *Fourier Analysis on
-Groups*, §1.4.3, for Bochner's theorem. Mathematical references are not extra
-Lean axioms; their needed conclusions must be proved or obtained from Mathlib.
-
-## Before each commit
-
-Run the build, all default environment linters (including slow tests), the
-blueprint checker and the transitive axiom checker. Compiler warnings are errors.
-Fix the code when linting fails; do not add `nolint` annotations or disable a
-linter. The blueprint checker rejects such suppressions in project proof sources.
-
-## Compact statements and standalone verification
-
-The final working `MainResults.lean` exposes 37 targets: the previously verified
-23 supporting results, the averaging and conditional geometric interfaces,
-Bochner existence and unconditional geometric conclusions. Official Comparator
-and Lean's default kernel accept all 37. The 931-declaration transitive axiom
-audit uses only standard Lean axioms. The archived `0fb31ee` audit
-certifies only its own twenty-three-result reference and inputs.
-
-Regenerate after source edits with `python3 scripts/build_standalone.py`.
-The generator resets Lean's auxiliary-proof naming cache at each file boundary,
-matching separate compilation; it does not change declarations or kernel checks.
-Before committing, also run:
-
-```sh
+python3 scripts/build_standalone.py
 lake build MainResults RieszEuclideanStandalone
 lake env lean -DwarningAsError=true scripts/LintMainResults.lean
 lake env lean -DwarningAsError=true scripts/LintStandalone.lean
@@ -112,70 +71,40 @@ python3 scripts/check_metadata.py
 
 Use a virtual environment for the Python validation dependencies if required by
 your system. The official metadata schema is vendored under `schema/`.
-Pinned Comparator build/run instructions are in `standalone/TOOLS.md`; actual
-verification scope and results are recorded in `reviews/standalone-validation.md`.
-Comparator checks source correspondence and kernel acceptance, while the
-blueprint and source reviews record fidelity to the paper.
 
-The hull lemma is proved: configurations with a common positive separation bound,
-including the empty configuration, form a compact metrizable space. Sequential
-convergence is precisely Beurling local matching, and translations act jointly
-continuously. Compatible Hausdorff limits on compact Euclidean windows and
-countable distance probes give a direct Euclidean proof of this lemma.
+## Documents
 
-`VagueConvergence` proves that this topology is also the vague counting-measure
-topology. Finite point matchings control compactly supported test integrals;
-distinguishing bumps and compactness make the counting-test map an embedding.
+- [Blueprint and proof structure](blueprint/README.md)
+- [Machine-readable obligations](blueprint/manifest.json)
+- [Formalization status](STATUS.md)
+- [Code provenance](PROVENANCE.md)
+- [Formalization metadata](formalization.yaml)
+- [Dependency caches and cloud sync](CACHE-SYNC.md)
 
-Continuous Euclidean box averages produce an invariant probability measure on
-the translation hull. Relative shell-volume estimates make their translation
-errors vanish. Banach–Alaoglu gives an invariant cluster functional, and
-Riesz–Markov–Kakutani represents it by the required measure.
+## Manuscript
 
-`Koopman` constructs the strongly continuous unitary action on the separable
-stationary L² space, with the group law and invariant unit constant. It follows
-the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}.
+The canonical manuscript is `paper/RieszEuclidean.tex`; edit this file directly.
+In the author's parent workspace, `RieszEuclidean.tex` is a relative symlink to
+this file, so edits through either path affect the same manuscript. The repository
+contains the real file and remains self-contained when cloned.
 
-The blueprint has **25 of 25 obligations proved**. This is a node count,
-not an estimate of remaining effort.
+With a TeX Live installation containing AMS packages, microtype, hyperref, and
+latexmk:
 
-The scalar calculus now includes kernel adjoints and convolution, the uniform
-Fourier-symbol operator bound, and a common probability control measure from a
-dense sequence of unit vectors. The actual box Fejér kernel has mass one and
-concentrates at zero. Its convolution with the domain indicator is the exact
-symbol of the finite filter. Dominated convergence gives the simultaneous
-stationary cutoff family, with strong convergence, self-adjointness, idempotence
-and spectral norm and difference identities.
+```sh
+mkdir -p paper/build
+latexmk -pdf -interaction=nonstopmode -halt-on-error \
+  -outdir=paper/build paper/RieszEuclidean.tex
+```
 
-Scalar correlations of strongly continuous unitary representations on separable
-complex Hilbert spaces now have finite positive Euclidean representing measures.
-The construction uses scalar Hilbert-basis coordinates of windows in the original
-Hilbert space, explicit Fourier-density measures and a finite-measure vague limit.
-It adds no spectral-existence axiom, amplified Hilbert space or lattice reduction.
-This is the exact existence statement used by the manuscript, rather than a claim
-for every abstract positive-definite function.
+The paper credits weak limits to Beurling and cites Rudin, *Fourier Analysis on
+Groups*, §1.4.3, for Bochner's theorem. The required mathematical conclusions are
+proved in Lean or obtained from Mathlib.
 
-The actual bump kernel has proved bounds, finite propagation, covariance,
-Hermitian symmetry, product integrability, the projection integral identity and
-joint continuity in its spatial variables, including configuration continuity.
-The stationary comparison family is self-adjoint, idempotent and operator-norm
-Lipschitz. The averaging and geometry modules prove the scalar averaging identities and
-transfers the original gap to the stationary cutoffs. It also implements the
-ball theorem, all noncollinear triangles, affine ellipsoids, the
-general boundary criterion, and finite irredundant supporting-halfspace polygons
-with an unpaired maximal side, including the odd-maximal-side consequence. Separate modules formalize physical translation
-spectra and the interval/rectangle boundary-overlap remarks.
+## Contribution checks
 
-The Bochner modules supply the stationary hull spectral representations, and the
-unconditional wrappers discharge those hypotheses. The public statements and
-transitive axiom boundary have been independently checked.
-
-At published commit `0fb31ee`, official Comparator and Lean's default kernel
-accepted all twenty-three supporting results. Modular, public and standalone
-builds and all 15 linters passed; all 597 transitive axiom reports used only
-standard Lean axioms. The current 37-target Comparator run is recorded separately
-in `reviews/comparator-bochner.txt`.
-The earlier `ee0e4c5` checkpoint covered nineteen results and 10/25 nodes.
-See [development status](STATUS.md) and
-[the checkpoint audit](reviews/comparison-sphere-progress.md) for the archived
-scope, exact verified inputs and remaining obligations.
+Run the build, all default environment linters, the blueprint checker, extraction
+check, metadata checker, and transitive axiom checker. Compiler warnings are
+errors. Fix linter findings in the code; do not add `nolint` annotations or
+disable linters. The blueprint checker rejects such suppressions in project proof
+sources.

@@ -1,9 +1,9 @@
 # Blueprint for the Euclidean proof
 
-This blueprint follows `paper/RieszEuclidean.tex`, not the earlier proof overview
-or the lattice proof. `manifest.json` records each obligation, dependencies,
-source labels, implementation status and relevant Lean declarations. A proved
-conditional lemma is distinguished from the construction of its hypotheses.
+This blueprint tracks `paper/RieszEuclidean.tex`. `manifest.json` records each
+obligation, its dependencies, source labels, proof status, hashes, and relevant
+Lean declarations. Conditional interfaces are recorded separately from the
+constructions that supply their hypotheses.
 
 ## Concrete statements and conventions
 
@@ -27,13 +27,12 @@ criterion is also a proof obligation.
 **Implemented:** `ProjectionGap.lean` proves Lemmas 2.1 and 2.2, including
 bounded invertibility of the range restriction, the converse gap estimate,
 and the impossibility of two strictly included projection ranges both lying
-at distance less than one from a third projection. These are copied proofs
-with independent Mathlib imports, not an import of a lattice main theorem.
+at distance less than one from a third projection.
 
 **Implemented:** `MovingComparison.lean` proves preservation of a common gap
 under simultaneous strong limits, specializes to norm convergence of the
-comparison operators, and obtains the final conditional contradiction.
-This does not assert that the paper's analytic construction already exists.
+comparison operators, and obtains the conditional contradiction used by the
+geometric theorems.
 
 ## Section 2: Fourier projection and bumps
 
@@ -47,10 +46,7 @@ orthonormal family. The exact identity between projected bump synthesis and
 exponential synthesis gives the projection gap. Completeness/surjectivity of
 synthesis is essential here; a Riesz sequence alone is insufficient.
 
-Implemented across the Fourier, bump, synthesis and initial-gap modules. The pinned Mathlib has Fourier inversion
-and Schwartz Fourier transforms but no ready-to-use continuum Bochner spectral
-construction was found in the initial inventory. Reusing names from the older
-project must not hide this additional analytic work.
+Implemented across the Fourier, bump, synthesis, and initial-gap modules.
 
 ## Section 3: Beurling weak limits
 
@@ -59,8 +55,8 @@ The elementary module proves constant convergence, translation invariance, and
 preservation of the common separation bound. The full compactness theorem is proved. The implementation supplies a compact
 metrizable space of separated configurations and
 identifies its topology with local matching and proves joint continuity of real
-translations. The empty set is permitted in the ambient space and excluded
-from the actual hull by the projection gap, not by an unsupported assumption.
+translations. The empty set is permitted in the ambient space. The projection
+gap excludes it from the orbit hull used in the stationary construction.
 
 Strong convergence of the configuration bump projections by matching finitely many centers
 for compactly supported inputs, then use density, is proved. Continuous box averaging, the invariant probability measure and the strongly
@@ -81,10 +77,9 @@ finiteness, total mass, the parallelogram law and the invariant constant's Dirac
 spectrum are proved. A countable dense sequence of normalized vectors constructs
 one probability control measure and proves domination of every spectral measure.
 
-Existence uses normalized vector windows in the original Hilbert space. Scalar
+Existence uses normalized vector windows in the Hilbert space. Scalar
 coordinates in a countable Hilbert basis have explicit physical Fourier-density
-measures; a bounded vague cluster limit represents the original correlation. No
-amplified Hilbert space or lattice is introduced.
+measures; a bounded vague cluster limit represents the correlation.
 
 Integrated L¹ operators have proved adjoint and convolution formulas, spectral
 norm identities and the uniform symbol bound. Actual continuous box overlaps give
@@ -96,8 +91,8 @@ Boundary-nullity gives a measurable conull good-parameter set. Scalar dominated
 convergence, pointwise Cauchy limits of bounded operators and composition limits
 construct the simultaneous cutoff family for real radii tending to infinity.
 Self-adjointness, idempotence, spectral mass and two-parameter difference identities
-are proved. The unitary spectral-measure construction supplies their formerly
-explicit representing family, completing the scalar-calculus and cutoff nodes.
+are proved. The unitary spectral-measure construction supplies the representing
+family used by the scalar-calculus and cutoff modules.
 
 ## Section 5: comparison and averaged scalar forms
 
@@ -105,21 +100,20 @@ The actual covariant bump kernel has proved uniform bounds, support where
 `‖v-w‖ ≤ 2r`, Hermitian symmetry, covariance, product integrability, the kernel
 projection identity and joint spatial continuity, including configuration
 continuity. The stationary comparison family `M_t` is self-adjoint,
-idempotent and operator-norm Lipschitz. The working batch implements the actual
-averaged scalar construction and its gap estimate.
+idempotent and operator-norm Lipschitz. The averaged scalar construction and its
+gap estimate are implemented.
 
 For each configuration use the actual compactly supported test function
 `|C_R|⁻¹ᐟ² 1_C_R(v) exp(-2πit·v) f(Γ-v)`. Tonelli proves the averaged energy
 identity and independence from measurable representatives. Expanding scalar
-inner products yields exactly `Π_(t,R)` and `M_(t,R)`. Apply the original gap
+inner products yields exactly `Π_(t,R)` and `M_(t,R)`. Apply the projection gap
 pointwise in the configuration, then Cauchy–Schwarz. Pass strongly on the cutoff
-side and in norm on the bump-kernel side. No amplified Hilbert space `𝒦` is
-introduced. No finite averaged operator is assumed to be a projection.
+side and in norm on the bump-kernel side. The argument uses the limiting
+projection operators.
 
 Implemented across the comparison-kernel and `Averaged*` modules, with
-`BumpBoxKernel.lean` and `StationaryAssemblyHelpers.lean`. The conclusion still
-can be stated with an explicit representing family, while the proved stationary
-spectral family discharges that hypothesis in the final result.
+`BumpBoxKernel.lean` and `StationaryAssemblyHelpers.lean`. The stationary
+spectral family supplies the representing measures used in the final result.
 
 ## Section 6: sphere and crossing
 
@@ -137,14 +131,14 @@ averaged gap. `SphereAnalyticAssembly.lean` isolates the representation hypothes
 `BallEllipsoidTheorems.lean` supplies it from Bochner existence and proves the
 unconditional ball theorem.
 
-## Sections 7 and 8: remaining domains
+## Sections 7 and 8: geometric domains
 
 For triangles and an unpaired maximal polygon edge, remove the other edges
 using their zero-length translated overlaps. Prove that all surviving edge
 components cross in the same normal direction. The jump may have nonzero
 tangential frequencies. For an odd polygon, prove that at most two maximal
-edges have a given unoriented direction and extract an unpaired edge. The working
-modules implement these steps. `PolygonPresentation.lean` identifies supporting
+edges have a given unoriented direction and extract an unpaired edge.
+`PolygonPresentation.lean` identifies supporting
 faces with maximal boundary segments and derives both the unpaired-maximal-side
 and odd-maximal-side formulations.
 
@@ -169,20 +163,18 @@ rectangle edges have positive translated boundary overlap.
    the public results; inspect Lean's axiom reports, not only text searches.
 4. Public theorem types preserve arbitrary frequency sets and the full geometric scope.
 5. Source labels, hashes, bibliography, repository links and proof status agree.
-6. The final public theorems are separately checked against independent statement
-   specifications, as in the original project's Comparator workflow.
+6. The public theorems are checked against independent statement specifications
+   with Comparator.
 7. GitHub contains the verified sources, blueprint, scaffold and current manuscript.
 
-The development CI builds and lints the modular, public and standalone sources,
+CI builds and lints the modular, public and standalone sources,
 checks extraction and metadata, audits axioms, and requires the full manifest to
 be discharged with `check_blueprint.py --require-complete`.
 
-## Published supporting checkpoint and working batch
+## Verification
 
-The published `0fb31ee` 13/25 inventory has twenty-three public supporting results
-accepted by official Comparator and Lean's default kernel. Modular, public and
-standalone builds and all 15 linters passed; all 597 axiom reports use standard
-axioms only. See [the archived audit](../reviews/comparison-sphere-progress.md).
-The current tree has all 25 nodes proved. Official Comparator and Lean's default
-kernel accept its 37-target reference, and the 931-declaration transitive axiom
-audit uses only standard Lean axioms.
+All 25 nodes are proved. Official Comparator and Lean's default kernel accept the
+37-target reference, and the transitive audit of 931 project declarations reports
+only `propext`, `Classical.choice`, and `Quot.sound`. See the
+[verification record](../reviews/bochner-progress.md) for the exact inputs,
+commands, hashes, and results.

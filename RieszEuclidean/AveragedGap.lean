@@ -46,7 +46,7 @@ theorem norm_operator_le_of_pairing_bound {H : Type*}
   · rw [hz]; positivity
   · have hp : 0 < ‖A f‖ := lt_of_le_of_ne (norm_nonneg _) (Ne.symm hz)
     nlinarith
-/-- The averaged scalar argument transfers the same gap constant, without an amplified Hilbert space. -/
+/-- The averaged scalar argument transfers the same gap constant. -/
 theorem norm_operator_le_of_averaged_scalar_pairings {H X : Type*}
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [MeasurableSpace X]
     (μ : Measure X) (A : H →L[ℂ] H) (j : H → X → ℝ)

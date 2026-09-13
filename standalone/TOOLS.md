@@ -48,8 +48,7 @@ git -C .local/landrun checkout --detach 811cfff51ceaf3d9843708aa6d22e9b84ccac8b4
 ```
 
 The build was verified with Lean 4.19.0 and Go 1.24.4. Landrun requires Linux
-with Landlock enabled. A real Landrun sandbox was tested on Linux 6.12.94;
-the development-only `fake-landrun.sh` is not used.
+with Landlock enabled. A real Landrun sandbox was tested on Linux 6.12.94.
 
 ## Run Comparator
 
@@ -79,14 +78,9 @@ Comparator interface. The reference and solution are trusted repository files;
 this setup is not a claim of current-master hardening for adversarial inputs.
 
 Successful completion prints `Lean default kernel accepts the solution` and
-`Your solution is okay!`. See `reviews/comparator-fejer-cutoffs.txt` for the accepted nineteen-result
-checkpoint. It includes continuous Fejér approximation, finite-filter symbols,
-conditional control measures and cutoffs, and the bump-kernel projection identity.
-Exact scope and inputs are recorded in `reviews/fejer-cutoffs-progress.md`;
-geometric nonexistence statements remain pending.
+`Your solution is okay!`. The 37-result verification log is
+`reviews/comparator-bochner.txt`; scope and input fingerprints are recorded in
+`reviews/bochner-progress.md` and `reviews/comparator-bochner-hashes.json`.
 
-For the initial local run, the three pinned binaries were copied from the
-author-authorized previous project to `/tmp/riesz-euclidean-comparator-bin`.
-That temporary cache is outside the synchronized tree; the reproducible build
-above requires no previous project. Exclude `.local` from synchronization if
-you choose that build location.
+Keep tool binaries outside the synchronized tree, or exclude `.local` from
+synchronization when using the build location above.

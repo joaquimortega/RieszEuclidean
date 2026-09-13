@@ -102,7 +102,6 @@ run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 
 The Fourier convention is exp(2 π i ⟪ξ,x⟫), as in `paper/RieszEuclidean.tex`.
 Mathlib's inner product is conjugate-linear in its first argument.
-No lattice or quotient space is part of these definitions.
 -/
 noncomputable section
 open MeasureTheory
@@ -162,8 +161,7 @@ end RieszEuclidean
 
 /- Source: RieszEuclidean/L2Transport.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-/-! General L² pullback and unit-phase reindexing, extracted from the old
-BallRounding module. No frequency rounding is imported or performed here. -/
+/-! General L² pullback and unit-phase reindexing. -/
 noncomputable section
 open MeasureTheory MeasureTheory.Measure Filter Topology
 open scoped ENNReal
@@ -8178,7 +8176,7 @@ theorem norm_operator_le_of_pairing_bound {H : Type*}
   · rw [hz]; positivity
   · have hp : 0 < ‖A f‖ := lt_of_le_of_ne (norm_nonneg _) (Ne.symm hz)
     nlinarith
-/-- The averaged scalar argument transfers the same gap constant, without an amplified Hilbert space. -/
+/-- The averaged scalar argument transfers the same gap constant. -/
 theorem norm_operator_le_of_averaged_scalar_pairings {H X : Type*}
     [NormedAddCommGroup H] [InnerProductSpace ℂ H] [MeasurableSpace X]
     (μ : Measure X) (A : H →L[ℂ] H) (j : H → X → ℝ)
@@ -11447,9 +11445,8 @@ run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 # Passing to a moving comparison projection
 
 This is the last analytic limit in Section 6 of the Euclidean manuscript.
-Unlike the lattice argument, the comparison projection depends on the parameter.
-The hypotheses here explicitly require both limiting families; construction of
-those families is a separate obligation recorded in the blueprint.
+The comparison projection depends on the parameter. The hypotheses specify
+both limiting families; their construction is recorded in the blueprint.
 -/
 noncomputable section
 namespace RieszEuclidean.OrthProjection

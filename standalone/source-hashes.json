@@ -1,6 +1,6 @@
 {
-  "RieszEuclidean/Basic.lean": "45d89f6d1e318439eaecca48afffd2529c8c403dbf7bed878be3036235cfe2ae",
-  "RieszEuclidean/L2Transport.lean": "301cef59b8659c1c363e3435ea82acdef03d55636e9b6afbb294ffb02917cb58",
+  "RieszEuclidean/Basic.lean": "b327924ac4e000dddb26b0c8ded32990ad44ae25005292817d03eb0f97b3971d",
+  "RieszEuclidean/L2Transport.lean": "e3cdda30408b9099c91a03cb15be9b0f89cbc582bb3189c1c866fa1373914b30",
   "RieszEuclidean/Affine.lean": "35c2391c553d950022745fe6acb37d46c13fb5f1ba572bb99f26144e21659cfc",
   "RieszEuclidean/ApproximateCutoffs.lean": "b15c213f844b5f7e6d962cb4bf295115252d90fb8178c31f37ad2fb52351c3b8",
   "RieszEuclidean/FourierL2.lean": "45ba96a77e8d8387a865b629c90f2e4c7bd55c7cbc8435288612c1680ab5d2af",
@@ -69,7 +69,7 @@
   "RieszEuclidean/AveragedFourierExpansion.lean": "7a81a792d3239e24b547518e1564b403d1edf344b0fa161e219466e24d496182",
   "RieszEuclidean/AveragedTestNorms.lean": "43e7306be4420662b14bf947d814b02449e2f6c0bacdccd8456b44f5c62b63a1",
   "RieszEuclidean/AveragedCanonicalForms.lean": "8854b8b44e3da3a43e33645694c4731575aaff8a880c950e586d2e7ab441a55e",
-  "RieszEuclidean/AveragedGap.lean": "76157d453af6a1ca53d1ec0b047dab243b2cb9ff12bcdc6986c9bf392e588107",
+  "RieszEuclidean/AveragedGap.lean": "fdf769ee32e4e8f0d5a66333824531cb41576a6bb46d605a9b097513c9344bea",
   "RieszEuclidean/Separation.lean": "94ed43c38cfeb481b1a529d4b5a89d3fd26a6fea1cb2263b0182b65b7002ea8f",
   "RieszEuclidean/BumpFourier.lean": "ac7c19daa5f750404c410db8d231e0ccd8ffdf2cd7936998a7938be92df00f0e",
   "RieszEuclidean/BumpTransform.lean": "0015bb085ea8451c283f016927dcc924954396e0893984405abe9765760e3264",
@@ -106,7 +106,7 @@
   "RieszEuclidean/SphereBoundaryApproach.lean": "23a19770c7e7d0c3efac5eb5a30946efb8360f6950941257a10c9c801531f538",
   "RieszEuclidean/BoundaryOperatorLimits.lean": "b9d021513daf7ef5f6067ef6dcb2c9788300c30827ba6a43893eeeb6f003e7dd",
   "RieszEuclidean/ProjectionOrder.lean": "ea823da671727021116198eff563d0fb546b3ad7a0d1866e47061052ee0edf95",
-  "RieszEuclidean/MovingComparison.lean": "cffeda724230c8c541a0935658fccda408a025d5bb2f86399b5924c207babc29",
+  "RieszEuclidean/MovingComparison.lean": "803e8223f483bb2f1cafe4c96a5e528968d3b9cd12efb449d80a4e02a8b48f3b",
   "RieszEuclidean/BoundaryCutoffLimits.lean": "b2504f445db6225afe36087b61ed1ea564a48abd0ddb8dd889e58b9d7cff13bf",
   "RieszEuclidean/SphereCutoffObstruction.lean": "e974a56987ee85399a252e5e3e4ba73afe8e16570a240968f91402c91d9bdbe9",
   "RieszEuclidean/SphereAnalyticAssembly.lean": "3411e6a347e833f40db05f6da5dea5e89aedac867a5b6c778f92616208d242d2",
@@ -132,5 +132,5 @@
   "RieszEuclidean/UnconditionalGeometry.lean": "d99bc744645916f43c9abe3544b5d33efef33f1d7a5a364156a3123fff2da439",
   "RieszEuclidean/WeakPointLimits.lean": "487dfa943d654798fbc4d979c134f569a70e9d0a4d92225d806659e37719d935",
   "MainResults.lean": "8f310a9abe247aba3c153b3a4eb42a03381a7b62fea80f01a669cbd657693ff5",
-  "RieszEuclideanStandalone.lean": "8312dbc9a46c953f179e7efe0d884a751d76537ac424108078b0d867b852880a"
+  "RieszEuclideanStandalone.lean": "8224fd5d844b204149996331832610d2fe343fcb8fabb05bd010a4da3ef9451b"
 }

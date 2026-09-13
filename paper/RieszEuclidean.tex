@@ -27,6 +27,7 @@
 \title[No Riesz bases of exponentials]{There are no Riesz bases of exponentials in balls and triangles}
 \author{Joaquim Ortega-Cerdà}
 \address{Universitat de Barcelona\\Centre de Recerca Matemàtica (CRM)}
+\email{jortega@ub.edu}
 % Funding acknowledgment adapted from https://arxiv.org/html/2606.08304v2.
 \thanks{The author is supported by grant PID2024-160033NB-I00, funded by
 MICIU/AEI/10.13039/501100011033 and FEDER, UE, and by the Generalitat de
@@ -41,11 +42,14 @@ Catalunya through grant 2024 ICREA 00142.}
 \begin{abstract}
 We prove that $L^2(\Omega)$, where $\Omega$ is a ball in $\R^n$, $n\geq2$, or a nondegenerate triangle in $\R^2$, admits no Riesz basis of exponentials.
 Using Beurling weak limits of translates of the frequency set, we construct
-a stationary system and two families of orthogonal projections. An exact
-bump representation of exponential synthesis transfers the Riesz basis
-bound to this system. One family is continuous in operator norm. The geometry of the boundary produces a strict inclusion of closed subspaces. Their associated projections
-would both be at operator-norm distance less than one from a third projection, which is a
-contradiction.
+a stationary system carrying spectral cutoff projections and comparison
+projections built from smooth bumps. The Riesz basis assumption forces
+the two projections to remain uniformly at operator-norm distance less
+than one. The comparison family is continuous in operator norm, while
+boundary geometry produces two pointwise limits of the spectral cutoffs
+whose ranges are strictly nested. Both limiting projections would then
+lie at distance less than one from the same comparison projection, which
+is impossible.
 \end{abstract}
 
 \maketitle
@@ -171,8 +175,7 @@ products. Finally, a boundary crossing gives two limiting
 projections with a strict inclusion of their ranges. Norm-continuity of $M_t$ places both at distance at most
 $\gamma$ from $M_{t_0}$, a contradiction.
 
-The frequencies, translations and spectral measures all remain in
-$\R^n$. Sections~\ref{sec:bumps}--\ref{sec:distance} establish the analytic
+Sections~\ref{sec:bumps}--\ref{sec:distance} establish the analytic
 construction for any bounded open domain with boundary of Lebesgue measure
 zero. Section~\ref{sec:sphere} supplies the geometric step for balls,
 and Sections~\ref{sec:triangles} and \ref{sec:ellipsoids} give the other
@@ -182,18 +185,15 @@ applications.
 The author thanks Joaquim Bruna for extensive discussions on the manuscript.
 
 \subsection*{Use of artificial intelligence}
-A large language model was used for mathematical discussions.  The results presented
-here arose from an initially misguided attempt by the author to disprove
-the existence of a Riesz basis of exponentials on a planar ball.  The initial
-approach failed and was corrected by the model during these discussions,
-leading to the argument presented in this paper.
+A large language model was used for mathematical discussions and assistance
+with the Lean formalization.
 
-The standalone Lean formalization of the Euclidean argument is being developed at
+The Lean formalization is available at
 \href{https://github.com/joaquimortega/RieszEuclidean}{RieszEuclidean}.
-The repository contains the proof blueprint, the Lean scaffold and the
-implemented lemmas. Its status report distinguishes the verified components
-from the remaining analytic and geometric constructions; the full Euclidean
-argument is not yet formally verified.
+The repository contains the proof blueprint, the Lean sources, a standalone
+proof file, and the verification records. All blueprint obligations are
+proved, and the public statements have been checked by Comparator and
+Lean's kernel.
 
 \section{From complete interpolation to bump projections}\label{sec:bumps}
 
@@ -397,7 +397,7 @@ point.
 \begin{lemma}\label{lem:hull}
 The space of $\delta$-separated subsets of $\R^n$, including the empty
 set, is compact and metrizable in the topology \eqref{eq:weak-sets}.
-Translations act jointly continuously on this space.
+Translations act jointly continuously (in the translation and in the subset) on this space.
 \end{lemma}
 
 \begin{proof}
@@ -425,9 +425,13 @@ are precisely the weak limits of sequences of translates of $\Lambda$.
 
 \subsection{The projection estimate survives weak limits}
 
+We call a sequence of operators $A_j$ pointwise convergent to $A$ if
+$\|A_jf-Af\|\to0$ for every fixed vector $f$. We use the same
+convention for operator families depending on a real parameter.
+
 \begin{lemma}\label{lem:strong-Q}
 If $\Gamma_j\to\Gamma$ in $X$, then $Q_{\Gamma_j}\to Q_\Gamma$
-strongly on $L^2(\R^n)$. In particular,
+pointwise on $L^2(\R^n)$. In particular,
 \begin{equation}\label{eq:hull-distance-bound}
  \|P-Q_\Gamma\|\leq\gamma\qquad(\Gamma\in X).
 \end{equation}
@@ -443,12 +447,12 @@ matched centers converging. Only centers in this ball can contribute
 to \eqref{eq:Q}. Translations of $b$ are continuous in $L^2$, so each
 term of this finite sum converges in $L^2$. Thus
 $Q_{\Gamma_j}a\to Q_\Gamma a$. Compactly supported functions are dense,
-and all these projections have norm at most one, proving strong
-convergence for every $a$.
+and all these projections have norm at most one, proving pointwise
+convergence.
 
 Conjugating by translations preserves $P$ and sends $Q_\Lambda$ to
 the projection for the translated set. Thus every translate satisfies
-\eqref{eq:initial-distance-bound}. Taking a strong limit and testing
+\eqref{eq:initial-distance-bound}. Taking a pointwise limit and testing
 on an arbitrary vector gives \eqref{eq:hull-distance-bound}.
 \end{proof}
 
@@ -465,7 +469,7 @@ Put $C_R=[-R,R]^n$ and define a probability measure on $X$ by
  \mu_R=\frac1{|C_R|}\int_{C_R}\delta_{T_v\Lambda}\,dv.
 \]
 Compactness gives a weakly convergent subsequence as $R\to\infty$;
-write $\mu$ for its limit. For $F\in C(X)$ and fixed $y$,
+write $\mu$ for its limit (we don't claim it is unique). For $F\in C(X)$ and fixed $y$,
 \[
  \left|\int F\circ T_y\,d\mu_R-\int F\,d\mu_R\right|
  \leq\|F\|_\infty\frac{|(C_R+y)\mathbin\triangle C_R|}{|C_R|}
@@ -477,7 +481,7 @@ Let
  \Hh=L^2(X,\mu),\qquad (U_yf)(\Gamma)=f(\Gamma+y).
 \end{equation}
 These operators form a unitary representation of $\R^n$. Joint continuity
-of the action on the compact space $X$ makes it strongly continuous on
+of the action on the compact space $X$ makes it pointwise continuous on
 $C(X)$, and density extends this conclusion to $\Hh$. This Hilbert space
 is separable. The constant function $\one$ has norm one and is fixed by
 all the $U_y$.
@@ -500,7 +504,7 @@ Borel measure $\sigma_f$ on $\R^n$ such that
  =\int_{\R^n}e^{2\pi iy\cdot\theta}\,d\sigma_f(\theta),
  \qquad \sigma_f(\R^n)=\|f\|^2.
 \end{equation}
-Uniqueness and the parallelogram identity for the correlations give
+Uniqueness and the parallelogram identity give
 \begin{equation}\label{eq:spectral-parallelogram}
  \sigma_{f+g}+\sigma_{f-g}=2\sigma_f+2\sigma_g,
  \qquad \sigma_{cf}=|c|^2\sigma_f.
@@ -604,7 +608,7 @@ The set
  \mathcal G=\{t\in\R^n:\sigma(\partial\Omega-t)=0\}
 \end{equation}
 is measurable and has full Lebesgue measure. For every $t\in\mathcal G$,
-$\Pi_{t,R}$ converges strongly as $R\to\infty$ to an orthogonal
+$\Pi_{t,R}$ converges pointwise as $R\to\infty$ to an orthogonal
 projection $\Pi_t$. For $s,t\in\mathcal G$ and $f\in\Hh$,
 \begin{align}
  \|\Pi_tf\|^2
@@ -640,7 +644,7 @@ makes $\Pi_t$ a bounded linear contraction. Similarly,
  =\int|m_R(t+\theta)^2-m_R(t+\theta)|^2\,d\sigma_f(\theta)
  \longrightarrow0.
 \]
-Products pass to the strong limit for uniformly bounded operators:
+Products pass to the pointwise limit for uniformly bounded operators:
 \[
  \|\Pi_{t,R}^2f-\Pi_t^2f\|
  \leq\|\Pi_{t,R}\|\,\|\Pi_{t,R}f-\Pi_tf\|
@@ -743,7 +747,7 @@ Applying the triangle inequality to the vector integral proves
 \end{proof}
 
 The norm-continuity comes from the integrable, compactly supported kernel.
-The translation operators themselves are only required to be strongly
+The translation operators themselves are only required to be pointwise
 continuous. This distinction will matter at the boundary crossing.
 
 \subsection{Compactly supported functions from a stationary vector}
@@ -839,14 +843,14 @@ By \eqref{eq:q-bounds} and dominated convergence,
  \longrightarrow0,
 \end{equation}
 uniformly in $t$. For $t\in\mathcal G$, Proposition~\ref{prop:cutoffs}
-gives strong convergence $\Pi_{t,R}\to\Pi_t$. Testing the distance
+gives pointwise convergence $\Pi_{t,R}\to\Pi_t$. Testing the distance
 bound on each vector and taking the limit proves
 \eqref{eq:stationary-distance-bound}.
 \end{proof}
 
 The finite averages $M_{t,R}$ need not be projections. Their norm limit
 $M_t$ is a projection by Proposition~\ref{prop:M}. At a boundary parameter,
-the spectral cutoffs will have two different strong limits, whereas
+the spectral cutoffs will have two different pointwise limits, whereas
 $M_t$ has a single operator-norm limit. This gives a common comparison
 projection for the two sides.
 
@@ -973,7 +977,7 @@ $\|\Pi_t\|\leq1$ gives bounded linear operators $R_-,R_+$ with
 \begin{equation}\label{eq:boundary-strong}
  \Pi_{t_j^-}\longrightarrow R_-,\qquad
  \Pi_{t_j^+}\longrightarrow R_+
- \quad\text{strongly}.
+ \quad\text{pointwise}.
 \end{equation}
 They are orthogonal projections.  To see the idempotence explicitly,
 if $P_j=\Pi_{t_j^\pm}$ and $R=R_\pm$, then
@@ -1077,7 +1081,7 @@ hypotheses. Tonelli with $\nu$ supplies a point satisfying both the
 spectral boundary-null condition and the local separation condition.
 The latter supplies the two sequences of good parameters. Their symbols
 have exactly the limits \eqref{eq:mminus}--\eqref{eq:mplus}, and the same
-strong-limit and norm-continuity arguments give a contradiction.
+arguments using pointwise limits and norm continuity give a contradiction.
 In particular one may use surface measure whenever it is finite and
 nonzero and satisfies the displayed overlap and separation conditions.
 \end{remark}
@@ -1140,7 +1144,7 @@ The limiting symbols are consequently
 \]
 They are indicators of sets ordered by inclusion. Formula~\eqref{eq:Pi-difference}
 and dominated convergence make $(\Pi_{t_j^\pm}f)_j$ Cauchy for every
-$f$. As in Section~\ref{sec:sphere}, the resulting strong limits
+$f$. As in Section~\ref{sec:sphere}, the resulting pointwise limits
 $R_-,R_+$ are orthogonal projections with
 \[
  \|R_\pm f\|^2=\int m_\pm\,d\sigma_f.

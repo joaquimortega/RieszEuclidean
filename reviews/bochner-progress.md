@@ -3,7 +3,7 @@
 All 25 blueprint nodes are proved, including the independent public-statement
 and transitive-axiom audit.
 
-Six Bochner modules add 46 public declarations. They prove finite positive
+Six Bochner modules contain 46 public declarations. They prove finite positive
 Euclidean representing measures for scalar correlations of strongly continuous
 unitary representations on separable complex Hilbert spaces, choose such
 measures for every vector, and specialize the construction to the stationary
@@ -14,17 +14,15 @@ continuous positive-definite scalar function.
 The proof uses normalized vector windows in the original Hilbert space, scalar
 coordinates in a countable Hilbert basis, their explicit physical
 Fourier-density measures, and a bounded vague measure limit. Fourier convergence
-identifies the limit with the original correlation. No amplified Hilbert space,
-lattice reduction, or spectral-existence axiom is introduced.
+identifies the limit with the original correlation.
 
-Unconditional wrappers discharge the formerly explicit hull-representation
-hypotheses. They cover every positive-radius ball in dimension at least two,
+The stationary spectral-measure construction supplies the hull representations. They cover every positive-radius ball in dimension at least two,
 every noncollinear planar triangle, every invertible affine image of the unit
 ball, the manuscript's general boundary-measure criterion, and finite
 irredundant supporting-halfspace polygons with nonzero normals and nonempty faces
 when a maximal side is unpaired, including the odd-maximal-side consequence.
 
-The final public reference contains 37 targets: the earlier supporting and
+The final public reference contains 37 targets: supporting and
 conditional interfaces, Bochner existence, and the unconditional conclusions.
 The modular project, 37-target public reference, and generated standalone
 solution all build. All 15 linters pass on the modular project
@@ -38,8 +36,3 @@ transitive audit using only `propext`, `Classical.choice`, and `Quot.sound`.
 Official Comparator and Lean's default kernel accept all 37 targets; the exact
 run log is `comparator-bochner.txt`. The complete 931-declaration transitive
 axiom audit uses only `propext`, `Classical.choice`, and `Quot.sound`.
-
-The published `0fb31ee` checkpoint remains a separate historical result: its 23
-targets, 13/25 blueprint nodes, all 15 linters, and 597 standard-only axiom
-reports are recorded in `comparison-sphere-progress.md` and
-`comparator-comparison-sphere-hashes.json`.

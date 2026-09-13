@@ -9,7 +9,6 @@ import Mathlib.Analysis.SpecialFunctions.Exponential
 
 The Fourier convention is exp(2 π i ⟪ξ,x⟫), as in `paper/RieszEuclidean.tex`.
 Mathlib's inner product is conjugate-linear in its first argument.
-No lattice or quotient space is part of these definitions.
 -/
 noncomputable section
 open MeasureTheory

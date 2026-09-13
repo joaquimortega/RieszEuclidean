@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=./schema/formalization-v0.4.schema.json
 version: v0.4
 project:
-  name: Riesz bases directly in Euclidean space
-  description: Standalone Lean development of the direct Euclidean argument in RieszEuclidean.tex.
+  name: Riesz bases in Euclidean space
+  description: Standalone Lean formalization of RieszEuclidean.tex.
   authors:
   - Joaquim Ortega-Cerdà
   - OpenAI Codex (AI-assisted formalization)
@@ -81,13 +81,15 @@ status:
     comparator_config: standalone/comparator.json
     literature_dependencies: []
 fidelity:
-  divergences: No alternate lattice proof is substituted for the Euclidean proof. The basis predicate
-    uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)). Mathlib conjugates the first inner-product
-    argument. Hull compactness uses Hausdorff limits on compact Euclidean windows and countable
-    extended-distance probes instead of counting-measure extraction. The lemma and its exact
-    Beurling convergence topology are preserved. Vague-convergence equivalence is proved
-    using finite point matchings, compactly supported distinguishing bumps, and compactness.
-    The complete source scope, including all geometric extensions, remains the objective.
+  divergences: The basis predicate uses actual restricted Lebesgue L² and
+    exp(2πi inner(ξ,x)); Mathlib conjugates the first inner-product argument.
+    Hull compactness uses Hausdorff limits on compact Euclidean windows and
+    countable extended-distance probes, and its topology is proved equivalent
+    to Beurling local matching and vague counting-measure convergence. The
+    Bochner theorem is formalized for scalar correlations of strongly continuous
+    unitary representations on separable complex Hilbert spaces. Polygon results
+    use finite irredundant supporting-halfspace presentations with nonzero normals
+    and nonempty faces.
 alignment:
   namespace: RieszEuclidean
   complete_mapping: blueprint/manifest.json
@@ -105,13 +107,11 @@ alignment:
     status: proved and independently audited
 review:
   status: complete
-  notes: All 25 blueprint nodes are proved. At published
-    commit 0fb31ee, official Comparator and Lean's default kernel accepted all twenty-three public supporting
-    results. Modular, public and standalone builds and all 15 linters passed. All 597
-    transitive axiom reports use only standard Lean axioms. Exact scope and inputs
-    are recorded in reviews/comparison-sphere-progress.md. Official Comparator and Lean's
-    default kernel accept the 37-target unconditional reference. The 931-declaration
-    transitive axiom audit uses only standard Lean axioms.
+  notes: All 25 blueprint nodes are proved. Official Comparator and Lean's default
+    kernel accept the 37-target reference. Modular, public and standalone builds
+    and all 15 linters pass. The transitive audit of 931 project declarations
+    reports only propext, Classical.choice and Quot.sound. Exact scope, inputs,
+    hashes and results are recorded in reviews/bochner-progress.md.
 classification:
   msc2020:
   - 42C15
@@ -124,9 +124,9 @@ automation:
     tool_setup: Lean 4.19.0, pinned Mathlib sources, Lake compilation, all default environment linters,
       explicit axiom audits, blueprint consistency checks and GitHub Actions builds. Reuse of author-authorized
       code is tracked in PROVENANCE.md.
-    prompting_notes: The author requested a standalone formalization of RieszEuclidean.tex, authorized
-      recycling the earlier Disc code, required linter fixes without suppressions before commits, and
-      requested Comparator and formalization.yaml.
+    prompting_notes: The author requested a standalone formalization of RieszEuclidean.tex,
+      authorized reuse of specified author-owned helper code, required linter fixes
+      without suppressions, and requested Comparator and formalization.yaml.
   notes: The author authorized subagents for independent proof modules. A primary assistant
     integrates their work and runs combined build, linter, axiom and Comparator checks.
     No independent external human review is claimed. The author directs the mathematical
@@ -136,7 +136,7 @@ techniques:
   status: implemented definitions
   description: EuclideanSpace over Fin d, restricted Lebesgue L² and a continuous linear equivalence from
     ℓ² of the actual frequency set. Standard coordinate vectors must equal exp(2πi inner(ξ,x)) almost
-    everywhere. No lattice or rounded frequencies occur.
+    everywhere.
   files:
   - RieszEuclidean/Basic.lean
 - name: Projection gap and moving comparison
@@ -151,8 +151,8 @@ techniques:
 - name: Beurling local matching
   status: compact metrizable configuration space and continuous real action proved
   description: Weak convergence is defined by two-sided matching on every bounded ball. The proof uses
-    metric triangle inequalities to retain the original separation constant. Real translation invariance
-    is proved without identifying sets with lattice patterns.
+    metric triangle inequalities to retain the separation constant. Real translation invariance
+    is proved for arbitrary configurations.
   files:
   - RieszEuclidean/Basic.lean
   - RieszEuclidean/WeakLimits.lean
@@ -323,8 +323,8 @@ techniques:
     prove joint spatial continuity, including the configuration variable. The stationary
     operators M_t are self-adjoint, idempotent and operator-norm Lipschitz. Actual compactly
     supported averaged tests, Fourier and bump scalar expansions, energy identities and
-    Cauchy-Schwarz estimates transfer the same gap to the stationary cutoff limit. This
-    introduces no amplified Hilbert space and retains the supplied spectral representations.
+    Cauchy-Schwarz estimates transfer the same gap to the stationary cutoff limit using
+    the supplied spectral representations.
   files:
   - RieszEuclidean/BumpKernel.lean
   - RieszEuclidean/BumpKernelProjection.lean
@@ -377,7 +377,7 @@ comparator:
   configuration: standalone/comparator.json
   verification_log: reviews/comparator-bochner.txt
   input_hashes: reviews/comparator-bochner-hashes.json
-  verified_scope: Thirty-seven results covering the prior supporting interfaces, the actual
+  verified_scope: Thirty-seven results covering the supporting interfaces, the actual
     averaging gap, conditional geometric interfaces, scalar spectral-measure existence for
     strongly continuous unitary representations on separable complex Hilbert spaces, and
     unconditional ball, noncollinear-triangle, affine-ellipsoid, general-boundary and
@@ -386,12 +386,13 @@ comparator:
     and the odd-maximal-side consequence. The broader abstract positive-definite-function
     form of Bochner's theorem is outside the claimed scope.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
-  plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
-    and a self-contained full solution file; run the official Comparator with only propext, Classical.choice
-    and Quot.sound permitted. A statement specification can use proved wrapper bodies instead of sorry
-    placeholders so no compiler warnings need suppression. Tool setup and source generation are distinct
-    from Comparator verification.
+  plan: MainResults.lean gives concrete definitions and explicit result statements,
+    and RieszEuclideanStandalone.lean gives the self-contained solution. Official
+    Comparator checks them with only propext, Classical.choice and Quot.sound
+    permitted. Tool setup and source generation are recorded separately from
+    Comparator verification.
   upstream: https://github.com/leanprover/comparator
-acknowledgements: Built on Lean and Mathlib; projection and affine helpers are recycled from the author-authorized
-  Disc formalization. Metadata follows the mathlib-initiative formalization.yaml v0.4 standard. Original
+acknowledgements: Built on Lean and Mathlib; specified projection and affine helpers use
+  author-owned code credited in PROVENANCE.md. Metadata follows the mathlib-initiative
+  formalization.yaml v0.4 standard. Original
   weak-limit credit belongs to Beurling; the manuscript cites Rudin for Bochner.

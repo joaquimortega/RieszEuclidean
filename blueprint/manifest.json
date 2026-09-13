@@ -2,10 +2,10 @@
   "project": "RieszEuclidean",
   "repository": "https://github.com/joaquimortega/RieszEuclidean",
   "complete": true,
-  "notice": "Proved entries certify only their stated scope; all pending nodes remain required for full formalization. No unproved main theorem is imported from a different proof route.",
+  "notice": "Each proved entry records its mathematical scope, source labels and Lean declarations.",
   "manuscript": {
     "file": "paper/RieszEuclidean.tex",
-    "sha256": "e7d3b1460316adb4f0e70c910efe07da17fa8d6e0b3b4f9aa0fa29e17d4d0163"
+    "sha256": "330c20c9daf939f8fa569e58925eb421fd0e1c6ab21a522dddad64a5f174abc7"
   },
   "nodes": [
     {
@@ -458,7 +458,7 @@
         "RieszEuclidean/InvariantProbability.lean",
         "RieszEuclidean/HullInvariantMeasure.lean"
       ],
-      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. The Koopman operators are constructed with the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}. They are unitaries, obey the additive group law, and form a strongly continuous representation on the separable stationary L² space. Constants are invariant and the constant one has norm one. Finite injective point matching controls compactly supported test integrals. Weak convergence therefore implies vague convergence. A compactly supported bump distinguishes different configurations, so the continuous counting-test map is injective; compactness makes it an embedding and proves the converse. All mathematical components of this node compile and pass all 15 integrated linters. The standalone compiles and the complete 245-declaration transitive axiom audit uses only standard Lean axioms."
+      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. The Koopman operators are constructed with the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}. They are unitaries, obey the additive group law, and form a strongly continuous representation on the separable stationary L² space. Constants are invariant and the constant one has norm one. Finite injective point matching controls compactly supported test integrals. Weak convergence therefore implies vague convergence. A compactly supported bump distinguishes different configurations, so the continuous counting-test map is injective; compactness makes it an embedding and proves the converse. All mathematical components compile and pass all 15 linters."
     },
     {
       "id": "bochner",
@@ -537,7 +537,7 @@
         "RieszEuclidean.exists_unitary_spectralMeasures",
         "RieszEuclidean.SeparatedConfiguration.exists_hull_spectralMeasures"
       ],
-      "progress": "Actual hull correlations are continuous and positive definite, with the value at zero equal to the squared vector norm. Representing measures are unique and have the required mass. Existence is proved for scalar correlations of strongly continuous unitary representations on separable complex Hilbert spaces: normalized vector windows in the original Hilbert space are expanded in a countable Hilbert basis, their scalar coordinates have explicit physical Fourier-density measures, and a bounded vague cluster limit represents the original correlation. Measures are chosen for every vector and specialized to the stationary hull Koopman representation. This is the exact Bochner existence used in the manuscript; it introduces no amplified Hilbert space, lattice reduction or new axiom, and does not claim the theorem for every abstract positive-definite function."
+      "progress": "Actual hull correlations are continuous and positive definite, with the value at zero equal to the squared vector norm. Representing measures are unique and have the required mass. Existence is proved for scalar correlations of strongly continuous unitary representations on separable complex Hilbert spaces: normalized vector windows in the original Hilbert space are expanded in a countable Hilbert basis, their scalar coordinates have explicit physical Fourier-density measures, and a bounded vague cluster limit represents the original correlation. Measures are chosen for every vector and specialized to the stationary hull Koopman representation. This is the exact Bochner existence used in the manuscript; it does not claim the theorem for every abstract positive-definite function."
     },
     {
       "id": "scalar-calculus",
@@ -979,7 +979,7 @@
         "RieszEuclidean.integral_sq_norm_schwartz_of_toLp_norm_one",
         "RieszEuclidean.SeparatedConfiguration.continuous_stationaryComparison"
       ],
-      "progress": "Canonical scalar tests are actual FullL2 classes on almost every hull fiber, with jointly measurable representatives, integrable scalar norm fields and exact averaged energy. Actual Fourier and bump projection pairings and scalar Cauchy–Schwarz transfer the uniform hull gap to the finite operators; strong cutoff limits and norm convergence of comparison averages transfer it to the actual good-parameter family. The stationary spectral-measure theorem discharges the former existence input. No auxiliary amplified Hilbert space or density hypothesis is used."
+      "progress": "Canonical scalar tests are actual FullL2 classes on almost every hull fiber, with jointly measurable representatives, integrable scalar norm fields and exact averaged energy. Actual Fourier and bump projection pairings and scalar Cauchy–Schwarz transfer the uniform hull gap to the finite operators; strong cutoff limits and norm convergence of comparison averages transfer it to the actual good-parameter family. The stationary spectral-measure theorem supplies the required measures."
     },
     {
       "id": "sphere-geometry",
@@ -1385,9 +1385,9 @@
   ],
   "proof_source_sha256": {
     "RieszEuclidean/Affine.lean": "35c2391c553d950022745fe6acb37d46c13fb5f1ba572bb99f26144e21659cfc",
-    "RieszEuclidean/Basic.lean": "45d89f6d1e318439eaecca48afffd2529c8c403dbf7bed878be3036235cfe2ae",
-    "RieszEuclidean/L2Transport.lean": "301cef59b8659c1c363e3435ea82acdef03d55636e9b6afbb294ffb02917cb58",
-    "RieszEuclidean/MovingComparison.lean": "cffeda724230c8c541a0935658fccda408a025d5bb2f86399b5924c207babc29",
+    "RieszEuclidean/Basic.lean": "b327924ac4e000dddb26b0c8ded32990ad44ae25005292817d03eb0f97b3971d",
+    "RieszEuclidean/L2Transport.lean": "e3cdda30408b9099c91a03cb15be9b0f89cbc582bb3189c1c866fa1373914b30",
+    "RieszEuclidean/MovingComparison.lean": "803e8223f483bb2f1cafe4c96a5e528968d3b9cd12efb449d80a4e02a8b48f3b",
     "RieszEuclidean/ProjectionGap.lean": "c638358de389fd9cd8c6373e8880573f9591527c42adfbb0a2445cbfe269e840",
     "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad",
     "RieszEuclidean/FourierL2.lean": "45ba96a77e8d8387a865b629c90f2e4c7bd55c7cbc8435288612c1680ab5d2af",
@@ -1479,7 +1479,7 @@
     "RieszEuclidean/SphereCutoffObstruction.lean": "e974a56987ee85399a252e5e3e4ba73afe8e16570a240968f91402c91d9bdbe9",
     "RieszEuclidean/AveragedTests.lean": "d54e3f7a1c1876137b073a8f40b3fc3513232b4738b4f9ed8d6d8bffb9b57c0b",
     "RieszEuclidean/AveragedTestNorms.lean": "43e7306be4420662b14bf947d814b02449e2f6c0bacdccd8456b44f5c62b63a1",
-    "RieszEuclidean/AveragedGap.lean": "76157d453af6a1ca53d1ec0b047dab243b2cb9ff12bcdc6986c9bf392e588107",
+    "RieszEuclidean/AveragedGap.lean": "fdf769ee32e4e8f0d5a66333824531cb41576a6bb46d605a9b097513c9344bea",
     "RieszEuclidean/AveragedFourierForm.lean": "3faf410fd7b7cff4d6b8cd79b5462b5c2c1ab33af16f175d5c5af7d08c0143b2",
     "RieszEuclidean/BumpBoxKernel.lean": "ae67d95346b1f92df7245aa26a71fb104c8537f2e5d7319e38215632d74f3f6f",
     "RieszEuclidean/AveragedBumpForm.lean": "08902c9a4e2c37fb2cdccb5044690d1583b722b6a2b888b28d510f549eb2c6da",
