@@ -50,3 +50,7 @@ import RieszEuclidean.InvariantProbability
 import RieszEuclidean.HullInvariantMeasure
 import RieszEuclidean.Koopman
 import RieszEuclidean.VagueConvergence
+import RieszEuclidean.Correlations
+import RieszEuclidean.SpectralMeasures
+import RieszEuclidean.IntegratedUnitary
+import RieszEuclidean.SpectralNorm

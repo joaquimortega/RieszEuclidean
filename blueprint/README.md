@@ -76,8 +76,11 @@ not a compact torus. Prove finiteness, uniqueness, the parallelogram law and
 the Dirac measure of the constant vector. Construct one control measure from
 a countable dense sequence and prove domination of null sets.
 
-Integrated L¹ kernels replace trigonometric polynomials. Establish the norm
-identity, convolution multiplication and adjoints. Continuous box overlaps
+Integrated L¹ kernels replace trigonometric polynomials. The integrated operator,
+its L¹ bound, absolute integrability of the correlation and Fourier Gram kernels,
+and the spectral norm identity for a supplied representing measure are proved.
+The existence of these measures for general vectors is still pending. Establish
+convolution multiplication and adjoints. Continuous box overlaps
 produce positive approximate identities. Boundary-nullity gives a common
 Lebesgue-conull set of good parameters. Scalar dominated convergence produces
 strong cutoff limits, idempotence, self-adjointness and difference norms.

@@ -435,8 +435,28 @@
         "eq:bochner"
       ],
       "scope": "Finite Euclidean scalar spectral measures with uniqueness",
-      "file": null,
-      "declarations": []
+      "file": "RieszEuclidean/Correlations.lean",
+      "declarations": [
+        "RieszEuclidean.unitaryCorrelation",
+        "RieszEuclidean.continuous_unitaryCorrelation",
+        "RieszEuclidean.norm_unitaryCorrelation_le",
+        "RieszEuclidean.unitaryCorrelation_zero",
+        "RieszEuclidean.unitaryCorrelation_sub",
+        "RieszEuclidean.unitaryCorrelation_positiveDefinite",
+        "RieszEuclidean.unitaryCorrelation_parallelogram",
+        "RieszEuclidean.unitaryCorrelation_smul",
+        "RieszEuclidean.SeparatedConfiguration.hullCorrelation",
+        "RieszEuclidean.SeparatedConfiguration.continuous_hullCorrelation",
+        "RieszEuclidean.SeparatedConfiguration.hullCorrelation_positiveDefinite",
+        "RieszEuclidean.SeparatedConfiguration.hullCorrelation_one",
+        "RieszEuclidean.RepresentsCorrelation",
+        "RieszEuclidean.measure_eq_of_fourierChar_integral_eq",
+        "RieszEuclidean.RepresentsCorrelation.unique",
+        "RieszEuclidean.RepresentsCorrelation.mass",
+        "RieszEuclidean.RepresentsCorrelation.unitary_mass",
+        "RieszEuclidean.integrable_fourierChar"
+      ],
+      "progress": "Actual hull correlations are continuous and positive definite: every finite complex quadratic form is real and nonnegative. The correlation at zero is the squared vector norm, correlations are uniformly bounded, and parallelogram and scalar homogeneity identities are proved. The invariant unit constant has correlation identically one. Representing measures are proved unique using the actual positive 2π Fourier characters, and their mass equals the squared vector norm. Existence for general correlations remains pending."
     },
     {
       "id": "scalar-calculus",
@@ -451,8 +471,34 @@
         "eq:control-null"
       ],
       "scope": "Control measure, Dirac constant spectrum, and L¹ integrated filter calculus",
-      "file": null,
-      "declarations": []
+      "file": "RieszEuclidean/SpectralMeasures.lean",
+      "declarations": [
+        "RieszEuclidean.representsCorrelation_one",
+        "RieszEuclidean.represents_hullCorrelation_one",
+        "RieszEuclidean.RepresentsCorrelation.add",
+        "RieszEuclidean.RepresentsCorrelation.smul",
+        "RieszEuclidean.spectralMeasure_parallelogram",
+        "RieszEuclidean.spectralMeasure_smul",
+        "RieszEuclidean.integrable_unitary_smul",
+        "RieszEuclidean.integratedUnitary",
+        "RieszEuclidean.norm_integratedUnitary_le",
+        "RieszEuclidean.integratedUnitaryLinear",
+        "RieszEuclidean.integratedUnitaryCLM",
+        "RieszEuclidean.integratedUnitaryCLM_apply",
+        "RieszEuclidean.norm_integratedUnitaryCLM_le",
+        "RieszEuclidean.integratedUnitary_congr_ae",
+        "RieszEuclidean.integratedUnitary_norm_sq",
+        "RieszEuclidean.integrable_unitaryCorrelation_kernel",
+        "RieszEuclidean.integratedKernelSymbol",
+        "RieszEuclidean.integrable_kernel_character",
+        "RieszEuclidean.integrable_fourier_gram_kernel",
+        "RieszEuclidean.fourier_gram_factor",
+        "RieszEuclidean.integral_fourier_gram",
+        "RieszEuclidean.integratedUnitary_spectral_norm_sq",
+        "RieszEuclidean.integratedKernelSymbol_eq_fourierInv",
+        "RieszEuclidean.integrable_integratedKernelSymbol_sq"
+      ],
+      "progress": "The actual invariant unit constant is represented by the Dirac measure at zero. Addition and nonnegative scaling of representing measures are proved. Uniqueness yields the spectral parallelogram and squared-modulus homogeneity identities whenever the relevant representing measures are supplied. The integrated unitary action is constructed for every integrable scalar kernel. Orbit integrability, vector linearity, almost-everywhere kernel congruence, and the L¹ operator-norm bound are proved. Its squared norm is the iterated integral of the correlation Gram kernel. The double correlation kernel and the three-variable Fourier Gram kernel are absolutely integrable. Fubini and character factorization prove the spectral norm identity for every L¹ kernel whenever a representing measure is supplied. The symbol is exactly the positive Euclidean Fourier transform, and its square is integrable against every finite spectral measure. General measure existence, the common control measure, convolution and adjoint identities remain pending."
     },
     {
       "id": "continuous-fejer",
@@ -714,6 +760,10 @@
     "RieszEuclidean/InvariantProbability.lean": "0f8a6da2bcde0701a01c29f91c618ba1e95c74c141c75f67661aac88f4553458",
     "RieszEuclidean/HullInvariantMeasure.lean": "ca19e26fd0181d71de1e6f49aa6119a235eb304c151c3f8f0f6be089c465258f",
     "RieszEuclidean/Koopman.lean": "89bae7b8fce0c5ef0a6e98148c0e0c504fb526298cb29538107ec480f10d6b8e",
-    "RieszEuclidean/VagueConvergence.lean": "e2885a9b3a9ae992496db5dcb5669c95f603c8393dfdbbed9f7c7233274cf657"
+    "RieszEuclidean/VagueConvergence.lean": "e2885a9b3a9ae992496db5dcb5669c95f603c8393dfdbbed9f7c7233274cf657",
+    "RieszEuclidean/Correlations.lean": "4d9764bfdde7277c0a682f717d5cae296305370bfd722bcfb2630ff20a318d0d",
+    "RieszEuclidean/SpectralMeasures.lean": "b377cd44f84bd5e9271bfb1f0e3a5f76a980c697ddd0d4d5a899e1d01128a60d",
+    "RieszEuclidean/IntegratedUnitary.lean": "38ef236cd542314ae3c203308bc65a7dc1ec0f3a0816146153410b1f843bad77",
+    "RieszEuclidean/SpectralNorm.lean": "7ecc280e704ef3c34ec57b0928ced318bcb192f890119ee993686fa20b723ed5"
   }
 }

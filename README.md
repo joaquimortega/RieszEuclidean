@@ -83,7 +83,7 @@ linter. The blueprint checker rejects such suppressions in project proof sources
 
 ## Compact statements and standalone verification
 
-`MainResults.lean` currently states thirteen proved supporting results with concrete
+`MainResults.lean` currently states fourteen proved supporting results with concrete
 basis definitions. `RieszEuclideanStandalone.lean` contains their full proofs,
 assembled from the modular source with Mathlib imports only. The analytic results include Schwartz Parseval, Schwartz density, and existence
 of the unitary Fourier transform with its measurable-domain cutoffs. Neither file yet
@@ -130,8 +130,30 @@ stationary L² space, with the group law and invariant unit constant. It follows
 the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}.
 
 The stationary-system node is complete: 9 of 25 blueprint nodes are proved and
-16 remain pending. All builds, all 15 linters, and the 245-declaration axiom audit
-pass. The official Comparator accepted thirteen supporting results, and the
+16 remain pending. At the stationary-system checkpoint, all builds, all 15 linters,
+and the 245-declaration axiom audit pass. The official Comparator accepted thirteen supporting results, and the
 Lean kernel accepted the standalone solution. The verified inputs are recorded
 in `reviews/comparator-stationary-system-hashes.json`; the successful log is
 `reviews/comparator-stationary-system.txt`.
+
+Further development (not part of the stationary-system Comparator checkpoint):
+`Correlations` proves continuity, positive definiteness and the scalar identities
+for actual hull correlations. `SpectralMeasures` proves uniqueness and mass of
+representing measures, constructs the Dirac spectrum of the invariant constant,
+and derives measure identities when the representing measures are supplied.
+`IntegratedUnitary` constructs the L¹ integrated operators, proves their norm
+bound and expands their squared norm as a double correlation integral.
+`SpectralNorm` proves absolute integrability of the correlation and Fourier Gram
+kernels. Fubini gives the spectral norm identity whenever the vector's representing
+measure is supplied; the symbol is the actual positive Euclidean Fourier transform.
+General Bochner measure existence and the remaining scalar calculus are pending;
+the blueprint count remains 9 of 25.
+
+The spectral checkpoint passes all builds and all 15 linters, with 287 standard-only
+axiom reports. Official Comparator and Lean's kernel accepted fourteen supporting
+results, including the spectral norm identity for a supplied representing measure. See
+[the progress audit](reviews/spectral-progress.md) for scope and input hashes.
+
+General Bochner existence is postponed at the user's request. Development continues
+with the remaining calculus, cutoffs, comparison and geometry, retaining the
+postponed result as an explicit dependency wherever it is needed.

@@ -64,3 +64,11 @@ translations to the earlier nine supporting results.
 
 The full-paper geometric main theorems remain pending; 8 of 25 blueprint nodes
 are proved. See `hull-compactness-validation.md` for proof scope and fidelity.
+
+## Spectral norm checkpoint
+
+The fourteen-result configuration passes official Comparator and Lean kernel
+verification. It adds the spectral norm identity for L¹ integrated unitary
+operators, with a representing measure as an explicit hypothesis. This does not
+prove general Bochner existence. See `spectral-progress.md`,
+`comparator-spectral-norm.txt` and `comparator-spectral-norm-hashes.json`.

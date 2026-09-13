@@ -4,6 +4,7 @@ import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.Analysis.Distribution.FourierSchwartz
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Analysis.InnerProductSpace.Orthonormal
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.l2Space
@@ -26,8 +27,11 @@ import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
 import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 import Mathlib.MeasureTheory.Integral.Bochner.Set
+import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
+import Mathlib.MeasureTheory.Measure.CharacteristicFunction
 import Mathlib.MeasureTheory.Measure.Count
 import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 import Mathlib.MeasureTheory.Measure.HasOuterApproxClosed
@@ -2971,124 +2975,6 @@ theorem tendsto_iff_weaklyConverges {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
 end SeparatedConfiguration
 end RieszEuclidean
 
-/- Source: RieszEuclidean/DomainExtension.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-open MeasureTheory Set
-namespace RieszEuclidean
-/-- Extend a domain L² class by zero to ambient Euclidean space. -/
-def domainExtension {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
-    (f : DomainL2 Ω) : FullL2 d :=
-  ((memLp_indicator_iff_restrict hΩ).mpr (Lp.memLp f)).toLp (Ω.indicator f)
-/-- The extension has the zero-extended representative. -/
-theorem domainExtension_coe {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
-    (f : DomainL2 Ω) : (domainExtension Ω hΩ f : Euclidean d → ℂ) =ᵐ[volume] Ω.indicator f :=
-  MemLp.coeFn_toLp _
-/-- Zero extension preserves the L² norm. -/
-theorem domainExtension_norm {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
-    (f : DomainL2 Ω) : ‖domainExtension Ω hΩ f‖ = ‖f‖ := by
-  rw [Lp.norm_def, Lp.norm_def, eLpNorm_congr_ae (domainExtension_coe Ω hΩ f),
-    eLpNorm_indicator_eq_eLpNorm_restrict hΩ]
-/-- Restricting an extension gives the original domain class. -/
-theorem domainRestriction_extension {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
-    (f : DomainL2 Ω) : domainRestriction Ω (domainExtension Ω hΩ f) = f := by
-  apply Lp.ext
-  have he := (domainExtension_coe Ω hΩ f).filter_mono
-    (ae_mono (Measure.restrict_le_self (s := Ω)))
-  filter_upwards [domainRestriction_coe Ω (domainExtension Ω hΩ f), he, ae_restrict_mem hΩ]
-    with x h1 h2 hx
-  rw [h1, h2, indicator_of_mem hx]
-/-- Extending a restriction gives precisely the domain cutoff. -/
-theorem domainExtension_restriction {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
-    (f : FullL2 d) : domainExtension Ω hΩ (domainRestriction Ω f) = domainCutoff Ω hΩ f := by
-  apply Lp.ext
-  have hr := (ae_restrict_iff' hΩ).mp (domainRestriction_coe Ω f)
-  filter_upwards [domainExtension_coe Ω hΩ (domainRestriction Ω f),
-    domainCutoff_coe Ω hΩ f, hr] with x h1 h2 h3
-  rw [h1, h2]
-  by_cases hx : x ∈ Ω
-  · simpa only [indicator_of_mem hx] using h3 hx
-  · simp only [indicator_of_not_mem hx]
-/-- Zero extension is a complex linear isometry. -/
-def domainExtensionLI {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
-    DomainL2 Ω →ₗᵢ[ℂ] FullL2 d where
-  toFun := domainExtension Ω hΩ
-  map_add' f g := by
-    apply Lp.ext
-    have ha := (ae_restrict_iff' hΩ).mp (Lp.coeFn_add f g)
-    filter_upwards [domainExtension_coe Ω hΩ (f + g), domainExtension_coe Ω hΩ f,
-      domainExtension_coe Ω hΩ g, Lp.coeFn_add (domainExtension Ω hΩ f) (domainExtension Ω hΩ g), ha]
-      with x h1 h2 h3 h4 h5
-    rw [h1, h4]
-    simp only [Pi.add_apply, h2, h3]
-    by_cases hx : x ∈ Ω
-    · simpa only [indicator_of_mem hx, Pi.add_apply] using h5 hx
-    · simp only [indicator_of_not_mem hx, add_zero]
-  map_smul' c f := by
-    apply Lp.ext
-    have ha := (ae_restrict_iff' hΩ).mp (Lp.coeFn_smul c f)
-    filter_upwards [domainExtension_coe Ω hΩ (c • f), domainExtension_coe Ω hΩ f,
-      Lp.coeFn_smul c (domainExtension Ω hΩ f), ha] with x h1 h2 h3 h4
-    simp only [RingHom.id_apply, h1, h3, Pi.smul_apply, h2]
-    by_cases hx : x ∈ Ω
-    · simpa only [indicator_of_mem hx, Pi.smul_apply] using h4 hx
-    · simp only [indicator_of_not_mem hx, smul_zero]
-  norm_map' := domainExtension_norm Ω hΩ
-/-- Zero extension has exactly the range of the domain projection. -/
-theorem domainExtension_range {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
-    LinearMap.range (domainExtensionLI Ω hΩ).toLinearMap = (domainProjection Ω hΩ).range := by
-  ext f
-  constructor
-  · rintro ⟨g, rfl⟩
-    apply ((domainProjection Ω hΩ).mem_range_iff _).mpr
-    change domainCutoff Ω hΩ (domainExtension Ω hΩ g) = domainExtension Ω hΩ g
-    rw [← domainExtension_restriction, domainRestriction_extension]
-  · intro hf
-    refine ⟨domainRestriction Ω f, ?_⟩
-    change domainExtension Ω hΩ (domainRestriction Ω f) = f
-    rw [domainExtension_restriction]
-    exact ((domainProjection Ω hΩ).mem_range_iff f).mp hf
-end RieszEuclidean
-
-/- Source: RieszEuclidean/FourierRange.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-open MeasureTheory
-namespace RieszEuclidean
-/-- Embed domain L² isometrically into the Fourier projection range. -/
-def fourierDomainEmbedding {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
-    DomainL2 Ω →ₗᵢ[ℂ] FullL2 d :=
-  (paperFourierL2 d).symm.toLinearIsometry.comp (domainExtensionLI Ω hΩ)
-/-- The embedding has exactly the range of the Fourier projection. -/
-theorem fourierDomainEmbedding_range {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
-    LinearMap.range (fourierDomainEmbedding Ω hΩ).toLinearMap = (fourierProjection Ω hΩ).range := by
-  ext f
-  constructor
-  · rintro ⟨g, rfl⟩
-    apply ((fourierProjection Ω hΩ).mem_range_iff _).mpr
-    apply (paperFourierL2 d).injective
-    rw [fourierProjection_transform]
-    change domainCutoff Ω hΩ ((paperFourierL2 d) ((paperFourierL2 d).symm
-      (domainExtension Ω hΩ g))) = (paperFourierL2 d) ((paperFourierL2 d).symm (domainExtension Ω hΩ g))
-    rw [LinearIsometryEquiv.apply_symm_apply, ← domainExtension_restriction, domainRestriction_extension]
-  · intro hf
-    refine ⟨domainRestriction Ω (paperFourierL2 d f), ?_⟩
-    apply (paperFourierL2 d).injective
-    change (paperFourierL2 d) ((paperFourierL2 d).symm
-      (domainExtension Ω hΩ (domainRestriction Ω (paperFourierL2 d f)))) = paperFourierL2 d f
-    rw [LinearIsometryEquiv.apply_symm_apply, domainExtension_restriction, ← fourierProjection_transform]
-    rw [((fourierProjection Ω hΩ).mem_range_iff f).mp hf]
-/-- Embedding the restricted Fourier transform is the Fourier projection itself. -/
-theorem fourierDomainEmbedding_restriction {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
-    (f : FullL2 d) :
-    fourierDomainEmbedding Ω hΩ (domainRestriction Ω (paperFourierL2 d f)) =
-      (fourierProjection Ω hΩ).op f := by
-  apply (paperFourierL2 d).injective
-  change (paperFourierL2 d) ((paperFourierL2 d).symm
-    (domainExtension Ω hΩ (domainRestriction Ω (paperFourierL2 d f)))) = _
-  rw [LinearIsometryEquiv.apply_symm_apply, domainExtension_restriction, fourierProjection_transform]
-end RieszEuclidean
-
 /- Source: RieszEuclidean/PositiveFunctionalMeasure.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 open MeasureTheory Set CompactlySupportedContinuousMap
@@ -3260,86 +3146,6 @@ theorem exists_hull_invariant_probability {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
     rw [translate_add, add_comm z y]
   · exact ⟨Γ, mem_hull Γ⟩
 end RieszEuclidean.SeparatedConfiguration
-
-/- Source: RieszEuclidean/RangeIso.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-namespace RieszEuclidean
-/-- An isometry identifies its source with any equal range submodule. -/
-def isometryRangeEquiv {A H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H] (V : A →ₗᵢ[ℂ] H)
-    (Q : Submodule ℂ H) (hQ : LinearMap.range V.toLinearMap = Q) : A ≃ₗᵢ[ℂ] Q :=
-  V.equivRange.trans (LinearIsometryEquiv.ofEq _ _ hQ)
-/-- The range equivalence has the original isometry as its ambient representative. -/
-theorem isometryRangeEquiv_coe {A H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H] (V : A →ₗᵢ[ℂ] H)
-    (Q : Submodule ℂ H) (hQ : LinearMap.range V.toLinearMap = Q) (x : A) :
-    (isometryRangeEquiv V Q hQ x : H) = V x := rfl
-/-- An invertible synthesis identity induces the required projection range isomorphism. -/
-theorem rangeIso_of_synthesis {A B H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
-    [NormedAddCommGroup B] [InnerProductSpace ℂ B]
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H]
-    (P Q : OrthProjection H) (V : A →ₗᵢ[ℂ] H) (W : B →ₗᵢ[ℂ] H)
-    (hV : LinearMap.range V.toLinearMap = Q.range)
-    (hW : LinearMap.range W.toLinearMap = P.range) (E : A ≃L[ℂ] B)
-    (h : ∀ a, P.op (V a) = W (E a)) : P.RangeIso Q := by
-  let eV := (isometryRangeEquiv V Q.range hV).toContinuousLinearEquiv
-  let eW := (isometryRangeEquiv W P.range hW).toContinuousLinearEquiv
-  refine ⟨eV.symm.trans (E.trans eW), ?_⟩
-  intro x
-  obtain ⟨a, rfl⟩ := eV.surjective x
-  change (eW (E (eV.symm (eV a))) : H) = P.op (eV a)
-  rw [ContinuousLinearEquiv.symm_apply_apply]
-  exact (h a).symm
-end RieszEuclidean
-
-/- Source: RieszEuclidean/InitialGap.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-open MeasureTheory
-namespace RieszEuclidean
-/-- The concrete bump projection has distance less than one from the Fourier projection. -/
-theorem initial_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
-    (hΩ : MeasurableSet Ω) (b : SchwartzMap (Euclidean d) ℂ)
-    (V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d)
-    (hV : ∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume))
-    (S : SeqL2 Λ ≃L[ℂ] DomainL2 Ω)
-    (hS : ∀ i : Λ, (S (lp.single 2 i 1) : Euclidean d → ℂ) =ᵐ[volume.restrict Ω]
-      exponential (i : Euclidean d))
-    {c : ℝ} (hc : 0 < c) (hl : ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) :
-    ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 := by
-  apply ((fourierProjection Ω hΩ).gap_iff_rangeIso (isometryRangeProjection V)).mpr
-  apply rangeIso_of_synthesis (fourierProjection Ω hΩ) (isometryRangeProjection V)
-    V (fourierDomainEmbedding Ω hΩ) (isometryRangeProjection_range V).symm
-    (fourierDomainEmbedding_range Ω hΩ) (S.trans (bumpFourierMultiplier Ω hΩ b hc hl))
-  intro a
-  have he := DFunLike.congr_fun (bump_synthesis_identity hΩ b V hV S hS hc hl) a
-  rw [← fourierDomainEmbedding_restriction Ω hΩ (V a)]
-  exact congrArg (fourierDomainEmbedding Ω hΩ) he
-/-- Every exponential Riesz basis on a bounded domain supplies the paper's small bump and initial gap. -/
-theorem exists_initial_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
-    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω)
-    (hB : HasExponentialRieszBasis Ω Λ) :
-    ∃ δ r : ℝ, 0 < δ ∧ Separated δ Λ ∧ 0 < r ∧ 2 * r < δ ∧
-      ∃ b : SchwartzMap (Euclidean d) ℂ,
-        HasCompactSupport b ∧ ‖b.toLp 2 volume‖ = 1 ∧
-        (∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) ∧
-        (∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) ∧
-        (∃ c : ℝ, 0 < c ∧ ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) ∧
-        ∃ V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d,
-          (∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
-          ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 := by
-  classical
-  obtain ⟨δ, hδ, hΛ⟩ := riesz_frequencies_separated hΩ hb hB
-  obtain ⟨r, hr, hrδ, b, hs, hn, hp, hz, c, hc, hl⟩ := exists_bump_fourier_lower hb hδ
-  let V := bumpSynthesis hΛ hrδ b hz hn
-  have hV : ∀ i : Λ, V (lp.single 2 i 1) =
-      translationL2 (-(i : Euclidean d)) (b.toLp 2 volume) := by
-    intro i
-    exact orthonormalSynthesis_single (translated_bumps_orthonormal hΛ hrδ b hz hn) i
-  obtain ⟨S, hS⟩ := hB
-  exact ⟨δ, r, hδ, hΛ, hr, hrδ, b, hs, hn, hp, hz, ⟨c, hc, hl⟩,
-    V, hV, initial_bump_gap hΩ b V hV S hS hc hl⟩
-end RieszEuclidean
 
 /- Source: RieszEuclidean/Koopman.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
@@ -3553,6 +3359,399 @@ theorem separableSpace_hullLp {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
 end SeparatedConfiguration
 end RieszEuclidean
 
+/- Source: RieszEuclidean/Correlations.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open scoped BigOperators
+namespace RieszEuclidean
+variable {d : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+/-- The paper uses an inner product linear in its first argument; this order
+translates its correlation to Mathlib's conjugate-linear-first convention. -/
+noncomputable def unitaryCorrelation (U : Euclidean d → H ≃ₗᵢ[ℂ] H) (f : H)
+    (z : Euclidean d) : ℂ := inner (𝕜 := ℂ) f (U z f)
+/-- Strong continuity gives continuous scalar correlations. -/
+theorem continuous_unitaryCorrelation (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun z => U z f)) (f : H) :
+    Continuous (unitaryCorrelation U f) := continuous_const.inner (hU f)
+/-- Scalar correlations are uniformly bounded by the squared vector norm. -/
+theorem norm_unitaryCorrelation_le (U : Euclidean d → H ≃ₗᵢ[ℂ] H) (f : H)
+    (z : Euclidean d) : ‖unitaryCorrelation U f z‖ ≤ ‖f‖ ^ 2 := by
+  simpa [unitaryCorrelation, pow_two] using norm_inner_le_norm (𝕜 := ℂ) f (U z f)
+/-- The correlation at zero records the total spectral mass. -/
+theorem unitaryCorrelation_zero (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (h0 : ∀ f, U 0 f = f) (f : H) : unitaryCorrelation U f 0 = (‖f‖ : ℂ) ^ 2 := by
+  rw [unitaryCorrelation, h0]
+  exact inner_self_eq_norm_sq_to_K (𝕜 := ℂ) f
+/-- Translation differences give the Gram kernel of a unitary orbit. -/
+theorem unitaryCorrelation_sub (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hadd : ∀ z y f, U z (U y f) = U (z + y) f) (f : H) (x y : Euclidean d) :
+    unitaryCorrelation U f (y - x) = inner (𝕜 := ℂ) (U x f) (U y f) := by
+  rw [unitaryCorrelation, ← (U x).inner_map_map, hadd]
+  rw [show x + (y - x) = y by abel]
+/-- Positive definiteness of the scalar unitary correlation, with the precise
+finite quadratic-form convention needed by Bochner's theorem. -/
+theorem unitaryCorrelation_positiveDefinite (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hadd : ∀ z y f, U z (U y f) = U (z + y) f)
+    (f : H) {ι : Type*} [Fintype ι] (x : ι → Euclidean d) (c : ι → ℂ) :
+    (∑ i, ∑ j, star (c i) * c j * unitaryCorrelation U f (x j - x i)).im = 0 ∧
+      0 ≤ (∑ i, ∑ j, star (c i) * c j * unitaryCorrelation U f (x j - x i)).re := by
+  have he : (∑ i, ∑ j, star (c i) * c j * unitaryCorrelation U f (x j - x i)) =
+      inner (𝕜 := ℂ) (∑ i, c i • U (x i) f) (∑ j, c j • U (x j) f) := by
+    simp_rw [unitaryCorrelation_sub U hadd]
+    symm
+    rw [sum_inner]
+    apply Finset.sum_congr rfl
+    intro i hi
+    rw [inner_sum]
+    apply Finset.sum_congr rfl
+    intro j hj
+    simp only [inner_smul_left, inner_smul_right, mul_assoc]
+    simp only [starRingEnd_apply]
+    ring
+
+  rw [he]
+  constructor
+  · exact inner_self_im (𝕜 := ℂ) (∑ i, c i • U (x i) f)
+  · simpa using (inner_self_nonneg (𝕜 := ℂ) (x := ∑ i, c i • U (x i) f))
+/-- The parallelogram identity holds already at the correlation level. -/
+theorem unitaryCorrelation_parallelogram (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (f g : H) (z : Euclidean d) :
+    unitaryCorrelation U (f + g) z + unitaryCorrelation U (f - g) z =
+      2 * (unitaryCorrelation U f z + unitaryCorrelation U g z) := by
+  simp only [unitaryCorrelation, map_add, map_sub, inner_add_left, inner_add_right,
+    inner_sub_left, inner_sub_right]
+  ring
+/-- Scaling a vector multiplies its correlation by the squared scalar modulus. -/
+theorem unitaryCorrelation_smul (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (c : ℂ) (f : H) (z : Euclidean d) :
+    unitaryCorrelation U (c • f) z = (‖c‖ : ℂ) ^ 2 * unitaryCorrelation U f z := by
+  simp only [unitaryCorrelation, map_smul, inner_smul_left, inner_smul_right]
+  rw [← mul_assoc, RCLike.mul_conj]
+  rfl
+namespace SeparatedConfiguration
+open MeasureTheory
+/-- Scalar correlations for the actual stationary hull and the paper's U_z. -/
+noncomputable def hullCorrelation {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ) [MeasurableSpace (hull Γ)]
+    (μ : Measure (hull Γ))
+    (hμ : ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ)
+    (f : Lp ℂ 2 μ) : Euclidean d → ℂ :=
+  unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f
+/-- The actual hull correlations are continuous. -/
+theorem continuous_hullCorrelation {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ)
+    [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+    (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ)
+    (f : Lp ℂ 2 μ) : Continuous (hullCorrelation hδ Γ μ hμ f) :=
+  continuous_unitaryCorrelation _ (strongContinuous_hullKoopmanUnitary hδ Γ μ hμ) f
+/-- The actual hull correlations have real, nonnegative finite quadratic forms. -/
+theorem hullCorrelation_positiveDefinite {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ) [MeasurableSpace (hull Γ)]
+    (μ : Measure (hull Γ))
+    (hμ : ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ)
+    (f : Lp ℂ 2 μ) {ι : Type*} [Fintype ι] (x : ι → Euclidean d) (c : ι → ℂ) :
+    (∑ i, ∑ j, star (c i) * c j * hullCorrelation hδ Γ μ hμ f (x j - x i)).im = 0 ∧
+      0 ≤ (∑ i, ∑ j, star (c i) * c j * hullCorrelation hδ Γ μ hμ f (x j - x i)).re :=
+  unitaryCorrelation_positiveDefinite _ (hullKoopmanUnitary_add hδ Γ μ hμ) f x c
+/-- The invariant unit constant has correlation identically equal to one. -/
+theorem hullCorrelation_one {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ) [MeasurableSpace (hull Γ)]
+    (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ z : Euclidean d, MeasurePreserving (hullTranslate hδ Γ z) μ μ)
+    (z : Euclidean d) : hullCorrelation hδ Γ μ hμ (Lp.const 2 μ (1 : ℂ)) z = 1 := by
+  rw [hullCorrelation, unitaryCorrelation, hullKoopmanUnitary_const,
+    inner_self_eq_norm_sq_to_K, norm_stationary_one]
+  norm_num
+end SeparatedConfiguration
+end RieszEuclidean
+
+/- Source: RieszEuclidean/DomainExtension.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Set
+namespace RieszEuclidean
+/-- Extend a domain L² class by zero to ambient Euclidean space. -/
+def domainExtension {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : FullL2 d :=
+  ((memLp_indicator_iff_restrict hΩ).mpr (Lp.memLp f)).toLp (Ω.indicator f)
+/-- The extension has the zero-extended representative. -/
+theorem domainExtension_coe {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : (domainExtension Ω hΩ f : Euclidean d → ℂ) =ᵐ[volume] Ω.indicator f :=
+  MemLp.coeFn_toLp _
+/-- Zero extension preserves the L² norm. -/
+theorem domainExtension_norm {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : ‖domainExtension Ω hΩ f‖ = ‖f‖ := by
+  rw [Lp.norm_def, Lp.norm_def, eLpNorm_congr_ae (domainExtension_coe Ω hΩ f),
+    eLpNorm_indicator_eq_eLpNorm_restrict hΩ]
+/-- Restricting an extension gives the original domain class. -/
+theorem domainRestriction_extension {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : domainRestriction Ω (domainExtension Ω hΩ f) = f := by
+  apply Lp.ext
+  have he := (domainExtension_coe Ω hΩ f).filter_mono
+    (ae_mono (Measure.restrict_le_self (s := Ω)))
+  filter_upwards [domainRestriction_coe Ω (domainExtension Ω hΩ f), he, ae_restrict_mem hΩ]
+    with x h1 h2 hx
+  rw [h1, h2, indicator_of_mem hx]
+/-- Extending a restriction gives precisely the domain cutoff. -/
+theorem domainExtension_restriction {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) : domainExtension Ω hΩ (domainRestriction Ω f) = domainCutoff Ω hΩ f := by
+  apply Lp.ext
+  have hr := (ae_restrict_iff' hΩ).mp (domainRestriction_coe Ω f)
+  filter_upwards [domainExtension_coe Ω hΩ (domainRestriction Ω f),
+    domainCutoff_coe Ω hΩ f, hr] with x h1 h2 h3
+  rw [h1, h2]
+  by_cases hx : x ∈ Ω
+  · simpa only [indicator_of_mem hx] using h3 hx
+  · simp only [indicator_of_not_mem hx]
+/-- Zero extension is a complex linear isometry. -/
+def domainExtensionLI {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    DomainL2 Ω →ₗᵢ[ℂ] FullL2 d where
+  toFun := domainExtension Ω hΩ
+  map_add' f g := by
+    apply Lp.ext
+    have ha := (ae_restrict_iff' hΩ).mp (Lp.coeFn_add f g)
+    filter_upwards [domainExtension_coe Ω hΩ (f + g), domainExtension_coe Ω hΩ f,
+      domainExtension_coe Ω hΩ g, Lp.coeFn_add (domainExtension Ω hΩ f) (domainExtension Ω hΩ g), ha]
+      with x h1 h2 h3 h4 h5
+    rw [h1, h4]
+    simp only [Pi.add_apply, h2, h3]
+    by_cases hx : x ∈ Ω
+    · simpa only [indicator_of_mem hx, Pi.add_apply] using h5 hx
+    · simp only [indicator_of_not_mem hx, add_zero]
+  map_smul' c f := by
+    apply Lp.ext
+    have ha := (ae_restrict_iff' hΩ).mp (Lp.coeFn_smul c f)
+    filter_upwards [domainExtension_coe Ω hΩ (c • f), domainExtension_coe Ω hΩ f,
+      Lp.coeFn_smul c (domainExtension Ω hΩ f), ha] with x h1 h2 h3 h4
+    simp only [RingHom.id_apply, h1, h3, Pi.smul_apply, h2]
+    by_cases hx : x ∈ Ω
+    · simpa only [indicator_of_mem hx, Pi.smul_apply] using h4 hx
+    · simp only [indicator_of_not_mem hx, smul_zero]
+  norm_map' := domainExtension_norm Ω hΩ
+/-- Zero extension has exactly the range of the domain projection. -/
+theorem domainExtension_range {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    LinearMap.range (domainExtensionLI Ω hΩ).toLinearMap = (domainProjection Ω hΩ).range := by
+  ext f
+  constructor
+  · rintro ⟨g, rfl⟩
+    apply ((domainProjection Ω hΩ).mem_range_iff _).mpr
+    change domainCutoff Ω hΩ (domainExtension Ω hΩ g) = domainExtension Ω hΩ g
+    rw [← domainExtension_restriction, domainRestriction_extension]
+  · intro hf
+    refine ⟨domainRestriction Ω f, ?_⟩
+    change domainExtension Ω hΩ (domainRestriction Ω f) = f
+    rw [domainExtension_restriction]
+    exact ((domainProjection Ω hΩ).mem_range_iff f).mp hf
+end RieszEuclidean
+
+/- Source: RieszEuclidean/FourierRange.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory
+namespace RieszEuclidean
+/-- Embed domain L² isometrically into the Fourier projection range. -/
+def fourierDomainEmbedding {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    DomainL2 Ω →ₗᵢ[ℂ] FullL2 d :=
+  (paperFourierL2 d).symm.toLinearIsometry.comp (domainExtensionLI Ω hΩ)
+/-- The embedding has exactly the range of the Fourier projection. -/
+theorem fourierDomainEmbedding_range {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) :
+    LinearMap.range (fourierDomainEmbedding Ω hΩ).toLinearMap = (fourierProjection Ω hΩ).range := by
+  ext f
+  constructor
+  · rintro ⟨g, rfl⟩
+    apply ((fourierProjection Ω hΩ).mem_range_iff _).mpr
+    apply (paperFourierL2 d).injective
+    rw [fourierProjection_transform]
+    change domainCutoff Ω hΩ ((paperFourierL2 d) ((paperFourierL2 d).symm
+      (domainExtension Ω hΩ g))) = (paperFourierL2 d) ((paperFourierL2 d).symm (domainExtension Ω hΩ g))
+    rw [LinearIsometryEquiv.apply_symm_apply, ← domainExtension_restriction, domainRestriction_extension]
+  · intro hf
+    refine ⟨domainRestriction Ω (paperFourierL2 d f), ?_⟩
+    apply (paperFourierL2 d).injective
+    change (paperFourierL2 d) ((paperFourierL2 d).symm
+      (domainExtension Ω hΩ (domainRestriction Ω (paperFourierL2 d f)))) = paperFourierL2 d f
+    rw [LinearIsometryEquiv.apply_symm_apply, domainExtension_restriction, ← fourierProjection_transform]
+    rw [((fourierProjection Ω hΩ).mem_range_iff f).mp hf]
+/-- Embedding the restricted Fourier transform is the Fourier projection itself. -/
+theorem fourierDomainEmbedding_restriction {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : FullL2 d) :
+    fourierDomainEmbedding Ω hΩ (domainRestriction Ω (paperFourierL2 d f)) =
+      (fourierProjection Ω hΩ).op f := by
+  apply (paperFourierL2 d).injective
+  change (paperFourierL2 d) ((paperFourierL2 d).symm
+    (domainExtension Ω hΩ (domainRestriction Ω (paperFourierL2 d f)))) = _
+  rw [LinearIsometryEquiv.apply_symm_apply, domainExtension_restriction, fourierProjection_transform]
+end RieszEuclidean
+
+/- Source: RieszEuclidean/RangeIso.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+namespace RieszEuclidean
+/-- An isometry identifies its source with any equal range submodule. -/
+def isometryRangeEquiv {A H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] (V : A →ₗᵢ[ℂ] H)
+    (Q : Submodule ℂ H) (hQ : LinearMap.range V.toLinearMap = Q) : A ≃ₗᵢ[ℂ] Q :=
+  V.equivRange.trans (LinearIsometryEquiv.ofEq _ _ hQ)
+/-- The range equivalence has the original isometry as its ambient representative. -/
+theorem isometryRangeEquiv_coe {A H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] (V : A →ₗᵢ[ℂ] H)
+    (Q : Submodule ℂ H) (hQ : LinearMap.range V.toLinearMap = Q) (x : A) :
+    (isometryRangeEquiv V Q hQ x : H) = V x := rfl
+/-- An invertible synthesis identity induces the required projection range isomorphism. -/
+theorem rangeIso_of_synthesis {A B H : Type} [NormedAddCommGroup A] [InnerProductSpace ℂ A]
+    [NormedAddCommGroup B] [InnerProductSpace ℂ B]
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    (P Q : OrthProjection H) (V : A →ₗᵢ[ℂ] H) (W : B →ₗᵢ[ℂ] H)
+    (hV : LinearMap.range V.toLinearMap = Q.range)
+    (hW : LinearMap.range W.toLinearMap = P.range) (E : A ≃L[ℂ] B)
+    (h : ∀ a, P.op (V a) = W (E a)) : P.RangeIso Q := by
+  let eV := (isometryRangeEquiv V Q.range hV).toContinuousLinearEquiv
+  let eW := (isometryRangeEquiv W P.range hW).toContinuousLinearEquiv
+  refine ⟨eV.symm.trans (E.trans eW), ?_⟩
+  intro x
+  obtain ⟨a, rfl⟩ := eV.surjective x
+  change (eW (E (eV.symm (eV a))) : H) = P.op (eV a)
+  rw [ContinuousLinearEquiv.symm_apply_apply]
+  exact (h a).symm
+end RieszEuclidean
+
+/- Source: RieszEuclidean/InitialGap.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+/-- The concrete bump projection has distance less than one from the Fourier projection. -/
+theorem initial_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (b : SchwartzMap (Euclidean d) ℂ)
+    (V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d)
+    (hV : ∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume))
+    (S : SeqL2 Λ ≃L[ℂ] DomainL2 Ω)
+    (hS : ∀ i : Λ, (S (lp.single 2 i 1) : Euclidean d → ℂ) =ᵐ[volume.restrict Ω]
+      exponential (i : Euclidean d))
+    {c : ℝ} (hc : 0 < c) (hl : ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) :
+    ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 := by
+  apply ((fourierProjection Ω hΩ).gap_iff_rangeIso (isometryRangeProjection V)).mpr
+  apply rangeIso_of_synthesis (fourierProjection Ω hΩ) (isometryRangeProjection V)
+    V (fourierDomainEmbedding Ω hΩ) (isometryRangeProjection_range V).symm
+    (fourierDomainEmbedding_range Ω hΩ) (S.trans (bumpFourierMultiplier Ω hΩ b hc hl))
+  intro a
+  have he := DFunLike.congr_fun (bump_synthesis_identity hΩ b V hV S hS hc hl) a
+  rw [← fourierDomainEmbedding_restriction Ω hΩ (V a)]
+  exact congrArg (fourierDomainEmbedding Ω hΩ) he
+/-- Every exponential Riesz basis on a bounded domain supplies the paper's small bump and initial gap. -/
+theorem exists_initial_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω)
+    (hB : HasExponentialRieszBasis Ω Λ) :
+    ∃ δ r : ℝ, 0 < δ ∧ Separated δ Λ ∧ 0 < r ∧ 2 * r < δ ∧
+      ∃ b : SchwartzMap (Euclidean d) ℂ,
+        HasCompactSupport b ∧ ‖b.toLp 2 volume‖ = 1 ∧
+        (∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) ∧
+        (∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) ∧
+        (∃ c : ℝ, 0 < c ∧ ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖) ∧
+        ∃ V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d,
+          (∀ i : Λ, V (lp.single 2 i 1) = translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
+          ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 := by
+  classical
+  obtain ⟨δ, hδ, hΛ⟩ := riesz_frequencies_separated hΩ hb hB
+  obtain ⟨r, hr, hrδ, b, hs, hn, hp, hz, c, hc, hl⟩ := exists_bump_fourier_lower hb hδ
+  let V := bumpSynthesis hΛ hrδ b hz hn
+  have hV : ∀ i : Λ, V (lp.single 2 i 1) =
+      translationL2 (-(i : Euclidean d)) (b.toLp 2 volume) := by
+    intro i
+    exact orthonormalSynthesis_single (translated_bumps_orthonormal hΛ hrδ b hz hn) i
+  obtain ⟨S, hS⟩ := hB
+  exact ⟨δ, r, hδ, hΛ, hr, hrδ, b, hs, hn, hp, hz, ⟨c, hc, hl⟩,
+    V, hV, initial_bump_gap hΩ b V hV S hS hc hl⟩
+end RieszEuclidean
+
+/- Source: RieszEuclidean/IntegratedUnitary.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+variable {d : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+/-- An integrable scalar kernel can be integrated against a strongly continuous unitary orbit. -/
+theorem integrable_unitary_smul (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f)) {a : Euclidean d → ℂ}
+    (ha : Integrable a) (f : H) : Integrable (fun y => a y • U y f) := by
+  apply (ha.norm.mul_const ‖f‖).mono'
+    (ha.aestronglyMeasurable.smul (hU f).aestronglyMeasurable)
+  filter_upwards [] with y
+  simp [norm_smul]
+/-- The integrated unitary action associated with a scalar kernel. -/
+noncomputable def integratedUnitary (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (a : Euclidean d → ℂ) (f : H) : H := ∫ y, a y • U y f
+/-- The integrated action has the expected L¹ bound. -/
+theorem norm_integratedUnitary_le (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (a : Euclidean d → ℂ) (f : H) :
+    ‖integratedUnitary U a f‖ ≤ (∫ y, ‖a y‖) * ‖f‖ := by
+  calc
+    ‖integratedUnitary U a f‖ ≤ ∫ y, ‖a y • U y f‖ := norm_integral_le_integral_norm _
+    _ = (∫ y, ‖a y‖) * ‖f‖ := by simp [norm_smul, integral_mul_const]
+/-- Integration is linear in the Hilbert-space vector. -/
+noncomputable def integratedUnitaryLinear (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f)) {a : Euclidean d → ℂ}
+    (ha : Integrable a) : H →ₗ[ℂ] H where
+  toFun := integratedUnitary U a
+  map_add' f g := by
+    simp only [integratedUnitary, map_add, smul_add]
+    exact integral_add (integrable_unitary_smul U hU ha f)
+      (integrable_unitary_smul U hU ha g)
+  map_smul' c f := by
+    simp only [integratedUnitary, map_smul, RingHom.id_apply]
+    simp_rw [smul_comm (a _) c]
+    exact integral_smul c _
+/-- The L¹ norm bounds the continuous integrated operator. -/
+noncomputable def integratedUnitaryCLM (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f)) {a : Euclidean d → ℂ}
+    (ha : Integrable a) : H →L[ℂ] H :=
+  (integratedUnitaryLinear U hU ha).mkContinuous (∫ y, ‖a y‖)
+    (norm_integratedUnitary_le U a)
+/-- The continuous operator evaluates to the orbit integral. -/
+theorem integratedUnitaryCLM_apply (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f)) {a : Euclidean d → ℂ}
+    (ha : Integrable a) (f : H) :
+    integratedUnitaryCLM U hU ha f = ∫ y, a y • U y f := rfl
+/-- The integrated operator norm is at most the scalar kernel's L¹ norm. -/
+theorem norm_integratedUnitaryCLM_le (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f)) {a : Euclidean d → ℂ}
+    (ha : Integrable a) : ‖integratedUnitaryCLM U hU ha‖ ≤ ∫ y, ‖a y‖ := by
+  apply (integratedUnitaryCLM U hU ha).opNorm_le_bound (integral_nonneg (fun _ => norm_nonneg _))
+  exact norm_integratedUnitary_le U a
+/-- Changing a kernel on a null set does not change its integrated action. -/
+theorem integratedUnitary_congr_ae (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    {a b : Euclidean d → ℂ} (hab : a =ᵐ[volume] b) (f : H) :
+    integratedUnitary U a f = integratedUnitary U b f := by
+  apply integral_congr_ae
+  filter_upwards [hab] with y hy
+  rw [hy]
+/-- The squared orbit integral is the double integral of its Gram kernel. -/
+theorem integratedUnitary_norm_sq [CompleteSpace H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f))
+    (hadd : ∀ z y f, U z (U y f) = U (z + y) f)
+    {a : Euclidean d → ℂ} (ha : Integrable a) (f : H) :
+    (‖integratedUnitary U a f‖ : ℂ) ^ 2 =
+      ∫ y, ∫ w, star (a w) * a y * unitaryCorrelation U f (y - w) := by
+  have hi := integrable_unitary_smul U hU ha f
+  trans inner (𝕜 := ℂ) (integratedUnitary U a f) (integratedUnitary U a f)
+  · exact (inner_self_eq_norm_sq_to_K (𝕜 := ℂ) (integratedUnitary U a f)).symm
+  change inner (𝕜 := ℂ) (integratedUnitary U a f) (∫ y, a y • U y f) = _
+  rw [← integral_inner hi]
+  apply integral_congr_ae
+  filter_upwards [] with y
+  have hl : inner (𝕜 := ℂ) (integratedUnitary U a f) (a y • U y f) =
+      ∫ w, inner (𝕜 := ℂ) (a w • U w f) (a y • U y f) := by
+    rw [← inner_conj_symm, integratedUnitary, ← integral_inner hi, ← integral_conj]
+    apply integral_congr_ae
+    filter_upwards [] with w
+    exact inner_conj_symm _ _
+  rw [hl]
+  apply integral_congr_ae
+  filter_upwards [] with w
+  rw [unitaryCorrelation_sub U hadd]
+  simp only [inner_smul_left, inner_smul_right, starRingEnd_apply]
+  ring
+end RieszEuclidean
+
 /- Source: RieszEuclidean/MovingComparison.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 /-!
@@ -3612,6 +3811,295 @@ theorem moving_comparison_obstruction [CompleteSpace H]
         hplus hMplus hgapplus).trans_lt hγ⟩
 
 end RieszEuclidean.OrthProjection
+
+/- Source: RieszEuclidean/SpectralMeasures.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory RealInnerProductSpace
+open scoped ENNReal NNReal
+namespace RieszEuclidean
+/-- A finite positive Borel measure representing a Euclidean scalar correlation
+with the paper's positive 2π Fourier convention. -/
+def RepresentsCorrelation {d : ℕ} (φ : Euclidean d → ℂ)
+    (σ : Measure (Euclidean d)) : Prop :=
+  IsFiniteMeasure σ ∧ ∀ y, φ y =
+    ∫ θ, (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ) ∂σ
+/-- Finite measures are determined by the paper's Euclidean Fourier characters. -/
+theorem measure_eq_of_fourierChar_integral_eq {d : ℕ}
+    {σ τ : Measure (Euclidean d)} [IsFiniteMeasure σ] [IsFiniteMeasure τ]
+    (h : ∀ y : Euclidean d,
+      (∫ θ, (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ) ∂σ) =
+      ∫ θ, (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ) ∂τ) : σ = τ := by
+  refine ext_of_integral_char_eq Real.continuous_fourierChar Real.fourierChar_ne_one
+    (V := Euclidean d) (W := Euclidean d) (L := bilinFormOfRealInner) ?_ ?_ ?_
+  · intro v hv
+    exact DFunLike.ne_iff.mpr ⟨v, inner_self_ne_zero.mpr hv⟩
+  · exact continuous_inner
+  · intro y
+    simpa only [BoundedContinuousFunction.char_apply, bilinFormOfRealInner_apply_apply,
+      real_inner_comm] using h y
+/-- A finite positive representing spectral measure is unique. -/
+theorem RepresentsCorrelation.unique {d : ℕ} {φ : Euclidean d → ℂ}
+    {σ τ : Measure (Euclidean d)} (hσ : RepresentsCorrelation φ σ)
+    (hτ : RepresentsCorrelation φ τ) : σ = τ := by
+  letI := hσ.1
+  letI := hτ.1
+  exact measure_eq_of_fourierChar_integral_eq (fun y => (hσ.2 y).symm.trans (hτ.2 y))
+/-- The zero-frequency value of a correlation is the total representing mass. -/
+theorem RepresentsCorrelation.mass {d : ℕ} {φ : Euclidean d → ℂ}
+    {σ : Measure (Euclidean d)} (hσ : RepresentsCorrelation φ σ) :
+    (σ.real Set.univ : ℂ) = φ 0 := by
+  letI := hσ.1
+  simpa using (hσ.2 0).symm
+/-- A representing measure for a unitary correlation has the required squared-norm mass. -/
+theorem RepresentsCorrelation.unitary_mass {d : ℕ} {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H) (h0 : ∀ f, U 0 f = f) (f : H)
+    {σ : Measure (Euclidean d)} (hσ : RepresentsCorrelation (unitaryCorrelation U f) σ) :
+    σ.real Set.univ = ‖f‖ ^ 2 := by
+  have hm := hσ.mass
+  rw [unitaryCorrelation_zero U h0 f] at hm
+  exact_mod_cast hm
+/-- The constant correlation one is represented by the unit point mass at zero. -/
+theorem representsCorrelation_one {d : ℕ} :
+    RepresentsCorrelation (fun _ : Euclidean d => (1 : ℂ)) (Measure.dirac 0) := by
+  refine ⟨inferInstance, ?_⟩
+  intro y
+  simp
+/-- The actual invariant unit constant has precisely the Dirac spectral measure at zero. -/
+theorem represents_hullCorrelation_one {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
+    (Γ : SeparatedConfiguration d δ) [MeasurableSpace (SeparatedConfiguration.hull Γ)]
+    (μ : Measure (SeparatedConfiguration.hull Γ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ z : Euclidean d, MeasurePreserving (SeparatedConfiguration.hullTranslate hδ Γ z) μ μ) :
+    RepresentsCorrelation (SeparatedConfiguration.hullCorrelation hδ Γ μ hμ (Lp.const 2 μ (1 : ℂ)))
+      (Measure.dirac 0) := by
+  have he : SeparatedConfiguration.hullCorrelation hδ Γ μ hμ (Lp.const 2 μ (1 : ℂ)) =
+      (fun _ => 1) := funext (SeparatedConfiguration.hullCorrelation_one hδ Γ μ hμ)
+  rw [he]
+  exact representsCorrelation_one
+/-- Fourier characters are integrable against any finite Euclidean measure. -/
+theorem integrable_fourierChar (d : ℕ) (σ : Measure (Euclidean d)) [IsFiniteMeasure σ]
+    (y : Euclidean d) : Integrable (fun θ => (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ)) σ := by
+  have hi := (BoundedContinuousFunction.char Real.continuous_fourierChar
+    (L := bilinFormOfRealInner) continuous_inner y).integrable σ
+  convert hi using 1
+  ext θ
+  simp only [BoundedContinuousFunction.char_apply, bilinFormOfRealInner_apply_apply,
+    real_inner_comm]
+
+/-- Addition of representing measures represents addition of correlations. -/
+theorem RepresentsCorrelation.add {d : ℕ} {φ ψ : Euclidean d → ℂ}
+    {σ τ : Measure (Euclidean d)} (hσ : RepresentsCorrelation φ σ)
+    (hτ : RepresentsCorrelation ψ τ) : RepresentsCorrelation (φ + ψ) (σ + τ) := by
+  letI := hσ.1
+  letI := hτ.1
+  refine ⟨inferInstance, fun y => ?_⟩
+  rw [Pi.add_apply, hσ.2 y, hτ.2 y,
+    integral_add_measure (integrable_fourierChar d σ y) (integrable_fourierChar d τ y)]
+/-- A nonnegative scalar scales a representing measure and its correlation together. -/
+theorem RepresentsCorrelation.smul {d : ℕ} {φ : Euclidean d → ℂ}
+    {σ : Measure (Euclidean d)} (hσ : RepresentsCorrelation φ σ) (c : ℝ≥0) :
+    RepresentsCorrelation (fun y => (c : ℂ) * φ y) ((c : ℝ≥0∞) • σ) := by
+  letI := hσ.1
+  refine ⟨σ.smul_finite ENNReal.coe_ne_top, fun y => ?_⟩
+  change (c : ℂ) * φ y = _
+  rw [integral_smul_measure, hσ.2 y]
+  simp [Complex.real_smul]
+/-- Uniqueness turns the correlation parallelogram identity into the measure identity. -/
+theorem spectralMeasure_parallelogram {d : ℕ} {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H) (f g : H)
+    {σp σm σf σg : Measure (Euclidean d)}
+    (hp : RepresentsCorrelation (unitaryCorrelation U (f + g)) σp)
+    (hm : RepresentsCorrelation (unitaryCorrelation U (f - g)) σm)
+    (hf : RepresentsCorrelation (unitaryCorrelation U f) σf)
+    (hg : RepresentsCorrelation (unitaryCorrelation U g) σg) :
+    σp + σm = (2 : ℝ≥0∞) • (σf + σg) := by
+  have hl := hp.add hm
+  have he : unitaryCorrelation U (f + g) + unitaryCorrelation U (f - g) =
+      (fun y => (2 : ℂ) * (unitaryCorrelation U f + unitaryCorrelation U g) y) :=
+    funext (unitaryCorrelation_parallelogram U f g)
+  rw [he] at hl
+  exact hl.unique ((hf.add hg).smul 2)
+/-- Uniqueness turns correlation homogeneity into squared-modulus scaling of measures. -/
+theorem spectralMeasure_smul {d : ℕ} {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H) (c : ℂ) (f : H)
+    {σc σf : Measure (Euclidean d)}
+    (hc : RepresentsCorrelation (unitaryCorrelation U (c • f)) σc)
+    (hf : RepresentsCorrelation (unitaryCorrelation U f) σf) :
+    σc = ((‖c‖₊ ^ 2 : ℝ≥0) : ℝ≥0∞) • σf := by
+  have he : unitaryCorrelation U (c • f) =
+      (fun y => ((‖c‖₊ ^ 2 : ℝ≥0) : ℂ) * unitaryCorrelation U f y) := by
+    ext y
+    simpa using unitaryCorrelation_smul U c f y
+  rw [he] at hc
+  exact hc.unique (hf.smul (‖c‖₊ ^ 2))
+end RieszEuclidean
+
+/- Source: RieszEuclidean/SpectralNorm.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+open MeasureTheory
+namespace RieszEuclidean
+variable {d : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+/-- Absolute integrability of the correlation Gram kernel justifies Fubini. -/
+theorem integrable_unitaryCorrelation_kernel
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f))
+    {a : Euclidean d → ℂ} (ha : Integrable a) (f : H) :
+    Integrable (fun p : Euclidean d × Euclidean d =>
+      star (a p.2) * a p.1 * unitaryCorrelation U f (p.1 - p.2))
+      (volume.prod volume) := by
+  have hm := ((continuous_star.comp_aestronglyMeasurable
+    ha.aestronglyMeasurable.snd).mul ha.aestronglyMeasurable.fst).mul
+    ((continuous_unitaryCorrelation U hU f).comp
+      (continuous_fst.sub continuous_snd)).aestronglyMeasurable
+  apply ((ha.norm.mul_prod ha.norm).mul_const (‖f‖ ^ 2)).mono' hm
+  filter_upwards [] with p
+  change ‖star (a p.2) * a p.1 * unitaryCorrelation U f (p.1 - p.2)‖ ≤
+    ‖a p.1‖ * ‖a p.2‖ * ‖f‖ ^ 2
+  simp only [norm_mul, norm_star]
+  calc
+    ‖a p.2‖ * ‖a p.1‖ * ‖unitaryCorrelation U f (p.1 - p.2)‖ ≤
+        ‖a p.2‖ * ‖a p.1‖ * ‖f‖ ^ 2 :=
+      mul_le_mul_of_nonneg_left (norm_unitaryCorrelation_le U f _)
+        (mul_nonneg (norm_nonneg _) (norm_nonneg _))
+    _ = ‖a p.1‖ * ‖a p.2‖ * ‖f‖ ^ 2 := by ring
+/-- The positive-sign Fourier symbol of an integrated kernel. -/
+noncomputable def integratedKernelSymbol (a : Euclidean d → ℂ) (θ : Euclidean d) : ℂ :=
+  ∫ y, a y * (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ)
+/-- Modulation by a Fourier character preserves integrability. -/
+theorem integrable_kernel_character {a : Euclidean d → ℂ} (ha : Integrable a)
+    (θ : Euclidean d) :
+    Integrable (fun y => a y * (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ)) := by
+  apply ha.norm.mono' (ha.aestronglyMeasurable.mul
+    ((continuous_subtype_val.comp Real.continuous_fourierChar).comp
+      (continuous_id.inner continuous_const)).aestronglyMeasurable)
+  filter_upwards [] with y
+  simp
+/-- The three-variable Fourier Gram kernel is absolutely integrable. -/
+theorem integrable_fourier_gram_kernel {a : Euclidean d → ℂ} (ha : Integrable a)
+    (σ : Measure (Euclidean d)) [IsFiniteMeasure σ] :
+    Integrable (fun q : (Euclidean d × Euclidean d) × Euclidean d =>
+      (a q.1.1 * (Real.fourierChar (inner (𝕜 := ℝ) q.1.1 q.2) : ℂ)) *
+      star (a q.1.2 * (Real.fourierChar (inner (𝕜 := ℝ) q.1.2 q.2) : ℂ)))
+      ((volume.prod volume).prod σ) := by
+  have hc₁ : Continuous (fun q : (Euclidean d × Euclidean d) × Euclidean d =>
+      (Real.fourierChar (inner (𝕜 := ℝ) q.1.1 q.2) : ℂ)) :=
+    (continuous_subtype_val.comp Real.continuous_fourierChar).comp
+      ((continuous_fst.fst).inner continuous_snd)
+  have hc₂ : Continuous (fun q : (Euclidean d × Euclidean d) × Euclidean d =>
+      (Real.fourierChar (inner (𝕜 := ℝ) q.1.2 q.2) : ℂ)) :=
+    (continuous_subtype_val.comp Real.continuous_fourierChar).comp
+      ((continuous_fst.snd).inner continuous_snd)
+  have hy : AEStronglyMeasurable (fun q : (Euclidean d × Euclidean d) × Euclidean d =>
+      a q.1.1 * (Real.fourierChar (inner (𝕜 := ℝ) q.1.1 q.2) : ℂ))
+      ((volume.prod volume).prod σ) :=
+    ha.aestronglyMeasurable.fst.fst.mul
+      hc₁.aestronglyMeasurable
+  have hw : AEStronglyMeasurable (fun q : (Euclidean d × Euclidean d) × Euclidean d =>
+      a q.1.2 * (Real.fourierChar (inner (𝕜 := ℝ) q.1.2 q.2) : ℂ))
+      ((volume.prod volume).prod σ) :=
+    ha.aestronglyMeasurable.snd.fst.mul
+      hc₂.aestronglyMeasurable
+  apply ((ha.norm.mul_prod ha.norm).mul_prod (integrable_const (μ := σ) (1 : ℝ))).mono'
+    (hy.mul (continuous_star.comp_aestronglyMeasurable hw))
+  filter_upwards [] with q
+  change ‖(a q.1.1 * (Real.fourierChar (inner (𝕜 := ℝ) q.1.1 q.2) : ℂ)) *
+    star (a q.1.2 * (Real.fourierChar (inner (𝕜 := ℝ) q.1.2 q.2) : ℂ))‖ ≤
+    (‖a q.1.1‖ * ‖a q.1.2‖) * 1
+  simp
+/-- Character differences factor the Fourier Gram kernel with the required conjugation. -/
+theorem fourier_gram_factor (a : Euclidean d → ℂ) (y w θ : Euclidean d) :
+    star (a w) * a y * (Real.fourierChar (inner (𝕜 := ℝ) (y - w) θ) : ℂ) =
+      (a y * (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ)) *
+      star (a w * (Real.fourierChar (inner (𝕜 := ℝ) w θ) : ℂ)) := by
+  rw [inner_sub_left, Real.fourierChar.map_sub_eq_div, div_eq_mul_inv,
+    Circle.coe_mul, Circle.coe_inv_eq_conj]
+  simp only [star_mul, starRingEnd_apply]
+  ring
+/-- Integrating a factored Fourier Gram kernel gives the squared symbol modulus. -/
+theorem integral_fourier_gram (a : Euclidean d → ℂ) (θ : Euclidean d) :
+    (∫ p : Euclidean d × Euclidean d,
+      (a p.1 * (Real.fourierChar (inner (𝕜 := ℝ) p.1 θ) : ℂ)) *
+      star (a p.2 * (Real.fourierChar (inner (𝕜 := ℝ) p.2 θ) : ℂ))
+      ∂(volume.prod volume)) = (‖integratedKernelSymbol a θ‖ : ℂ) ^ 2 := by
+  trans (∫ y, a y * (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ)) *
+    (∫ w, star (a w * (Real.fourierChar (inner (𝕜 := ℝ) w θ) : ℂ)))
+  · exact integral_prod_mul (L := ℂ) (μ := volume) (ν := volume)
+      (fun y : Euclidean d => a y * (Real.fourierChar (inner (𝕜 := ℝ) y θ) : ℂ))
+      (fun w : Euclidean d => star (a w * (Real.fourierChar (inner (𝕜 := ℝ) w θ) : ℂ)))
+  change integratedKernelSymbol a θ *
+    (∫ w, starRingEnd ℂ (a w * (Real.fourierChar (inner (𝕜 := ℝ) w θ) : ℂ))) = _
+  rw [integral_conj]
+  exact RCLike.mul_conj (integratedKernelSymbol a θ)
+/-- A supplied representing measure gives the spectral norm identity for every L¹ kernel. -/
+theorem integratedUnitary_spectral_norm_sq [CompleteSpace H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f))
+    (hadd : ∀ z y f, U z (U y f) = U (z + y) f)
+    {a : Euclidean d → ℂ} (ha : Integrable a) (f : H)
+    {σ : Measure (Euclidean d)} (hσ : RepresentsCorrelation (unitaryCorrelation U f) σ) :
+    ‖integratedUnitary U a f‖ ^ 2 = ∫ θ, ‖integratedKernelSymbol a θ‖ ^ 2 ∂σ := by
+  letI := hσ.1
+  have he : (‖integratedUnitary U a f‖ : ℂ) ^ 2 =
+      ∫ θ, (‖integratedKernelSymbol a θ‖ : ℂ) ^ 2 ∂σ := by
+    calc
+      (‖integratedUnitary U a f‖ : ℂ) ^ 2 =
+          ∫ y, ∫ w, star (a w) * a y * unitaryCorrelation U f (y - w) :=
+        integratedUnitary_norm_sq U hU hadd ha f
+      _ = ∫ p : Euclidean d × Euclidean d,
+          star (a p.2) * a p.1 * unitaryCorrelation U f (p.1 - p.2)
+          ∂(volume.prod volume) :=
+        (integral_prod _ (integrable_unitaryCorrelation_kernel U hU ha f)).symm
+      _ = ∫ p : Euclidean d × Euclidean d, ∫ θ,
+          (a p.1 * (Real.fourierChar (inner (𝕜 := ℝ) p.1 θ) : ℂ)) *
+          star (a p.2 * (Real.fourierChar (inner (𝕜 := ℝ) p.2 θ) : ℂ))
+          ∂σ ∂(volume.prod volume) := by
+        apply integral_congr_ae
+        filter_upwards [] with p
+        rw [hσ.2 (p.1 - p.2), ← integral_const_mul]
+        apply integral_congr_ae
+        filter_upwards [] with θ
+        exact fourier_gram_factor a p.1 p.2 θ
+      _ = ∫ θ, ∫ p : Euclidean d × Euclidean d,
+          (a p.1 * (Real.fourierChar (inner (𝕜 := ℝ) p.1 θ) : ℂ)) *
+          star (a p.2 * (Real.fourierChar (inner (𝕜 := ℝ) p.2 θ) : ℂ))
+          ∂(volume.prod volume) ∂σ :=
+        integral_integral_swap (integrable_fourier_gram_kernel ha σ)
+      _ = ∫ θ, (‖integratedKernelSymbol a θ‖ : ℂ) ^ 2 ∂σ := by
+        apply integral_congr_ae
+        filter_upwards [] with θ
+        exact integral_fourier_gram a θ
+  have he' : ((‖integratedUnitary U a f‖ ^ 2 : ℝ) : ℂ) =
+      ((∫ θ, ‖integratedKernelSymbol a θ‖ ^ 2 ∂σ : ℝ) : ℂ) := by
+    calc
+      ((‖integratedUnitary U a f‖ ^ 2 : ℝ) : ℂ) =
+          ∫ θ, (‖integratedKernelSymbol a θ‖ : ℂ) ^ 2 ∂σ := by
+        simpa only [Complex.ofReal_pow] using he
+      _ = ∫ θ, ((‖integratedKernelSymbol a θ‖ ^ 2 : ℝ) : ℂ) ∂σ := by
+        apply integral_congr_ae
+        filter_upwards [] with θ
+        exact (Complex.ofReal_pow _ _).symm
+      _ = ((∫ θ, ‖integratedKernelSymbol a θ‖ ^ 2 ∂σ : ℝ) : ℂ) := integral_ofReal
+  exact_mod_cast he'
+/-- The kernel symbol is exactly the positive Euclidean Fourier transform. -/
+theorem integratedKernelSymbol_eq_fourierInv (a : Euclidean d → ℂ) (θ : Euclidean d) :
+    integratedKernelSymbol a θ = Real.fourierIntegralInv a θ := by
+  rw [integratedKernelSymbol, Real.fourierIntegralInv_eq]
+  apply integral_congr_ae
+  filter_upwards [] with y
+  simp [Circle.smul_def, real_inner_comm, mul_comm]
+/-- The squared kernel symbol is integrable against every finite spectral measure. -/
+theorem integrable_integratedKernelSymbol_sq {a : Euclidean d → ℂ} (ha : Integrable a)
+    (σ : Measure (Euclidean d)) [IsFiniteMeasure σ] :
+    Integrable (fun θ => ‖integratedKernelSymbol a θ‖ ^ 2) σ := by
+  have hi := (integrable_fourier_gram_kernel ha σ).integral_prod_right
+  have hi' : Integrable (fun θ => (‖integratedKernelSymbol a θ‖ : ℂ) ^ 2) σ :=
+    hi.congr (Filter.Eventually.of_forall (integral_fourier_gram a))
+  convert hi'.re using 1
+  ext θ
+  simp [← Complex.ofReal_pow]
+end RieszEuclidean
 
 /- Source: RieszEuclidean/VagueConvergence.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
@@ -4047,4 +4535,16 @@ theorem beurling_iff_vague {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
       Filter.Tendsto (fun n => ∫ x, f x ∂configurationMeasure (Γ n)) Filter.atTop
         (nhds (∫ x, f x ∂configurationMeasure Δ)) :=
   weaklyConverges_iff_vague hδ hΓ hΔ
+/-- The L¹ integrated unitary operator has the manuscript's spectral norm,
+provided the vector correlation is represented by the supplied finite measure. -/
+theorem integrated_spectral_norm {d : ℕ} {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f))
+    (hadd : ∀ z y f, U z (U y f) = U (z + y) f)
+    {a : Euclidean d → ℂ} (ha : Integrable a) (f : H)
+    {σ : Measure (Euclidean d)} (hσ : RepresentsCorrelation (unitaryCorrelation U f) σ) :
+    ‖∫ y, a y • U y f‖ ^ 2 = ∫ θ, ‖Real.fourierIntegralInv a θ‖ ^ 2 ∂σ := by
+  simpa only [integratedUnitary, integratedKernelSymbol_eq_fourierInv] using
+    integratedUnitary_spectral_norm_sq U hU hadd ha f hσ
 end RieszEuclidean.Results

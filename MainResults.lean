@@ -175,4 +175,16 @@ theorem beurling_iff_vague {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
       Filter.Tendsto (fun n => ∫ x, f x ∂configurationMeasure (Γ n)) Filter.atTop
         (nhds (∫ x, f x ∂configurationMeasure Δ)) :=
   weaklyConverges_iff_vague hδ hΓ hΔ
+/-- The L¹ integrated unitary operator has the manuscript's spectral norm,
+provided the vector correlation is represented by the supplied finite measure. -/
+theorem integrated_spectral_norm {d : ℕ} {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (U : Euclidean d → H ≃ₗᵢ[ℂ] H)
+    (hU : ∀ f, Continuous (fun y => U y f))
+    (hadd : ∀ z y f, U z (U y f) = U (z + y) f)
+    {a : Euclidean d → ℂ} (ha : Integrable a) (f : H)
+    {σ : Measure (Euclidean d)} (hσ : RepresentsCorrelation (unitaryCorrelation U f) σ) :
+    ‖∫ y, a y • U y f‖ ^ 2 = ∫ θ, ‖Real.fourierIntegralInv a θ‖ ^ 2 ∂σ := by
+  simpa only [integratedUnitary, integratedKernelSymbol_eq_fourierInv] using
+    integratedUnitary_spectral_norm_sq U hU hadd ha f hσ
 end RieszEuclidean.Results

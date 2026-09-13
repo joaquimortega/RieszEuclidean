@@ -55,14 +55,16 @@ alignment:
     status: pending full analytic and geometric construction
 review:
   status: in-progress
-  notes: The stationary-system node is complete. All 15 modular linters pass for
-    328 declarations and 371 generated declarations; all 15 public-result linters pass
-    for 16 declarations and 5 generated declarations. The standalone build and all
-    245 transitive axiom reports pass. All 15 standalone linters pass for 344 declarations
-    and 376 generated declarations. Standard imports were aligned for exact export identity;
-    the official Comparator accepted all thirteen supporting results and the Lean kernel
-    accepted the standalone solution with exit code 0.
-    The blueprint has 9 proved nodes and 16 pending.  Final geometric nonexistence theorems remain unproved.
+  notes: The stationary-system node is complete. The expanded spectral checkpoint passes
+    modular, public-result and standalone builds. All 15 linters pass for 370 modular
+    declarations plus 386 generated declarations, 17 public declarations plus 5 generated,
+    and 387 standalone declarations plus 391 generated. All 287 transitive axiom reports
+    use only standard Lean axioms. The official Comparator accepts all fourteen supporting
+    results and Lean's default kernel accepts the standalone solution with exit code 0.
+    The spectral norm result explicitly assumes a representing measure. General Bochner
+    existence is postponed at the user's request while the rest of the argument is developed.
+    The blueprint remains at 9 proved nodes and 16 pending. Final geometric nonexistence
+    theorems remain unproved. Scope and validation details are in reviews/spectral-progress.md.
 classification:
   msc2020:
   - 42C15
@@ -185,9 +187,19 @@ techniques:
     on the separable stationary L² space, with invariant unit constant. Finite injective
     point matchings control test integrals and prove weak-to-vague convergence. Compactly
     supported bumps separate configurations; the continuous counting-test map is then an
-    embedding by compactness, proving the converse. Construct finite spectral measures on ℝⁿ from continuous
-    positive-definite correlations, their common control measure and the Dirac spectrum of the invariant
-    constant.
+    embedding by compactness, proving the converse. Actual hull correlations are continuous
+    and positive definite. Fourier-character uniqueness determines representing measures
+    and their total mass. The invariant constant has Dirac spectrum at zero; spectral
+    parallelogram and homogeneity identities hold when representing measures are supplied.
+    Strongly continuous unitary orbits admit L¹ integrated operators with the expected
+    norm bound. Their squared norm is the iterated integral of the correlation Gram kernel.
+    Absolute product integrability and Fourier-character factorization justify both
+    Fubini exchanges and give the spectral norm identity for a supplied representing
+    measure. The symbol equals the positive Euclidean Fourier transform, and its
+    square is integrable against every finite spectral measure.
+    General Bochner measure existence, a common control measure, and the remaining
+    spectral filter identities are pending. The spectral norm identity is included in the recorded
+    fourteen-result Comparator checkpoint.
   files:
   - RieszEuclidean/WindowWeakLimit.lean
   - RieszEuclidean/DistanceProfile.lean
@@ -206,6 +218,10 @@ techniques:
   - RieszEuclidean/HullInvariantMeasure.lean
   - RieszEuclidean/Koopman.lean
   - RieszEuclidean/VagueConvergence.lean
+  - RieszEuclidean/Correlations.lean
+  - RieszEuclidean/SpectralMeasures.lean
+  - RieszEuclidean/IntegratedUnitary.lean
+  - RieszEuclidean/SpectralNorm.lean
 - name: Continuous cutoffs, kernels and averaged forms
   status: planned; not yet formalized
   description: Continuous Fejér kernels and dominated convergence give cutoff projections. A compactly
@@ -218,13 +234,13 @@ techniques:
     the strong cutoff limits and use the invariant constant for strict inclusion. Retain the full ball,
     triangle, unpaired/odd polygon, ellipsoid and general-boundary scope.
 comparator:
-  status: thirteen supporting results verified; full-paper results pending
+  status: fourteen supporting results verified; full-paper results pending
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-stationary-system.txt
-  input_hashes: reviews/comparator-stationary-system-hashes.json
-  verified_scope: Thirteen supporting results, including the initial Fourier construction, normalized bumps with the initial projection gap, and the compact metrizable configuration space with exact Beurling convergence and jointly continuous translations, together with an invariant probability measure constructed from continuous Euclidean box averages, the strongly continuous unitary Koopman representation with invariant unit constant and separable stationary Hilbert space, and equivalence between Beurling and vague counting-measure convergence; no geometric nonexistence theorem.
+  verification_log: reviews/comparator-spectral-norm.txt
+  input_hashes: reviews/comparator-spectral-norm-hashes.json
+  verified_scope: Fourteen supporting results, including the initial Fourier construction, normalized bumps with the initial projection gap, and the compact metrizable configuration space with exact Beurling convergence and jointly continuous translations, together with an invariant probability measure constructed from continuous Euclidean box averages, the strongly continuous unitary Koopman representation with invariant unit constant and separable stationary Hilbert space, equivalence between Beurling and vague counting-measure convergence, and the L¹ integrated spectral norm identity for a supplied representing measure; no general Bochner existence or geometric nonexistence theorem.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
   plan: Generate a compact MainResults.lean with concrete definitions and explicit result statements,
     and a self-contained full solution file; run the official Comparator with only propext, Classical.choice
