@@ -24,7 +24,7 @@ criterion is also a proof obligation.
 
 ## Projection gap
 
-**Implemented:** `ProjectionGap.lean` proves Lemmas 2.1 and 2.2, including
+**Implemented:** `ProjectionGap.lean` proves Lemmas 2.2 and 2.3, including
 bounded invertibility of the range restriction, the converse gap estimate,
 and the impossibility of two strictly included projection ranges both lying
 at distance less than one from a third projection.
@@ -47,6 +47,10 @@ exponential synthesis gives the projection gap. Completeness/surjectivity of
 synthesis is essential here; a Riesz sequence alone is insufficient.
 
 Implemented across the Fourier, bump, synthesis, and initial-gap modules.
+`BumpEquivalence.lean` adds the converse, reconstructing exponential synthesis
+from the range isomorphism and inverse Fourier multiplier. Its equivalence
+includes the lower bound on the closure of the domain. `ProjectionGap.lean` now
+uses the adjoint and closed-range proof and records the exact maximum identity.
 
 ## Section 3: Beurling weak limits
 
@@ -131,7 +135,7 @@ averaged gap. `SphereAnalyticAssembly.lean` isolates the representation hypothes
 `BallEllipsoidTheorems.lean` supplies it from Bochner existence and proves the
 unconditional ball theorem.
 
-## Sections 7 and 8: geometric domains
+## Section 7 and retained affine results
 
 For triangles and an unpaired maximal polygon edge, remove the other edges
 using their zero-length translated overlaps. Prove that all surviving edge
@@ -171,10 +175,27 @@ CI builds and lints the modular, public and standalone sources,
 checks extraction and metadata, audits axioms, and requires the full manifest to
 be discharged with `check_blueprint.py --require-complete`.
 
+## Section 8: convex C² domains
+
+**Implemented:** `HasC2Boundary` uses local regular C² defining functions.
+`ConvexCurvedPatch.lean` constructs a containing-ball contact point and an
+implicit boundary chart. The radial second derivative is negative definite;
+its quantitative bound persists on a neighborhood. Strict concavity and
+convexity yield singleton supporting faces on a relatively open patch.
+The chart-Hessian inequality records curvature in local coordinates.
+
+`ConvexTranslatedOverlap.lean` proves Lemma 8.3. Nonproportional supporting
+derivatives define regular codimension-two levels, which have zero surface
+measure. Positive proportionality is excluded by singleton faces; negative
+proportionality forces a singleton intersection of the closed domains.
+
+`ChartSurfaceMeasure.lean` uses Lipschitz bounds for a chart and its affine
+inverse to obtain a smaller patch of positive finite Hausdorff measure.
+`ConvexDomainTheorem.lean` then applies the general boundary criterion and
+proves the unconditional convex C²-domain corollary.
+
 ## Verification
 
-All 25 nodes are proved. Official Comparator and Lean's default kernel accept the
-37-target reference, and the transitive audit of 931 project declarations reports
-only `propext`, `Classical.choice`, and `Quot.sound`. See the
-[verification record](../reviews/bochner-progress.md) for the exact inputs,
-commands, hashes, and results.
+All 32 nodes are proved. The full-completion gate remains enabled.
+Current verification is recorded in [the review](../reviews/convex-progress.md).
+The earlier 37-target Comparator record is retained as historical evidence.

@@ -84,3 +84,7 @@ Successful completion prints `Lean default kernel accepts the solution` and
 
 Keep tool binaries outside the synchronized tree, or exclude `.local` from
 synchronization when using the build location above.
+
+The revised Section 2 and convex-domain extension use 41 public targets.
+Their current verification record is `reviews/convex-progress.md`, with a
+separate Comparator log and fingerprints so the historical run remains distinct.

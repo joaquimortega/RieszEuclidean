@@ -2,7 +2,9 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath,amssymb,mathtools,microtype}
-\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+\usepackage{needspace}
+\newcommand{\lead}[1]{\par\smallskip\noindent\leavevmode#1\par\smallskip}
+\usepackage[hidelinks]{hyperref}
 \hypersetup{
  pdftitle={There are no Riesz bases of exponentials in balls and triangles},
  pdfauthor={Joaquim Ortega-Cerdà}
@@ -40,33 +42,39 @@ Catalunya through grant 2024 ICREA 00142.}
 \raggedbottom
 
 \begin{abstract}
-We prove that $L^2(\Omega)$, where $\Omega$ is a ball in $\R^n$, $n\geq2$, or a nondegenerate triangle in $\R^2$, admits no Riesz basis of exponentials.
-Using Beurling weak limits of translates of the frequency set, we construct
-a stationary system carrying spectral cutoff projections and comparison
-projections built from smooth bumps. The Riesz basis assumption forces
-the two projections to remain uniformly at operator-norm distance less
-than one. The comparison family is continuous in operator norm, while
-boundary geometry produces two pointwise limits of the spectral cutoffs
-whose ranges are strictly nested. Both limiting projections would then
-lie at distance less than one from the same comparison projection, which
-is impossible.
+We prove that $L^2(\Omega)$ admits no Riesz basis of exponentials when
+$\Omega$ is a ball in $\R^n$, $n\geq2$, or a nondegenerate triangle in $\R^2$.
+The ball result extends to every nonempty bounded convex open set with
+$C^2$ boundary in $\R^n$, $n\geq2$.
+Starting from a hypothetical Riesz basis, we use Beurling weak limits of
+translates of its frequency set to construct a stationary system. On the
+associated Hilbert space, we define spectral cutoff projections and a
+comparison family of orthogonal projections obtained from the synthesis
+operator. The distance between corresponding projections is uniformly
+bounded by a constant strictly smaller than one. The comparison family is
+continuous in operator norm, whereas the boundary geometry of $\Omega$
+produces two strong limits of the cutoff projections with strictly nested
+ranges. Both limiting projections would then be at distance less than one
+from the same comparison projection, which is impossible.
 \end{abstract}
 
 \maketitle
 
-\section{Introduction and main result}
+
+\section{Introduction}
+
 
 Fix an integer $n\geq2$.  Let $\Omega\subset\R^n$ be an open ball and, for $\lambda\in\R^n$, write
 \[
  e_\lambda(x)=e^{2\pi i\lambda\cdot x}.
 \]
-We ask whether there can be a sequence $\Lambda\subset\R^n$ for which
+We ask whether there is a discrete set $\Lambda\subset\R^n$ for which
 $\{e_\lambda\}_{\lambda\in\Lambda}$ is a Riesz basis of $L^2(\Omega)$.  Thus the
 synthesis map
 \[
  (c_\lambda)\longmapsto \sum_{\lambda\in\Lambda}c_\lambda e_\lambda
 \]
-is an isomorphism from $\ell^2(\Lambda)$ onto $L^2(\Omega)$; equivalently, there
+is an isomorphism from $\ell^2(\Lambda)$ onto $L^2(\Omega)$; equivalently, the exponential system is complete and there
 are constants $0<A\leq B<\infty$ such that
 \begin{equation}\label{eq:riesz}
  A\sum_{\lambda\in\Lambda}|c_\lambda|^2
@@ -75,11 +83,10 @@ are constants $0<A\leq B<\infty$ such that
  \leq
  B\sum_{\lambda\in\Lambda}|c_\lambda|^2
 \end{equation}
-for every finitely supported family $(c_\lambda)$, and the exponential system
-is complete.
+for every finitely supported family $(c_\lambda)$.
 
 The existence of an exponential Riesz basis for Euclidean balls is a longstanding
-folklore problem in harmonic analysis.  Bruna, Massaneda and Ortega-Cerdà
+folklore problem in harmonic analysis. The author learned about this problem from Yurii Lyubarskii in the late 90's.  Bruna, Massaneda and Ortega-Cerdà
 \cite[Section~5, p.~350]{BrunaMassanedaOrtegaCerda} explicitly formulated
 the conjecture that balls in dimensions greater than one have no such basis.
 The planar case was still recorded as open in 2025
@@ -91,8 +98,9 @@ The main result is the following.
 For every $n\geq2$, no ball of positive radius in $\R^n$ admits a Riesz basis of exponentials.
 \end{theorem}
 
-An invertible affine change of variables gives the same conclusion for
-all nondegenerate ellipsoids in $\R^n$; see Section~\ref{sec:ellipsoids}.
+The same conclusion holds for every nonempty bounded convex open set
+with $C^2$ boundary in $\R^n$, $n\geq2$; see Corollary~\ref{cor:convex} in
+Section~\ref{sec:convex}.
 The argument also excludes exponential Riesz bases on every nondegenerate
 triangle in $\R^2$ (Theorem~\ref{thm:triangle}).  More generally, Remark~\ref{rem:general-boundary} states a
 boundary-measure criterion under which the same projection obstruction
@@ -120,9 +128,9 @@ for every centrally symmetric convex polygon and, more generally, for
 centrally symmetric convex polytopes whose faces of all dimensions are
 centrally symmetric.
 
-A related construction principle is lattice multi-tiling: the lattice
-translates of a bounded measurable domain cover almost every point the
-same finite number of times.  Grepstad and Lev \cite{GrepstadLev} proved
+A related construction principle is lattice multi-tiling: translates of a
+bounded measurable domain by a lattice cover almost every point of
+$\R^n$ the same finite number of times.  Grepstad and Lev \cite{GrepstadLev} proved
 that such domains admit exponential Riesz bases under a Riemann
 measurability assumption; Kolountzakis \cite{Kolountzakis} gave a simpler
 proof and removed this regularity assumption.  Kozma and Nitzan proved
@@ -149,9 +157,9 @@ when the restriction map
 \[
  F\longmapsto \bigl(F(\lambda)\bigr)_{\lambda\in\Lambda}
 \]
-is an isomorphism from $PW_\Omega$ onto $\ell^2(\Lambda)$.  This map is the adjoint of synthesis under the
-Fourier--Laplace identification.  In other words, the problem is to clarify the existence of complete
-interpolating sequences for a Paley--Wiener space in $n$ variables.
+is an isomorphism from $PW_\Omega$ onto $\ell^2(\Lambda)$.  Under the Fourier--Laplace identification, this restriction map is the
+adjoint of the synthesis operator. Thus the question is whether this
+Paley--Wiener space in $n$ variables has a complete interpolating sequence.
 
 The proof relies on a geometric
 feature of the ball: a nontrivial translate of its boundary meets the original
@@ -159,36 +167,43 @@ boundary in a set of $(n-1)$-dimensional surface measure zero.
 
 The proof has four steps. First, separation of the frequency set allows
 us to replace its points by orthonormal translates of a small smooth bump.
-The common Fourier factor is invertible on the bounded domain, so the
-basis property gives an exact estimate $\|P-Q_\Lambda\|<1$ between two
-orthogonal projections on $L^2(\R^n)$. Second, we take weak limits of real
-translates of $\Lambda$ and construct an invariant probability measure on
-the resulting compact space. This use of weak limits originates in
-Beurling's work on sampling and interpolation \cite{Beurling}; a modern
-account of the topology is given in \cite[Section~4]{GOR}.
-Third, scalar Bochner measures and continuous box averages give spectral
-cutoffs $\Pi_t$ and comparison projections $M_t$ on the stationary space,
-with $\|\Pi_t-M_t\|\leq\gamma<1$ for almost every $t$.
-The averaging estimate is proved by applying the original projection bound
-to compactly supported functions and integrating their scalar inner
-products. Finally, a boundary crossing gives two limiting
-projections with a strict inclusion of their ranges. Norm-continuity of $M_t$ places both at distance at most
-$\gamma$ from $M_{t_0}$, a contradiction.
+The Fourier transform of the bump is bounded away from zero on the domain,
+so the Riesz basis property yields an estimate
+$\|P-Q_\Lambda\|<1$ between two orthogonal projections on $L^2(\R^n)$.
+Second, we take weak limits of translates of $\Lambda$ and construct an
+invariant probability measure on the resulting compact space. This use of
+weak limits originates in Beurling's work on sampling and interpolation
+\cite{Beurling}; a modern account of the topology is given in
+\cite[Section~4]{GOR}. Third, scalar Bochner measures and continuous box
+averages yield spectral cutoffs $\Pi_t$ and comparison projections $M_t$
+on the associated stationary Hilbert space, with
+$\|\Pi_t-M_t\|\leq\gamma<1$ for almost every $t$. We obtain this estimate
+by applying the original projection bound to compactly supported functions
+and averaging the resulting scalar inner products. Finally, crossing the
+boundary produces two strong limits of the cutoff projections with
+strictly nested ranges. Norm continuity of $M_t$ places both limits at
+distance at most $\gamma$ from $M_{t_0}$, giving a contradiction.
 
 Sections~\ref{sec:bumps}--\ref{sec:distance} establish the analytic
 construction for any bounded open domain with boundary of Lebesgue measure
 zero. Section~\ref{sec:sphere} supplies the geometric step for balls,
-and Sections~\ref{sec:triangles} and \ref{sec:ellipsoids} give the other
-applications.
+Section~\ref{sec:triangles} treats triangles, and Section~\ref{sec:convex}
+extends the result to nonempty bounded convex open sets with $C^2$
+boundary.
 
 \subsection*{Acknowledgments}
 The author thanks Joaquim Bruna for extensive discussions on the manuscript.
 
 \subsection*{Use of artificial intelligence}
-A large language model was used for mathematical discussions and assistance
-with the Lean formalization.
+A large language model was used for mathematical discussions and
+assistance with the Lean formalization. The work began with an unsuccessful
+attempt by the author to prove nonexistence of an exponential Riesz basis
+on the disk, following a strategy inspired by
+\cite{MateiMeyerOrtegaCerda}. During these discussions, the model corrected
+the failed approach, leading to a proof based on representation theory.
+The author subsequently simplified that proof into the present form.
 
-The Lean formalization is available at
+The Lean formalization is available at the GitHub repository:
 \href{https://github.com/joaquimortega/RieszEuclidean}{RieszEuclidean}.
 The repository contains the proof blueprint, the Lean sources, a standalone
 proof file, and the verification records. All blueprint obligations are
@@ -197,9 +212,16 @@ Lean's kernel.
 
 \section{From complete interpolation to bump projections}\label{sec:bumps}
 
+\lead{This section converts the Riesz basis assumption into a geometric
+statement about two closed subspaces of $L^2(\R^n)$. Disjoint smooth bumps
+model the coefficient space, and their projections onto the Fourier
+subspace reproduce the original synthesis operator up to an invertible
+multiplier.}
+
+
 Throughout Sections~\ref{sec:bumps}--\ref{sec:distance}, $\Omega$ is a
 bounded open subset of $\R^n$ of positive measure. Inner products are
-linear in the first variable. We use the unitary Fourier transform
+linear in the first variable. We use the Fourier transform with the convention
 \[
  (\Ff a)(x)=\int_{\R^n}a(\xi)e^{2\pi i\xi\cdot x}\,d\xi,
 \]
@@ -208,17 +230,103 @@ initially defined on $L^1\cap L^2$, and set
  P=\Ff^{-1}M_{\one_\Omega}\Ff,\qquad
  p(y)=\int_\Omega e^{-2\pi iy\cdot x}\,dx.
 \end{equation}
-Thus $P$ is an orthogonal projection on $L^2(\R^n)$ and commutes with
-translations. For compactly supported $a\in L^2$, Fourier inversion and
-Fubini give $(Pa)(v)=\int p(v-w)a(w)\,dw$ almost everywhere.
-Indeed $a\in L^1$, $\Omega$ has finite measure and $p$ is bounded, so this
-formula follows directly by interchanging the integrals defining $P$.
+Thus $P$ is an orthogonal projection on $L^2(\R^n)$ that commutes with
+translations. For compactly supported $a\in L^2(\R^n)$, Fourier inversion
+and Fubini's theorem give
+$(Pa)(v)=\int_{\R^n}p(v-w)a(w)\,dw$ almost everywhere.
+
+
+\subsection{Separated frequencies and an exact bump representation}
+
+\lead{The lower Riesz bound first separates the frequencies. We then choose
+one sufficiently small bump so that its translates by the given frequencies are orthonormal and its
+Fourier transform has no zeros on $\overline\Omega$. This gives an equivalence between the Riesz basis property and a
+distance bound for projections, using the elementary criterion proved
+in Lemma~\ref{lem:projection-distance} below.}
+
+
+\begin{lemma}\label{lem:bumps}
+The system $\{e_\lambda:\lambda\in\Lambda\}$ is a Riesz basis of
+$L^2(\Omega)$ if and only if there are $\delta,r>0$, a real nonnegative
+$b\in C_c^\infty(\R^n)$ and $0\leq\gamma<1$ such that $\Lambda$ is
+$\delta$-separated,
+\begin{equation}\label{eq:bump}
+ \|b\|_2=1,\quad \supp b\subset B(0,r),\quad 2r<\delta,
+ \quad \inf_{x\in\overline\Omega}|\Ff b(x)|>0,
+\end{equation}
+and the orthogonal projection $Q_\Lambda$ onto the closed span of
+$\{b(\cdot-\lambda):\lambda\in\Lambda\}$ satisfies
+\begin{equation}\label{eq:initial-distance-bound}
+ \|P-Q_\Lambda\|\leq\gamma<1.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Suppose first that the system is a Riesz basis. Apply the lower Riesz bound to coefficients $1$ and $-1$ at distinct
+frequencies. Since $|e^{iu}-e^{iv}|\leq|u-v|$,
+\[
+ 2A\leq\|e_\lambda-e_\eta\|_{L^2(\Omega)}^2
+ \leq4\pi^2|\lambda-\eta|^2\int_\Omega|x|^2\,dx.
+\]
+The integral is finite and positive. This gives a positive separation
+constant $\delta$. Comparing the volumes of disjoint balls of radius
+$\delta/2$ also gives a uniform bound on the number of frequencies in any
+ball of fixed radius.
+
+Choose a real nonnegative smooth compactly supported $b_0$ with
+$\|b_0\|_2=1$. For small $\varepsilon>0$ put
+$b(\xi)=\varepsilon^{-n/2}b_0(\xi/\varepsilon)$. Its support can be made arbitrarily small, and
+\[
+ (\Ff b)(x)=\varepsilon^{n/2}(\Ff b_0)(\varepsilon x).
+\]
+Since $(\Ff b_0)(0)>0$ and $\overline\Omega$ is compact, this proves
+\eqref{eq:bump} for a sufficiently small fixed $\varepsilon$.
+
+For either direction, the conditions on $b$ and $\Lambda$ imply that the
+translates $b_\lambda=b(\cdot-\lambda)$ have disjoint supports and
+norm one. Consequently
+\[
+ W_\Lambda:\ell^2(\Lambda)\longrightarrow\Ran Q_\Lambda,
+ \qquad W_\Lambda c=\sum_{\lambda\in\Lambda}c_\lambda b_\lambda,
+\]
+is unitary. For finitely supported $c$,
+\begin{equation}\label{eq:bump-synthesis}
+ \Ff(PW_\Lambda c)
+ =\one_\Omega(\Ff b)\sum_{\lambda\in\Lambda}c_\lambda e_\lambda.
+\end{equation}
+Multiplication by $\Ff b$ is an isomorphism of $L^2(\Omega)$.
+If the exponential system is a Riesz basis, its synthesis operator is
+also an isomorphism onto $L^2(\Omega)$. Thus \eqref{eq:bump-synthesis}
+extends to $\ell^2(\Lambda)$ and shows that
+$P:\Ran Q_\Lambda\to\Ran P$ is an isomorphism.
+Lemma~\ref{lem:projection-distance} below gives
+\eqref{eq:initial-distance-bound}.
+
+Conversely, suppose the stated separation, bump and distance conditions
+hold. The same lemma shows that
+$P:\Ran Q_\Lambda\to\Ran P$ is an isomorphism. Hence
+\[
+ c\longmapsto (\Ff b)^{-1}\Ff(PW_\Lambda c)|_\Omega
+\]
+is a bounded isomorphism from $\ell^2(\Lambda)$ onto $L^2(\Omega)$.
+By \eqref{eq:bump-synthesis}, it agrees with exponential synthesis on
+finitely supported sequences. The exponential system is therefore a
+Riesz basis.
+\end{proof}
 
 \subsection{Distance between orthogonal projections}
 
-For orthogonal projections $P$ and $Q$ on the same Hilbert space,
-their operator-norm distance is $\|P-Q\|$.  We use this distance throughout.
+\lead{We need two elementary facts about orthogonal projections. A distance
+strictly smaller than one is equivalent to invertibility of the projection
+between the ranges; consequently, two strictly nested ranges cannot both
+be this close to the range of a third projection.}
 
+
+For orthogonal projections $P$ and $Q$ on the same Hilbert space, we use
+the operator-norm distance $\|P-Q\|$.
+
+
+\Needspace{8\baselineskip}
 \begin{lemma}\label{lem:projection-distance}
 Let $P$ and $Q$ be orthogonal projections on a Hilbert space.  The map
 \[
@@ -231,58 +339,47 @@ is a bounded isomorphism if and only if
 \end{lemma}
 
 \begin{proof}
-Assume first that $\|P-Q\|=\gamma<1$.  If $u\in\Ran Q$, then
+Set $A=P|_{\Ran Q}:\Ran Q\to\Ran P$. Its adjoint is
+$A^*=Q|_{\Ran P}$. We first record the identity
 \[
- \|(I-P)u\|=\|(Q-P)u\|\leq\gamma\|u\|,
+ \|P-Q\|
+ =\max\{\|(I-P)Q\|,\|(I-Q)P\|\}.
 \]
-and therefore
+Indeed, for every $x$,
 \[
- \|Pu\|^2
- =\|u\|^2-\|(I-P)u\|^2
- \geq(1-\gamma^2)\|u\|^2.
+ (P-Q)x=P(I-Q)x-(I-P)Qx.
 \]
-This gives injectivity and a lower bound.  To obtain surjectivity, put
-$A=P|_{\Ran Q}$ and $B=Q|_{\Ran P}$.  On the closed
-subspace $\Ran P$,
-\[
- I-AB=P(P-Q).
-\]
-Thus $\|I-AB\|\leq\gamma<1$, so the Neumann series makes $AB$ invertible.
-It follows that $A$ is onto, and the lower bound makes its inverse bounded.
+The two terms on the right are orthogonal, as are $(I-Q)x$ and $Qx$.
+Since $\|P(I-Q)\|=\|(I-Q)P\|$, Pythagoras gives the upper bound in
+the identity. The reverse bound follows by multiplying $P-Q$ on the left
+by $I-P$ and $I-Q$.
 
-Conversely, suppose $A=P|_{\Ran Q}$ is an isomorphism.  Set
-$K=1+\|A^{-1}\|$ and $c=K^{-1}$, so $0<c\leq1$, including when both
-ranges are zero.  For $u\in\Ran Q$ we have $\|Au\|\geq c\|u\|$.
-For $y\in\Ran P$, take $u=A^{-1}y$.  Orthogonality gives
+
+Suppose first that $\|P-Q\|=\gamma<1$. For $u\in\Ran Q$ and
+$y\in\Ran P$, Pythagoras gives
 \[
- \|y\|^2=\langle u,y\rangle=|\langle u,Qy\rangle|
- \leq \|u\|\,\|Qy\|\leq K\|y\|\,\|Qy\|.
-\]
-For $y\neq0$ we may cancel $\|y\|$; for $y=0$ the conclusion is
-immediate.  Hence $\|Qy\|\geq c\|y\|$.  Pythagoras now gives
-\[
- \|(I-P)Q\|\leq\sqrt{1-c^2}<1,
+ \|Au\|^2\geq(1-\gamma^2)\|u\|^2,
  \qquad
- \|(I-Q)P\|\leq\sqrt{1-c^2}<1.
+ \|A^*y\|^2\geq(1-\gamma^2)\|y\|^2.
 \]
-For every $x$,
+Thus $A$ is injective with closed range, while
+$(\Ran A)^\perp=\ker A^*=\{0\}$ makes its range dense in $\Ran P$.
+Hence $A$ is onto and has a bounded inverse.
+
+Conversely, suppose $A$ is an isomorphism. If both ranges are zero, the
+conclusion is immediate. Otherwise, put
+$c=\|A^{-1}\|^{-1}\in(0,1]$. Since
+$(A^*)^{-1}=(A^{-1})^*$, both $A$ and $A^*$ are bounded below by $c$.
+Pythagoras therefore yields
 \[
- (P-Q)x=P(I-Q)x-(I-P)Qx,
+ \|(I-P)Q\|\leq\sqrt{1-c^2},
+ \qquad
+ \|(I-Q)P\|\leq\sqrt{1-c^2}.
 \]
-and the two terms on the right are orthogonal.  Since $(I-Q)x$ and $Qx$
-are also orthogonal,
-\[
- \|(P-Q)x\|^2
- \leq
- \max\!\left\{
- \|P(I-Q)\|^2,\|(I-P)Q\|^2
- \right\}\|x\|^2.
-\]
-Now $\|P(I-Q)\|=\|(I-Q)P\|$, and both numbers are strictly smaller than
-one.  This proves \eqref{eq:projection-distance}.
+The identity above gives $\|P-Q\|\leq\sqrt{1-c^2}<1$.
 \end{proof}
 
-We shall also use the following immediate consequence.
+The following consequence will give the final contradiction.
 
 \begin{lemma}\label{lem:inclusion}
 Let $R_-$ and $R_+$ be orthogonal projections with
@@ -305,74 +402,28 @@ $0\neq w-u\in\Ran R_+$ and $M(w-u)=0$, contradicting injectivity on
 $\Ran R_+$.
 \end{proof}
 
-\subsection{Separated frequencies and an exact bump representation}
-
-\begin{lemma}\label{lem:bumps}
-Suppose that $\{e_\lambda:\lambda\in\Lambda\}$ is a Riesz basis of
-$L^2(\Omega)$. There are $\delta,r>0$, a real nonnegative
-$b\in C_c^\infty(\R^n)$ and $\gamma<1$ such that $\Lambda$ is
-$\delta$-separated,
-\begin{equation}\label{eq:bump}
- \|b\|_2=1,\quad \supp b\subset B(0,r),\quad 2r<\delta,
- \quad \inf_{x\in\overline\Omega}|\Ff b(x)|>0,
-\end{equation}
-and the orthogonal projection $Q_\Lambda$ onto the closed span of
-$\{b(\cdot-\lambda):\lambda\in\Lambda\}$ satisfies
-\begin{equation}\label{eq:initial-distance-bound}
- \|P-Q_\Lambda\|\leq\gamma<1.
-\end{equation}
-\end{lemma}
-
-\begin{proof}
-Apply the lower Riesz bound to coefficients $1$ and $-1$ at distinct
-frequencies. Since $|e^{iu}-e^{iv}|\leq|u-v|$,
-\[
- 2A\leq\|e_\lambda-e_\eta\|_{L^2(\Omega)}^2
- \leq4\pi^2|\lambda-\eta|^2\int_\Omega|x|^2\,dx.
-\]
-The integral is finite and positive. This gives a positive separation
-constant $\delta$ and, by disjoint balls of radius $\delta/2$, a uniform
-bound on the number of frequencies in any ball of fixed radius.
-
-Choose a real nonnegative smooth compactly supported $b_0$ with
-$\|b_0\|_2=1$. For small $\varepsilon>0$ put
-$b(\xi)=\varepsilon^{-n/2}b_0(\xi/\varepsilon)$. Its support is as small
-as required and
-\[
- (\Ff b)(x)=\varepsilon^{n/2}(\Ff b_0)(\varepsilon x).
-\]
-Since $(\Ff b_0)(0)>0$ and $\overline\Omega$ is compact, this proves
-\eqref{eq:bump} for a sufficiently small fixed $\varepsilon$.
-
-The translates $b_\lambda=b(\cdot-\lambda)$ have disjoint supports and
-norm one. Consequently
-\[
- W_\Lambda:\ell^2(\Lambda)\longrightarrow\Ran Q_\Lambda,
- \qquad W_\Lambda c=\sum_{\lambda\in\Lambda}c_\lambda b_\lambda,
-\]
-is unitary. For finitely supported $c$,
-\begin{equation}\label{eq:bump-synthesis}
- \Ff(PW_\Lambda c)
- =\one_\Omega(\Ff b)\sum_{\lambda\in\Lambda}c_\lambda e_\lambda.
-\end{equation}
-Both sides extend continuously to $\ell^2(\Lambda)$. On the right,
-synthesis is an isomorphism onto $L^2(\Omega)$ and multiplication by
-$\Ff b$ is an isomorphism of that space. Hence
-$P:\Ran Q_\Lambda\to\Ran P$ is an isomorphism.
-Lemma~\ref{lem:projection-distance} gives \eqref{eq:initial-distance-bound}.
-\end{proof}
-
-Fix $b,\delta,r$ and $\gamma$ from this lemma. For every $\delta$-separated
+Fix $b,\delta,r$ and $\gamma$ from Lemma~\ref{lem:bumps}. For every $\delta$-separated
 set $\Gamma$, let $Q_\Gamma$ be the orthogonal projection onto the closed
 span of the corresponding bumps. Explicitly,
 \begin{equation}\label{eq:Q}
  Q_\Gamma a=\sum_{\lambda\in\Gamma}\langle a,b_\lambda\rangle b_\lambda.
 \end{equation}
-The bumps represent the original synthesis map exactly.
 
 \section{Beurling weak limits and a stationary system}\label{sec:weak}
 
+\lead{We enlarge the original frequency set to the compact space of all
+its translation limits. The projection estimate persists throughout this
+space. Averaging translates then provides an invariant probability measure
+and a Hilbert space with a nonzero translation-invariant vector.}
+
+
 \subsection{Weak convergence of separated sets}
+
+\lead{Uniform separation prevents points from colliding in a limit. It
+also makes local convergence of configurations equivalent to vague
+convergence of their counting measures, which provides a convenient route
+to compactness.}
+
 
 We use Beurling's notion of weak convergence of point sets
 \cite{Beurling}. For a modern treatment see \cite[Section~4]{GOR}.
@@ -382,11 +433,12 @@ for every $R,\varepsilon>0$, eventually
  \Gamma_j\cap B(0,R)\subset\Gamma+B(0,\varepsilon),\qquad
  \Gamma\cap B(0,R)\subset\Gamma_j+B(0,\varepsilon).
 \end{equation}
-For sets with a common positive separation constant, this is equivalent
+For sequences with a common positive separation constant, this is equivalent
 to vague convergence of their counting measures
 $\eta_\Gamma=\sum_{\lambda\in\Gamma}\delta_\lambda$.
-To see this, weak convergence matches the finitely many points on each
-compact region, and continuous compactly supported test functions give
+To see this, work in bounded regions whose boundaries contain no points
+of the limit set. Weak convergence matches the finitely many points in
+each such region, so continuous compactly supported test functions give
 vague convergence. Conversely, testing on small disjoint balls around
 limit points forces the matching points to exist. A sequence of unmatched
 points in a fixed compact set would have a convergent subsequence and
@@ -397,41 +449,75 @@ point.
 \begin{lemma}\label{lem:hull}
 The space of $\delta$-separated subsets of $\R^n$, including the empty
 set, is compact and metrizable in the topology \eqref{eq:weak-sets}.
-Translations act jointly continuously (in the translation and in the subset) on this space.
+The translation action is jointly continuous in the translation parameter
+and the configuration.
 \end{lemma}
 
 \begin{proof}
 The separation bound gives a uniform bound on the mass of the counting
 measures on each compact set. A diagonal extraction against a countable
 dense collection of continuous compactly supported functions gives a
-vaguely convergent subsequence from any sequence of these measures.
-Its limit is again the counting measure of a $\delta$-separated set:
-on a ball of diameter less than $\delta$ there is at most one point,
-and a point either converges along a subsequence or leaves each compact
-subset. Applying this observation on a countable cover identifies the
-limit and rules out both fractional masses and multiplicities.
+vaguely convergent subsequence, with a locally finite positive limit
+measure $\eta$.
+
+
+We verify that $\eta$ is again a counting measure. If
+$x\in\supp\eta$, choose arbitrarily small balls $B(x,\varepsilon)$ of
+diameter less than $\delta$ whose boundaries have $\eta$-measure zero.
+Vague convergence gives
+\[
+ \eta_{\Gamma_j}(B(x,\varepsilon))
+ \longrightarrow\eta(B(x,\varepsilon)).
+\]
+The left-hand side takes values in $\{0,1\}$, while the limit is positive
+because $x\in\supp\eta$. Hence every such ball has mass one. Letting
+$\varepsilon\downarrow0$ gives $\eta(\{x\})=1$. Thus $\eta$ is the
+counting measure of its support. Two distinct support points at distance
+less than $\delta$ would, for large $j$, force two points of $\Gamma_j$
+to be less than $\delta$ apart. The support is therefore
+$\delta$-separated; the zero measure corresponds to the empty set.
+
+
 The same countable test functions metrize vague convergence on this
-uniformly locally bounded family. Sequential compactness thus implies
-compactness. If $\Gamma_j\to\Gamma$ and $y_j\to y$, the local matching
-criterion immediately gives $\Gamma_j-y_j\to\Gamma-y$.
+uniformly locally bounded family. Sequential compactness therefore gives
+compactness. Finally, if $\Gamma_j\to\Gamma$ and $y_j\to y$, the local
+matching criterion gives $\Gamma_j-y_j\to\Gamma-y$.
 \end{proof}
 
-Let
+Define the translation hull
 \[
  X=\overline{\{\Lambda-y:y\in\R^n\}},\qquad T_y\Gamma=\Gamma-y.
 \]
 This is a compact metrizable translation-invariant space. Its elements
 are precisely the weak limits of sequences of translates of $\Lambda$.
 
-\subsection{The projection estimate survives weak limits}
+\subsection{Passing the projection estimate to weak limits}
 
-We call a sequence of operators $A_j$ pointwise convergent to $A$ if
+\lead{Only finitely many bumps act on a compactly supported test function,
+so local convergence of the centers gives strong convergence of the bump
+projections. We also record a basic fact about strong limits that will
+avoid repeating the same argument in the later constructions.}
+
+
+A sequence of operators $A_j$ converges \emph{strongly} to $A$ if
 $\|A_jf-Af\|\to0$ for every fixed vector $f$. We use the same
-convention for operator families depending on a real parameter.
+terminology for operator families depending on a real parameter.
+Strong convergence is preserved under products of uniformly bounded
+families: if $A_j\to A$ and $B_j\to B$ strongly, then
+\begin{equation}\label{eq:strong-products}
+ \|(A_jB_j-AB)f\|
+ \leq\|A_j\|\,\|(B_j-B)f\|+\|(A_j-A)Bf\|
+ \longrightarrow0.
+\end{equation}
+Self-adjointness passes to strong limits through inner products.
+Consequently, a strong limit of orthogonal projections is an orthogonal
+projection: the projections are uniformly bounded, and
+\eqref{eq:strong-products} preserves idempotence.
+
 
 \begin{lemma}\label{lem:strong-Q}
 If $\Gamma_j\to\Gamma$ in $X$, then $Q_{\Gamma_j}\to Q_\Gamma$
-pointwise on $L^2(\R^n)$. In particular,
+strongly on $L^2(\R^n)$. In particular,
 \begin{equation}\label{eq:hull-distance-bound}
  \|P-Q_\Gamma\|\leq\gamma\qquad(\Gamma\in X).
 \end{equation}
@@ -447,12 +533,12 @@ matched centers converging. Only centers in this ball can contribute
 to \eqref{eq:Q}. Translations of $b$ are continuous in $L^2$, so each
 term of this finite sum converges in $L^2$. Thus
 $Q_{\Gamma_j}a\to Q_\Gamma a$. Compactly supported functions are dense,
-and all these projections have norm at most one, proving pointwise
+and all these projections have norm at most one, proving strong
 convergence.
 
 Conjugating by translations preserves $P$ and sends $Q_\Lambda$ to
 the projection for the translated set. Thus every translate satisfies
-\eqref{eq:initial-distance-bound}. Taking a pointwise limit and testing
+\eqref{eq:initial-distance-bound}. Taking a strong limit and testing
 on an arbitrary vector gives \eqref{eq:hull-distance-bound}.
 \end{proof}
 
@@ -460,16 +546,23 @@ Since $P$ is nonzero, the empty set cannot belong to $X$: its projection
 is zero and would have distance one from $P$. By
 Lemma~\ref{lem:projection-distance} and \eqref{eq:bump-synthesis}, each
 configuration in $X$ is again the frequency set of an exponential
-Riesz basis. Only the uniform projection estimate will be needed below.
+Riesz basis for $L^2(\Omega)$. Only the uniform projection estimate will be needed below.
 
 \subsection{Translation averaging}
 
+\lead{Averaging the orbit over expanding boxes produces an invariant
+probability measure. The associated translation operators are strongly
+continuous, and the constant function has norm one. This invariant vector
+will detect the spectral jump at the boundary.}
+
+
 Put $C_R=[-R,R]^n$ and define a probability measure on $X$ by
 \[
- \mu_R=\frac1{|C_R|}\int_{C_R}\delta_{T_v\Lambda}\,dv.
+ \mu_R=\frac{1}{|C_R|}\int_{C_R}\delta_{T_v\Lambda}\,dv.
 \]
 Compactness gives a weakly convergent subsequence as $R\to\infty$;
-write $\mu$ for its limit (we don't claim it is unique). For $F\in C(X)$ and fixed $y$,
+write $\mu$ for one such limit. No uniqueness is needed. For
+$F\in C(X)$ and fixed $y$,
 \[
  \left|\int F\circ T_y\,d\mu_R-\int F\,d\mu_R\right|
  \leq\|F\|_\infty\frac{|(C_R+y)\mathbin\triangle C_R|}{|C_R|}
@@ -480,20 +573,35 @@ Let
 \begin{equation}\label{eq:U}
  \Hh=L^2(X,\mu),\qquad (U_yf)(\Gamma)=f(\Gamma+y).
 \end{equation}
-These operators form a unitary representation of $\R^n$. Joint continuity
-of the action on the compact space $X$ makes it pointwise continuous on
-$C(X)$, and density extends this conclusion to $\Hh$. This Hilbert space
-is separable. The constant function $\one$ has norm one and is fixed by
-all the $U_y$.
+Thus $U_yf=f\circ T_{-y}$, and the operators $U_y$ form a unitary
+representation of $\R^n$. Joint continuity of the action on the compact
+space $X$ makes $y\mapsto U_yf$ continuous in the uniform norm for
+$f\in C(X)$. Density of $C(X)$ in $\Hh$, together with unitarity,
+extends strong continuity to every $f\in\Hh$. The Hilbert space $\Hh$
+is separable because $X$ is compact and metrizable. The constant function
+$\one$ has norm one and is fixed by every $U_y$.
 
 \section{Bochner measures and stationary Fourier projections}\label{sec:bochner}
 
-We construct projections on $\Hh$ that retain the stationary frequencies
-$\theta$ for which $t+\theta\in\Omega$. From now on assume in addition
-that $|\partial\Omega|=0$. The spectral variables, like the translation
-parameters, belong to $\R^n$.
+\lead{We now construct the stationary analogue of the Fourier projection
+$P$. Scalar Bochner measures describe the frequencies of each vector, and
+Fej\'er averages approximate the indicator of $\Omega$. A single control
+measure makes the exceptional set of translation parameters independent
+of the vector.}
+
+
+From now on, assume in addition that $|\partial\Omega|=0$. We seek
+projections on $\Hh$ that retain the stationary frequencies $\theta$
+for which $t+\theta\in\Omega$. Both the parameter $t$ and the spectral
+variable $\theta$ belong to $\R^n$.
 
 \subsection{Scalar Fourier measures}
+
+\lead{Bochner's theorem associates a positive measure to the correlation
+function of each vector. The resulting norm identity turns convolution
+kernels into spectral multipliers; it is all the Fourier calculus needed
+below.}
+
 
 For $f\in\Hh$, the continuous function
 $y\mapsto\langle U_yf,f\rangle$ is positive definite. Bochner's theorem
@@ -513,16 +621,18 @@ Since $U_y\one=\one$, uniqueness also gives
 \begin{equation}\label{eq:constant-spectrum}
  \sigma_{\one}=\delta_0.
 \end{equation}
-The zero-frequency mass will ensure that the boundary crossing changes
-the projection nontrivially.
+This atom at zero will ensure that the boundary crossing produces a
+nonzero change in the projection.
 
 For $a\in L^1(\R^n)$ define
 \[
  T_af=\int_{\R^n}a(y)U_yf\,dy,\qquad
  \phi_a(\theta)=\int_{\R^n}a(y)e^{2\pi iy\cdot\theta}\,dy.
 \]
-The first integral is an $\Hh$-valued integral for each $f$, bounded in
-norm by $\|a\|_1\|f\|$. Expanding its squared norm and using
+We call $a$ the \emph{kernel} of $T_a$ in translation coordinates and
+$\phi_a$ its \emph{symbol} in frequency coordinates. The integral defining
+$T_af$ is a Bochner integral in $\Hh$, with norm at most
+$\|a\|_1\|f\|$. Expanding its squared norm and using
 \eqref{eq:bochner} gives
 \begin{align*}
  \|T_af\|^2
@@ -531,7 +641,7 @@ norm by $\|a\|_1\|f\|$. Expanding its squared norm and using
  &=\int_{\R^n}|\phi_a(\theta)|^2\,d\sigma_f(\theta).
 \end{align*}
 Fubini applies because $a\in L^1$ and $\sigma_f$ is finite.
-The group law and invariance give, for $a,c\in L^1$,
+The group law and unitarity give, for $a,c\in L^1(\R^n)$,
 \begin{equation}\label{eq:multiplier-norm}
  \|T_af\|^2=\int|\phi_a|^2\,d\sigma_f,\qquad
  T_aT_c=T_{a*c},\qquad T_a^*=T_{a^*},
@@ -544,26 +654,38 @@ norm identity. These facts provide the scalar calculus used below.
 
 \subsection{One measure to control all exceptional sets}
 
+\lead{Different vectors may have different spectral measures. A weighted
+sum over a countable dense set gives one measure whose null sets are null
+for every vector, allowing us to choose the later boundary point only
+once.}
+
+
 Choose a dense sequence $(h_j)_{j\geq1}$ in the unit sphere of $\Hh$
 and set
 \begin{equation}\label{eq:control}
  \sigma=\sum_{j=1}^\infty2^{-j}\sigma_{h_j}.
 \end{equation}
-This is a finite positive measure of mass one. Moreover,
+This is a positive measure of mass one. For every Borel set $E$,
 \begin{equation}\label{eq:control-null}
  \sigma(E)=0\quad\Longrightarrow\quad
  \sigma_f(E)=0\quad(f\in\Hh).
 \end{equation}
-Indeed approximate $f$ by scalar multiples $g$ of the $h_j$.
-Then $\sigma_g(E)=0$ and \eqref{eq:spectral-parallelogram} gives
+Indeed, approximate $f$ by scalar multiples $g$ of the $h_j$.
+Then $\sigma_g(E)=0$ and \eqref{eq:spectral-parallelogram}, applied to $f-g$ and $g$, gives
 \[
  \sigma_f(E)\leq2\sigma_{f-g}(E)+2\sigma_g(E)
  \leq2\|f-g\|^2\longrightarrow0.
 \]
-This control measure allows a single choice of boundary point to work
-simultaneously for all vectors.
+Thus a single null-set condition applies simultaneously to all vectors
+in $\Hh$.
 
 \subsection{Continuous Fej\'er filters}
+
+\lead{The overlap of a box with its translates generates a nonnegative
+approximate identity. Its compactly supported inverse Fourier kernel
+serves two purposes: it defines bounded stationary multipliers here and
+reappears in the spatial averages of the next section.}
+
 
 The normalized overlap of the boxes $C_R=[-R,R]^n$ is
 \begin{equation}\label{eq:fejer-weights}
@@ -572,13 +694,13 @@ The normalized overlap of the boxes $C_R=[-R,R]^n$ is
 \end{equation}
 Put
 \[
- K_R(x)=\frac1{|C_R|}\left|\int_{C_R}e^{2\pi iv\cdot x}\,dv\right|^2,
+ K_R(x)=\frac{1}{|C_R|}\left|\int_{C_R}e^{2\pi iv\cdot x}\,dv\right|^2,
  \qquad m_R=K_R*\one_\Omega.
 \]
 Plancherel gives $K_R\geq0$ and $\int K_R=1$. The scaling identity
 $K_R(x)=R^nK_1(Rx)$ shows that for each $\varepsilon>0$,
-$\int_{|x|>\varepsilon}K_R(x)\,dx\to0$. Thus $K_R$ is an approximate
-identity. Since $\one_\Omega$ is locally constant away from its boundary,
+$\int_{|x|>\varepsilon}K_R(x)\,dx\to0$. Thus $(K_R)_{R>0}$ is an approximate
+identity as $R\to\infty$. Since $\one_\Omega$ is locally constant away from its boundary,
 \begin{equation}\label{eq:fejer-convergence}
  0\leq m_R\leq1,\qquad
  m_R(x)\longrightarrow\one_\Omega(x)\quad(x\notin\partial\Omega).
@@ -602,13 +724,19 @@ $\Pi_{t,R}$ is a self-adjoint contraction.
 
 \subsection{Constructing the cutoff projections}
 
+\lead{For almost every translation parameter, the translated boundary
+has zero control measure. At these parameters, the approximate symbols
+converge in every relevant $L^2$ space, producing orthogonal projections
+and an exact formula for their differences.}
+
+
 \begin{proposition}\label{prop:cutoffs}
 The set
 \begin{equation}\label{eq:good-t}
  \mathcal G=\{t\in\R^n:\sigma(\partial\Omega-t)=0\}
 \end{equation}
 is measurable and has full Lebesgue measure. For every $t\in\mathcal G$,
-$\Pi_{t,R}$ converges pointwise as $R\to\infty$ to an orthogonal
+$\Pi_{t,R}$ converges strongly as $R\to\infty$ to an orthogonal
 projection $\Pi_t$. For $s,t\in\mathcal G$ and $f\in\Hh$,
 \begin{align}
  \|\Pi_tf\|^2
@@ -624,7 +752,7 @@ projection $\Pi_t$. For $s,t\in\mathcal G$ and $f\in\Hh$,
 \begin{proof}
 The function $(t,\theta)\mapsto\one_{\partial\Omega}(t+\theta)$ is
 Borel measurable, so its integral against $\sigma$ is measurable.
-Tonelli and the boundary-null assumption give
+Tonelli's theorem and the assumption $|\partial\Omega|=0$ give
 \begin{equation}\label{eq:good-ae}
  \int_{\R^n}\sigma(\partial\Omega-t)\,dt
  =\int_{\R^n}|\partial\Omega-\theta|\,d\sigma(\theta)=0.
@@ -644,14 +772,9 @@ makes $\Pi_t$ a bounded linear contraction. Similarly,
  =\int|m_R(t+\theta)^2-m_R(t+\theta)|^2\,d\sigma_f(\theta)
  \longrightarrow0.
 \]
-Products pass to the pointwise limit for uniformly bounded operators:
-\[
- \|\Pi_{t,R}^2f-\Pi_t^2f\|
- \leq\|\Pi_{t,R}\|\,\|\Pi_{t,R}f-\Pi_tf\|
-       +\|(\Pi_{t,R}-\Pi_t)\Pi_tf\|\longrightarrow0.
-\]
-Thus $\Pi_t^2=\Pi_t$. Self-adjointness passes through inner products,
-so $\Pi_t$ is orthogonal. Passing to limits in the norm identities for
+By \eqref{eq:strong-products}, $\Pi_{t,R}^2\to\Pi_t^2$ strongly,
+so the preceding limit implies $\Pi_t^2=\Pi_t$. Self-adjointness passes
+through inner products, so $\Pi_t$ is orthogonal. Passing to limits in the norm identities for
 $\Pi_{t,R}$ and $\Pi_{t,R}-\Pi_{s,R}$ proves the asserted formulas.
 \end{proof}
 
@@ -659,16 +782,25 @@ We call $\theta\mapsto\one_\Omega(t+\theta)$ the cutoff symbol of
 $\Pi_t$. Here $t$ is a parameter and $\theta$ is a frequency of the
 stationary translation action. Formula~\eqref{eq:Pi-norm} says that
 $\|\Pi_tf\|^2$ is the spectral mass of $f$ in $\Omega-t$.
-Formula~\eqref{eq:Pi-difference} will construct the two boundary limits.
+Formula~\eqref{eq:Pi-difference} will allow us to construct the two
+boundary limits.
 
 \section{Preserving the distance bound}\label{sec:distance}
 
-We transfer \eqref{eq:hull-distance-bound} to $\Hh$ by averaging scalar
-inner products of compactly supported functions on $\R^n$. The comparison
-operator is now a family $M_t$. We first prove that its members are
-orthogonal projections and that this family is continuous in operator norm.
+\lead{We transfer the original distance estimate to the stationary Hilbert
+space without losing its constant. First we construct a norm-continuous
+family of comparison projections $M_t$. We then insert stationary vectors
+into compactly supported functions on $\R^n$ and average their scalar
+inner products.}
+
 
 \subsection{The covariant bump kernel}
+
+\lead{The bump projection has a continuous kernel that vanishes when its
+two spatial arguments are sufficiently far apart. Covariance turns this
+kernel into operators on $\Hh$; its projection identity and bounded
+support give idempotence and norm continuity, respectively.}
+
 
 The projection $Q_\Gamma$ has the continuous kernel
 \begin{equation}\label{eq:q-kernel}
@@ -680,8 +812,8 @@ For fixed $v$ at most one summand is nonzero. Thus, uniformly in $\Gamma$,
  |q_\Gamma(v,w)|\leq\|b\|_\infty^2,\qquad
  q_\Gamma(v,w)=0\quad\text{if }|v-w|>2r.
 \end{equation}
-Local finiteness, weak convergence and continuity of $b$ imply joint
-continuity in $(\Gamma,v,w)$. The kernel satisfies
+Local finiteness, weak convergence of the configurations, and continuity
+of $b$ imply joint continuity in $(\Gamma,v,w)$. The kernel satisfies
 \begin{align}
  q_{\Gamma+y}(v,w)&=q_\Gamma(v-y,w-y),\label{eq:q-covariance}\\
  q_\Gamma(w,v)&=\overline{q_\Gamma(v,w)},\label{eq:q-hermitian}\\
@@ -689,7 +821,7 @@ continuity in $(\Gamma,v,w)$. The kernel satisfies
  \label{eq:q-projection}
 \end{align}
 The last identity follows by expanding the locally finite sums and using
-orthonormality of the bumps. Compact support makes the integrals absolute.
+orthonormality of the bumps. The integrals are absolutely convergent because $b$ has compact support.
 
 Set $k_y(\Gamma)=q_\Gamma(0,-y)$, and write $B_y$ for multiplication by
 $k_y$ on $\Hh$. The map $y\mapsto k_y$ is continuous with values in
@@ -712,7 +844,7 @@ in operator norm:
 \end{proposition}
 
 \begin{proof}
-For bounded $f,g$, invariance of $\mu$ and the substitution
+For bounded $f,g$, invariance of $\mu$ and the change of variables
 $\Gamma'=\Gamma+y$ give
 \begin{align*}
  \langle B_yU_yf,g\rangle
@@ -746,32 +878,44 @@ Applying the triangle inequality to the vector integral proves
 \eqref{eq:M-continuity}. Finiteness follows from \eqref{eq:q-bounds}.
 \end{proof}
 
-The norm-continuity comes from the integrable, compactly supported kernel.
-The translation operators themselves are only required to be pointwise
-continuous. This distinction will matter at the boundary crossing.
+Norm continuity of $M_t$ comes from the integrable, compactly supported
+kernel. The translation operators $U_y$ themselves need only be strongly
+continuous. This distinction is essential at the boundary crossing.
 
 \subsection{Compactly supported functions from a stationary vector}
+
+\lead{We next restrict a stationary vector to a finite box along each
+translation orbit and add a modulation. The normalization is chosen so
+that averaging the squared spatial norm recovers exactly the original
+Hilbert-space norm.}
+
 
 Fix $R>0$, $t\in\R^n$, and abbreviate $C=C_R$. For $f\in\Hh$ define,
 for almost every $\Gamma$,
 \begin{equation}\label{eq:finite-test}
  a_f(\Gamma)(v)=|C|^{-1/2}\one_C(v)e^{-2\pi it\cdot v}f(\Gamma-v).
 \end{equation}
-These are compactly supported functions of $v\in\R^n$. Tonelli and
-stationarity give
+These are compactly supported functions of $v\in\R^n$. Tonelli's theorem and
+translation invariance give
 \begin{equation}\label{eq:finite-energy}
  \int_X\|a_f(\Gamma)\|_2^2\,d\mu(\Gamma)
- =\frac1{|C|}\int_C\int_X|f(\Gamma-v)|^2\,d\mu(\Gamma)\,dv
+ =\frac{1}{|C|}\int_C\int_X|f(\Gamma-v)|^2\,d\mu(\Gamma)\,dv
  =\|f\|^2.
 \end{equation}
 In particular $a_f(\Gamma)\in L^2(\R^n)$ for almost every $\Gamma$.
 Borel representatives of $f$ give joint measurability, and the same
 identity applied to a representative that vanishes almost everywhere
 shows that the resulting integrals do not depend on representatives.
-Thus the uncountable set of translation parameters causes no null-set
-ambiguity.
+Thus these averages are well defined despite the uncountable family of
+translation parameters.
 
-\subsection{Compute the two averaged inner products}
+\subsection{Computing the two averaged inner products}
+
+\lead{The two spatial projections can now be averaged in parallel. A
+change to the difference variable produces the same box-overlap weight in
+both calculations, identifying the averages with $M_{t,R}$ and
+$\Pi_{t,R}$.}
+
 
 Let
 \begin{equation}\label{eq:finite-M}
@@ -780,17 +924,17 @@ Let
 For bounded $f,g$, expansion of the compact spatial integrals gives
 \begin{align*}
  &\int_X\langle Q_\Gamma a_f(\Gamma),a_g(\Gamma)\rangle\,d\mu(\Gamma)\\
- &\quad=\frac1{|C|}\int_{C\times C}e^{2\pi it\cdot(v-w)}
+ &\quad=\frac{1}{|C|}\int_{C\times C}e^{2\pi it\cdot(v-w)}
    \int_X q_\Gamma(v,w)f(\Gamma-w)
                    \overline{g(\Gamma-v)}\,d\mu(\Gamma)\,dv\,dw.
 \end{align*}
-In the inner integral substitute $\Gamma'=\Gamma-v$. For $y=v-w$,
+In the inner integral, make the change of variables $\Gamma'=\Gamma-v$. For $y=v-w$,
 covariance turns the kernel into $q_{\Gamma'}(0,-y)$, and the two
 functions become $f(\Gamma'+y)$ and $g(\Gamma')$. The inner integral
 is therefore $\langle B_yU_yf,g\rangle$. For every integrable function
 $H$ of the difference variable,
 \[
- \frac1{|C|}\int_{C\times C}H(v-w)\,dv\,dw
+ \frac{1}{|C|}\int_{C\times C}H(v-w)\,dv\,dw
  =\int w_R(y)H(y)\,dy.
 \]
 Consequently
@@ -799,7 +943,7 @@ Consequently
  =\langle M_{t,R}f,g\rangle.
 \end{equation}
 
-For $P$ its kernel $p(v-w)$ is independent of $\Gamma$. The same
+The kernel $p(v-w)$ of $P$ is independent of $\Gamma$. The same
 calculation, now with inner integral $\langle U_{v-w}f,g\rangle$, gives
 \begin{align}
  \int_X\langle Pa_f,a_g\rangle\,d\mu
@@ -808,12 +952,18 @@ calculation, now with inner integral $\langle U_{v-w}f,g\rangle$, gives
  \label{eq:average-P}
 \end{align}
 All kernels are bounded on $C\times C$. Thus the expansions for bounded
-$f,g$ are justified by absolute integration. For general $f,g\in\Hh$,
+$f,g$ are justified by absolute integrability and Fubini's theorem. For general $f,g\in\Hh$,
 Cauchy--Schwarz, contractivity of $P,Q_\Gamma$ and
 \eqref{eq:finite-energy} bound each averaged form by $\|f\|\|g\|$.
 The identities extend by density.
 
-\subsection{Apply the distance bound and pass to the limit}
+\subsection{Applying the distance bound and passing to the limit}
+
+\lead{The averaged identities retain the original operator-norm bound
+because the test functions preserve the averaged squared norm. We then
+pass to a strong limit for the spectral cutoffs and a norm limit for the
+comparison operators.}
+
 
 \begin{proposition}\label{prop:distance}
 For every $t\in\mathcal G$,
@@ -843,36 +993,43 @@ By \eqref{eq:q-bounds} and dominated convergence,
  \longrightarrow0,
 \end{equation}
 uniformly in $t$. For $t\in\mathcal G$, Proposition~\ref{prop:cutoffs}
-gives pointwise convergence $\Pi_{t,R}\to\Pi_t$. Testing the distance
+gives strong convergence $\Pi_{t,R}\to\Pi_t$. Testing the distance
 bound on each vector and taking the limit proves
 \eqref{eq:stationary-distance-bound}.
 \end{proof}
 
 The finite averages $M_{t,R}$ need not be projections. Their norm limit
 $M_t$ is a projection by Proposition~\ref{prop:M}. At a boundary parameter,
-the spectral cutoffs will have two different pointwise limits, whereas
+the spectral cutoffs will have two different strong limits, whereas
 $M_t$ has a single operator-norm limit. This gives a common comparison
 projection for the two sides.
 
 \section{Crossing the sphere}\label{sec:sphere}
 
+\lead{The analytic construction is now complete. For a ball, we choose a
+boundary point at which the only spectral boundary mass is at frequency
+zero. Approaching this point from the two sides adds that component
+without removing any other one, creating strictly nested limiting ranges.}
+
+
 We now prove Theorem~\ref{thm:ball}. Suppose that a ball
 $\Omega=B(a,\rho)\subset\R^n$, $n\geq2$, admits an exponential Riesz
 basis. The preceding sections give projections $\Pi_t$ and $M_t$ with
-\eqref{eq:stationary-distance-bound} for $t\in\mathcal G$. We will find
-two boundary limits whose ranges satisfy a strict inclusion, both within distance
-$\gamma<1$ of $M_{t_0}$.
+\eqref{eq:stationary-distance-bound} for $t\in\mathcal G$. We will
+construct two strong limits at a boundary point $t_0$, with strictly
+nested ranges and both at distance at most $\gamma<1$ from $M_{t_0}$.
 
-Recall that $\Pi_t$ retains the stationary frequencies $\theta$ for
-which $t+\theta\in\Omega$. We approach a boundary point $t_0$ from
-outside and inside. At $\theta=0$, this changes the cutoff from zero
-to one. The geometric step chooses $t_0$ so that every other frequency
-on the translated boundary lies in a common spectral null set.
+\subsection{Choosing a boundary point with no other spectral boundary mass}
 
-\subsection{Choose a boundary point with no other spectral boundary mass}
 
-Write $S=\partial\Omega$ and $\nu=\mathcal H^{n-1}|_S$. This is a finite
-nonzero measure.
+\lead{A sphere has surface-measure-zero intersection with each of its
+nontrivial translates. Tonelli's theorem reverses the roles of boundary
+points and frequencies, yielding a point whose translated boundary has
+no control-measure mass away from zero.}
+
+
+Write $S=\partial\Omega$ and let $\nu=\mathcal H^{n-1}|_S$ be surface
+measure on $S$. The measure $\nu$ is finite and nonzero.
 
 \begin{lemma}\label{lem:sphere}
 For every nonzero $\theta\in\R^n$,
@@ -896,7 +1053,7 @@ $n$-dimensional Lebesgue measure.
 
 We need the reverse viewpoint: fix a boundary point $t_0$ and control
 the frequencies $\theta$ for which $t_0+\theta\in S$.
-Fubini interchanges these roles.  Using the control measure $\sigma$
+Tonelli's theorem interchanges these roles. Using the control measure $\sigma$
 from \eqref{eq:control}, we obtain
 \begin{equation}\label{eq:boundary-fubini}
  \begin{aligned}
@@ -917,9 +1074,16 @@ for every vector in $\Hh$ simultaneously.
 
 Zero must be excluded from this null-set statement.  Indeed,
 $\sigma_{\one}=\delta_0$, so the constant vector has spectral mass
-there.  This mass is precisely what will enter the cutoff.
+there.  This is precisely the mass that will enter the cutoff.
 
-\subsection{Approach the point from outside and inside}
+\subsection{Approaching the point from outside and inside}
+
+\lead{The cutoff projection need not be defined at the chosen boundary
+point. We therefore approach it through good parameters in ambient open
+sets on the two sides, rather than along a prescribed line. The limiting
+symbols agree everywhere except at the zero-frequency atom, up to a common
+spectral null set.}
+
 
 The good set $\mathcal G$ has full Lebesgue measure in $\R^n$, but this
 does not imply that it contains $t_0$.  In fact $t_0\notin\mathcal G$:
@@ -946,7 +1110,7 @@ constant, so both symbols eventually equal
 $\one_\Omega(t_0+\theta)$.  At $\theta=0$, the exterior symbol is
 always zero and the interior symbol is always one.  All remaining
 cases lie in $(S-t_0)\setminus\{0\}$, which is null for every
-$\sigma_f$ by \eqref{eq:boundary-null}.
+$\sigma_f$ by \eqref{eq:boundary-null} and \eqref{eq:control-null}.
 Thus, for every $f\in\Hh$, we have $a_j^\pm\to m_\pm$
 $\sigma_f$-almost everywhere, where
 \begin{align}
@@ -958,35 +1122,32 @@ Since $\Omega$ is open and $t_0\in S$, zero does not belong to
 $\Omega-t_0$.  Both limits are therefore indicator functions, and
 $m_-\leq m_+$.  The only added spectral component is at zero.
 
-\subsection{Turn the limiting symbols into projections}
+\subsection{Turning the limiting symbols into projections}
 
-We now justify that the projections themselves converge.  For either
-choice of sign, \eqref{eq:Pi-difference} gives
+\lead{The exact difference formula converts convergence of the indicator
+functions into strong convergence of the projections. Their limiting norm
+identities will then allow us to read inclusion of the ranges directly
+from inclusion of the spectral sets.}
+
+
+For either choice of sign, dominated convergence gives
+$a_j^\pm\to m_\pm$ in $L^2(\sigma_f)$ for every $f\in\Hh$.
+Formula~\eqref{eq:Pi-difference} therefore yields
 \[
- \|(\Pi_{t_j^\pm}-\Pi_{t_k^\pm})f\|^2
- =\int_{\R^n}|a_j^\pm-a_k^\pm|^2\,d\sigma_f.
+ \|(\Pi_{t_j^\pm}-\Pi_{t_k^\pm})f\|
+ =\|a_j^\pm-a_k^\pm\|_{L^2(\sigma_f)}
+ \longrightarrow0.
 \]
-The right-hand side tends to zero, since
-\[
- |a_j^\pm-a_k^\pm|^2
- \leq2|a_j^\pm-m_\pm|^2+2|a_k^\pm-m_\pm|^2
-\]
-and dominated convergence applies to both terms.  Hence
-$(\Pi_{t_j^\pm}f)_j$ is Cauchy for each $f$.  The uniform bound
-$\|\Pi_t\|\leq1$ gives bounded linear operators $R_-,R_+$ with
+Thus $(\Pi_{t_j^\pm}f)_j$ is Cauchy for every $f$. Since the projections
+are contractions, their limits define bounded linear operators $R_-,R_+$
+with
 \begin{equation}\label{eq:boundary-strong}
  \Pi_{t_j^-}\longrightarrow R_-,\qquad
  \Pi_{t_j^+}\longrightarrow R_+
- \quad\text{pointwise}.
+ \quad\text{strongly}.
 \end{equation}
-They are orthogonal projections.  To see the idempotence explicitly,
-if $P_j=\Pi_{t_j^\pm}$ and $R=R_\pm$, then
-\[
- \|P_j^2f-R^2f\|
- \leq\|P_j\|\,\|P_jf-Rf\|+\|(P_j-R)Rf\|\longrightarrow0.
-\]
-Since $P_j^2=P_j$, we obtain $R^2=R$.  Self-adjointness passes to the
-limit through inner products.  Finally, passing to the limit in
+By the strong-convergence facts recorded in Section~\ref{sec:weak},
+$R_-$ and $R_+$ are orthogonal projections. Passing to the limit in
 \eqref{eq:Pi-norm} gives
 \begin{equation}\label{eq:boundary-norm}
  \|R_\pm f\|^2=\int_{\R^n}m_\pm(\theta)\,d\sigma_f(\theta).
@@ -995,6 +1156,13 @@ This formula lets us read the order of the limiting projections from
 the order of their symbols.
 
 \subsection{Strict inclusion of subspaces and the contradiction}
+
+\lead{Order of the limiting symbols gives inclusion of the ranges, and
+the constant vector makes this inclusion strict. Norm continuity of the
+comparison family then places both limiting projections within distance
+less than one of the same projection, contradicting the elementary
+projection lemma.}
+
 
 Since $m_-\leq m_+$, \eqref{eq:boundary-norm} implies
 $\|R_-f\|\leq\|R_+f\|$ for every $f$.  In particular,
@@ -1010,8 +1178,8 @@ spectral measure is $\delta_0$, so \eqref{eq:boundary-norm} gives
 \[
  R_-\one=0,\qquad \|R_+\one\|=\|\one\|=1.
 \]
-An orthogonal projection preserves a vector's norm only when it fixes
-that vector, by Pythagoras.  Hence $R_+\one=\one$: the constant
+By Pythagoras, an orthogonal projection preserves a vector's norm only
+when it fixes that vector.  Hence $R_+\one=\one$: the constant
 function belongs to the larger range and is orthogonal to the smaller
 one.  We have proved
 \begin{equation}\label{eq:strict-inclusion}
@@ -1022,8 +1190,8 @@ More precisely, the difference is an orthogonal projection, and
  \|(R_+-R_-)f\|^2=\sigma_f(\{0\}),\qquad
  (R_+-R_-)\one=\one.
 \end{equation}
-The jump need not have rank one; the constant vector ensures that it
-is nonzero.
+The jump need not have rank one; the constant vector only ensures that
+it is nonzero.
 
 
 Both limits also inherit a common distance bound. By
@@ -1040,15 +1208,16 @@ Consequently
  \|R_--M_{t_0}\|\leq\gamma<1,\qquad
  \|R_+-M_{t_0}\|\leq\gamma<1.
 \end{equation}
-The comparison at $t_0$ is legitimate even though $t_0\notin\mathcal G$:
-$M_t$ is defined and is a projection for every real parameter.
+This comparison is valid even though $t_0\notin\mathcal G$: $M_t$ is
+defined and is a projection for every $t\in\R^n$.
 Lemma~\ref{lem:inclusion} contradicts \eqref{eq:strict-inclusion} and
 \eqref{eq:boundary-distance}. This proves Theorem~\ref{thm:ball}.
 
 \begin{remark}[The role of the stationary space]\label{rem:stationary-space}
 The invariant probability measure supplies a nonzero constant vector
 with spectral measure $\delta_0$. The ordinary translation representation
-on $L^2(\R^n)$ has no such vector. Its scalar spectral measures are
+$(V_ya)(v)=a(v-y)$ on $L^2(\R^n)$ has no nonzero invariant vector.
+With our Fourier convention, its scalar spectral measures are
 $|\Ff a(\theta)|^2\,d\theta$, so changing a cutoff at the single point
 zero has no effect on that space. On $\Hh$, the same change gives
 $R_-\one=0$ and $R_+\one=\one$. The averaging argument brings both this
@@ -1057,7 +1226,7 @@ space.
 \end{remark}
 
 \begin{remark}\label{rem:interval}
-For a sphere the boundary has no positive-measure overlap with a
+A sphere has no overlap of positive surface measure with a
 nontrivial translate. This fails for the one-dimensional interval:
 a translation can send one endpoint to the other. It also fails for
 opposite sides of a rectangle. A boundary crossing can then exchange
@@ -1076,21 +1245,25 @@ Assume also that, for $\nu$-almost every $t\in\partial\Omega$, every
 neighborhood of $t$ meets both $\Omega$ and
 $\R^n\setminus\overline\Omega$ in sets of positive Lebesgue measure.
 Then $L^2(\Omega)$ admits no Riesz basis of exponentials.
-Indeed Sections~\ref{sec:bumps}--\ref{sec:distance} apply under these
-hypotheses. Tonelli with $\nu$ supplies a point satisfying both the
-spectral boundary-null condition and the local separation condition.
-The latter supplies the two sequences of good parameters. Their symbols
+Indeed, Sections~\ref{sec:bumps}--\ref{sec:distance} apply under these
+hypotheses. Tonelli's theorem, applied with $\nu$, supplies a point satisfying both
+the spectral boundary-null condition and the stated two-sided
+neighborhood condition. The latter provides the two sequences of good
+parameters. Their symbols
 have exactly the limits \eqref{eq:mminus}--\eqref{eq:mplus}, and the same
-arguments using pointwise limits and norm continuity give a contradiction.
+arguments using strong limits and norm continuity give a contradiction.
 In particular one may use surface measure whenever it is finite and
-nonzero and satisfies the displayed overlap and separation conditions.
+nonzero and satisfies the displayed overlap condition and the two-sided neighborhood condition.
 \end{remark}
 
 \section{Triangles}\label{sec:triangles}
 
-For a triangle, translations along an edge can overlap it in positive
-length. The other edges are not parallel to it, so all surviving boundary
-components can still be made to enter the cutoff together.
+\lead{For a triangle, tangential translations can produce overlap of
+positive length along an edge, so the sphere argument does not apply
+verbatim. We instead isolate one edge from the other two. Crossing it
+then brings all the surviving spectral boundary mass into the cutoff
+at once, again giving strictly nested limiting ranges.}
+
 
 \begin{theorem}\label{thm:triangle}
 No nondegenerate triangle in $\R^2$ admits a Riesz basis of exponentials.
@@ -1098,9 +1271,10 @@ No nondegenerate triangle in $\R^2$ admits a Riesz basis of exponentials.
 
 \begin{proof}
 An invertible affine change of variables preserves the Riesz basis
-property: frequencies are transformed by the transpose of the linear
-part, and the change introduces only unit phases and a fixed norm factor.
-Thus we may assume
+property. Indeed, the pullback under $x=a+Ay$ sends
+$e_\lambda$ to $e^{2\pi i\lambda\cdot a}e_{A^{\mathsf T}\lambda}$
+and multiplies the $L^2$ norm by $|\det A|^{-1/2}$. The phase factors
+have modulus one, and the frequency map is invertible. Thus we may assume
 \[
  \Omega=\{x_1>0,\ x_2>0,\ x_1+x_2<1\}.
 \]
@@ -1109,14 +1283,19 @@ and its boundary has area zero, Sections~\ref{sec:bumps}--\ref{sec:distance}
 give the control measure $\sigma$, the conull set $\mathcal G$,
 and the projections with \eqref{eq:stationary-distance-bound}.
 
+\lead{We first choose a point in the interior of the horizontal edge such
+that the other two edges carry no translated spectral mass. Their
+nonparallel supporting lines make the required Tonelli argument possible.}
+
+
 Let $L=\{(a,0):0<a<1\}$ and $F=\partial\Omega\setminus L$.
 The set $F$ consists of the two other closed edges, including all
 vertices. For $\nu=\mathcal H^1|_L$ and every $\theta\in\R^2$,
 \[
- \nu\bigl(L\cap(F-\theta)\bigr)=0:
+ \nu\bigl(L\cap(F-\theta)\bigr)=0,
 \]
-a horizontal segment meets a translated vertical or diagonal supporting
-line in at most one point. Tonelli therefore gives
+because a horizontal segment meets a translated vertical or diagonal
+supporting line in at most one point. Tonelli's theorem therefore gives
 \[
  \int_L\sigma(F-t)\,d\nu(t)
  =\int_{\R^2}\nu\bigl(L\cap(F-\theta)\bigr)\,d\sigma(\theta)=0.
@@ -1124,12 +1303,18 @@ line in at most one point. Tonelli therefore gives
 Choose $t_0\in L$ with $\sigma(F-t_0)=0$. This set is null for every
 $\sigma_f$ by \eqref{eq:control-null}.
 
+\lead{Once the other edges have been removed as spectral null sets, the
+sign of one normal coordinate controls every surviving boundary point.
+Good parameters approaching from opposite sides therefore have ordered
+limiting symbols.}
+
+
 Near $t_0$, the triangle coincides with the half-plane $x_2>0$.
 Choose good parameters $t_j^+\in\mathcal G\cap\Omega$ and
 $t_j^-\in\mathcal G\cap(\R^2\setminus\overline\Omega)$ tending to
 $t_0$ inside such a neighborhood. Their second coordinates are positive
 and negative, respectively. For each point $t_0+\theta\in L$, membership
-in the triangle is likewise locally exactly positivity of the second
+in the triangle is likewise determined locally by positivity of the second
 coordinate. Therefore
 $\one_\Omega(t_j^++\theta)\to1$ and
 $\one_\Omega(t_j^-+\theta)\to0$ on $L-t_0$.
@@ -1142,9 +1327,17 @@ The limiting symbols are consequently
  m_-=\one_{\Omega-t_0},\qquad
  m_+=\one_{\Omega-t_0}+\one_{L-t_0}.
 \]
-They are indicators of sets ordered by inclusion. Formula~\eqref{eq:Pi-difference}
+They are indicators of nested sets.
+
+
+\lead{The remaining steps are the same as for the ball: the difference
+formula gives strong limits, the constant vector makes their ranges
+strictly nested, and norm continuity supplies a common nearby projection.}
+
+
+Formula~\eqref{eq:Pi-difference}
 and dominated convergence make $(\Pi_{t_j^\pm}f)_j$ Cauchy for every
-$f$. As in Section~\ref{sec:sphere}, the resulting pointwise limits
+$f$. As in Section~\ref{sec:sphere}, the resulting strong limits
 $R_-,R_+$ are orthogonal projections with
 \[
  \|R_\pm f\|^2=\int m_\pm\,d\sigma_f.
@@ -1158,17 +1351,18 @@ Finally $M_{t_j^\pm}\to M_{t_0}$ in norm, so
 $\|R_\pm-M_{t_0}\|\leq\gamma<1$, contradicting
 Lemma~\ref{lem:inclusion}.
 
-Here $\|(R_+-R_-)f\|^2=\sigma_f(L-t_0)$. The jump may contain nonzero
-tangential frequencies; the constant vector guarantees that it is nonzero.
+In this case, $\|(R_+-R_-)f\|^2=\sigma_f(L-t_0)$. The jump may
+contain nonzero tangential frequencies, but the constant vector still
+guarantees that the jump is nonzero.
 \end{proof}
 
 \begin{remark}[Convex polygons with an unpaired edge]\label{rem:odd-polygons}
 The same proof excludes an exponential Riesz basis on the interior of a
-convex polygon having an edge with no parallel partner. Edges are taken
-to be maximal boundary segments. In particular the conclusion holds for
+convex polygon having an edge with no parallel partner. Here edges are
+maximal boundary segments. In particular the conclusion holds for
 every convex polygon with an odd number of sides: a bounded convex polygon
 has at most two maximal edges in each unoriented direction, so an odd
-number of sides cannot all be paired by parallelism.
+number of sides cannot be partitioned into parallel pairs.
 
 To verify the extension, let $L$ be the relative interior of an unpaired
 edge and put $F=\partial\Omega\setminus L$. Every other edge is
@@ -1178,35 +1372,167 @@ nonparallel to $L$, so for $\nu=\mathcal H^1|_L$,
 \]
 The intersections with the translated supporting lines are finite;
 the two endpoints contribute only finitely many further points.
-Tonelli gives $t_0\in L$ with $\sigma(F-t_0)=0$.
+Tonelli's theorem gives $t_0\in L$ with $\sigma(F-t_0)=0$.
 Fix the inward unit normal to $L$. At each point of $L$, membership in
-$\Omega$ is locally determined by the positive sign of the displacement
+$\Omega$ is locally determined by positive displacement
 in this normal direction. Choose good parameters approaching $t_0$
 from the two local half-planes. For every $t_0+\theta\in L$, the same
 normal sign determines their eventual membership. The symbols are
 therefore the same $m_-,m_+$ as in the triangle proof, with this edge $L$.
 Their limiting projections satisfy $\Ran R_-\subsetneq\Ran R_+$
 because $0\in L-t_0$.
-Norm-continuity of $M_t$ again supplies the common comparison projection
+Norm continuity of $M_t$ again supplies the common comparison projection
 $M_{t_0}$ and Lemma~\ref{lem:inclusion} gives the contradiction.
 \end{remark}
 
-\section{Ellipsoids}\label{sec:ellipsoids}
+\section{Bounded convex domains with \texorpdfstring{$C^2$}{C2} boundary}\label{sec:convex}
 
-\begin{corollary}\label{cor:ellipsoid}
-For every $n\geq2$, no nondegenerate ellipsoid in $\R^n$ admits a
-Riesz basis of exponentials.
+\lead{The boundary criterion extends the nonexistence result from balls to
+all nonempty bounded convex open sets with $C^2$ boundary. The key is to
+use surface measure on a small positively curved patch, rather than on
+the whole boundary, which may contain flat pieces. We first find such a
+patch and then show that its intersection with every nontrivial translate
+of the boundary has surface measure zero.}
+
+\begin{corollary}\label{cor:convex}
+Let $n\geq2$ and let $\Omega\subset\R^n$ be a nonempty bounded convex
+open set with $C^2$ boundary. Then $L^2(\Omega)$ admits no Riesz basis of
+exponentials.
 \end{corollary}
 
+Neither strict convexity of the whole domain nor positive curvature at
+every boundary point is required.
+
+\lead{A ball containing the closure of the domain touches its boundary
+at a point where all principal curvatures are positive. Continuity gives
+a patch with the same property. Convexity then makes each supporting
+hyperplane along this patch meet the closed domain at only one point.}
+
+\begin{lemma}\label{lem:convex-patch}
+Under the hypotheses of Corollary~\ref{cor:convex}, put
+$K=\overline\Omega$ and $S=\partial\Omega$. There is a nonempty relatively
+open patch $U\subset S$ on which the second fundamental form is positive
+definite, with the convention that convex principal curvatures are
+nonnegative. Moreover, if $N(x)$ denotes the outward unit normal, then
+\begin{equation}\label{eq:convex-support}
+ K\cap\{z:N(x)\cdot(z-x)=0\}=\{x\}
+ \qquad(x\in U).
+\end{equation}
+\end{lemma}
+
 \begin{proof}
-Write the ellipsoid as $\Omega=a+A B(0,1)$, where $A$ is an invertible real
-$n\times n$ matrix.  The pullback $f\mapsto[y\mapsto f(a+Ay)]$
-is an isomorphism from $L^2(\Omega)$ onto $L^2(B(0,1))$ with norm factor
-$|\det A|^{-1/2}$.  It sends $e_\lambda$ to
-$e^{2\pi i\lambda\cdot a}e_{A^{\mathsf T}\lambda}$.  The invertible change of
-frequency and the unit phases preserve the Riesz basis property.
-A basis on $\Omega$ would therefore give one on the unit ball, contradicting
-Theorem~\ref{thm:ball}.
+Choose $c\in\Omega$ and let
+\[
+ R=\max_{z\in K}|z-c|>0.
+\]
+Then $K\subset\overline B(c,R)$, with contact at some $p\in S$.
+The tangent hyperplane to the ball at $p$ supports $K$ and, since $S$
+is $C^2$, is also the tangent hyperplane to $S$. After a translation
+and rotation, we may assume that
+\[
+ p=0,\qquad c=-Re_n,\qquad N(p)=e_n.
+\]
+Locally write $S$ as $x_n=f(x')$, with $f\in C^2$,
+$f(0)=0$ and $Df(0)=0$. Containment in the ball gives
+\[
+ f(x')\leq -R+\sqrt{R^2-|x'|^2},
+\]
+with equality at $x'=0$. Taking second derivatives at this contact point
+in the sense of quadratic forms yields
+\[
+ D^2f(0)\leq-\frac1R I.
+\]
+Thus the second fundamental form at $p$, represented in these coordinates
+by $-D^2f(0)$, is positive definite. By continuity it remains positive
+definite on a sufficiently small relatively open patch $U$.
+
+To prove \eqref{eq:convex-support}, fix $x\in U$ and suppose that another
+point $z\in K$ lies in the supporting hyperplane at $x$. Convexity places
+the segment $[x,z]$ in $K$ and in that hyperplane, hence in $S$.
+In coordinates centered at $x$ with horizontal tangent hyperplane, the
+boundary is the graph of a function $g$ with $g(0)=0$, $Dg(0)=0$ and
+$D^2g(0)$ negative definite. The segment would give
+$g(tv)=0$ for a nonzero tangent vector $v$ and all sufficiently small
+$t>0$, contradicting
+\[
+ g(tv)=\frac{t^2}{2}\,D^2g(0)[v,v]+o(t^2)<0.
+\]
+This proves the singleton supporting-face property.
+\end{proof}
+
+\lead{We now compare the outward normals at two boundary points separated
+by a fixed translation. Nonparallel normals give a transverse
+intersection of codimension two. Equal normals are ruled out by the
+singleton supporting-face property, while opposite normals force the
+entire intersection to consist of one point.}
+
+\begin{lemma}\label{lem:convex-translates}
+Let $U$ be the patch in Lemma~\ref{lem:convex-patch}. Then
+\begin{equation}\label{eq:convex-intersection}
+ \mathcal H^{n-1}\bigl(U\cap(S-\theta)\bigr)=0
+ \qquad(\theta\in\R^n\setminus\{0\}).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Fix $\theta\ne0$. At any $x\in U\cap(S-\theta)$, put $y=x+\theta\in S$.
+The normals to $S$ and $S-\theta$ at $x$ are $N(x)$ and $N(y)$,
+respectively.
+
+If these normals are not parallel, the implicit function theorem makes
+the intersection locally a $C^1$ submanifold of dimension $n-2$.
+The set of all such transverse intersection points is covered by
+countably many of these neighborhoods, since $\R^n$ is second countable.
+It therefore has zero $\mathcal H^{n-1}$-measure.
+
+The equality $N(y)=N(x)$ is impossible. Indeed, $x$ and $y$ would
+maximize the same linear functional on $K$ and so lie in the same
+supporting hyperplane, contrary to \eqref{eq:convex-support} and $x\ne y$.
+
+Finally, suppose $N(y)=-N(x)$ and write $v=N(x)$. The supporting
+inequalities at $x$ and $y$ give
+\[
+ K\subset\{z:v\cdot(z-x)\leq0\},\qquad
+ K-\theta\subset\{z:v\cdot(z-x)\geq0\}.
+\]
+Consequently, \eqref{eq:convex-support} implies
+\[
+ K\cap(K-\theta)
+ \subset K\cap\{z:v\cdot(z-x)=0\}
+ =\{x\}.
+\]
+Since $x$ belongs to both boundaries, $S\cap(S-\theta)=\{x\}$ in this
+case. A singleton has zero $\mathcal H^{n-1}$-measure because $n\geq2$.
+If this case does not occur, every intersection point in $U$ is
+transverse. This proves \eqref{eq:convex-intersection}.
+\end{proof}
+
+\lead{Surface measure restricted to the patch now satisfies the
+non-overlap hypothesis of Remark~\ref{rem:general-boundary}. The remaining
+hypotheses follow from boundary regularity and convexity, so the analytic
+construction and the final projection contradiction need no changes.}
+
+\begin{proof}[Proof of Corollary~\ref{cor:convex}]
+The compact $C^2$ hypersurface $S$ has zero $n$-dimensional Lebesgue
+measure and finite $(n-1)$-dimensional surface measure. Since $U$ is a
+nonempty relatively open patch, the positive Borel measure
+\[
+ \nu=\mathcal H^{n-1}|_U
+\]
+is finite and nonzero. Lemma~\ref{lem:convex-translates} gives
+\[
+ \nu\bigl(S\cap(S-\theta)\bigr)
+ =\mathcal H^{n-1}\bigl(U\cap(S-\theta)\bigr)=0
+ \qquad(\theta\ne0).
+\]
+Every neighborhood of a point $t\in S$ meets $\Omega$ in a nonempty
+open set, because $t$ is a boundary point. It also contains a nonempty
+open subset of the strict exterior: the supporting inequality
+$N(t)\cdot(z-t)\leq0$ holds throughout $K$, so points sufficiently close
+to $t$ on the other side of this hyperplane lie outside $K$.
+Both intersections therefore have positive Lebesgue measure.
+All the hypotheses of Remark~\ref{rem:general-boundary} hold, and its
+conclusion proves the corollary.
 \end{proof}
 
 \begin{thebibliography}{99}
@@ -1244,7 +1570,7 @@ Adv. Math. \textbf{252} (2014), 1--6.
 \href{https://doi.org/10.1016/j.aim.2013.10.019}{doi:10.1016/j.aim.2013.10.019}.
 
 \bibitem{GOR}
-K.~Gr\"ochenig, J.~Ortega-Cerd\`a and J.~L.~Romero,
+K.~Gr\"ochenig, J.~Ortega-Cerdà and J.~L.~Romero,
 \emph{Deformation of Gabor systems},
 Adv. Math. \textbf{277} (2015), 388--425.
 \href{https://doi.org/10.1016/j.aim.2015.01.019}{doi:10.1016/j.aim.2015.01.019}.
@@ -1299,6 +1625,12 @@ Y.~I.~Lyubarskii and A.~Rashkovskii,
 convex symmetric polygons},
 Ark. Mat. \textbf{38} (2000), no.~1, 139--170.
 \href{https://doi.org/10.1007/BF02384495}{doi:10.1007/BF02384495}.
+
+\bibitem{MateiMeyerOrtegaCerda}
+B.~Matei, Y.~Meyer and J.~Ortega-Cerdà,
+\emph{Stable sampling and Fourier multipliers},
+Publ. Mat. \textbf{58} (2014), no.~2, 341--351.
+\href{https://doi.org/10.5565/PUBLMAT_58214_17}{doi:10.5565/PUBLMAT\_58214\_17}.
 
 \bibitem{Rudin}
 W.~Rudin,

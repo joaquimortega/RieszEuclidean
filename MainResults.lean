@@ -557,3 +557,57 @@ theorem unpaired_maximal_side_polygon_no_exponentialRieszBasis
     normal offset hn hface hbounded S hS hunpaired Λ
 
 end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+/-- The revised manuscript's bump characterization, in both directions. -/
+theorem initial_bumps_iff {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω) :
+    HasExponentialRieszBasis Ω Λ ↔
+    ∃ δ r : ℝ, 0 < δ ∧ Separated δ Λ ∧ 0 < r ∧ 2 * r < δ ∧
+      ∃ b : SchwartzMap (Euclidean d) ℂ,
+        HasCompactSupport b ∧ ‖b.toLp 2 volume‖ = 1 ∧
+        (∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) ∧
+        (∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) ∧
+        (∃ c : ℝ, 0 < c ∧ ∀ x ∈ closure Ω, c ≤ ‖Real.fourierIntegralInv b x‖) ∧
+        ∃ V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d,
+          (∀ i : Λ, V (lp.single 2 i 1) =
+            translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
+          ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 :=
+  exponentialRieszBasis_iff_initial_bump_gap hΩ hb
+
+/-- Convex-domain reduction with an explicit boundary-measure hypothesis.
+This does not assert that C² regularity supplies that measure. -/
+theorem convex_boundary_measure_no_exponentialRieszBasis {d : ℕ}
+    (Ω : Set (Euclidean d)) (hΩ : IsOpen Ω) (hn : Ω.Nonempty)
+    (hc : Convex ℝ Ω) (hb : Bornology.IsBounded Ω)
+    (ν : Measure (Euclidean d)) [IsFiniteMeasure ν] (hν : ν ≠ 0)
+    (hsupport : ν (frontier Ω)ᶜ = 0)
+    (hoverlap : ∀ θ : Euclidean d, θ ≠ 0 →
+      ν (frontier Ω ∩ RieszEuclidean.translate θ (frontier Ω)) = 0)
+    (Λ : Set (Euclidean d)) : ¬ HasExponentialRieszBasis Ω Λ :=
+  convex_no_exponentialRieszBasis_of_boundary_measure Ω hΩ hn hc hb ν hν hsupport hoverlap Λ
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+/-- The maximum identity used in the revised proof of Lemma 2.2. -/
+theorem projection_gap_maximum {H : Type} [NormedAddCommGroup H]
+    [InnerProductSpace ℂ H] (P Q : OrthProjection H) :
+    ‖P.op - Q.op‖ = max ‖(1 - P.op).comp Q.op‖ ‖(1 - Q.op).comp P.op‖ :=
+  P.norm_sub_eq_max_complement Q
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+/-- Every bounded nonempty convex open domain with C² boundary in dimension at
+least two has no exponential Riesz basis. -/
+theorem convex_C2_no_exponentialRieszBasis {n : ℕ} (hn : 2 ≤ n)
+    (Ω : Set (Euclidean n)) (hΩ : IsOpen Ω) (hne : Ω.Nonempty)
+    (hc : Convex ℝ Ω) (hb : Bornology.IsBounded Ω) (hC : HasC2Boundary Ω)
+    (Λ : Set (Euclidean n)) : ¬ HasExponentialRieszBasis Ω Λ :=
+  RieszEuclidean.convex_C2_no_exponentialRieszBasis hn Ω hΩ hne hc hb hC Λ
+
+end RieszEuclidean.Results

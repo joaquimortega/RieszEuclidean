@@ -3,16 +3,21 @@
 Lean formalization project for Joaquim Ortega-Cerdà's
 [`RieszEuclidean.tex`](paper/RieszEuclidean.tex).
 
-All **25 of 25 blueprint obligations** are proved. The formalization covers the
-Euclidean Fourier and bump constructions, the compact configuration hull and its
-invariant probability measure, the stationary Koopman representation, continuous
-box averaging and spectral cutoffs, the comparison projection, and the geometric
-boundary arguments.
+All **32 blueprint obligations are proved**, including the revised Section 2
+and the new Section 8 on bounded convex domains with C² boundary. The bump
+characterization is an equivalence, and the projection proof uses adjoints,
+closed range, and the exact maximum-norm identity.
+
+The convex extension constructs a curved boundary patch from a containing-ball
+contact point, proves translated surface-null intersections, and derives the
+positive finite boundary measure needed by the analytic obstruction.
+See [the verification review](reviews/convex-progress.md).
 
 Scalar correlations of strongly continuous unitary representations on separable
 complex Hilbert spaces have finite positive Euclidean representing measures. This
 is the Bochner statement used for the stationary hull. The geometric conclusions
-cover positive-radius balls, all noncollinear triangles, affine ellipsoids, a
+cover bounded nonempty convex C² domains in dimension at least two,
+positive-radius balls, all noncollinear triangles, affine ellipsoids, a
 general boundary-measure criterion, and polygons given by finite irredundant
 supporting-halfspace presentations with nonzero normals, nonempty faces, and an
 unpaired maximal side, including the odd-maximal-side consequence. Physical
@@ -41,21 +46,21 @@ Mathlib and its transitive dependencies are fetched by Lake.
 The public theorems use the concrete `HasExponentialRieszBasis` predicate,
 arbitrary frequency sets, and the manuscript's dimensional and geometric
 hypotheses. CI builds and lints the modular, public, and standalone sources,
-checks extraction and metadata, audits transitive axioms, and requires the full
-blueprint manifest to be discharged.
+checks extraction and metadata, audits transitive axioms, and requires all
+blueprint obligations to be proved.
 
 ## Verification
 
-`MainResults.lean` exposes 37 audited targets covering the supporting interfaces,
-averaging, Bochner existence, conditional geometric interfaces, and unconditional
-geometric conclusions. `RieszEuclideanStandalone.lean` contains their extracted
-Mathlib-only proofs. Official Comparator and Lean's default kernel accept all 37
-targets. The transitive audit of 931 project declarations reports only `propext`,
-`Classical.choice`, and `Quot.sound`.
+`MainResults.lean` exposes 41 public targets, including the unconditional convex
+`C²` corollary and the Section 2 bump equivalence.
+`RieszEuclideanStandalone.lean` is generated from the same checked source modules.
+Current verification results are recorded in
+[`reviews/convex-progress.md`](reviews/convex-progress.md).
 
-The exact inputs, commands, hashes, and results are recorded in the
-[current verification record](reviews/bochner-progress.md). Pinned Comparator
-build and run instructions are in [`standalone/TOOLS.md`](standalone/TOOLS.md).
+The earlier 37-target Comparator run is a historical verification of the previous
+manuscript scope, recorded in [`reviews/bochner-progress.md`](reviews/bochner-progress.md).
+It must not be read as verification of the new Section 8. Pinned Comparator
+instructions are in [`standalone/TOOLS.md`](standalone/TOOLS.md).
 
 Regenerate and verify the standalone source after proof edits with:
 

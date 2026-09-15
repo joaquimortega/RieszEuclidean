@@ -1,36 +1,32 @@
 # Formalization status
 
-The formalization has **25 of 25 blueprint obligations proved**. No theorem is
-implemented by `sorry` or a new axiom.
+**All 32 blueprint obligations are proved.** The formalization includes the
+revised Section 2 and the new Section 8 on convex C² domains.
 
-The completed construction includes Euclidean Fourier analysis, normalized bump
-projections and the initial gap, the compact configuration hull, an invariant
-probability measure, the strongly continuous stationary Koopman representation,
-continuous Fejér approximation, simultaneous spectral cutoffs, the covariant
-comparison kernel, and the averaged scalar gap.
+Section 2 includes both directions of the bump characterization, with the
+Fourier lower bound on the closure of the domain. The projection proof identifies
+the adjoint restriction, proves lower bounds and closed range, and uses the exact
+maximum-norm identity for the converse. The nested-range proof follows the
+manuscript's surjectivity/injectivity contradiction.
 
-For every vector of a strongly continuous unitary representation on a separable
-complex Hilbert space, the Bochner modules construct a finite positive Euclidean
-measure representing its scalar correlation. Hilbert-basis coordinates of
-windows, explicit Fourier-density measures, and a bounded vague limit give the
-construction. These measures supply the stationary spectral family and its common
-control measure.
+Section 8 derives its geometry from local regular C² defining functions:
 
-The unconditional results cover positive-radius balls, all noncollinear
-triangles, affine ellipsoids, the general boundary-measure criterion, and finite
-irredundant supporting-halfspace polygons with nonzero normals, nonempty faces,
-and an unpaired maximal side. The polygon presentation identifies maximal
-boundary segments geometrically and includes the odd-maximal-side consequence.
-Physical translation spectra and the interval/rectangle boundary-overlap remarks
-are formalized as well.
+- A containing-ball contact point yields a negative radial chart Hessian.
+- Continuity and strict concavity give a relatively open patch with singleton
+  supporting faces.
+- Regular codimension-two levels handle transverse translated intersections;
+  proportional supporting functionals give the equal/opposite normal cases.
+- A chart and its affine inverse give positive finite Hausdorff measure on a
+  smaller patch, completing the general boundary-measure obstruction.
 
-Official Comparator and Lean's default kernel accept all 37 public targets.
-Modular, public, and standalone builds and all 15 linters pass. A transitive audit
-of 931 project declarations reports only the standard Lean axioms `propext`,
-`Classical.choice`, and `Quot.sound`. The verification commands, inputs, hashes,
-and logs are recorded in [`reviews/bochner-progress.md`](reviews/bochner-progress.md).
+The public theorem is `RieszEuclidean.Results.convex_C2_no_exponentialRieszBasis`.
+It applies to every bounded nonempty open convex domain with C² boundary in
+real dimension at least two, and every frequency set. No curvature or boundary
+measure assumption is added to this statement.
 
-See [`blueprint/manifest.json`](blueprint/manifest.json) for the precise scopes,
-dependencies, declarations, and proof hashes. The full-project check
-`python3 scripts/check_blueprint.py --require-complete` passes and is enforced by
-CI.
+The earlier ball, triangle, ellipsoid, general-boundary and polygon results are
+retained. The former ellipsoid corollary remains a legacy result.
+
+There are no placeholder proofs, added axioms, or linter suppressions.
+Build, linter, axiom, source-correspondence and Comparator results are recorded
+in [the verification review](reviews/convex-progress.md).

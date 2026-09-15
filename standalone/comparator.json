@@ -38,7 +38,11 @@
     "RieszEuclidean.Results.ellipsoid_no_exponentialRieszBasis",
     "RieszEuclidean.Results.general_boundary_no_exponentialRieszBasis",
     "RieszEuclidean.Results.odd_maximal_sides_polygon_no_exponentialRieszBasis",
-    "RieszEuclidean.Results.unpaired_maximal_side_polygon_no_exponentialRieszBasis"
+    "RieszEuclidean.Results.unpaired_maximal_side_polygon_no_exponentialRieszBasis",
+    "RieszEuclidean.Results.initial_bumps_iff",
+    "RieszEuclidean.Results.convex_boundary_measure_no_exponentialRieszBasis",
+    "RieszEuclidean.Results.projection_gap_maximum",
+    "RieszEuclidean.Results.convex_C2_no_exponentialRieszBasis"
   ],
   "permitted_axioms": [
     "propext",

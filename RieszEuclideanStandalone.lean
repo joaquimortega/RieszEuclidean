@@ -1,8 +1,14 @@
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
+import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.Calculus.ContDiff.Defs
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
+import Mathlib.Analysis.Calculus.Implicit
+import Mathlib.Analysis.Calculus.InverseFunctionTheorem.ContDiff
+import Mathlib.Analysis.Calculus.LocalExtr.Basic
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Complex.RealDeriv
+import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.Convex.Measure
 import Mathlib.Analysis.Convex.Topology
 import Mathlib.Analysis.Convolution
@@ -10,10 +16,13 @@ import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.Analysis.Distribution.FourierSchwartz
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.Basic
+import Mathlib.Analysis.InnerProductSpace.Calculus
+import Mathlib.Analysis.InnerProductSpace.Dual
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Analysis.InnerProductSpace.Orthonormal
 import Mathlib.Analysis.InnerProductSpace.PiL2
 import Mathlib.Analysis.InnerProductSpace.l2Space
+import Mathlib.Analysis.Normed.Module.Convex
 import Mathlib.Analysis.Normed.Module.WeakDual
 import Mathlib.Analysis.Normed.Operator.Banach
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
@@ -30,6 +39,7 @@ import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 import Mathlib.Data.Set.Card
 import Mathlib.Geometry.Manifold.Instances.Sphere
 import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
+import Mathlib.LinearAlgebra.Dual.Lemmas
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Function.ContinuousMapDense
@@ -61,6 +71,7 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.MeasureTheory.Measure.Real
 import Mathlib.MeasureTheory.Measure.SeparableMeasure
+import Mathlib.MeasureTheory.Measure.Typeclasses.NoAtoms
 import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.FieldSimp
@@ -78,11 +89,13 @@ import Mathlib.Topology.ContinuousMap.ZeroAtInfty
 import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Topology.MetricSpace.Bounded
 import Mathlib.Topology.MetricSpace.Closeds
+import Mathlib.Topology.MetricSpace.HausdorffDimension
 import Mathlib.Topology.MetricSpace.Polish
 import Mathlib.Topology.Metrizable.Basic
 import Mathlib.Topology.Metrizable.CompletelyMetrizable
 import Mathlib.Topology.Metrizable.Real
 import Mathlib.Topology.Metrizable.Urysohn
+import Mathlib.Topology.Order.Compact
 import Mathlib.Topology.Sequences
 import Mathlib.Topology.UniformSpace.Cauchy
 import Mathlib.Topology.UniformSpace.HeineCantor
@@ -923,6 +936,7 @@ end RieszEuclidean
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 /-! Blueprint: blueprint/README.md#projection-gap. -/
 noncomputable section
+open scoped NNReal
 namespace RieszEuclidean
 
 variable (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -1015,40 +1029,75 @@ instance range_completeSpace [CompleteSpace H] (P : OrthProjection H) :
 def between (P Q : OrthProjection H) : Q.range →L[ℂ] P.range :=
   (P.op.comp Q.range.subtypeL).codRestrict P.range (fun x => ⟨x, rfl⟩)
 
+/-- The reverse restriction is exactly the Hilbert-space adjoint. -/
+theorem between_adjoint [CompleteSpace H] (P Q : OrthProjection H) :
+    (P.between Q).adjoint = Q.between P := by
+  symm
+  apply (ContinuousLinearMap.eq_adjoint_iff _ _).mpr
+  intro y x
+  change inner (𝕜 := ℂ) (Q.op y) (x : H) = inner (𝕜 := ℂ) (y : H) (P.op x)
+  rw [Q.symmetric, (Q.mem_range_iff x).mp x.property,
+    ← P.symmetric, (P.mem_range_iff y).mp y.property]
+
+/-- Pythagoras gives the manuscript's squared lower bound on the restriction. -/
+theorem between_lower_bound_sq (P Q : OrthProjection H) (x : Q.range) :
+    (1 - ‖P.op - Q.op‖ ^ 2) * ‖x‖ ^ 2 ≤ ‖P.between Q x‖ ^ 2 := by
+  have hx : Q.op x = x := (Q.mem_range_iff x).mp x.property
+  have hb := (P.op - Q.op).le_opNorm (x : H)
+  simp only [ContinuousLinearMap.sub_apply, hx] at hb
+  rw [norm_sub_rev] at hb
+  have hs := pow_le_pow_left₀ (norm_nonneg _) hb 2
+  have hp := P.norm_sq_decomposition (x : H)
+  change (1 - ‖P.op - Q.op‖ ^ 2) * ‖(x : H)‖ ^ 2 ≤ ‖P.op x‖ ^ 2
+  nlinarith [hs]
+
+/-- A strict gap makes the restriction bounded below, hence its range closed. -/
+theorem between_antilipschitz_of_gap (P Q : OrthProjection H)
+    (hgap : ‖P.op - Q.op‖ < 1) :
+    ∃ K : ℝ≥0, AntilipschitzWith K (P.between Q) := by
+  let c := 1 - ‖P.op - Q.op‖
+  have hc : 0 < c := sub_pos.mpr hgap
+  refine ⟨⟨c⁻¹, inv_nonneg.mpr hc.le⟩, (P.between Q).antilipschitz_of_bound ?_⟩
+  intro x
+  have hx : Q.op x = x := (Q.mem_range_iff x).mp x.property
+  have hb := (P.op - Q.op).le_opNorm (x : H)
+  simp only [ContinuousLinearMap.sub_apply, hx] at hb
+  rw [norm_sub_rev] at hb
+  have ht := norm_add_le ((x : H) - P.op x) (P.op x)
+  rw [sub_add_cancel] at ht
+  have hl : c * ‖(x : H)‖ ≤ ‖P.op x‖ := by dsimp [c]; nlinarith
+  change ‖(x : H)‖ ≤ c⁻¹ * ‖P.op x‖
+  rw [inv_mul_eq_div]
+  exact (le_div_iff₀ hc).mpr (by simpa only [mul_comm] using hl)
+
+/-- The manuscript's closed-range and adjoint proof of the forward implication. -/
 theorem rangeIso_of_gap [CompleteSpace H] (P Q : OrthProjection H)
     (hgap : ‖P.op - Q.op‖ < 1) : RangeIso P Q := by
   let A := P.between Q
   let B := Q.between P
-  have hnorm : ‖1 - A.comp B‖ ≤ ‖P.op - Q.op‖ := by
-    apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _)
-    intro x
-    have hx : P.op x = x := (P.mem_range_iff x).mp x.property
-    change ‖(x : H) - P.op (Q.op x)‖ ≤ ‖P.op - Q.op‖ * ‖(x : H)‖
-    calc
-      ‖(x : H) - P.op (Q.op x)‖ = ‖P.op ((P.op - Q.op) x)‖ := by
-        simp only [ContinuousLinearMap.sub_apply, map_sub, P.apply_idempotent, hx]
-      _ ≤ ‖(P.op - Q.op) x‖ := P.norm_op_apply_le _
-      _ ≤ ‖P.op - Q.op‖ * ‖(x : H)‖ := (P.op - Q.op).le_opNorm x
-  have hunit : IsUnit (A.comp B) := by
-    simpa only [sub_sub_cancel] using
-      isUnit_one_sub_of_norm_lt_one (x := 1 - A.comp B) (hnorm.trans_lt hgap)
-  have hsurj : Function.Surjective A := by
-    have hAB := (ContinuousLinearMap.isUnit_iff_bijective.mp hunit).surjective
-    intro y
-    obtain ⟨x, hx⟩ := hAB y
-    exact ⟨B x, hx⟩
-  have hinj : Function.Injective A := by
-    apply (injective_iff_map_eq_zero A).mpr
-    intro x hx
-    have hPx : P.op x = 0 := congrArg Subtype.val hx
-    have hQx : Q.op x = x := (Q.mem_range_iff x).mp x.property
-    have hbound := (P.op - Q.op).le_opNorm (x : H)
-    simp only [ContinuousLinearMap.sub_apply, hPx, hQx, _root_.zero_sub, norm_neg] at hbound
-    have hxzero : ‖(x : H)‖ = 0 := by
-      nlinarith [norm_nonneg (x : H)]
-    exact Subtype.ext (norm_eq_zero.mp hxzero)
+  obtain ⟨K, hA⟩ := P.between_antilipschitz_of_gap Q hgap
+  have hgap' : ‖Q.op - P.op‖ < 1 := by rwa [norm_sub_rev]
+  obtain ⟨J, hB⟩ := Q.between_antilipschitz_of_gap P hgap'
+  have hclosed : IsClosed (Set.range A) := hA.isClosed_range A.uniformContinuous
+  letI : CompleteSpace (LinearMap.range A) := hclosed.completeSpace_coe
+  have horth : (LinearMap.range A)ᗮ = ⊥ := by
+    apply le_antisymm _ bot_le
+    intro y hy
+    have hBy : B y = 0 := by
+      apply ext_inner_left ℂ
+      intro x
+      have hi := (Submodule.mem_orthogonal _ _).mp hy (A x) ⟨x, rfl⟩
+      change inner (𝕜 := ℂ) x (B y) = inner (𝕜 := ℂ) x 0
+      rw [inner_zero_right]
+      change inner (𝕜 := ℂ) x (Q.between P y) = 0
+      rw [← P.between_adjoint Q]
+      exact (ContinuousLinearMap.adjoint_inner_right A x y).trans hi
+    have hy0 : y = 0 := hB.injective (hBy.trans (map_zero B).symm)
+    exact hy0
+  have hsurj : Function.Surjective A :=
+    LinearMap.range_eq_top.mp (Submodule.orthogonal_eq_bot_iff.mp horth)
   exact ⟨ContinuousLinearEquiv.ofBijective A
-    (LinearMap.ker_eq_bot.mpr hinj) (LinearMap.range_eq_top.mpr hsurj), fun _ => rfl⟩
+    (LinearMap.ker_eq_bot.mpr hA.injective) (LinearMap.range_eq_top.mpr hsurj), fun _ => rfl⟩
 
 theorem lower_bounds_of_rangeIso (P Q : OrthProjection H) (h : RangeIso P Q) :
     ∃ c : ℝ, 0 < c ∧ c ≤ 1 ∧
@@ -1133,6 +1182,59 @@ theorem bound_on_kernel_of_complement_bound (P Q : OrthProjection H) {b : ℝ}
     apply (mul_le_mul_left hpos).mp
     nlinarith only [hprod]
 
+/-- Either complementary component is bounded by the projection gap. -/
+theorem complement_comp_norm_le_gap (P Q : OrthProjection H) :
+    ‖(1 - P.op).comp Q.op‖ ≤ ‖P.op - Q.op‖ := by
+  apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _)
+  intro x
+  have he : ((1 - P.op).comp Q.op) x = -((P.op - Q.op) (Q.op x)) := by
+    simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.sub_apply,
+      ContinuousLinearMap.one_apply, Q.apply_idempotent, neg_sub]
+  rw [he, norm_neg]
+  exact ((P.op - Q.op).le_opNorm _).trans
+    (mul_le_mul_of_nonneg_left (Q.norm_op_apply_le x) (norm_nonneg _))
+
+/-- The exact maximum identity displayed in manuscript Lemma 2.2. -/
+theorem norm_sub_eq_max_complement (P Q : OrthProjection H) :
+    ‖P.op - Q.op‖ = max ‖(1 - P.op).comp Q.op‖ ‖(1 - Q.op).comp P.op‖ := by
+  let b := max ‖(1 - P.op).comp Q.op‖ ‖(1 - Q.op).comp P.op‖
+  have hb : 0 ≤ b := (norm_nonneg _).trans (le_max_left _ _)
+  have hP : ∀ x ∈ Q.range, ‖x - P.op x‖ ≤ b * ‖x‖ := by
+    intro x hx
+    have he : ((1 - P.op).comp Q.op) x = x - P.op x := by
+      simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.sub_apply,
+        ContinuousLinearMap.one_apply, (Q.mem_range_iff x).mp hx]
+    rw [← he]
+    exact (((1 - P.op).comp Q.op).le_opNorm x).trans
+      (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg x))
+  have hQ : ∀ y ∈ P.range, ‖y - Q.op y‖ ≤ b * ‖y‖ := by
+    intro y hy
+    have he : ((1 - Q.op).comp P.op) y = y - Q.op y := by
+      simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.sub_apply,
+        ContinuousLinearMap.one_apply, (P.mem_range_iff y).mp hy]
+    rw [← he]
+    exact (((1 - Q.op).comp P.op).le_opNorm y).trans
+      (mul_le_mul_of_nonneg_right (le_max_right _ _) (norm_nonneg y))
+  apply le_antisymm
+  · apply ContinuousLinearMap.opNorm_le_bound _ hb
+    intro x
+    have h₁ := P.bound_on_kernel_of_complement_bound Q hb hQ (x - Q.op x)
+      (by rw [map_sub, Q.apply_idempotent, _root_.sub_self])
+    have h₂ := hP (Q.op x) ⟨x, rfl⟩
+    have hs₁ := pow_le_pow_left₀ (norm_nonneg _) h₁ 2
+    have hs₂ := pow_le_pow_left₀ (norm_nonneg _) h₂ 2
+    have hs : ‖(P.op - Q.op) x‖ ^ 2 ≤ (b * ‖x‖) ^ 2 := by
+      calc
+        ‖(P.op - Q.op) x‖ ^ 2 =
+            ‖P.op (x - Q.op x)‖ ^ 2 + ‖Q.op x - P.op (Q.op x)‖ ^ 2 :=
+          P.norm_sub_apply_sq Q x
+        _ ≤ (b * ‖x - Q.op x‖) ^ 2 + (b * ‖Q.op x‖) ^ 2 := add_le_add hs₁ hs₂
+        _ = b ^ 2 * (‖Q.op x‖ ^ 2 + ‖x - Q.op x‖ ^ 2) := by ring
+        _ = (b * ‖x‖) ^ 2 := by rw [Q.norm_sq_decomposition, mul_pow]
+    nlinarith [mul_nonneg hb (norm_nonneg x), norm_nonneg ((P.op - Q.op) x)]
+  · apply max_le (P.complement_comp_norm_le_gap Q)
+    simpa only [norm_sub_rev] using Q.complement_comp_norm_le_gap P
+
 theorem gap_of_rangeIso (P Q : OrthProjection H) (h : RangeIso P Q) :
     ‖P.op - Q.op‖ < 1 := by
   obtain ⟨c, hc, hc₁, hP, hQ⟩ := P.lower_bounds_of_rangeIso Q h
@@ -1142,30 +1244,25 @@ theorem gap_of_rangeIso (P Q : OrthProjection H) (h : RangeIso P Q) :
   have hb₁ : b < 1 := by nlinarith [sq_pos_of_pos hc]
   have hPcomp := P.complement_bound_of_lower Q hc.le hb hb_sq hP
   have hQcomp := Q.complement_bound_of_lower P hc.le hb hb_sq hQ
-  apply lt_of_le_of_lt _ hb₁
-  apply ContinuousLinearMap.opNorm_le_bound _ hb
-  intro x
-  have h₁ := P.bound_on_kernel_of_complement_bound Q hb hQcomp (x - Q.op x)
-    (by rw [map_sub, Q.apply_idempotent, _root_.sub_self])
-  have h₂ := hPcomp (Q.op x) ⟨x, rfl⟩
-  have h₁sq := pow_le_pow_left₀ (norm_nonneg _) h₁ 2
-  have h₂sq := pow_le_pow_left₀ (norm_nonneg _) h₂ 2
-  have hsq : ‖(P.op - Q.op) x‖ ^ 2 ≤ (b * ‖x‖) ^ 2 := by
-    calc
-      ‖(P.op - Q.op) x‖ ^ 2 =
-          ‖P.op (x - Q.op x)‖ ^ 2 + ‖Q.op x - P.op (Q.op x)‖ ^ 2 :=
-        P.norm_sub_apply_sq Q x
-      _ ≤ (b * ‖x - Q.op x‖) ^ 2 + (b * ‖Q.op x‖) ^ 2 := add_le_add h₁sq h₂sq
-      _ = b ^ 2 * (‖Q.op x‖ ^ 2 + ‖x - Q.op x‖ ^ 2) := by ring
-      _ = (b * ‖x‖) ^ 2 := by rw [Q.norm_sq_decomposition, mul_pow]
-  nlinarith [mul_nonneg hb (norm_nonneg x), norm_nonneg ((P.op - Q.op) x)]
+  rw [P.norm_sub_eq_max_complement Q]
+  apply lt_of_le_of_lt (max_le ?_ ?_) hb₁
+  · apply ContinuousLinearMap.opNorm_le_bound _ hb
+    intro x
+    change ‖Q.op x - P.op (Q.op x)‖ ≤ b * ‖x‖
+    exact (hPcomp (Q.op x) ⟨x, rfl⟩).trans
+      (mul_le_mul_of_nonneg_left (Q.norm_op_apply_le x) hb)
+  · apply ContinuousLinearMap.opNorm_le_bound _ hb
+    intro x
+    change ‖P.op x - Q.op (P.op x)‖ ≤ b * ‖x‖
+    exact (hQcomp (P.op x) ⟨x, rfl⟩).trans
+      (mul_le_mul_of_nonneg_left (P.norm_op_apply_le x) hb)
 
-/-- GAP-01: manuscript Lemma 2.1. -/
+/-- GAP-01: manuscript Lemma 2.2. -/
 theorem gap_iff_rangeIso [CompleteSpace H] (P Q : OrthProjection H) :
     ‖P.op - Q.op‖ < 1 ↔ RangeIso P Q := by
   exact ⟨P.rangeIso_of_gap Q, P.gap_of_rangeIso Q⟩
 
-/-- GAP-02: Lemma 2.2; infinite-dimensional nesting, not rank counting. -/
+/-- GAP-02: Lemma 2.3; infinite-dimensional nesting, not rank counting. -/
 theorem nested_not_both_gap [CompleteSpace H] (Rminus Rplus M : OrthProjection H)
     (hnest : Rminus.range < Rplus.range) :
     ¬ (‖Rminus.op - M.op‖ < 1 ∧ ‖Rplus.op - M.op‖ < 1) := by
@@ -11907,6 +12004,1241 @@ theorem boundary_jump_cutoff_ranges_strict {d : ℕ} {H : Type*}
 
 end RieszEuclidean
 
+/- Source: RieszEuclidean/BumpEquivalence.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory
+namespace RieszEuclidean
+
+/-- A strict Fourier-to-bump projection gap recovers exponential synthesis.
+The columns are recovered from the Fourier transform of the actual translated
+bump, so no Riesz-basis assumption enters this direction. -/
+theorem exponentialRieszBasis_of_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (b : SchwartzMap (Euclidean d) ℂ)
+    (V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d)
+    (hV : ∀ i : Λ, V (lp.single 2 i 1) =
+      translationL2 (-(i : Euclidean d)) (b.toLp 2 volume))
+    {c : ℝ} (hc : 0 < c) (hl : ∀ x ∈ Ω, c ≤ ‖Real.fourierIntegralInv b x‖)
+    (hgap : ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1) :
+    HasExponentialRieszBasis Ω Λ := by
+  classical
+  obtain ⟨E, hE⟩ :=
+    ((fourierProjection Ω hΩ).gap_iff_rangeIso (isometryRangeProjection V)).mp hgap
+  let eV := (isometryRangeEquiv V (isometryRangeProjection V).range
+    (isometryRangeProjection_range V).symm).toContinuousLinearEquiv
+  let eW := (isometryRangeEquiv (fourierDomainEmbedding Ω hΩ)
+    (fourierProjection Ω hΩ).range
+    (fourierDomainEmbedding_range Ω hΩ)).toContinuousLinearEquiv
+  let T := eV.trans (E.trans eW.symm)
+  let B := bumpFourierMultiplier Ω hΩ b hc hl
+  let S := T.trans B.symm
+  have hT (a : SeqL2 Λ) :
+      T a = domainRestriction Ω (paperFourierL2 d (V a)) := by
+    apply (fourierDomainEmbedding Ω hΩ).injective
+    rw [fourierDomainEmbedding_restriction]
+    have he := hE (eV a)
+    have hw := congrArg (fun z : (fourierProjection Ω hΩ).range => (z : FullL2 d))
+      (eW.apply_symm_apply (E (eV a)))
+    exact hw.trans he
+  refine ⟨S, fun i => ?_⟩
+  have hBS : B (S (lp.single 2 i 1)) =
+      domainRestriction Ω (paperFourierL2 d (V (lp.single 2 i 1))) := by
+    change B (B.symm (T _)) = _
+    rw [B.apply_symm_apply, hT]
+  have ht := (paperFourierL2_translated_bump b (i : Euclidean d)).filter_mono
+    (ae_mono (Measure.restrict_le_self (s := Ω)))
+  have hm := bumpFourierMultiplier_coe Ω hΩ b hc hl (S (lp.single 2 i 1))
+  rw [hBS, hV] at hm
+  filter_upwards [hm, ht, ae_restrict_mem hΩ,
+    domainRestriction_coe Ω
+      (paperFourierL2 d (translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)))]
+    with x hm ht hx hd
+  have hn : Real.fourierIntegralInv b x ≠ 0 := norm_pos_iff.mp (hc.trans_le (hl x hx))
+  apply mul_left_cancel₀ hn
+  rw [← hm, hd, ht, mul_comm]
+
+/-- Lemma 2.1 of the revised manuscript: the Riesz-basis property is equivalent
+to the existence of separated normalized bumps at projection distance less than one. -/
+theorem exponentialRieszBasis_iff_initial_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω) :
+    HasExponentialRieszBasis Ω Λ ↔
+    ∃ δ r : ℝ, 0 < δ ∧ Separated δ Λ ∧ 0 < r ∧ 2 * r < δ ∧
+      ∃ b : SchwartzMap (Euclidean d) ℂ,
+        HasCompactSupport b ∧ ‖b.toLp 2 volume‖ = 1 ∧
+        (∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) ∧
+        (∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) ∧
+        (∃ c : ℝ, 0 < c ∧ ∀ x ∈ closure Ω, c ≤ ‖Real.fourierIntegralInv b x‖) ∧
+        ∃ V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d,
+          (∀ i : Λ, V (lp.single 2 i 1) =
+            translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
+          ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 := by
+  constructor
+  · intro hB
+    obtain ⟨δ, r, hδ, hΛ, hr, hrδ, b, hs, hn, hp, hz, ⟨c, hc, hl⟩, V, hV, hgap⟩ :=
+      exists_initial_bump_gap hΩ hb hB
+    refine ⟨δ, r, hδ, hΛ, hr, hrδ, b, hs, hn, hp, hz, ⟨c, hc, ?_⟩, V, hV, hgap⟩
+    have hcont : Continuous (Real.fourierIntegralInv b) :=
+      VectorFourier.fourierIntegral_continuous Real.continuous_fourierChar
+        (continuous_fst.inner continuous_snd).neg b.integrable
+    exact closure_minimal hl (isClosed_le continuous_const hcont.norm)
+  · rintro ⟨δ, r, _, _, _, _, b, _, _, _, _, ⟨c, hc, hl⟩, V, hV, hgap⟩
+    exact exponentialRieszBasis_of_bump_gap hΩ b V hV hc
+      (fun x hx => hl x (subset_closure hx)) hgap
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/C2Boundary.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Topology
+namespace RieszEuclidean
+
+/-- A `C²` boundary, expressed by local regular defining functions. The domain
+is the negative side and its frontier is the zero level. The derivative is
+nonzero on the chart neighborhood, which can always be shrunk at a regular
+boundary point. This definition contains no curvature, measure, or spectral
+conclusion. -/
+def HasC2Boundary {d : ℕ} (Ω : Set (Euclidean d)) : Prop :=
+  ∀ p ∈ frontier Ω, ∃ (W : Set (Euclidean d)) (f : Euclidean d → ℝ),
+    IsOpen W ∧ p ∈ W ∧ ContDiffOn ℝ 2 f W ∧
+    (∀ x ∈ W, fderiv ℝ f x ≠ 0) ∧
+    (∀ x ∈ W, x ∈ Ω ↔ f x < 0) ∧
+    (∀ x ∈ W, x ∈ frontier Ω ↔ f x = 0)
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConvexSupport.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Topology
+namespace RieszEuclidean
+
+/-- The vector `v` supports `K` at `x`, with the outward sign convention. -/
+def SupportsAt {d : ℕ} (K : Set (Euclidean d)) (x v : Euclidean d) : Prop :=
+  ∀ z ∈ K, inner (𝕜 := ℝ) v (z - x) ≤ 0
+
+/-- The supporting hyperplane with normal `v` meets `K` only at `x`. -/
+def SingletonSupportingFace {d : ℕ} (K : Set (Euclidean d))
+    (x v : Euclidean d) : Prop :=
+  ∀ z ∈ K, inner (𝕜 := ℝ) v (z - x) = 0 → z = x
+
+/-- Equal outward normals cannot occur at two different supporting points
+when one supporting face is a singleton. -/
+theorem supporting_points_eq_of_same_normal {d : ℕ} {K : Set (Euclidean d)}
+    {x y v : Euclidean d} (hx : x ∈ K) (hy : y ∈ K)
+    (hsx : SupportsAt K x v) (hsy : SupportsAt K y v)
+    (hface : SingletonSupportingFace K x v) : y = x := by
+  apply hface y hy
+  have h₁ := hsx y hy
+  have h₂ := hsy x hx
+  rw [inner_sub_right] at h₁ h₂ ⊢
+  linarith
+
+/-- Opposite supporting normals at `x` and `x + θ` force the entire
+intersection of the closed domain with its translate into `{x}`. -/
+theorem translated_inter_subset_singleton_of_opposite_normals {d : ℕ}
+    {K : Set (Euclidean d)} {x θ v : Euclidean d}
+    (hsx : SupportsAt K x v) (hsy : SupportsAt K (x + θ) (-v))
+    (hface : SingletonSupportingFace K x v) :
+    K ∩ translate θ K ⊆ {x} := by
+  intro z hz
+  apply hface z hz.1
+  have h₁ := hsx z hz.1
+  have h₂ := hsy (z + θ) hz.2
+  have he : z + θ - (x + θ) = z - x := by abel
+  rw [he, inner_neg_left] at h₂
+  linarith
+
+/-- The normal-case argument in Lemma 8.3. The only analytic input is
+nullity of the transverse intersections. Equal normals are impossible;
+one pair of opposite normals makes the entire intersection a singleton. -/
+theorem patch_translated_inter_null_of_transverse_null {d : ℕ}
+    {K S U : Set (Euclidean d)} (hSK : S ⊆ K) (hUS : U ⊆ S)
+    (N : Euclidean d → Euclidean d)
+    (hs : ∀ x ∈ S, SupportsAt K x (N x))
+    (hf : ∀ x ∈ U, SingletonSupportingFace K x (N x))
+    (μ : Measure (Euclidean d)) [NoAtoms μ]
+    {θ : Euclidean d} (hθ : θ ≠ 0)
+    (htransverse : μ {x | x ∈ U ∧ x + θ ∈ S ∧
+      N (x + θ) ≠ N x ∧ N (x + θ) ≠ -N x} = 0) :
+    μ (U ∩ translate θ S) = 0 := by
+  classical
+  by_cases hopp : ∃ x ∈ U, x + θ ∈ S ∧ N (x + θ) = -N x
+  · obtain ⟨x, hx, hy, he⟩ := hopp
+    have hsy : SupportsAt K (x + θ) (-N x) := he ▸ hs (x + θ) hy
+    have hsingle := translated_inter_subset_singleton_of_opposite_normals
+      (hs x (hUS hx)) hsy (hf x hx)
+    apply measure_mono_null (t := {x}) _ (measure_singleton x)
+    intro z hz
+    exact hsingle ⟨hSK (hUS hz.1), hSK hz.2⟩
+  · apply measure_mono_null _ htransverse
+    intro x hx
+    refine ⟨hx.1, hx.2, ?_, ?_⟩
+    · intro he
+      have hy := supporting_points_eq_of_same_normal (hSK (hUS hx.1))
+        (hSK hx.2) (hs x (hUS hx.1)) (he ▸ hs (x + θ) hx.2) (hf x hx.1)
+      apply hθ
+      exact add_left_cancel (hy.trans (add_zero x).symm)
+    · intro he
+      exact hopp ⟨x, hx.1, hx.2, he⟩
+
+/-- For a convex set, a supporting face that is locally a singleton is a
+singleton globally. This is the segment argument used after obtaining curvature. -/
+theorem singletonSupportingFace_of_local {d : ℕ} {K : Set (Euclidean d)}
+    (hc : Convex ℝ K) {x v : Euclidean d} (hx : x ∈ K)
+    (hlocal : ∀ᶠ z in nhds x, z ∈ K →
+      inner (𝕜 := ℝ) v (z - x) = 0 → z = x) :
+    SingletonSupportingFace K x v := by
+  intro z hz hf
+  by_contra hzx
+  have hclosure : x ∈ closure (openSegment ℝ x z) :=
+    segment_subset_closure_openSegment (left_mem_segment ℝ x z)
+  obtain ⟨w, hwlocal, hwseg⟩ := mem_closure_iff_nhds.mp hclosure _ hlocal
+  have hwK := hc.segment_subset hx hz (openSegment_subset_segment ℝ x z hwseg)
+  have hwface : inner (𝕜 := ℝ) v (w - x) = 0 := by
+    obtain ⟨a, b, _, _, hab, rfl⟩ := hwseg
+    rw [inner_sub_right, inner_add_right, inner_smul_right, inner_smul_right]
+    rw [inner_sub_right] at hf
+    rw [sub_eq_zero.mp hf, ← add_mul, hab, one_mul, _root_.sub_self]
+  have hwx := hwlocal hwK hwface
+  rw [hwx, left_mem_openSegment_iff] at hwseg
+  exact hzx hwseg.symm
+
+/-- At a farthest point, containment in a ball gives a strict supporting face.
+This is the global support part of the contact-ball construction; it does not
+assert the still separate persistence of positive curvature on a patch. -/
+theorem farthest_point_support {d : ℕ} {K : Set (Euclidean d)}
+    {p c : Euclidean d} (hfar : ∀ z ∈ K, ‖z - c‖ ≤ ‖p - c‖) :
+    SupportsAt K p (p - c) ∧ SingletonSupportingFace K p (p - c) := by
+  have he (z : Euclidean d) : ‖z - c‖ ^ 2 =
+      ‖p - c‖ ^ 2 + 2 * inner (𝕜 := ℝ) (p - c) (z - p) + ‖z - p‖ ^ 2 := by
+    have h : z - c = (p - c) + (z - p) := by abel
+    rw [h, norm_add_sq_real]
+  constructor
+  · intro z hz
+    have h := hfar z hz
+    have heq := he z
+    nlinarith [sq_nonneg ‖z - p‖, norm_nonneg (z - c)]
+  · intro z hz hf
+    have h := hfar z hz
+    have heq := he z
+    have hn : ‖z - p‖ = 0 := by
+      nlinarith [sq_nonneg ‖z - p‖, norm_nonneg (z - c), norm_nonneg (z - p)]
+    exact sub_eq_zero.mp (norm_eq_zero.mp hn)
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConvexDefiningFunctions.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- A supporting hyperplane written using a real linear functional. -/
+def FunctionalSupportsAt {n : ℕ} (K : Set (Euclidean n))
+    (p : Euclidean n) (L : Euclidean n →L[ℝ] ℝ) : Prop :=
+  ∀ z ∈ K, L (z - p) ≤ 0
+
+/-- The exposed face of a supporting functional is a singleton. -/
+def FunctionalSingletonFace {n : ℕ} (K : Set (Euclidean n))
+    (p : Euclidean n) (L : Euclidean n →L[ℝ] ℝ) : Prop :=
+  ∀ z ∈ K, L (z - p) = 0 → z = p
+
+/-- A local defining function of a convex domain has a globally supporting
+derivative. The positive tangent cone carries every chord direction. -/
+theorem defining_derivative_supports {n : ℕ} {Ω W : Set (Euclidean n)}
+    (hΩ : IsOpen Ω) (hc : Convex ℝ Ω) {p : Euclidean n}
+    (hp : p ∈ frontier Ω) (hW : IsOpen W) (hpW : p ∈ W)
+    {f : Euclidean n → ℝ} {L : Euclidean n →L[ℝ] ℝ}
+    (hf : HasFDerivAt f L p) (hf0 : f p = 0)
+    (hneg : ∀ x ∈ W, x ∈ Ω ↔ f x < 0)
+    (hzero : ∀ x ∈ W, x ∈ frontier Ω ↔ f x = 0) :
+    FunctionalSupportsAt (closure Ω) p L := by
+  have hm : IsLocalMaxOn f (closure Ω) p := by
+    change ∀ᶠ x in nhdsWithin p (closure Ω), f x ≤ f p
+    rw [eventually_nhdsWithin_iff]
+    filter_upwards [hW.mem_nhds hpW] with x hx
+    intro hxK
+    rw [hf0]
+    by_cases hxΩ : x ∈ Ω
+    · exact ((hneg x hx).mp hxΩ).le
+    · have hxS : x ∈ frontier Ω := by
+        rw [hΩ.frontier_eq]
+        exact ⟨hxK, hxΩ⟩
+      exact ((hzero x hx).mp hxS).le
+  intro z hz
+  exact hm.hasFDerivWithinAt_nonpos hf.hasFDerivWithinAt
+    (sub_mem_posTangentConeAt_of_segment_subset
+      (hc.closure.segment_subset (frontier_subset_closure hp) hz))
+
+/-- Every C² boundary point has a nonzero supporting defining derivative and
+a local regular level description. -/
+theorem exists_supporting_defining_function {n : ℕ} {Ω : Set (Euclidean n)}
+    (hΩ : IsOpen Ω) (hc : Convex ℝ Ω) (hC : HasC2Boundary Ω)
+    {p : Euclidean n} (hp : p ∈ frontier Ω) :
+    ∃ (f : Euclidean n → ℝ) (L : Euclidean n →L[ℝ] ℝ),
+      HasStrictFDerivAt f L p ∧ L ≠ 0 ∧ f p = 0 ∧
+      FunctionalSupportsAt (closure Ω) p L ∧
+      ∀ᶠ x in nhds p, x ∈ frontier Ω ↔ f x = 0 := by
+  obtain ⟨W, f, hW, hpW, hf, hL, hneg, hzero⟩ := hC p hp
+  have hd := (hf.contDiffAt (hW.mem_nhds hpW)).hasStrictFDerivAt (by norm_num)
+  have hf0 := (hzero p hpW).mp hp
+  refine ⟨f, fderiv ℝ f p, hd, hL p hpW, hf0,
+    defining_derivative_supports hΩ hc hp hW hpW hd.hasFDerivAt hf0 hneg hzero, ?_⟩
+  exact Filter.eventually_of_mem (hW.mem_nhds hpW) hzero
+
+/-- Proportional supporting functionals with a positive factor expose the same
+face, so a singleton face forces equality of the support points. -/
+theorem functional_support_points_eq {n : ℕ} {K : Set (Euclidean n)}
+    {x y : Euclidean n} {L M : Euclidean n →L[ℝ] ℝ} {c : ℝ}
+    (hx : x ∈ K) (hy : y ∈ K) (hL : FunctionalSupportsAt K x L)
+    (hM : FunctionalSupportsAt K y M) (hface : FunctionalSingletonFace K x L)
+    (he : M = c • L) (hc : 0 < c) : y = x := by
+  apply hface y hy
+  have h₁ := hL y hy
+  have h₂ := hM x hx
+  rw [he, ContinuousLinearMap.smul_apply, smul_eq_mul, map_sub] at h₂
+  rw [map_sub] at h₁ ⊢
+  nlinarith
+
+/-- A negative proportionality factor places the two translated domains on
+opposite sides of one supporting plane. -/
+theorem functional_opposite_inter_subset_singleton {n : ℕ} {K : Set (Euclidean n)}
+    {x θ : Euclidean n} {L M : Euclidean n →L[ℝ] ℝ} {c : ℝ}
+    (hL : FunctionalSupportsAt K x L) (hM : FunctionalSupportsAt K (x + θ) M)
+    (hface : FunctionalSingletonFace K x L) (he : M = c • L) (hc : c < 0) :
+    K ∩ translate θ K ⊆ {x} := by
+  intro z hz
+  apply hface z hz.1
+  have h₁ := hL z hz.1
+  have h₂ := hM (z + θ) hz.2
+  have hsub : z + θ - (x + θ) = z - x := by abel
+  rw [he, ContinuousLinearMap.smul_apply, smul_eq_mul, hsub] at h₂
+  nlinarith
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/TransverseLinearAlgebra.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+namespace RieszEuclidean
+
+/-- Two nonproportional nonzero real functionals give a surjective map to ℝ². -/
+theorem prod_functionals_surjective {n : ℕ}
+    (L M : Euclidean n →L[ℝ] ℝ) (hL : L ≠ 0)
+    (hM : ∀ c : ℝ, M ≠ c • L) : Function.Surjective (L.prod M) := by
+  classical
+  obtain ⟨u, hu⟩ : ∃ u, L u ≠ 0 := by
+    contrapose! hL
+    ext u
+    exact hL u
+  have hv : ∃ v, L v = 0 ∧ M v ≠ 0 := by
+    by_contra! hv
+    apply hM (M u / L u)
+    ext x
+    have hz : L (x - (L x / L u) • u) = 0 := by
+      simp [hu]
+    have hm := hv _ hz
+    simp only [map_sub, map_smul, smul_eq_mul] at hm
+    change M x = (M u / L u) * L x
+    have he : M x = (L x / L u) * M u := sub_eq_zero.mp hm
+    rw [he]
+    ring
+  obtain ⟨v, hvL, hvM⟩ := hv
+  intro y
+  refine ⟨(y.1 / L u) • u + ((y.2 - (y.1 / L u) * M u) / M v) • v, ?_⟩
+  apply Prod.ext
+  · simp [hvL, hu]
+  · simp [hvM]
+
+/-- Surjectivity to ℝ² gives codimension two by rank-nullity. -/
+theorem prod_functionals_kernel_dim {n : ℕ}
+    (L M : Euclidean n →L[ℝ] ℝ) (h : Function.Surjective (L.prod M)) :
+    Module.finrank ℝ (LinearMap.ker (L.prod M)) + 2 = n := by
+  have he := LinearMap.finrank_range_add_finrank_ker (L.prod M).toLinearMap
+  have hr : LinearMap.range (L.prod M).toLinearMap = ⊤ := LinearMap.range_eq_top.mpr h
+  rw [hr, finrank_top] at he
+  simpa [Module.finrank_prod, Euclidean, Nat.add_comm] using he
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/SurfaceNullity.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory
+open scoped ENNReal NNReal
+namespace RieszEuclidean
+
+/-- A continuously differentiable parametrization of dimension `m` has zero
+`k`-dimensional Hausdorff measure whenever `m < k`. -/
+theorem smooth_chart_hausdorff_null {m n k : ℕ} (hmk : m < k)
+    {f : Euclidean m → Euclidean n} {D : Set (Euclidean m)}
+    (hf : ContDiffOn ℝ 1 f D) (hD : Convex ℝ D) :
+    (Measure.hausdorffMeasure (k : ℝ)) (f '' D) = 0 := by
+  have hdim : dimH (f '' D) ≤ (m : ℝ≥0∞) := by
+    calc
+      dimH (f '' D) ≤ dimH D := hf.dimH_image_le hD Set.Subset.rfl
+      _ ≤ dimH (Set.univ : Set (Euclidean m)) := dimH_mono (Set.subset_univ D)
+      _ = m := by rw [Real.dimH_univ_eq_finrank]; simp [Euclidean]
+  exact hausdorffMeasure_of_dimH_lt (d := (k : ℝ≥0))
+    (hdim.trans_lt (by exact_mod_cast hmk))
+
+/-- A countable collection of lower-dimensional smooth charts is surface-null.
+This is the measure-theoretic step after obtaining local transverse charts. -/
+theorem countable_smooth_charts_hausdorff_null {m n k : ℕ} (hmk : m < k)
+    {T : Set (Euclidean n)} (f : ℕ → Euclidean m → Euclidean n)
+    (D : ℕ → Set (Euclidean m))
+    (hf : ∀ j, ContDiffOn ℝ 1 (f j) (D j)) (hD : ∀ j, Convex ℝ (D j))
+    (hcover : T ⊆ ⋃ j, f j '' D j) :
+    (Measure.hausdorffMeasure (k : ℝ)) T = 0 := by
+  apply measure_mono_null hcover
+  exact measure_iUnion_null (fun j => smooth_chart_hausdorff_null hmk (hf j) (hD j))
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/RegularLevelNullity.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+open scoped ENNReal NNReal
+namespace RieszEuclidean
+
+/-- A regular level is locally the Lipschitz image of the derivative's kernel.
+Consequently it is null in every larger Hausdorff dimension. Strict
+differentiability suffices; no smoothness theorem for the implicit function
+is needed. -/
+theorem regular_level_locally_hausdorff_null {n k : ℕ}
+    {F : Type} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
+    {f : Euclidean n → F} {a : Euclidean n}
+    {L : Euclidean n →L[ℝ] F} (hf : HasStrictFDerivAt f L a)
+    (hL : LinearMap.range L = ⊤) (hk : Module.finrank ℝ (LinearMap.ker L) < k) :
+    ∃ V ∈ nhds a, (Measure.hausdorffMeasure (k : ℝ))
+      (V ∩ {x | f x = f a}) = 0 := by
+  let φ := hf.implicitFunction f L hL (f a)
+  let e := hf.implicitToPartialHomeomorph f L hL
+  have hd := hf.to_implicitFunction hL
+  obtain ⟨D, hD, happ⟩ := hd.approximates_deriv_on_nhds
+    (Or.inr (show (0 : ℝ≥0) < 1 by norm_num))
+  have hlip : LipschitzOnWith (‖(LinearMap.ker L).subtypeL‖₊ + 1) φ D := by
+    intro x hx y hy
+    exact happ.lipschitz ⟨x, hx⟩ ⟨y, hy⟩
+  have hnull : (Measure.hausdorffMeasure (k : ℝ)) (φ '' D) = 0 := by
+    apply hausdorffMeasure_of_dimH_lt (d := (k : ℝ≥0))
+    calc
+      dimH (φ '' D) ≤ dimH D := hlip.dimH_image_le
+      _ ≤ dimH (Set.univ : Set (LinearMap.ker L)) := dimH_mono (Set.subset_univ D)
+      _ = Module.finrank ℝ (LinearMap.ker L) := Real.dimH_univ_eq_finrank _
+      _ < (k : ℝ≥0) := by exact_mod_cast hk
+  have he : Tendsto (fun x => (e x).2) (nhds a) (nhds 0) := by
+    have ht := (e.continuousAt (hf.mem_implicitToPartialHomeomorph_source hL)).snd
+    simpa only [e, hf.implicitToPartialHomeomorph_self hL, Prod.snd_zero] using ht.tendsto
+  have hall : ∀ᶠ x in nhds a, (e x).2 ∈ D ∧
+      hf.implicitFunction f L hL (f x) (e x).2 = x :=
+    (he.eventually hD).and (hf.eq_implicitFunction hL)
+  refine ⟨{x | (e x).2 ∈ D ∧ hf.implicitFunction f L hL (f x) (e x).2 = x}, hall, ?_⟩
+  apply measure_mono_null _ hnull
+  intro x hx
+  refine ⟨(e x).2, hx.1.1, ?_⟩
+  change hf.implicitFunction f L hL (f a) (e x).2 = x
+  rw [← hx.2]
+  exact hx.1.2
+
+/-- Local nullity implies nullity in a second-countable Euclidean space. -/
+theorem measure_null_of_locally_null {n : ℕ} (μ : Measure (Euclidean n))
+    (T : Set (Euclidean n))
+    (hlocal : ∀ a ∈ T, ∃ V ∈ nhds a, μ (V ∩ T) = 0) : μ T = 0 := by
+  classical
+  choose V hV hn using hlocal
+  obtain ⟨J, hJ, hcover⟩ :=
+    (HereditarilyLindelof_LindelofSets T).elim_nhds_subcover' V hV
+  have hnull : μ (⋃ a ∈ J, V a a.property ∩ T) = 0 :=
+    (measure_biUnion_null_iff hJ).mpr (fun a _ => hn a a.property)
+  apply measure_mono_null _ hnull
+  intro x hx
+  obtain ⟨a, ha, hxa⟩ := Set.mem_iUnion₂.mp (hcover hx)
+  exact Set.mem_iUnion₂.mpr ⟨a, ha, hxa, hx⟩
+
+/-- A set locally contained in regular levels whose derivative kernels have
+ dimension less than `k` has zero `k`-dimensional Hausdorff measure. -/
+theorem regular_levels_hausdorff_null {n k : ℕ}
+    {F : Type} [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
+    (T : Set (Euclidean n))
+    (hlocal : ∀ a ∈ T, ∃ (f : Euclidean n → F)
+      (L : Euclidean n →L[ℝ] F),
+      HasStrictFDerivAt f L a ∧ LinearMap.range L = ⊤ ∧
+      Module.finrank ℝ (LinearMap.ker L) < k ∧
+      ∀ᶠ x in nhds a, x ∈ T → f x = f a) :
+    (Measure.hausdorffMeasure (k : ℝ)) T = 0 := by
+  apply measure_null_of_locally_null
+  intro a ha
+  obtain ⟨f, L, hf, hL, hk, he⟩ := hlocal a ha
+  obtain ⟨V, hV, hn⟩ := regular_level_locally_hausdorff_null hf hL hk
+  refine ⟨V ∩ {x | x ∈ T → f x = f a}, inter_mem hV he, ?_⟩
+  apply measure_mono_null _ hn
+  intro x hx
+  exact ⟨hx.1.1, hx.1.2 hx.2⟩
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/SupportingDerivative.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- A nonzero real continuous functional is onto. -/
+theorem functional_range_eq_top {n : ℕ} {L : Euclidean n →L[ℝ] ℝ} (hL : L ≠ 0) :
+    LinearMap.range L = ⊤ := by
+  apply Module.Dual.range_eq_top_of_ne_zero
+  intro hz
+  apply hL
+  ext x
+  exact DFunLike.congr_fun hz x
+
+/-- The derivative of a regular defining function determines every supporting
+functional up to scalar multiplication. -/
+theorem supporting_functional_proportional {n : ℕ} {Ω : Set (Euclidean n)}
+    {p : Euclidean n} {f : Euclidean n → ℝ} {L J : Euclidean n →L[ℝ] ℝ}
+    (hf : HasStrictFDerivAt f L p) (hL : L ≠ 0) (hf0 : f p = 0)
+    (hlevel : ∀ᶠ x in nhds p, x ∈ frontier Ω ↔ f x = 0)
+    (hJ : FunctionalSupportsAt (closure Ω) p J) : ∃ c : ℝ, J = c • L := by
+  classical
+  classical
+  let hr := functional_range_eq_top hL
+  let φ := hf.implicitFunction f L hr (f p)
+  have hφ0 : φ 0 = p := hf.implicitFunction_apply_image hr
+  have hφ : HasStrictFDerivAt φ (LinearMap.ker L).subtypeL 0 := hf.to_implicitFunction hr
+  have hφlevel : ∀ᶠ u in nhds (0 : LinearMap.ker L), φ u ∈ frontier Ω := by
+    have hm := (tendsto_const_nhds.prodMk_nhds tendsto_id).eventually
+      (hf.map_implicitFunction_eq hr)
+    have ht : Tendsto φ (nhds 0) (nhds p) := hφ0 ▸ hφ.continuousAt.tendsto
+    have hs := ht.eventually hlevel
+    filter_upwards [hm, hs] with u hu hs
+    exact hs.mpr (hu.trans hf0)
+  have hg : IsLocalMax (fun u => J (φ u - p)) 0 := by
+    filter_upwards [hφlevel] with u hu
+    rw [hφ0, _root_.sub_self, map_zero]
+    exact hJ _ (frontier_subset_closure hu)
+  have hd : J.comp (LinearMap.ker L).subtypeL = 0 := by
+    apply hg.hasFDerivAt_eq_zero
+    exact J.hasFDerivAt.comp 0 (hφ.hasFDerivAt.sub_const p)
+  by_contra hn
+  have hnonprop : ∀ c : ℝ, J ≠ c • L := fun c he => hn ⟨c, he⟩
+  have hsurj := prod_functionals_surjective L J hL hnonprop
+  obtain ⟨v, hv⟩ := hsurj (0, 1)
+  have hvL : L v = 0 := congrArg Prod.fst hv
+  have hvJ : J v = 1 := congrArg Prod.snd hv
+  have he := DFunLike.congr_fun hd (⟨v, hvL⟩ : LinearMap.ker L)
+  change J v = 0 at he
+  linarith
+
+/-- A nonzero supporting functional is strictly negative towards any interior
+point. Otherwise a nonzero affine function would have a local maximum there. -/
+theorem supporting_functional_strict_interior {n : ℕ} {Ω : Set (Euclidean n)}
+    (hΩ : IsOpen Ω) {p c : Euclidean n} (hc : c ∈ Ω)
+    {L : Euclidean n →L[ℝ] ℝ} (hL : L ≠ 0)
+    (hs : FunctionalSupportsAt (closure Ω) p L) : L (c - p) < 0 := by
+  have hle := hs c (subset_closure hc)
+  apply lt_of_le_of_ne hle
+  intro he
+  have hm : IsLocalMax (fun x => L (x - p)) c := by
+    filter_upwards [hΩ.mem_nhds hc] with x hx
+    rw [he]
+    exact hs x (subset_closure hx)
+  apply hL
+  have hd : HasFDerivAt (fun x => L (x - p)) L c := by
+    simpa only [ContinuousLinearMap.comp_id] using
+      L.hasFDerivAt.comp c ((hasFDerivAt_id c).sub_const p)
+  exact IsLocalMax.hasFDerivAt_eq_zero hm hd
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConvexContactPoint.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- A bounded nonempty open convex domain has a contact point with a containing
+ball centered at any chosen interior point. -/
+theorem exists_convex_contact_point {n : ℕ} (hn : 0 < n)
+    {Ω : Set (Euclidean n)} (hΩ : IsOpen Ω) (hb : Bornology.IsBounded Ω)
+    {c : Euclidean n} (hc : c ∈ Ω) :
+    ∃ p ∈ frontier Ω, p ≠ c ∧ ∀ z ∈ closure Ω, ‖z-c‖ ≤ ‖p-c‖ := by
+  letI : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
+  obtain ⟨p, hpK, hfar⟩ := hb.isCompact_closure.exists_isMaxOn
+    ⟨c, subset_closure hc⟩ (f := fun x => ‖x-c‖)
+    (continuous_id.sub continuous_const).norm.continuousOn
+  have hpc : p ≠ c := by
+    intro he
+    have hsub : Ω ⊆ {c} := by
+      intro z hz
+      have hh : ‖z-c‖ ≤ ‖p-c‖ := hfar (subset_closure hz)
+      rw [he, _root_.sub_self, norm_zero] at hh
+      exact sub_eq_zero.mp (norm_eq_zero.mp (le_antisymm hh (norm_nonneg _)))
+    exact (infinite_of_mem_nhds c (hΩ.mem_nhds hc)) (Set.finite_singleton c |>.subset hsub)
+  have hJ : innerSL ℝ (p-c) ≠ 0 := by
+    intro he
+    have hh := DFunLike.congr_fun he (p-c)
+    have hn0 : ‖p-c‖ ^ 2 = 0 := by
+      simpa only [innerSL_apply, real_inner_self_eq_norm_sq, ContinuousLinearMap.zero_apply] using hh
+    exact hpc (sub_eq_zero.mp (norm_eq_zero.mp (pow_eq_zero hn0)))
+  have hs : FunctionalSupportsAt (closure Ω) p (innerSL ℝ (p-c)) :=
+    (farthest_point_support hfar).1
+  have hpS : p ∈ frontier Ω := by
+    rw [hΩ.frontier_eq]
+    refine ⟨hpK, ?_⟩
+    intro hpΩ
+    have hh := supporting_functional_strict_interior hΩ hpΩ hJ hs
+    simp at hh
+  exact ⟨p, hpS, hpc, hfar⟩
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/SmoothImplicitChart.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- The implicit-function parametrization inherits C² regularity. -/
+theorem implicit_data_contDiffAt
+    {E F G : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F] [CompleteSpace F]
+    [NormedAddCommGroup G] [NormedSpace ℝ G] [CompleteSpace G]
+    (D : ImplicitFunctionData ℝ E F G)
+    (hl : ContDiffAt ℝ 2 D.leftFun D.pt) (hr : ContDiffAt ℝ 2 D.rightFun D.pt) :
+    ContDiffAt ℝ 2 (D.implicitFunction (D.leftFun D.pt)) (D.rightFun D.pt) := by
+  have hc : ContDiffAt ℝ 2 D.prodFun D.pt := hl.prodMk hr
+  have hpt : D.toPartialHomeomorph.symm (D.prodFun D.pt) = D.pt :=
+    D.toPartialHomeomorph.left_inv D.pt_mem_toPartialHomeomorph_source
+  have hinv : ContDiffAt ℝ 2 D.toPartialHomeomorph.symm (D.prodFun D.pt) := by
+    apply D.toPartialHomeomorph.contDiffAt_symm
+      (f₀' := D.leftDeriv.equivProdOfSurjectiveOfIsCompl D.rightDeriv
+        D.left_range D.right_range D.isCompl_ker)
+      D.map_pt_mem_toPartialHomeomorph_target
+    · change HasFDerivAt D.prodFun _ (D.toPartialHomeomorph.symm (D.prodFun D.pt))
+      rw [hpt]
+      exact D.hasStrictFDerivAt.hasFDerivAt
+    · change ContDiffAt ℝ 2 D.prodFun (D.toPartialHomeomorph.symm (D.prodFun D.pt))
+      rw [hpt]
+      exact hc
+  exact hinv.comp (D.rightFun D.pt) (contDiffAt_const.prodMk contDiffAt_id)
+
+/-- A regular C² scalar level is C²-parametrized by its tangent kernel. -/
+theorem regular_implicit_contDiffAt {n : ℕ} {f : Euclidean n → ℝ}
+    {L : Euclidean n →L[ℝ] ℝ} {a : Euclidean n}
+    (hf : HasStrictFDerivAt f L a) (hL : LinearMap.range L = ⊤)
+    (hC : ContDiffAt ℝ 2 f a) :
+    ContDiffAt ℝ 2 (hf.implicitFunction f L hL (f a)) 0 := by
+  let hker := L.ker_closedComplemented_of_finiteDimensional_range
+  let D := hf.implicitFunctionDataOfComplemented f L hL hker
+  have hr : ContDiffAt ℝ 2 D.rightFun a := by
+    exact (Classical.choose hker).contDiff.contDiffAt.comp a
+      (contDiffAt_id.sub contDiffAt_const)
+  have he := implicit_data_contDiffAt D hC hr
+  simpa only [D, HasStrictFDerivAt.implicitFunctionDataOfComplemented,
+    _root_.sub_self, map_zero] using he
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/RegularBoundaryChart.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- A regular defining function provides a C² boundary chart whose inverse is
+an affine continuous projection onto the tangent kernel. -/
+theorem regular_boundary_chart {n : ℕ} {Ω : Set (Euclidean n)}
+    {f : Euclidean n → ℝ} {p : Euclidean n} {L : Euclidean n →L[ℝ] ℝ}
+    (hf : HasStrictFDerivAt f L p) (hL : L ≠ 0) (hC : ContDiffAt ℝ 2 f p)
+    (hlevel : ∀ᶠ x in nhds p, x ∈ frontier Ω ↔ f x = f p) :
+    ∃ (φ : LinearMap.ker L → Euclidean n) (P : Euclidean n →L[ℝ] LinearMap.ker L),
+      φ 0 = p ∧ ContDiffAt ℝ 2 φ 0 ∧
+      HasStrictFDerivAt φ (LinearMap.ker L).subtypeL 0 ∧
+      (∀ᶠ u in nhds 0, φ u ∈ frontier Ω ∧ P (φ u-p) = u) ∧
+      (∀ᶠ x in nhds p, x ∈ frontier Ω → φ (P (x-p)) = x) := by
+  classical
+  let hr := functional_range_eq_top hL
+  let hk := L.ker_closedComplemented_of_finiteDimensional_range
+  let φ := hf.implicitFunction f L hr (f p)
+  let P := Classical.choose hk
+  let e := hf.implicitToPartialHomeomorph f L hr
+  have hφ0 : φ 0 = p := hf.implicitFunction_apply_image hr
+  have hd : HasStrictFDerivAt φ (LinearMap.ker L).subtypeL 0 := hf.to_implicitFunction hr
+  have he (x : Euclidean n) : e x = (f x, P (x-p)) := rfl
+  have hright : ∀ᶠ u in nhds (0 : LinearMap.ker L), e (φ u) = (f p,u) := by
+    exact (tendsto_const_nhds.prodMk_nhds tendsto_id).eventually
+      (e.eventually_right_inverse (hf.mem_implicitToPartialHomeomorph_target hr))
+  have ht : Tendsto φ (nhds 0) (nhds p) := hφ0 ▸ hd.continuousAt.tendsto
+  refine ⟨φ, P, hφ0, regular_implicit_contDiffAt hf hr hC, hd, ?_, ?_⟩
+  · filter_upwards [hright, ht.eventually hlevel] with u hu hlev
+    rw [he] at hu
+    exact ⟨hlev.mpr (congrArg Prod.fst hu), congrArg Prod.snd hu⟩
+  · filter_upwards [hf.eq_implicitFunction hr, hlevel] with x hx hlev
+    intro hxS
+    have hfval := hlev.mp hxS
+    change hf.implicitFunction f L hr (f x) (P (x-p)) = x at hx
+    rwa [hfval] at hx
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/SecondDerivativeTest.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- A twice continuously differentiable real function has nonpositive second
+derivative at a local maximum. -/
+theorem second_derivative_nonpos_at_local_max {f : ℝ → ℝ} {a : ℝ}
+    (hf : ContDiffAt ℝ 2 f a) (hm : IsLocalMax f a) :
+    deriv (deriv f) a ≤ 0 := by
+  have hd : ContDiffAt ℝ 1 (deriv f) a := by
+    exact (hf.fderiv_right (by norm_num : (1 : WithTop ℕ∞) + 1 ≤ 2)).clm_apply
+      contDiffAt_const
+  have hdd : ContinuousAt (deriv (deriv f)) a := by
+    exact ((hd.fderiv_right (by norm_num : (0 : WithTop ℕ∞) + 1 ≤ 1)).clm_apply
+      contDiffAt_const).continuousAt
+  by_contra! hpos
+  have hp : ∀ᶠ x in nhds a, 0 < deriv (deriv f) x := hdd.eventually (lt_mem_nhds hpos)
+  have he : ∀ᶠ x in nhds a,
+      0 < deriv (deriv f) x ∧ ContDiffAt ℝ 2 f x ∧ f x ≤ f a :=
+    hp.and ((hf.eventually (by norm_num)).and hm)
+  obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp he
+  have hconv : StrictConvexOn ℝ (Metric.ball a ε) f := by
+    apply strictConvexOn_of_deriv2_pos (convex_ball a ε)
+    · intro x hx
+      exact (hball hx).2.1.continuousAt.continuousWithinAt
+    · intro x hx
+      exact (hball (interior_subset hx)).1
+  have hx : a - ε / 2 ∈ Metric.ball a ε := by
+    rw [Metric.mem_ball, Real.dist_eq]
+    have heq : a - ε / 2 - a = -(ε / 2) := by ring
+    rw [heq, abs_neg, abs_of_pos (half_pos hε)]
+    linarith
+  have hy : a + ε / 2 ∈ Metric.ball a ε := by
+    rw [Metric.mem_ball, Real.dist_eq, add_sub_cancel_left, abs_of_pos (half_pos hε)]
+    linarith
+  have hxy : a - ε / 2 ≠ a + ε / 2 := by linarith
+  obtain ⟨_, hstrict⟩ := hconv
+  have hi := hstrict hx hy hxy (a := (1 / 2 : ℝ)) (b := (1 / 2 : ℝ))
+    (by norm_num) (by norm_num) (by norm_num)
+  have heq : (1 / 2 : ℝ) • (a - ε / 2) + (1 / 2 : ℝ) • (a + ε / 2) = a := by
+    simp only [smul_eq_mul]
+    ring
+  rw [heq] at hi
+  simp only [smul_eq_mul] at hi
+  linarith [(hball hx).2.2, (hball hy).2.2]
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ContactCurvature.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- At contact with a containing ball, the radial component of the acceleration
+of any C² boundary curve is bounded above by minus its squared speed. -/
+theorem contact_curve_acceleration {n : ℕ} {q : ℝ → Euclidean n}
+    {a : ℝ} (c : Euclidean n) (hq : ContDiffAt ℝ 2 q a)
+    (hm : IsLocalMax (fun t => ‖q t - c‖ ^ 2) a) :
+    inner (𝕜 := ℝ) (q a - c) (deriv (deriv q) a) ≤ -‖deriv q a‖ ^ 2 := by
+  let G := fun t => ‖q t - c‖ ^ 2
+  have hd : ContDiffAt ℝ 1 (deriv q) a :=
+    (hq.fderiv_right (by norm_num : (1 : WithTop ℕ∞) + 1 ≤ 2)).clm_apply contDiffAt_const
+  have hfirst : deriv G =ᶠ[nhds a] fun t =>
+      2 * inner (𝕜 := ℝ) (q t - c) (deriv q t) := by
+    filter_upwards [hq.eventually (by norm_num)] with t ht
+    exact ((ht.differentiableAt (by norm_num)).hasDerivAt.sub_const c).norm_sq.deriv
+  have hs := (((hq.differentiableAt (by norm_num)).hasDerivAt.sub_const c).inner ℝ
+    (hd.differentiableAt (by norm_num)).hasDerivAt).const_mul 2
+  have hsecond : HasDerivAt (deriv G)
+      (2 * (inner (𝕜 := ℝ) (q a - c) (deriv (deriv q) a) + ‖deriv q a‖ ^ 2)) a := by
+    apply HasDerivAt.congr_of_eventuallyEq _ hfirst
+    simpa only [real_inner_self_eq_norm_sq] using hs
+  have hnon := second_derivative_nonpos_at_local_max
+    ((hq.sub (contDiffAt_const (c := c))).norm_sq ℝ) hm
+  change deriv (deriv G) a ≤ 0 at hnon
+  rw [hsecond.deriv] at hnon
+  linarith
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/DirectionalSecondDerivative.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- Second derivatives along affine lines are evaluations of the second Fréchet
+derivative on the direction twice. -/
+theorem second_derivative_along_line
+    {E F : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    {f : E → F} (u v : E) (t : ℝ)
+    (hf : ContDiffAt ℝ 2 f (u + t • v)) :
+    deriv (deriv (fun s : ℝ => f (u + s • v))) t =
+      fderiv ℝ (fderiv ℝ f) (u + t • v) v v := by
+  have hc (s : ℝ) : HasDerivAt (fun s : ℝ => u + s • v) v s := by
+    simpa using (hasDerivAt_const s u).add ((hasDerivAt_id s).smul_const v)
+  have he : deriv (fun s : ℝ => f (u + s • v)) =ᶠ[nhds t]
+      fun s => fderiv ℝ f (u + s • v) v := by
+    have hn := (hc t).continuousAt.tendsto.eventually (hf.eventually (by norm_num))
+    filter_upwards [hn] with s hs
+    exact ((hs.differentiableAt (by norm_num)).hasFDerivAt.comp_hasDerivAt s (hc s)).deriv
+  have hd := ((hf.fderiv_right (by norm_num : (1 : WithTop ℕ∞) + 1 ≤ 2)).differentiableAt
+    (by norm_num)).hasFDerivAt.comp_hasDerivAt t (hc t)
+  have hd' := hd.clm_apply (hasDerivAt_const t v)
+  have hsecond : HasDerivAt (deriv (fun s : ℝ => f (u + s • v)))
+      (fderiv ℝ (fderiv ℝ f) (u + t • v) v v) t := by
+    apply HasDerivAt.congr_of_eventuallyEq _ he
+    simpa using hd'
+  exact hsecond.deriv
+
+/-- The C² chart at a contact point has negative radial second fundamental form
+in every nonzero tangent direction, quantitatively in the parameter norm. -/
+theorem contact_chart_second_derivative {n : ℕ}
+    {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (φ : E → Euclidean n) (p c : Euclidean n)
+    (hφ : ContDiffAt ℝ 2 φ 0) (hφ0 : φ 0 = p)
+    (V : E →ₗᵢ[ℝ] Euclidean n) (hd : HasFDerivAt φ V.toContinuousLinearMap 0)
+    (hball : ∀ᶠ u in nhds 0, ‖φ u - c‖ ≤ ‖p - c‖) (v : E) :
+    inner (𝕜 := ℝ) (p - c) (fderiv ℝ (fderiv ℝ φ) 0 v v) ≤ -‖v‖ ^ 2 := by
+  have hc : ContDiffAt ℝ 2 (fun t : ℝ => t • v) 0 :=
+    contDiffAt_id.smul contDiffAt_const
+  have hq : ContDiffAt ℝ 2 (fun t : ℝ => φ (t • v)) 0 := by
+    simpa using (show ContDiffAt ℝ 2 φ ((0 : ℝ) • v) by simpa using hφ).comp 0 hc
+  have hm : IsLocalMax (fun t : ℝ => ‖φ (t • v) - c‖ ^ 2) 0 := by
+    have hn := (show Tendsto (fun t : ℝ => t • v) (nhds 0) (nhds 0) by
+      simpa using hc.continuousAt.tendsto).eventually hball
+    filter_upwards [hn] with t ht
+    simpa [hφ0] using pow_le_pow_left₀ (norm_nonneg _) ht 2
+  have ha := contact_curve_acceleration c hq hm
+  have hfirst : deriv (fun t : ℝ => φ (t • v)) 0 = V v := by
+    have hl : HasDerivAt (fun t : ℝ => t • v) v 0 := by
+      simpa using (hasDerivAt_id (0 : ℝ)).smul_const v
+    simpa using ((show HasFDerivAt φ V.toContinuousLinearMap ((0 : ℝ) • v) by
+      simpa using hd).comp_hasDerivAt 0 hl).deriv
+  have hsecond := second_derivative_along_line (f := φ) 0 v 0 (by simpa using hφ)
+  simp only [zero_add, zero_smul] at hsecond ha
+  rw [hsecond, hφ0, hfirst, V.norm_map] at ha
+  exact ha
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/NegativeBilinear.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- Uniform negativity of a continuous bilinear form persists under a small
+operator-norm perturbation. -/
+theorem negative_bilinear_perturbation
+    {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {A B : E →L[ℝ] E →L[ℝ] ℝ} {c : ℝ}
+    (hA : ∀ v, A v v ≤ -c * ‖v‖ ^ 2) (hB : ‖B - A‖ < c / 2) :
+    ∀ v, B v v ≤ -(c / 2) * ‖v‖ ^ 2 := by
+  intro v
+  have he : ‖(B - A) v v‖ ≤ ‖B - A‖ * ‖v‖ ^ 2 := by
+    calc
+      _ ≤ ‖(B - A) v‖ * ‖v‖ := ContinuousLinearMap.le_opNorm _ _
+      _ ≤ (‖B - A‖ * ‖v‖) * ‖v‖ :=
+        mul_le_mul_of_nonneg_right (ContinuousLinearMap.le_opNorm _ _) (norm_nonneg _)
+      _ = _ := by ring
+  have hval : B v v - A v v ≤ ‖B - A‖ * ‖v‖ ^ 2 := by
+    exact (le_abs_self _).trans (by simpa only [ContinuousLinearMap.sub_apply, Real.norm_eq_abs] using he)
+  have hmul := mul_le_mul_of_nonneg_right hB.le (sq_nonneg ‖v‖)
+  have ha := hA v
+  linarith
+
+/-- The quantitative estimate is uniform in all directions on a neighborhood. -/
+theorem negative_bilinear_eventually
+    {E X : Type} [NormedAddCommGroup E] [NormedSpace ℝ E] [TopologicalSpace X]
+    {B : X → E →L[ℝ] E →L[ℝ] ℝ} {x : X} {c : ℝ}
+    (hc : 0 < c) (hB : ContinuousAt B x)
+    (hneg : ∀ v, B x v v ≤ -c * ‖v‖ ^ 2) :
+    ∀ᶠ y in nhds x, ∀ v, B y v v ≤ -(c / 2) * ‖v‖ ^ 2 := by
+  have he : ∀ᶠ y in nhds x, ‖B y - B x‖ < c / 2 := by
+    have hh : Tendsto (fun y => ‖B y - B x‖) (nhds x) (nhds 0) := by
+      have hs : ContinuousAt (fun y => B y - B x) x := hB.sub continuousAt_const
+      have hc' : ContinuousAt (fun y => ‖B y - B x‖) x :=
+        ContinuousAt.norm (E := E →L[ℝ] E →L[ℝ] ℝ) hs
+      simpa only [_root_.sub_self, ContinuousLinearMap.opNorm_zero] using hc'.tendsto
+    exact (tendsto_order.1 hh).2 _ (half_pos hc)
+  exact he.mono fun _ hy => negative_bilinear_perturbation hneg hy
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/LinearHeightHessian.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- Taking a fixed linear height commutes with the second derivative. -/
+theorem linear_height_hessian
+    {E F : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [NormedAddCommGroup F] [NormedSpace ℝ F]
+    {φ : E → F} {u : E} (hφ : ContDiffAt ℝ 2 φ u)
+    (J : F →L[ℝ] ℝ) (v : E) :
+    fderiv ℝ (fderiv ℝ (fun w => J (φ w))) u v v =
+      J (fderiv ℝ (fderiv ℝ φ) u v v) := by
+  have he : fderiv ℝ (fun w => J (φ w)) =ᶠ[nhds u]
+      fun w => J.comp (fderiv ℝ φ w) := by
+    filter_upwards [hφ.eventually (by norm_num)] with w hw
+    exact (J.hasFDerivAt.comp w (hw.differentiableAt (by norm_num)).hasFDerivAt).fderiv
+  have hd := (ContinuousLinearMap.compL ℝ E F ℝ J).hasFDerivAt.comp u
+    ((hφ.fderiv_right (by norm_num : (1 : WithTop ℕ∞) + 1 ≤ 2)).differentiableAt
+      (by norm_num)).hasFDerivAt
+  have hh := (hd.congr_of_eventuallyEq he).fderiv
+  exact congrArg (fun A : E →L[ℝ] E →L[ℝ] ℝ => A v v) hh
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/HessianConcavity.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- A negative definite second Fréchet derivative implies strict concavity on
+a convex set. The proof restricts to each segment and uses the scalar test. -/
+theorem strictConcaveOn_of_hessian_neg
+    {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {D : Set E} {f : E → ℝ} (hD : Convex ℝ D)
+    (hf : ∀ x ∈ D, ContDiffAt ℝ 2 f x)
+    (hneg : ∀ x ∈ D, ∀ v : E, v ≠ 0 → fderiv ℝ (fderiv ℝ f) x v v < 0) :
+    StrictConcaveOn ℝ D f := by
+  refine ⟨hD, ?_⟩
+  intro x hx y hy hxy a b ha hb hab
+  let q : ℝ → E := fun t => x + t • (y - x)
+  have hq (t : ℝ) (ht : t ∈ Set.Icc (0 : ℝ) 1) : q t ∈ D := by
+    have he : q t = (1-t) • x + t • y := by dsimp [q]; module
+    rw [he]
+    exact hD hx hy (sub_nonneg.mpr ht.2) ht.1 (by ring)
+  have hqc : ContDiff ℝ 2 q := contDiff_const.add (contDiff_id.smul contDiff_const)
+  have hcont : ContinuousOn (f ∘ q) (Set.Icc (0 : ℝ) 1) := by
+    intro t ht
+    exact ((hf _ (hq t ht)).continuousAt.comp hqc.continuous.continuousAt).continuousWithinAt
+  have hs : StrictConcaveOn ℝ (Set.Icc (0 : ℝ) 1) (f ∘ q) := by
+    apply strictConcaveOn_of_deriv2_neg (convex_Icc _ _) hcont
+    intro t ht
+    have ht' := interior_subset ht
+    have he := second_derivative_along_line x (y-x) t (hf _ (hq t ht'))
+    change deriv (deriv (fun s => f (q s))) t < 0
+    rw [he]
+    exact hneg _ (hq t ht') _ (sub_ne_zero.mpr hxy.symm)
+  obtain ⟨_, hstrict⟩ := hs
+  have hh := hstrict (by simp : (0 : ℝ) ∈ Set.Icc (0 : ℝ) 1)
+    (by simp : (1 : ℝ) ∈ Set.Icc (0 : ℝ) 1) (by norm_num : (0 : ℝ) ≠ 1) ha hb hab
+  have he : q b = a • x + b • y := by
+    dsimp [q]
+    have haeq : a = 1-b := by linarith
+    rw [haeq]
+    module
+  simp only [Function.comp_def, smul_eq_mul, mul_zero, mul_one, zero_add] at hh
+  rw [he] at hh
+  simpa only [q, zero_smul, add_zero, one_smul, add_sub_cancel] using hh
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ContactChartConcavity.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- A contact chart has a strictly concave radial height on a small ball.
+The quantitative Hessian estimate records persistence of strict curvature. -/
+theorem contact_chart_strictConcavity {n : ℕ}
+    {E : Type} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    (φ : E → Euclidean n) (p c : Euclidean n)
+    (hφ : ContDiffAt ℝ 2 φ 0) (hφ0 : φ 0 = p)
+    (V : E →ₗᵢ[ℝ] Euclidean n) (hd : HasFDerivAt φ V.toContinuousLinearMap 0)
+    (hball : ∀ᶠ u in nhds 0, ‖φ u-c‖ ≤ ‖p-c‖) :
+    ∃ r : ℝ, 0 < r ∧
+      StrictConcaveOn ℝ (Metric.ball 0 r) (fun u => inner (𝕜 := ℝ) (p-c) (φ u)) ∧
+      (∀ u ∈ Metric.ball 0 r, ContDiffAt ℝ 2 φ u) ∧
+      (∀ u ∈ Metric.ball 0 r, ∀ v,
+        inner (𝕜 := ℝ) (p-c) (fderiv ℝ (fderiv ℝ φ) u v v) ≤ -(1/2 : ℝ) * ‖v‖ ^ 2) := by
+  let H := innerSL ℝ (p-c)
+  let g := fun u => H (φ u)
+  have hg : ContDiffAt ℝ 2 g 0 := H.contDiff.contDiffAt.comp 0 hφ
+  have hh : ContinuousAt (fderiv ℝ (fderiv ℝ g)) 0 :=
+    ((hg.fderiv_right (by norm_num : (1 : WithTop ℕ∞) + 1 ≤ 2)).fderiv_right
+      (by norm_num : (0 : WithTop ℕ∞) + 1 ≤ 1)).continuousAt
+  have hneg : ∀ v, fderiv ℝ (fderiv ℝ g) 0 v v ≤ -(1 : ℝ) * ‖v‖ ^ 2 := by
+    intro v
+    rw [linear_height_hessian hφ H v]
+    simpa only [neg_mul, one_mul, H, innerSL_apply] using
+      contact_chart_second_derivative φ p c hφ hφ0 V hd hball v
+  have hn := negative_bilinear_eventually (by norm_num : (0 : ℝ) < 1) hh hneg
+  obtain ⟨r, hr, hsmall⟩ := Metric.mem_nhds_iff.mp (hn.and (hφ.eventually (by norm_num)))
+  refine ⟨r, hr, ?_, fun u hu => (hsmall hu).2, ?_⟩
+  · apply strictConcaveOn_of_hessian_neg (convex_ball 0 r)
+    · intro u hu
+      exact H.contDiff.contDiffAt.comp u (hsmall hu).2
+    · intro u hu v hv
+      have he := (hsmall hu).1 v
+      exact lt_of_le_of_lt he (by nlinarith [sq_pos_of_pos (norm_pos_iff.mpr hv)])
+  · intro u hu v
+    have he := (hsmall hu).1 v
+    rw [linear_height_hessian (hsmall hu).2 H v] at he
+    exact he
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConcaveChartFaces.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- Convexity promotes a locally singleton exposed face to a singleton face. -/
+theorem functional_singleton_face_of_local {n : ℕ} {K : Set (Euclidean n)}
+    (hc : Convex ℝ K) {x : Euclidean n} {J : Euclidean n →L[ℝ] ℝ} (hx : x ∈ K)
+    (hlocal : ∀ᶠ z in nhds x, z ∈ K → J (z - x) = 0 → z = x) :
+    FunctionalSingletonFace K x J := by
+  intro z hz hf
+  by_contra hzx
+  have hclosure : x ∈ closure (openSegment ℝ x z) :=
+    segment_subset_closure_openSegment (left_mem_segment ℝ x z)
+  obtain ⟨w, hwlocal, hwseg⟩ := mem_closure_iff_nhds.mp hclosure _ hlocal
+  have hwK := hc.segment_subset hx hz (openSegment_subset_segment ℝ x z hwseg)
+  have hwface : J (w - x) = 0 := by
+    obtain ⟨a, b, _, _, hab, rfl⟩ := hwseg
+    rw [map_sub, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    rw [map_sub] at hf
+    rw [sub_eq_zero.mp hf, ← add_mul, hab, one_mul, _root_.sub_self]
+  have hwx := hwlocal hwK hwface
+  rw [hwx, left_mem_openSegment_iff] at hwseg
+  exact hzx hwseg.symm
+
+/-- A chart with a strictly concave linear height cannot contain a nontrivial
+straight boundary segment. This yields the singleton supporting faces. -/
+theorem strictConcave_chart_singleton_faces {n : ℕ}
+    {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {Ω W : Set (Euclidean n)} {D : Set E}
+    (hΩ : IsOpen Ω) (hc : Convex ℝ Ω) (hW : IsOpen W) (hcW : Convex ℝ W)
+    (φ : E → Euclidean n) (P : Euclidean n →L[ℝ] E) (p : Euclidean n)
+    (H : Euclidean n →L[ℝ] ℝ)
+    (hconc : StrictConcaveOn ℝ D (fun u => H (φ u)))
+    (hinv : ∀ x ∈ W, x ∈ frontier Ω → φ (P (x-p)) = x)
+    (hparam : ∀ x ∈ W, P (x-p) ∈ D) :
+    ∀ x ∈ W ∩ frontier Ω, ∀ J : Euclidean n →L[ℝ] ℝ,
+      J ≠ 0 → FunctionalSupportsAt (closure Ω) x J →
+      FunctionalSingletonFace (closure Ω) x J := by
+  intro x hx J hJ hs
+  apply functional_singleton_face_of_local hc.closure (frontier_subset_closure hx.2)
+  filter_upwards [hW.mem_nhds hx.1] with y hyW
+  intro hyK hyface
+  by_contra hxy
+  have hS (z : Euclidean n) (hzK : z ∈ closure Ω) (hzJ : J (z-x) = 0) :
+      z ∈ frontier Ω := by
+    rw [hΩ.frontier_eq]
+    refine ⟨hzK, ?_⟩
+    intro hzΩ
+    have hh := supporting_functional_strict_interior hΩ hzΩ hJ hs
+    rw [hzJ] at hh
+    exact lt_irrefl _ hh
+  have hyS := hS y hyK hyface
+  let m := (1/2 : ℝ) • x + (1/2 : ℝ) • y
+  have hmW : m ∈ W := hcW hx.1 hyW (by norm_num) (by norm_num) (by norm_num)
+  have hmK : m ∈ closure Ω := hc.closure (frontier_subset_closure hx.2) hyK
+    (by norm_num) (by norm_num) (by norm_num)
+  have hmface : J (m-x) = 0 := by
+    dsimp [m]
+    simp only [map_sub, map_add, map_smul, smul_eq_mul] at hyface ⊢
+    linarith
+  have hmS := hS m hmK hmface
+  have hne : P (x-p) ≠ P (y-p) := by
+    intro he
+    have hh := congrArg φ he
+    rw [hinv x hx.1 hx.2, hinv y hyW hyS] at hh
+    exact hxy hh.symm
+  obtain ⟨_, hstrict⟩ := hconc
+  have hh := hstrict (hparam x hx.1) (hparam y hyW) hne
+    (by norm_num : (0 : ℝ) < 1/2) (by norm_num : (0 : ℝ) < 1/2) (by norm_num)
+  have he : (1/2 : ℝ) • P (x-p) + (1/2 : ℝ) • P (y-p) = P (m-p) := by
+    rw [← map_smul, ← map_smul, ← map_add]
+    congr 1
+    dsimp [m]
+    module
+  dsimp only at hh
+  rw [he, hinv m hmW hmS, hinv x hx.1 hx.2, hinv y hyW hyS] at hh
+  simp only [m, map_add, map_smul, lt_self_iff_false] at hh
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConvexCurvedPatch.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open Filter Topology
+namespace RieszEuclidean
+
+/-- Data of a relatively open boundary patch with strict curvature and singleton
+supporting faces. The projection is an affine inverse to the regular chart. -/
+structure CurvedBoundaryPatch {n : ℕ} (Ω : Set (Euclidean n)) where
+  /-- The contact point of the containing ball. -/
+  point : Euclidean n
+  /-- The nonzero derivative defining the tangent parameter space. -/
+  functional : Euclidean n →L[ℝ] ℝ
+  functional_ne_zero : functional ≠ 0
+  /-- The local C² parametrization of the boundary. -/
+  chart : LinearMap.ker functional → Euclidean n
+  /-- The continuous linear part of the inverse chart. -/
+  projection : Euclidean n →L[ℝ] LinearMap.ker functional
+  /-- The ambient open set defining the relatively open patch. -/
+  neighborhood : Set (Euclidean n)
+  isOpen_neighborhood : IsOpen neighborhood
+  point_mem : point ∈ neighborhood ∩ frontier Ω
+  chart_zero : chart 0 = point
+  chart_deriv : HasStrictFDerivAt chart (LinearMap.ker functional).subtypeL 0
+  chart_mem : ∀ᶠ u in nhds 0, chart u ∈ neighborhood ∩ frontier Ω
+  projection_chart : ∀ᶠ u in nhds 0, projection (chart u-point) = u
+  /-- A fixed linear height with uniformly negative chart Hessian. -/
+  height : Euclidean n →L[ℝ] ℝ
+  curvature : ∀ᶠ u in nhds 0, ∀ v,
+    height (fderiv ℝ (fderiv ℝ chart) u v v) ≤ -(1/2 : ℝ) * ‖v‖ ^ 2
+  singleton_faces : ∀ x ∈ neighborhood ∩ frontier Ω,
+    ∀ J : Euclidean n →L[ℝ] ℝ, J ≠ 0 →
+      FunctionalSupportsAt (closure Ω) x J → FunctionalSingletonFace (closure Ω) x J
+
+/-- Lemma 8.2: a bounded nonempty convex C² domain admits a nonempty relatively
+open strictly curved patch whose supporting hyperplanes have singleton faces. -/
+theorem exists_convex_curved_patch {n : ℕ} (hn : 0 < n)
+    {Ω : Set (Euclidean n)} (hΩ : IsOpen Ω) (hc : Convex ℝ Ω)
+    (hb : Bornology.IsBounded Ω) (hne : Ω.Nonempty) (hC : HasC2Boundary Ω) :
+    Nonempty (CurvedBoundaryPatch Ω) := by
+  obtain ⟨c, hcΩ⟩ := hne
+  obtain ⟨p, hpS, _, hfar⟩ := exists_convex_contact_point hn hΩ hb hcΩ
+  obtain ⟨V, f, hV, hpV, hf, hL, _, hzero⟩ := hC p hpS
+  let L := fderiv ℝ f p
+  have hfC : ContDiffAt ℝ 2 f p := hf.contDiffAt (hV.mem_nhds hpV)
+  have hstrict : HasStrictFDerivAt f L p := hfC.hasStrictFDerivAt (by norm_num)
+  have hlevel : ∀ᶠ x in nhds p, x ∈ frontier Ω ↔ f x = f p := by
+    filter_upwards [hV.mem_nhds hpV] with x hx
+    rw [(hzero p hpV).mp hpS]
+    exact hzero x hx
+  obtain ⟨φ, P, hφ0, hφC, hφd, hforward, hinverse⟩ :=
+    regular_boundary_chart hstrict (hL p hpV) hfC hlevel
+  have hball : ∀ᶠ u in nhds 0, ‖φ u-c‖ ≤ ‖p-c‖ :=
+    hforward.mono fun _ hu => hfar _ (frontier_subset_closure hu.1)
+  obtain ⟨r, hr, hconc, _, hcurv⟩ := contact_chart_strictConcavity φ p c hφC hφ0
+    (LinearMap.ker L).subtypeₗᵢ hφd.hasFDerivAt hball
+  have hP : ContinuousAt (fun x => P (x-p)) p := P.continuous.continuousAt.comp
+    (continuousAt_id.sub continuousAt_const)
+  have hparam : ∀ᶠ x in nhds p, P (x-p) ∈ Metric.ball 0 r := by
+    apply hP.eventually
+    simpa only [_root_.sub_self, map_zero] using Metric.ball_mem_nhds (0 : LinearMap.ker L) hr
+  obtain ⟨δ, hδ, hsmall⟩ := Metric.mem_nhds_iff.mp (hinverse.and hparam)
+  let W := Metric.ball p δ
+  have hface := strictConcave_chart_singleton_faces hΩ hc Metric.isOpen_ball (convex_ball p δ)
+    φ P p (innerSL ℝ (p-c)) hconc (fun x hx => (hsmall hx).1) (fun x hx => (hsmall hx).2)
+  have ht : Tendsto φ (nhds 0) (nhds p) := hφ0 ▸ hφd.continuousAt.tendsto
+  refine ⟨{
+    point := p
+    functional := L
+    functional_ne_zero := hL p hpV
+    chart := φ
+    projection := P
+    neighborhood := W
+    isOpen_neighborhood := Metric.isOpen_ball
+    point_mem := ⟨Metric.mem_ball_self hδ, hpS⟩
+    chart_zero := hφ0
+    chart_deriv := hφd
+    chart_mem := ?_
+    projection_chart := hforward.mono fun _ hu => hu.2
+    height := innerSL ℝ (p-c)
+    curvature := Filter.eventually_of_mem (Metric.ball_mem_nhds 0 hr) hcurv
+    singleton_faces := hface }⟩
+  exact (ht.eventually (Metric.ball_mem_nhds p hδ)).and (hforward.mono fun _ hu => hu.1)
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ChartSurfaceMeasure.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+open scoped NNReal ENNReal
+namespace RieszEuclidean
+
+/-- A regular chart with a Lipschitz inverse contains a patch of positive finite
+Hausdorff measure in its parameter dimension. -/
+theorem chart_positive_finite_measure
+    {n : ℕ} {E : Type} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
+    {φ : E → Euclidean n} {A : E →L[ℝ] Euclidean n}
+    (hd : HasStrictFDerivAt φ A 0)
+    (P : Euclidean n →L[ℝ] E) (p : Euclidean n) (U : Set (Euclidean n))
+    (hmem : ∀ᶠ u in nhds 0, φ u ∈ U)
+    (hinv : ∀ᶠ u in nhds 0, P (φ u-p) = u) :
+    ∃ K ⊆ U, (Measure.hausdorffMeasure (Module.finrank ℝ E : ℝ)) K ≠ 0 ∧
+      (Measure.hausdorffMeasure (Module.finrank ℝ E : ℝ)) K ≠ ⊤ := by
+  obtain ⟨D, hD, happ⟩ := hd.approximates_deriv_on_nhds
+    (Or.inr (show (0 : ℝ≥0) < 1 by norm_num))
+  have hlip : LipschitzOnWith (‖A‖₊ + 1) φ D := by
+    intro x hx y hy
+    exact happ.lipschitz ⟨x, hx⟩ ⟨y, hy⟩
+  obtain ⟨r, hr, hsmall⟩ := Metric.mem_nhds_iff.mp (Filter.inter_mem hD (hmem.and hinv))
+  let B := Metric.closedBall (0 : E) (r/2)
+  have hB : B ⊆ Metric.ball 0 r := Metric.closedBall_subset_ball (by linarith)
+  have hBD : B ⊆ D := fun x hx => (hsmall (hB hx)).1
+  have hpos : 0 < (Measure.hausdorffMeasure (Module.finrank ℝ E : ℝ)) B :=
+    Metric.measure_closedBall_pos _ _ (half_pos hr)
+  have hfin : (Measure.hausdorffMeasure (Module.finrank ℝ E : ℝ)) B < ⊤ :=
+    (isCompact_closedBall (0 : E) (r/2)).measure_lt_top
+  refine ⟨φ '' B, ?_, ?_, ?_⟩
+  · rintro x ⟨u, hu, rfl⟩
+    exact (hsmall (hB hu)).2.1
+  · intro hz
+    have hQ : LipschitzWith ‖P‖₊ (fun x => P (x-p)) :=
+      by
+        intro x y
+        have he : (x-p)-(y-p) = x-y := by abel
+        simpa only [edist_eq_enorm_sub, he] using P.lipschitz (x-p) (y-p)
+    have he : (fun x => P (x-p)) '' (φ '' B) = B := by
+      ext u
+      constructor
+      · rintro ⟨x, ⟨v, hv, rfl⟩, rfl⟩
+        change P (φ v-p) ∈ B
+        rwa [(hsmall (hB hv)).2.2]
+      · intro hu
+        exact ⟨φ u, ⟨u, hu, rfl⟩, (hsmall (hB hu)).2.2⟩
+    have hh := hQ.hausdorffMeasure_image_le (by positivity : (0 : ℝ) ≤ Module.finrank ℝ E) (φ '' B)
+    rw [he, hz, mul_zero] at hh
+    exact (not_le_of_gt hpos) hh
+  · apply ne_top_of_le_ne_top _ ((hlip.mono hBD).hausdorffMeasure_image_le
+      (by positivity : (0 : ℝ) ≤ Module.finrank ℝ E))
+    rw [ENNReal.rpow_natCast]
+    exact (ENNReal.mul_lt_top (ENNReal.pow_lt_top ENNReal.coe_lt_top) hfin).ne
+
+/-- The curved patch contains a positive finite `(n-1)`-dimensional surface
+measure patch. -/
+theorem CurvedBoundaryPatch.exists_positive_finite_subpatch {n : ℕ}
+    {Ω : Set (Euclidean n)} (C : CurvedBoundaryPatch Ω) :
+    ∃ K ⊆ C.neighborhood ∩ frontier Ω,
+      (Measure.hausdorffMeasure ((n-1 : ℕ) : ℝ)) K ≠ 0 ∧
+      (Measure.hausdorffMeasure ((n-1 : ℕ) : ℝ)) K ≠ ⊤ := by
+  borelize ↥(LinearMap.ker C.functional)
+  have hL : C.functional.toLinearMap ≠ 0 := by
+    intro hz
+    apply C.functional_ne_zero
+    ext x
+    exact DFunLike.congr_fun hz x
+  have hdim := Module.Dual.finrank_ker_add_one_of_ne_zero hL
+  have hd : Module.finrank ℝ (LinearMap.ker C.functional) = n-1 := by
+    simpa only [Euclidean, finrank_euclideanSpace, Fintype.card_fin] using (Nat.eq_sub_of_add_eq hdim)
+  have hh := chart_positive_finite_measure C.chart_deriv C.projection C.point
+    (C.neighborhood ∩ frontier Ω) C.chart_mem C.projection_chart
+  rwa [hd] at hh
+
+end RieszEuclidean
+
 /- Source: RieszEuclidean/EdgeGeometry.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 noncomputable section
@@ -12080,6 +13412,815 @@ theorem edgeLengthMeasure_translate_polygon_remainder {ι : Type*} [Fintype ι]
 
 end RieszEuclidean
 
+/- Source: RieszEuclidean/TriangleCrossing.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- The literal open standard triangle in the Euclidean plane. -/
+def standardTriangle (s : ℝ) : Set (Euclidean 2) :=
+  {x | 0 < x 0 ∧ 0 < x 1 ∧ x 0 + x 1 < s}
+
+/-- The relative interior of the horizontal edge of the standard triangle. -/
+def standardTriangleEdge (s : ℝ) : Set (Euclidean 2) :=
+  {x | 0 < x 0 ∧ x 1 = 0 ∧ x 0 < s}
+
+/-- The second coordinate is the fixed inward normal coordinate on the bottom edge. -/
+theorem standardTriangleEdge_translation_normal_zero (s : ℝ) (t θ : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) (htθ : t + θ ∈ standardTriangleEdge s) :
+    θ 1 = 0 := by
+  have h := htθ.2.1
+  simp only [PiLp.add_apply, ht.2.1, zero_add] at h
+  exact h
+
+/-- Near each point of the open bottom edge, triangle membership is exactly positivity
+of the common inward normal coordinate. -/
+theorem standardTriangleEdge_local_halfplane (s : ℝ) (t : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) :
+    ∀ᶠ u in nhds t, u ∈ standardTriangle s ↔ 0 < u 1 := by
+  have hc (i : Fin 2) : Continuous (fun x : Euclidean 2 => x i) :=
+    (continuous_apply i).comp (PiLp.continuous_equiv 2 (fun _ : Fin 2 => ℝ))
+  have hleft : ∀ᶠ u in nhds t, 0 < u 0 :=
+    (isOpen_lt continuous_const (hc 0)).mem_nhds ht.1
+  have hsum : ∀ᶠ u in nhds t, u 0 + u 1 < s :=
+    (isOpen_lt ((hc 0).add (hc 1)) continuous_const).mem_nhds
+      (by simpa only [Set.mem_setOf_eq, ht.2.1, add_zero] using ht.2.2)
+  filter_upwards [hleft, hsum] with u hu hv
+  exact ⟨fun h => h.2.1, fun h => ⟨hu, h, hv⟩⟩
+
+/-- Translations between two points of the bottom edge preserve which side enters
+the actual triangle in sufficiently small neighborhoods. -/
+theorem standardTriangleEdge_same_direction_nhds (s : ℝ) (t θ : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) (htθ : t + θ ∈ standardTriangleEdge s) :
+    ∀ᶠ u in nhds t, u + θ ∈ standardTriangle s ↔ u ∈ standardTriangle s := by
+  have hnormal := standardTriangleEdge_translation_normal_zero s t θ ht htθ
+  have hshift : Tendsto (fun u : Euclidean 2 => u + θ) (nhds t) (nhds (t + θ)) :=
+    (continuous_id.add continuous_const).continuousAt
+  filter_upwards [standardTriangleEdge_local_halfplane s t ht,
+    hshift.eventually (standardTriangleEdge_local_halfplane s (t + θ) htθ)] with u hu hv
+  rw [hu, hv]
+  simp only [PiLp.add_apply, hnormal, add_zero]
+
+/-- Along any approaching sequence, every surviving translated bottom-edge point
+crosses in the same direction. -/
+theorem standardTriangleEdge_same_direction (s : ℝ) (t θ : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) (htθ : t + θ ∈ standardTriangleEdge s)
+    (ts : ℕ → Euclidean 2) (hts : Tendsto ts atTop (nhds t)) :
+    ∀ᶠ j in atTop, ts j + θ ∈ standardTriangle s ↔ ts j ∈ standardTriangle s :=
+  hts.eventually (standardTriangleEdge_same_direction_nhds s t θ ht htθ)
+
+/-- A finite intersection of strict supporting halfspaces in actual Euclidean space. -/
+def strictHalfspaceIntersection {d : ℕ} {ι : Type*}
+    (normal : ι → Euclidean d) (offset : ι → ℝ) : Set (Euclidean d) :=
+  {x | ∀ i, offset i < inner (𝕜 := ℝ) x (normal i)}
+
+/-- At a point with exactly one active supporting constraint, membership in the
+polyhedron is locally determined by that constraint's inward normal. -/
+theorem strictHalfspaceIntersection_local_halfspace {d : ℕ} {ι : Type*} [Fintype ι]
+    (normal : ι → Euclidean d) (offset : ι → ℝ) (j : ι) (t : Euclidean d)
+    (hstrict : ∀ i, i ≠ j → offset i < inner (𝕜 := ℝ) t (normal i)) :
+    ∀ᶠ u in nhds t, u ∈ strictHalfspaceIntersection normal offset ↔
+      offset j < inner (𝕜 := ℝ) u (normal j) := by
+  have hother : ∀ i, ∀ᶠ u in nhds t,
+      i ≠ j → offset i < inner (𝕜 := ℝ) u (normal i) := by
+    intro i
+    by_cases hij : i = j
+    · exact Eventually.of_forall (fun _ h => (h hij).elim)
+    · have hi : ∀ᶠ u in nhds t, offset i < inner (𝕜 := ℝ) u (normal i) :=
+        (isOpen_lt continuous_const (by fun_prop)).mem_nhds (hstrict i hij)
+      exact hi.mono (fun _ h _ => h)
+  filter_upwards [eventually_all.mpr hother] with u hu
+  constructor
+  · exact fun h => h j
+  · intro h i
+    by_cases hij : i = j
+    · simpa only [hij] using h
+    · exact hu i hij
+
+/-- Two points in the relative interior of the same supporting face have identical
+local crossing direction, with their tangential translation explicitly retained. -/
+theorem strictHalfspaceIntersection_same_direction {d : ℕ} {ι : Type*} [Fintype ι]
+    (normal : ι → Euclidean d) (offset : ι → ℝ) (j : ι) (t θ : Euclidean d)
+    (hactive : inner (𝕜 := ℝ) t (normal j) = offset j)
+    (hactiveθ : inner (𝕜 := ℝ) (t + θ) (normal j) = offset j)
+    (hstrict : ∀ i, i ≠ j → offset i < inner (𝕜 := ℝ) t (normal i))
+    (hstrictθ : ∀ i, i ≠ j → offset i < inner (𝕜 := ℝ) (t + θ) (normal i)) :
+    ∀ᶠ u in nhds t, u + θ ∈ strictHalfspaceIntersection normal offset ↔
+      u ∈ strictHalfspaceIntersection normal offset := by
+  have hn : inner (𝕜 := ℝ) θ (normal j) = 0 := by
+    rw [inner_add_left, hactive] at hactiveθ
+    linarith
+  have hshift : Tendsto (fun u : Euclidean d => u + θ) (nhds t) (nhds (t + θ)) :=
+    (continuous_id.add continuous_const).continuousAt
+  filter_upwards [strictHalfspaceIntersection_local_halfspace normal offset j t hstrict,
+    hshift.eventually (strictHalfspaceIntersection_local_halfspace
+      normal offset j (t + θ) hstrictθ)] with u hu hv
+  rw [hu, hv, inner_add_left, hn, add_zero]
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/TriangleBoundary.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- The closed triangle defined by its three weak supporting inequalities. -/
+def closedStandardTriangle (s : ℝ) : Set (Euclidean 2) :=
+  {x | 0 ≤ x 0 ∧ 0 ≤ x 1 ∧ x 0 + x 1 ≤ s}
+
+/-- A point on the horizontal coordinate axis. -/
+def standardHorizontalPoint (a : ℝ) : Euclidean 2 :=
+  (WithLp.equiv 2 (Fin 2 → ℝ)).symm ![a, 0]
+
+theorem standardTriangle_isOpen (s : ℝ) : IsOpen (standardTriangle s) := by
+  have hc (i : Fin 2) : Continuous (fun x : Euclidean 2 => x i) :=
+    (continuous_apply i).comp (PiLp.continuous_equiv 2 (fun _ : Fin 2 => ℝ))
+  exact (isOpen_lt continuous_const (hc 0)).inter
+    ((isOpen_lt continuous_const (hc 1)).inter (isOpen_lt ((hc 0).add (hc 1)) continuous_const))
+
+theorem closedStandardTriangle_isClosed (s : ℝ) : IsClosed (closedStandardTriangle s) := by
+  have hc (i : Fin 2) : Continuous (fun x : Euclidean 2 => x i) :=
+    (continuous_apply i).comp (PiLp.continuous_equiv 2 (fun _ : Fin 2 => ℝ))
+  exact (isClosed_le continuous_const (hc 0)).inter
+    ((isClosed_le continuous_const (hc 1)).inter (isClosed_le ((hc 0).add (hc 1)) continuous_const))
+
+theorem standardTriangle_subset_closedStandardTriangle (s : ℝ) :
+    standardTriangle s ⊆ closedStandardTriangle s :=
+  fun _ hx => ⟨hx.1.le, hx.2.1.le, hx.2.2.le⟩
+
+theorem closedStandardTriangle_interior (s : ℝ) :
+    interior (closedStandardTriangle s) = standardTriangle s := by
+  let p (i : Fin 2) : Euclidean 2 →L[ℝ] ℝ := PiLp.proj 2 (fun _ : Fin 2 => ℝ) i
+  have hp (i : Fin 2) : Function.Surjective (p i) := by
+    intro a
+    refine ⟨(WithLp.equiv 2 (Fin 2 → ℝ)).symm (fun _ => a), rfl⟩
+  have hsum : Function.Surjective (p 0 + p 1) := by
+    intro a
+    refine ⟨standardHorizontalPoint a, ?_⟩
+    simp [p, PiLp.proj, standardHorizontalPoint]
+  change interior ((p 0 ⁻¹' Set.Ici 0) ∩
+    ((p 1 ⁻¹' Set.Ici 0) ∩ ((p 0 + p 1) ⁻¹' Set.Iic s))) = _
+  rw [interior_inter, interior_inter, (p 0).interior_preimage (hp 0),
+    (p 1).interior_preimage (hp 1), (p 0 + p 1).interior_preimage hsum,
+    interior_Ici, interior_Iic]
+  rfl
+
+theorem closedStandardTriangle_convex (s : ℝ) : Convex ℝ (closedStandardTriangle s) := by
+  intro x hx y hy a b ha hb hab
+  change 0 ≤ a * x 0 + b * y 0 ∧ 0 ≤ a * x 1 + b * y 1 ∧
+    (a * x 0 + b * y 0) + (a * x 1 + b * y 1) ≤ s
+  refine ⟨add_nonneg (mul_nonneg ha hx.1) (mul_nonneg hb hy.1),
+    add_nonneg (mul_nonneg ha hx.2.1) (mul_nonneg hb hy.2.1), ?_⟩
+  calc
+    a * x 0 + b * y 0 + (a * x 1 + b * y 1) =
+        a * (x 0 + x 1) + b * (y 0 + y 1) := by ring
+    _ ≤ a * s + b * s := add_le_add
+      (mul_le_mul_of_nonneg_left hx.2.2 ha) (mul_le_mul_of_nonneg_left hy.2.2 hb)
+    _ = s := by rw [← add_mul, hab, one_mul]
+
+theorem standardTriangle_nonempty (s : ℝ) (hs : 0 < s) : (standardTriangle s).Nonempty := by
+  refine ⟨(WithLp.equiv 2 (Fin 2 → ℝ)).symm ![s / 3, s / 3], ?_⟩
+  change 0 < s / 3 ∧ 0 < s / 3 ∧ s / 3 + s / 3 < s
+  constructor
+  · positivity
+  constructor
+  · positivity
+  · linarith
+
+theorem standardTriangle_closure (s : ℝ) (hs : 0 < s) :
+    closure (standardTriangle s) = closedStandardTriangle s := by
+  have h := (closedStandardTriangle_convex s).closure_interior_eq_closure_of_nonempty_interior
+    (by rw [closedStandardTriangle_interior]; exact standardTriangle_nonempty s hs)
+  simpa only [closedStandardTriangle_interior, (closedStandardTriangle_isClosed s).closure_eq] using h
+
+theorem closedStandardTriangle_norm_le (s : ℝ) (hs : 0 ≤ s)
+    {x : Euclidean 2} (hx : x ∈ closedStandardTriangle s) : ‖x‖ ≤ s := by
+  have hsq : ‖x‖ ^ 2 = (x 0) ^ 2 + (x 1) ^ 2 := by
+    rw [PiLp.norm_sq_eq_of_L2, Fin.sum_univ_two]
+    simp only [Real.norm_eq_abs, sq_abs]
+  have hprod := mul_nonneg hx.1 hx.2.1
+  have hsum := add_nonneg hx.1 hx.2.1
+  nlinarith [hx.2.2, norm_nonneg x]
+
+theorem closedStandardTriangle_isCompact (s : ℝ) (hs : 0 ≤ s) :
+    IsCompact (closedStandardTriangle s) := by
+  apply (isCompact_closedBall (0 : Euclidean 2) s).of_isClosed_subset
+    (closedStandardTriangle_isClosed s)
+  intro x hx
+  simpa only [Metric.mem_closedBall, dist_zero_right] using closedStandardTriangle_norm_le s hs hx
+
+
+/-- The standard triangle is bounded in the ambient Euclidean plane. -/
+theorem standardTriangle_isBounded (s : ℝ) (hs : 0 ≤ s) :
+    Bornology.IsBounded (standardTriangle s) :=
+  (closedStandardTriangle_isCompact s hs).isBounded.subset
+    (standardTriangle_subset_closedStandardTriangle s)
+
+/-- Its ordinary frontier is its closed triangle minus its open interior. -/
+theorem standardTriangle_frontier (s : ℝ) (hs : 0 < s) :
+    frontier (standardTriangle s) = closedStandardTriangle s \ standardTriangle s := by
+  rw [frontier, standardTriangle_closure s hs, (standardTriangle_isOpen s).interior_eq]
+
+/-- Convexity gives Lebesgue-null boundary for the actual Euclidean triangle. -/
+theorem standardTriangle_volume_frontier (s : ℝ) :
+    volume (frontier (standardTriangle s)) = 0 := by
+  have hc : Convex ℝ (standardTriangle s) := by
+    rw [← closedStandardTriangle_interior]
+    exact (closedStandardTriangle_convex s).interior
+  exact hc.addHaar_frontier volume
+
+/-- The bottom-edge coordinate description is literally the nondegenerate open segment. -/
+theorem standardTriangleEdge_eq_openSegment (s : ℝ) (hs : 0 < s) :
+    standardTriangleEdge s = openSegment ℝ (0 : Euclidean 2) (standardHorizontalPoint s) := by
+  rw [openSegment_eq_image_lineMap]
+  ext x
+  constructor
+  · intro hx
+    refine ⟨x 0 / s, ⟨div_pos hx.1 hs, (div_lt_one hs).mpr hx.2.2⟩, ?_⟩
+    rw [AffineMap.lineMap_apply_module]
+    apply PiLp.ext
+    intro i
+    fin_cases i
+    · change (1 - x 0 / s) * 0 + x 0 / s * s = x 0
+      field_simp
+    · change (1 - x 0 / s) * 0 + x 0 / s * 0 = x 1
+      simp only [mul_zero, add_zero, hx.2.1]
+  · rintro ⟨t, ht, rfl⟩
+    rw [AffineMap.lineMap_apply_module]
+    change 0 < (1 - t) * 0 + t * s ∧ (1 - t) * 0 + t * 0 = 0 ∧
+      (1 - t) * 0 + t * s < s
+    simp only [mul_zero, zero_add, add_zero]
+    exact ⟨mul_pos ht.1 hs, trivial, by nlinarith [ht.2]⟩
+
+/-- Every point of the selected bottom edge is on the actual frontier. -/
+theorem standardTriangleEdge_subset_frontier (s : ℝ) (hs : 0 < s) :
+    standardTriangleEdge s ⊆ frontier (standardTriangle s) := by
+  rw [standardTriangle_frontier s hs]
+  intro x hx
+  refine ⟨⟨hx.1.le, by simp only [hx.2.1]; rfl, ?_⟩, ?_⟩
+  · simpa only [hx.2.1, add_zero] using hx.2.2.le
+  · intro h
+    simpa only [hx.2.1, lt_self_iff_false] using h.2.1
+
+/-- Removing the open bottom edge leaves just the vertical and diagonal supports,
+including all three vertices. -/
+theorem standardTriangle_remainder_subset_supports (s : ℝ) (hs : 0 < s) :
+    frontier (standardTriangle s) \ standardTriangleEdge s ⊆
+      {x : Euclidean 2 | x 0 = 0} ∪ {x | x 0 + x 1 = s} := by
+  rw [standardTriangle_frontier s hs]
+  rintro x ⟨⟨hx, hout⟩, hedge⟩
+  by_contra hn
+  have h₀ : x 0 ≠ 0 := fun h => hn (Or.inl h)
+  have hsum : x 0 + x 1 ≠ s := fun h => hn (Or.inr h)
+  have hx₀ : 0 < x 0 := lt_of_le_of_ne hx.1 (Ne.symm h₀)
+  have hxsum : x 0 + x 1 < s := lt_of_le_of_ne hx.2.2 hsum
+  have hx₁ : x 1 = 0 := by
+    by_contra hn₁
+    exact hout ⟨hx₀, lt_of_le_of_ne hx.2.1 (Ne.symm hn₁), hxsum⟩
+  exact hedge ⟨hx₀, hx₁, by simpa only [hx₁, add_zero] using hxsum⟩
+
+/-- A point on the vertical coordinate axis. -/
+def standardVerticalPoint (a : ℝ) : Euclidean 2 :=
+  (WithLp.equiv 2 (Fin 2 → ℝ)).symm ![0, a]
+
+/-- Pairing with the horizontal unit vector extracts the first coordinate. -/
+theorem inner_standardHorizontalPoint_one (x : Euclidean 2) :
+    inner (𝕜 := ℝ) x (standardHorizontalPoint 1) = x 0 := by
+  simp [PiLp.inner_apply, Fin.sum_univ_two, standardHorizontalPoint]
+
+/-- Pairing with the vertical unit vector extracts the second coordinate. -/
+theorem inner_standardVerticalPoint_one (x : Euclidean 2) :
+    inner (𝕜 := ℝ) x (standardVerticalPoint 1) = x 1 := by
+  simp [PiLp.inner_apply, Fin.sum_univ_two, standardVerticalPoint]
+
+/-- The two endpoints determining bottom-edge length are distinct. -/
+theorem standardHorizontalPoint_ne_zero (s : ℝ) (hs : 0 < s) :
+    standardHorizontalPoint s ≠ 0 := by
+  intro h
+  have h₀ := congrArg (fun x : Euclidean 2 => x 0) h
+  exact hs.ne' h₀
+
+/-- Every translate of the other two edges is null, including the zero translation. -/
+theorem standardTriangle_edgeLength_remainder_null (s : ℝ) (hs : 0 < s)
+    (θ : Euclidean 2) :
+    edgeLengthMeasure 0 (standardHorizontalPoint s)
+      (translate θ (frontier (standardTriangle s) \ standardTriangleEdge s)) = 0 := by
+  have hsub : translate θ (frontier (standardTriangle s) \ standardTriangleEdge s) ⊆
+      translate θ {x : Euclidean 2 | x 0 = 0} ∪
+        translate θ {x : Euclidean 2 | x 0 + x 1 = s} :=
+    fun _ hx => standardTriangle_remainder_subset_supports s hs hx
+  apply measure_mono_null hsub
+  apply measure_union_null
+  · have h := edgeLengthMeasure_translate_hyperplane 0 (standardHorizontalPoint s)
+      (standardHorizontalPoint 1) θ 0
+      (by simpa only [sub_zero, inner_standardHorizontalPoint_one] using hs.ne')
+    simpa only [inner_standardHorizontalPoint_one] using h
+  · have h := edgeLengthMeasure_translate_hyperplane 0 (standardHorizontalPoint s)
+      (standardHorizontalPoint 1 + standardVerticalPoint 1) θ s
+      (by
+        rw [sub_zero, inner_add_right, inner_standardHorizontalPoint_one,
+          inner_standardVerticalPoint_one]
+        change s + 0 ≠ 0
+        simpa only [add_zero] using hs.ne')
+    simpa only [inner_add_right, inner_standardHorizontalPoint_one,
+      inner_standardVerticalPoint_one] using h
+
+/-- Tonelli discards exactly the translated boundary remainder, preserving the whole
+bottom-edge jump, including all tangential frequencies. -/
+theorem exists_clean_standardTriangle_edge_point (s : ℝ) (hs : 0 < s)
+    (σ : Measure (Euclidean 2)) [SFinite σ] :
+    ∃ t ∈ standardTriangleEdge s,
+      σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0 := by
+  let ν := edgeLengthMeasure 0 (standardHorizontalPoint s)
+  haveI : IsFiniteMeasure ν := edgeLengthMeasure_finite _ _
+  have hab : (0 : Euclidean 2) ≠ standardHorizontalPoint s :=
+    (standardHorizontalPoint_ne_zero s hs).symm
+  haveI : NeZero ν := ⟨fun h =>
+    (edgeLengthMeasure_univ_pos 0 (standardHorizontalPoint s) hab).ne'
+      (by change ν Set.univ = 0; rw [h]; rfl)⟩
+  have hE : MeasurableSet (standardTriangleEdge s) := by
+    rw [standardTriangleEdge_eq_openSegment s hs]
+    exact measurableSet_openEdge _ _ hab
+  have hF : MeasurableSet (frontier (standardTriangle s) \ standardTriangleEdge s) :=
+    isClosed_frontier.measurableSet.diff hE
+  have hm : MeasurableSet {p : Euclidean 2 × Euclidean 2 |
+      p.1 + p.2 ∉ frontier (standardTriangle s) \ standardTriangleEdge s} :=
+    (hF.preimage (measurable_fst.add measurable_snd)).compl
+  have hsections : ∀ᵐ θ ∂σ, ∀ᵐ t ∂ν,
+      t + θ ∉ frontier (standardTriangle s) \ standardTriangleEdge s := by
+    apply Eventually.of_forall
+    intro θ
+    exact compl_mem_ae_iff.mpr (standardTriangle_edgeLength_remainder_null s hs θ)
+  have hswap := (Measure.ae_ae_comm (μ := ν) (ν := σ) hm).mpr hsections
+  have hedge : ∀ᵐ t ∂ν, t ∈ standardTriangleEdge s := by
+    rw [standardTriangleEdge_eq_openSegment s hs]
+    exact edgeLengthMeasure_ae_edge _ _ hab
+  have hgood : ∀ᵐ t ∂ν, t ∈ standardTriangleEdge s ∧
+      σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0 := by
+    filter_upwards [hswap, hedge] with t ht he
+    exact ⟨he, compl_mem_ae_iff.mp ht⟩
+  exact hgood.exists
+
+/-- Bottom-edge points are approached from both ambient open sides of the triangle. -/
+theorem standardTriangleEdge_two_sided_closure (s : ℝ) (hs : 0 < s)
+    (t : Euclidean 2) (ht : t ∈ standardTriangleEdge s) :
+    t ∈ closure (standardTriangle s) ∧ t ∈ closure (closure (standardTriangle s))ᶜ := by
+  have hf := standardTriangleEdge_subset_frontier s hs ht
+  refine ⟨frontier_subset_closure hf, ?_⟩
+  rw [closure_compl, standardTriangle_closure s hs, closedStandardTriangle_interior]
+  rw [(standardTriangle_isOpen s).frontier_eq] at hf
+  exact hf.2
+
+/-- Any Lebesgue-conull parameter set approaches the selected edge from inside and
+from the strict exterior in the ambient plane. -/
+theorem exists_conull_sequences_standardTriangle_two_sides (s : ℝ) (hs : 0 < s)
+    {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0)
+    (t : Euclidean 2) (ht : t ∈ standardTriangleEdge s) :
+    (∃ ts : ℕ → Euclidean 2, (∀ j, ts j ∈ G ∩ standardTriangle s) ∧
+      Tendsto ts atTop (nhds t)) ∧
+    (∃ ts : ℕ → Euclidean 2, (∀ j, ts j ∈ G ∩ (closure (standardTriangle s))ᶜ) ∧
+      Tendsto ts atTop (nhds t)) := by
+  have h := standardTriangleEdge_two_sided_closure s hs t ht
+  exact exists_conull_sequences_two_sides hG (standardTriangle_isOpen s) h.1 h.2
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/TriangleSymbolLimits.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- The full surviving bottom-edge jump, retaining tangential translations. -/
+def standardTriangleJump (s : ℝ) (t : Euclidean 2) : Set (Euclidean 2) :=
+  {θ | t + θ ∈ standardTriangleEdge s}
+
+/-- The full edge jump is a measurable frequency set. -/
+theorem standardTriangleJump_measurableSet (s : ℝ) (hs : 0 < s) (t : Euclidean 2) :
+    MeasurableSet (standardTriangleJump s t) := by
+  have he : MeasurableSet (standardTriangleEdge s) := by
+    rw [standardTriangleEdge_eq_openSegment s hs]
+    exact measurableSet_openEdge _ _ (standardHorizontalPoint_ne_zero s hs).symm
+  exact he.preimage (measurable_const.add measurable_id)
+
+/-- The invariant zero frequency always belongs to the edge jump. -/
+theorem zero_mem_standardTriangleJump (s : ℝ) (t : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) : 0 ∈ standardTriangleJump s t := by
+  simpa only [standardTriangleJump, Set.mem_setOf_eq, add_zero] using ht
+
+/-- Every retained jump frequency is tangential to the chosen bottom edge. -/
+theorem standardTriangleJump_normal_zero (s : ℝ) (t : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) {θ : Euclidean 2}
+    (hθ : θ ∈ standardTriangleJump s t) : θ 1 = 0 :=
+  standardTriangleEdge_translation_normal_zero s t θ ht hθ
+
+/-- Jump frequencies lie outside the original open-domain symbol. -/
+theorem standardTriangleJump_not_mem (s : ℝ) (t : Euclidean 2)
+    {θ : Euclidean 2} (hθ : θ ∈ standardTriangleJump s t) :
+    t + θ ∉ standardTriangle s := by
+  intro h
+  have he : (t + θ) 1 = 0 := hθ.2.1
+  exact (ne_of_gt h.2.1) he
+
+/-- Arbitrary interior approaches eventually turn on each retained jump frequency. -/
+theorem standardTriangleJump_interior_eventually (s : ℝ) (t θ : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) (hθ : θ ∈ standardTriangleJump s t)
+    {ts : ℕ → Euclidean 2} (hts : Tendsto ts atTop (nhds t))
+    (hin : ∀ n, ts n ∈ standardTriangle s) :
+    ∀ᶠ n in atTop, cutoffSymbol (standardTriangle s) (ts n) θ = 1 := by
+  filter_upwards [standardTriangleEdge_same_direction s t θ ht hθ ts hts] with n hn
+  exact Set.indicator_of_mem (hn.mpr (hin n)) _
+
+/-- Arbitrary strict exterior approaches eventually turn off each retained frequency. -/
+theorem standardTriangleJump_exterior_eventually (s : ℝ) (t θ : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) (hθ : θ ∈ standardTriangleJump s t)
+    {ts : ℕ → Euclidean 2} (hts : Tendsto ts atTop (nhds t))
+    (hout : ∀ n, ts n ∉ closure (standardTriangle s)) :
+    ∀ᶠ n in atTop, cutoffSymbol (standardTriangle s) (ts n) θ = 0 := by
+  filter_upwards [standardTriangleEdge_same_direction s t θ ht hθ ts hts] with n hn
+  exact Set.indicator_of_not_mem (fun h => hout n (subset_closure (hn.mp h))) _
+
+/-- At a clean bottom point the interior symbol gains the entire edge jump. -/
+theorem standardTriangle_cutoffSymbol_interior_ae_tendsto (s : ℝ)
+    (t : Euclidean 2) (ht : t ∈ standardTriangleEdge s)
+    (σ : Measure (Euclidean 2))
+    (hclean : σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0)
+    {ts : ℕ → Euclidean 2} (hts : Tendsto ts atTop (nhds t))
+    (hin : ∀ n, ts n ∈ standardTriangle s) :
+    ∀ᵐ θ ∂σ, Tendsto (fun n => cutoffSymbol (standardTriangle s) (ts n) θ) atTop
+      (nhds (cutoffSymbol (standardTriangle s) t θ +
+        (standardTriangleJump s t).indicator (fun _ => (1 : ℂ)) θ)) := by
+  have hae : ∀ᵐ θ ∂σ,
+      t + θ ∉ frontier (standardTriangle s) \ standardTriangleEdge s :=
+    compl_mem_ae_iff.mpr hclean
+  filter_upwards [hae] with θ hθ
+  by_cases hj : θ ∈ standardTriangleJump s t
+  · have hn := standardTriangleJump_not_mem s t hj
+    simpa only [cutoffSymbol, Set.indicator_of_not_mem hn, Set.indicator_of_mem hj,
+      zero_add] using
+      tendsto_const_nhds.congr' ((standardTriangleJump_interior_eventually s t θ ht hj hts hin).mono (fun _ h => h.symm))
+  · have hoff : t + θ ∉ frontier (standardTriangle s) := fun h => hθ ⟨h, hj⟩
+    simpa only [Set.indicator_of_not_mem hj, add_zero] using
+      tendsto_cutoffSymbol_off_frontier hts hoff
+
+/-- At the same clean point the exterior symbol keeps the original open-domain value. -/
+theorem standardTriangle_cutoffSymbol_exterior_ae_tendsto (s : ℝ)
+    (t : Euclidean 2) (ht : t ∈ standardTriangleEdge s)
+    (σ : Measure (Euclidean 2))
+    (hclean : σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0)
+    {ts : ℕ → Euclidean 2} (hts : Tendsto ts atTop (nhds t))
+    (hout : ∀ n, ts n ∉ closure (standardTriangle s)) :
+    ∀ᵐ θ ∂σ, Tendsto (fun n => cutoffSymbol (standardTriangle s) (ts n) θ) atTop
+      (nhds (cutoffSymbol (standardTriangle s) t θ)) := by
+  have hae : ∀ᵐ θ ∂σ,
+      t + θ ∉ frontier (standardTriangle s) \ standardTriangleEdge s :=
+    compl_mem_ae_iff.mpr hclean
+  filter_upwards [hae] with θ hθ
+  by_cases hj : θ ∈ standardTriangleJump s t
+  · have hn := standardTriangleJump_not_mem s t hj
+    simpa only [cutoffSymbol, Set.indicator_of_not_mem hn] using
+      tendsto_const_nhds.congr' ((standardTriangleJump_exterior_eventually s t θ ht hj hts hout).mono (fun _ h => h.symm))
+  · exact tendsto_cutoffSymbol_off_frontier hts (fun h => hθ ⟨h, hj⟩)
+
+/-- The jump is the whole translated open edge interval on the tangent line. -/
+theorem standardTriangleJump_eq_tangent_interval (s : ℝ) (t : Euclidean 2)
+    (ht : t ∈ standardTriangleEdge s) :
+    standardTriangleJump s t =
+      {θ : Euclidean 2 | θ 1 = 0 ∧ -(t 0) < θ 0 ∧ θ 0 < s - t 0} := by
+  ext θ
+  change (0 < t 0 + θ 0 ∧ t 1 + θ 1 = 0 ∧ t 0 + θ 0 < s) ↔ _
+  rw [ht.2.1, zero_add]
+  constructor
+  · rintro ⟨h₀, h₁, h₂⟩
+    exact ⟨h₁, by linarith, by linarith⟩
+  · rintro ⟨h₁, h₀, h₂⟩
+    exact ⟨by linarith, h₁, by linarith⟩
+
+/-- Every ambient conull set supplies both boundary approaches at one point clean
+for the entire control measure, with the actual shifted-indicator limits. -/
+theorem exists_standardTriangle_boundary_symbol_limits (s : ℝ) (hs : 0 < s)
+    (σ : Measure (Euclidean 2)) [SFinite σ]
+    {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0) :
+    ∃ t ∈ standardTriangleEdge s,
+      σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0 ∧
+      (∃ ts : ℕ → Euclidean 2,
+        (∀ n, ts n ∈ G ∩ standardTriangle s) ∧ Tendsto ts atTop (nhds t) ∧
+        ∀ᵐ θ ∂σ, Tendsto (fun n => cutoffSymbol (standardTriangle s) (ts n) θ) atTop
+          (nhds (cutoffSymbol (standardTriangle s) t θ +
+            (standardTriangleJump s t).indicator (fun _ => (1 : ℂ)) θ))) ∧
+      (∃ ts : ℕ → Euclidean 2,
+        (∀ n, ts n ∈ G ∩ (closure (standardTriangle s))ᶜ) ∧ Tendsto ts atTop (nhds t) ∧
+        ∀ᵐ θ ∂σ, Tendsto (fun n => cutoffSymbol (standardTriangle s) (ts n) θ) atTop
+          (nhds (cutoffSymbol (standardTriangle s) t θ))) := by
+  obtain ⟨t, ht, hc⟩ := exists_clean_standardTriangle_edge_point s hs σ
+  obtain ⟨⟨tin, hin, htin⟩, ⟨tout, hout, htout⟩⟩ :=
+    exists_conull_sequences_standardTriangle_two_sides s hs hG t ht
+  exact ⟨t, ht, hc,
+    ⟨tin, hin, htin, standardTriangle_cutoffSymbol_interior_ae_tendsto s t ht σ hc htin
+      (fun n => (hin n).2)⟩,
+    ⟨tout, hout, htout, standardTriangle_cutoffSymbol_exterior_ae_tendsto s t ht σ hc htout
+      (fun n => (hout n).2)⟩⟩
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/TriangleCutoffObstruction.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- Actual triangle cutoffs have orthogonal strong limits with the complete edge jump. -/
+theorem exists_standardTriangle_cutoff_limits {H : Type*}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (s : ℝ) (hs : 0 < s) {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0)
+    {t₀ : Euclidean 2} (hx : t₀ ∈ standardTriangleEdge s)
+    (σ : H → Measure (Euclidean 2)) (hfinite : ∀ f, IsFiniteMeasure (σ f))
+    (hclean : ∀ f, σ f {θ | t₀ + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0)
+    (P : G → H →L[ℂ] H)
+    (hP : ∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t)
+    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (standardTriangle s) t θ‖ ^ 2 ∂σ f)
+    (hdiff : ∀ a b f, ‖P a f - P b f‖ ^ 2 =
+      ∫ θ, ‖cutoffSymbol (standardTriangle s) a θ - cutoffSymbol (standardTriangle s) b θ‖ ^ 2 ∂σ f) :
+    ∃ (tm tp : ℕ → G) (Rm Rp : H →L[ℂ] H),
+      (∀ n, (tm n : Euclidean 2) ∉ closure (standardTriangle s) ∧ (tp n : Euclidean 2) ∈ (standardTriangle s)) ∧
+      Tendsto (fun n => (tm n : Euclidean 2)) atTop (𝓝 t₀) ∧
+      Tendsto (fun n => (tp n : Euclidean 2)) atTop (𝓝 t₀) ∧
+      (‖Rm‖ ≤ 1 ∧ IsSelfAdjoint Rm ∧ Rm.comp Rm = Rm) ∧
+      (‖Rp‖ ≤ 1 ∧ IsSelfAdjoint Rp ∧ Rp.comp Rp = Rp) ∧
+      (∀ f, Tendsto (fun n => P (tm n) f) atTop (𝓝 (Rm f))) ∧
+      (∀ f, Tendsto (fun n => P (tp n) f) atTop (𝓝 (Rp f))) ∧
+      (∀ f, ‖Rm f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (standardTriangle s) t₀ θ‖ ^ 2 ∂σ f) ∧
+      (∀ f, ‖Rp f‖ ^ 2 = ∫ θ, ‖boundaryJumpSymbol (standardTriangle s) t₀ (standardTriangleJump s t₀) θ‖ ^ 2 ∂σ f) := by
+  obtain ⟨⟨tp', hp', htp⟩, ⟨tm', hm', htm⟩⟩ :=
+    exists_conull_sequences_standardTriangle_two_sides s hs hG t₀ hx
+  let tp : ℕ → G := fun n => ⟨tp' n, (hp' n).1⟩
+  let tm : ℕ → G := fun n => ⟨tm' n, (hm' n).1⟩
+  have ha (t : ℕ → G) (f : H) (n : ℕ) :
+      AEStronglyMeasurable (cutoffSymbol (standardTriangle s) (t n)) (σ f) :=
+    (measurable_cutoffSymbol (standardTriangle_isOpen s).measurableSet (t n)).aestronglyMeasurable
+  have hb (t : ℕ → G) (f : H) (n : ℕ) :
+      ∀ᵐ θ ∂σ f, ‖cutoffSymbol (standardTriangle s) (t n) θ‖ ≤ 1 :=
+    Filter.Eventually.of_forall (norm_cutoffSymbol_le_one (standardTriangle s) (t n))
+  obtain ⟨Rm, hRm, hRms, hRmi, hRmt, hRmn⟩ :=
+    exists_projection_of_spectral_symbol_limit (l := atTop) (fun n => P (tm n))
+      (fun n => (hP (tm n)).1) (fun n => (hP (tm n)).2.1)
+      (fun n => (hP (tm n)).2.2) σ hfinite
+      (fun n => cutoffSymbol (standardTriangle s) (tm n)) (cutoffSymbol (standardTriangle s) t₀) (ha tm) (hb tm)
+      (fun f => standardTriangle_cutoffSymbol_exterior_ae_tendsto s t₀ hx (σ f) (hclean f) htm
+        (fun n => (hm' n).2))
+      (fun f i j => hdiff (tm i) (tm j) f) (fun f n => hnorm (tm n) f)
+  obtain ⟨Rp, hRp, hRps, hRpi, hRpt, hRpn⟩ :=
+    exists_projection_of_spectral_symbol_limit (l := atTop) (fun n => P (tp n))
+      (fun n => (hP (tp n)).1) (fun n => (hP (tp n)).2.1)
+      (fun n => (hP (tp n)).2.2) σ hfinite
+      (fun n => cutoffSymbol (standardTriangle s) (tp n)) (boundaryJumpSymbol (standardTriangle s) t₀ (standardTriangleJump s t₀)) (ha tp) (hb tp)
+      (fun f => standardTriangle_cutoffSymbol_interior_ae_tendsto s t₀ hx (σ f) (hclean f) htp
+        (fun n => (hp' n).2))
+      (fun f i j => hdiff (tp i) (tp j) f) (fun f n => hnorm (tp n) f)
+  exact ⟨tm, tp, Rm, Rp, fun n => ⟨(hm' n).2, (hp' n).2⟩, htm, htp,
+    ⟨hRm, hRms, hRmi⟩, ⟨hRp, hRps, hRpi⟩, hRmt, hRpt, hRmn, hRpn⟩
+
+/-- The complete triangle edge jump obstructs a common subunit gap to a continuous
+orthogonal comparison family at a point clean for all the given spectral measures. -/
+theorem standardTriangle_clean_cutoffs_comparison_obstruction {H : Type}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (s : ℝ) (hs : 0 < s) {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0)
+    {t₀ : Euclidean 2} (hx : t₀ ∈ standardTriangleEdge s)
+    (σ : H → Measure (Euclidean 2)) (hfinite : ∀ f, IsFiniteMeasure (σ f))
+    (hclean : ∀ f, σ f {θ | t₀ + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0)
+    (P : G → H →L[ℂ] H)
+    (hP : ∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t)
+    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (standardTriangle s) t θ‖ ^ 2 ∂σ f)
+    (hdiff : ∀ a b f, ‖P a f - P b f‖ ^ 2 =
+      ∫ θ, ‖cutoffSymbol (standardTriangle s) a θ - cutoffSymbol (standardTriangle s) b θ‖ ^ 2 ∂σ f)
+    (u : H) (hu : ‖u‖ = 1) (hσu : σ u = Measure.dirac 0)
+    (M : Euclidean 2 → H →L[ℂ] H) (hM : ContinuousAt M t₀)
+    (hMs : IsSelfAdjoint (M t₀)) (hMi : (M t₀).comp (M t₀) = M t₀)
+    {γ : ℝ} (hγ : γ < 1) (hgap : ∀ t : G, ‖P t - M t‖ ≤ γ) : False := by
+  obtain ⟨tm, tp, Rm, Rp, _, htm, htp, hRm, hRp, hRmt, hRpt, hRmn, hRpn⟩ :=
+    exists_standardTriangle_cutoff_limits s hs hG hx σ hfinite hclean P hP hnorm hdiff
+  obtain ⟨_, _, hstrict⟩ := boundary_jump_cutoff_ranges_strict
+    (standardTriangle_isOpen s).measurableSet t₀ (standardTriangleJump_measurableSet s hs t₀)
+    (fun _ h => standardTriangleJump_not_mem s t₀ h) (zero_mem_standardTriangleJump s t₀ hx)
+    σ hfinite Rm Rp hRm.2.1 hRp.2.1 hRm.2.2 hRp.2.2 hRmn hRpn u hu hσu
+  let Rminus : OrthProjection H := ⟨Rm, hRm.2.2, hRm.2.1.isSymmetric⟩
+  let Rplus : OrthProjection H := ⟨Rp, hRp.2.2, hRp.2.1.isSymmetric⟩
+  let Q : OrthProjection H := ⟨M t₀, hMi, hMs.isSymmetric⟩
+  exact OrthProjection.moving_comparison_obstruction
+    (fun n => P (tm n)) (fun n => P (tp n))
+    (fun n => M (tm n)) (fun n => M (tp n)) Rminus Rplus Q γ hγ
+    hRmt hRpt (hM.tendsto.comp htm) (hM.tendsto.comp htp)
+    (fun n => hgap (tm n)) (fun n => hgap (tp n)) hstrict
+
+/-- The actual triangle geometry excludes a uniform subunit gap for spectral cutoffs
+with the stated norm and difference identities and a common control measure.
+Constructing those analytic identities from an exponential Riesz basis is separate. -/
+theorem standardTriangle_cutoffs_continuous_comparison_obstruction {H : Type}
+    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+    (s : ℝ) (hs : 0 < s) {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0)
+    (σ : H → Measure (Euclidean 2)) (hfinite : ∀ f, IsFiniteMeasure (σ f))
+    (μ : Measure (Euclidean 2)) [SFinite μ] (hdom : ∀ f, σ f ≪ μ)
+    (P : G → H →L[ℂ] H)
+    (hP : ∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t)
+    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (standardTriangle s) t θ‖ ^ 2 ∂σ f)
+    (hdiff : ∀ a b f, ‖P a f - P b f‖ ^ 2 =
+      ∫ θ, ‖cutoffSymbol (standardTriangle s) a θ - cutoffSymbol (standardTriangle s) b θ‖ ^ 2 ∂σ f)
+    (u : H) (hu : ‖u‖ = 1) (hσu : σ u = Measure.dirac 0)
+    (M : Euclidean 2 → H →L[ℂ] H) (hM : Continuous M)
+    (hMs : ∀ t, IsSelfAdjoint (M t)) (hMi : ∀ t, (M t).comp (M t) = M t)
+    {γ : ℝ} (hγ : γ < 1) (hgap : ∀ t : G, ‖P t - M t‖ ≤ γ) : False := by
+  obtain ⟨t₀, ht₀, hclean⟩ := exists_clean_standardTriangle_edge_point s hs μ
+  exact standardTriangle_clean_cutoffs_comparison_obstruction s hs hG ht₀ σ hfinite
+    (fun f => hdom f hclean) P hP hnorm hdiff u hu hσu
+    M hM.continuousAt (hMs t₀) (hMi t₀) hγ hgap
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/TriangleAnalyticAssembly.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean.SeparatedConfiguration
+
+/-- The actual triangle Fourier-to-bump hull gap contradicts the stationary boundary
+jump, assuming only existence of representing measures for the hull correlations. -/
+theorem standardTriangle_hull_gap_obstruction {δ r M γ : ℝ}
+    (s : ℝ) (hspos : 0 < s) (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
+    [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)] [CompactSpace (hull Γ)]
+    (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+    (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ)
+    (σ : Lp ℂ 2 μ → Measure (Euclidean 2))
+    (hσ : ∀ f, RepresentsCorrelation (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (hr : 2 * r < δ) (b : SchwartzMap (Euclidean 2) ℂ)
+    (hcompact : HasCompactSupport b) (hs : ∀ x, r ≤ ‖x‖ → b x = 0)
+    (hn : ‖b.toLp 2 volume‖ = 1) (hM : 0 ≤ M) (hb : ∀ x, ‖b x‖ ≤ M)
+    (hγ : 0 ≤ γ) (hγlt : γ < 1)
+    (hgap : ∀ Δ : hull Γ,
+      ‖(fourierProjection (standardTriangle s) (standardTriangle_isOpen s).measurableSet).op -
+        (isometryRangeProjection (bumpSynthesis Δ.val.separated hr b hs hn)).op‖ ≤ γ) : False := by
+  letI := separableSpace_hullLp hδ Γ μ
+  obtain ⟨v, _, hν, hdom⟩ := exists_spectralControlMeasure
+    (hullKoopmanUnitary hδ Γ μ hμ) (hullKoopmanUnitary_zero hδ Γ μ hμ)
+    σ hσ (Lp.const 2 μ (1 : ℂ)) norm_stationary_one
+  letI := hν
+  have hfin : volume (standardTriangle s) ≠ ⊤ :=
+    (standardTriangle_isBounded s hspos.le).measure_lt_top.ne
+  obtain ⟨_, hG, P, hP, _, hnorm, hdiff, hPg⟩ :=
+    exists_stationary_cutoff_family_with_comparison_gap hδ Γ μ hμ σ hσ
+      (spectralControlMeasure σ v) hdom (standardTriangle s)
+      (standardTriangle_isOpen s).measurableSet hfin (standardTriangle_volume_frontier s)
+      hr b hcompact hs hn hM hb hγ hgap
+  have hnorm' : ∀ t f, ‖P t f‖ ^ 2 =
+      ∫ θ, ‖cutoffSymbol (standardTriangle s) t θ‖ ^ 2 ∂σ f := by
+    intro t f
+    letI := (hσ f).1
+    rw [integral_cutoffSymbol_sq (σ f) (standardTriangle s)
+      (standardTriangle_isOpen s).measurableSet]
+    exact hnorm t f
+  have hσone : σ (Lp.const 2 μ (1 : ℂ)) = Measure.dirac 0 :=
+    (hσ _).unique (represents_hullCorrelation_one hδ Γ μ hμ)
+  exact standardTriangle_cutoffs_continuous_comparison_obstruction s hspos hG
+    σ (fun f => (hσ f).1) (spectralControlMeasure σ v) hdom P hP hnorm' hdiff
+    (Lp.const 2 μ (1 : ℂ)) norm_stationary_one hσone
+    (stationaryComparison hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb)
+    (continuous_stationaryComparison hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb)
+    (stationaryComparison_isSelfAdjoint hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb)
+    (stationaryComparison_idempotent hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb
+      (integral_sq_norm_schwartz_of_toLp_norm_one b hn)) hγlt hPg
+
+/-- For the literal standard triangle, the exponential Riesz basis assumption reduces
+given representing measures on stationary hulls. -/
+theorem standardTriangle_no_exponentialRieszBasis_of_hull_representations
+    (s : ℝ) (hspos : 0 < s)
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
+        ∀ f, RepresentsCorrelation
+          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (Λ : Set (Euclidean 2)) : ¬ HasExponentialRieszBasis (standardTriangle s) Λ := by
+  intro hB
+  obtain ⟨δ, r, hδ, _, hr, Γ, b, hs, hn, _, hcompact, _, γ, hγ, hγlt, hgap⟩ :=
+    exists_riesz_basis_uniform_hull_gap (standardTriangle_isOpen s).measurableSet
+      (standardTriangle_isBounded s hspos.le) hB
+  letI : MeasurableSpace (hull Γ) := borel (hull Γ)
+  letI : BorelSpace (hull Γ) := ⟨rfl⟩
+  letI : CompactSpace (hull Γ) := isCompact_iff_compactSpace.mp (isCompact_hull hδ Γ)
+  obtain ⟨μ, hμprob, hμ⟩ := exists_hull_invariant_probability hδ Γ
+  letI := hμprob
+  obtain ⟨σ, hσ⟩ := hrep hδ Γ μ hμ
+  exact standardTriangle_hull_gap_obstruction s hspos hδ Γ μ hμ σ hσ hr b hcompact hs hn
+    (show 0 ≤ SchwartzMap.seminorm ℝ 0 0 b from apply_nonneg _ _)
+    (SchwartzMap.norm_le_seminorm ℝ b) hγ hγlt (fun Δ => hgap Δ.val Δ.property)
+
+end RieszEuclidean.SeparatedConfiguration
+
+/- Source: RieszEuclidean/TriangleAffineAssembly.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- The open triangle with vertices `a`, `b`, `c`, expressed by positive barycentric
+coordinates. Nondegeneracy is imposed separately by independence of its two edges. -/
+def vertexTriangle (a b c : Euclidean 2) : Set (Euclidean 2) :=
+  {y | ∃ u v : ℝ, 0 < u ∧ 0 < v ∧ u + v < 1 ∧
+    y = a + u • (b - a) + v • (c - a)}
+
+/-- Nondegenerate edge vectors define an invertible map from the standard coordinates. -/
+def triangleLinearEquiv (a b c : Euclidean 2)
+    (h : LinearIndependent ℝ ![b - a, c - a]) : Euclidean 2 ≃L[ℝ] Euclidean 2 :=
+  (EuclideanSpace.equiv (Fin 2) ℝ).trans
+    (basisOfLinearIndependentOfCardEqFinrank h (by simp [Euclidean])).equivFun.symm.toContinuousLinearEquiv
+
+/-- The normal-form map sends standard coordinates to the two actual edge vectors. -/
+theorem triangleLinearEquiv_apply (a b c : Euclidean 2)
+    (h : LinearIndependent ℝ ![b - a, c - a]) (x : Euclidean 2) :
+    triangleLinearEquiv a b c h x = x 0 • (b - a) + x 1 • (c - a) := by
+  simp [triangleLinearEquiv, Basis.equivFun_symm_apply, Fin.sum_univ_two]
+
+/-- Every ordinary nondegenerate vertex triangle is an affine image of the standard triangle. -/
+theorem vertexTriangle_eq_affine_image (a b c : Euclidean 2)
+    (h : LinearIndependent ℝ ![b - a, c - a]) :
+    vertexTriangle a b c = (planeAffine a (triangleLinearEquiv a b c h)) '' standardTriangle 1 := by
+  ext y
+  constructor
+  · rintro ⟨u, v, hu, hv, huv, rfl⟩
+    let x : Euclidean 2 := (WithLp.equiv 2 (Fin 2 → ℝ)).symm ![u, v]
+    refine ⟨x, ⟨hu, hv, huv⟩, ?_⟩
+    change a + triangleLinearEquiv a b c h x = _
+    rw [triangleLinearEquiv_apply]
+    change a + (u • (b - a) + v • (c - a)) = _
+    abel
+  · rintro ⟨x, ⟨h0, h1, hsum⟩, rfl⟩
+    refine ⟨x 0, x 1, h0, h1, hsum, ?_⟩
+    change a + triangleLinearEquiv a b c h x = _
+    rw [triangleLinearEquiv_apply]
+    abel
+
+/-- The affine reduction covers arbitrary noncollinear triples of vertices. -/
+theorem vertexTriangle_basis_iff (a b c : Euclidean 2)
+    (h : LinearIndependent ℝ ![b - a, c - a]) :
+    (∃ Λ, HasExponentialRieszBasis (vertexTriangle a b c) Λ) ↔
+      ∃ Λ, HasExponentialRieszBasis (standardTriangle 1) Λ := by
+  rw [vertexTriangle_eq_affine_image a b c h]
+  exact exists_exponentialRieszBasis_affine_iff _ _ _
+
+open SeparatedConfiguration in
+/-- Every actual nondegenerate vertex triangle has no exponential Riesz basis,
+given representing measures for the stationary hull correlations. -/
+theorem vertexTriangle_no_exponentialRieszBasis_of_hull_representations
+    (a b c : Euclidean 2) (h : LinearIndependent ℝ ![b - a, c - a])
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
+        ∀ f, RepresentsCorrelation
+          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (Λ : Set (Euclidean 2)) : ¬ HasExponentialRieszBasis (vertexTriangle a b c) Λ := by
+  intro hB
+  rw [vertexTriangle_eq_affine_image a b c h] at hB
+  exact standardTriangle_no_exponentialRieszBasis_of_hull_representations 1 zero_lt_one hrep
+    ((affineFrequency (triangleLinearEquiv a b c h)) '' Λ)
+    (hasExponentialRieszBasis_affine_pullback a (triangleLinearEquiv a b c h)
+      (standardTriangle 1) Λ hB)
+
+/-- Affine independence of three vertices gives precisely the edge independence
+used in the explicit normal form. -/
+theorem vertex_edges_linearIndependent_of_affineIndependent (a b c : Euclidean 2)
+    (h : AffineIndependent ℝ ![a, b, c]) : LinearIndependent ℝ ![b - a, c - a] := by
+  have he := (affineIndependent_iff_linearIndependent_vsub ℝ ![a, b, c] 0).mp h
+  let e : Fin 2 → {j : Fin 3 // j ≠ 0} := fun i => ⟨i.succ, Fin.succ_ne_zero i⟩
+  have hi : Function.Injective e := by
+    intro i j hij
+    exact Fin.succ_injective _ (congrArg Subtype.val hij)
+  convert he.comp e hi using 1
+  ext i
+  fin_cases i <;> rfl
+
+open SeparatedConfiguration in
+/-- The conditional triangle theorem for arbitrary noncollinear vertex triples,
+with no affine-image assumption in its statement. -/
+theorem noncollinear_triangle_no_exponentialRieszBasis_of_hull_representations
+    (a b c : Euclidean 2) (h : ¬ Collinear ℝ (Set.range ![a, b, c]))
+    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
+      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
+      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
+      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
+      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
+        ∀ f, RepresentsCorrelation
+          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
+    (Λ : Set (Euclidean 2)) : ¬ HasExponentialRieszBasis (vertexTriangle a b c) Λ :=
+  vertexTriangle_no_exponentialRieszBasis_of_hull_representations a b c
+    (vertex_edges_linearIndependent_of_affineIndependent a b c
+      (affineIndependent_iff_not_collinear.mpr h)) hrep Λ
+
+end RieszEuclidean
+
 /- Source: RieszEuclidean/GeneralBoundaryAssembly.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 noncomputable section
@@ -12210,166 +14351,6 @@ theorem no_exponentialRieszBasis_of_general_boundary_and_hull_representations {d
     (SchwartzMap.norm_le_seminorm ℝ b) hγ hγlt (fun Δ => hgap Δ.val Δ.property)
 
 end SeparatedConfiguration
-end RieszEuclidean
-
-/- Source: RieszEuclidean/IntervalRectangleRemarks.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-
-open MeasureTheory Set
-
-namespace RieszEuclidean
-
-/-- The boundary of a nondegenerate real interval has positive counting mass in
-its overlap with a nonzero translate: translating by the interval length sends
-the left endpoint to the right endpoint. -/
-theorem interval_boundary_positive_translated_overlap (a b : ℝ) (hab : a < b) :
-    b - a ≠ 0 ∧
-      0 < (Measure.dirac a + Measure.dirac b)
-        (frontier (Ioo a b) ∩
-          (fun x : ℝ => x + (b - a)) ⁻¹' frontier (Ioo a b)) := by
-  constructor
-  · linarith
-  · rw [frontier_Ioo hab]
-    have ha : a ∈ ({a, b} : Set ℝ) ∩
-        (fun x : ℝ => x + (b - a)) ⁻¹' ({a, b} : Set ℝ) := by
-      constructor
-      · simp
-      · simp only [mem_preimage, mem_insert_iff, mem_singleton_iff]
-        exact Or.inr (by ring)
-    have hdirac : Measure.dirac a
-        (({a, b} : Set ℝ) ∩
-          (fun x : ℝ => x + (b - a)) ⁻¹' ({a, b} : Set ℝ)) = 1 := by
-      rw [Measure.dirac_apply_of_mem ha]
-    rw [Measure.add_apply, hdirac]
-    simp
-
-/-- Two distinct parallel edges related by a perpendicular translation have
-their full positive edge length in translated overlap, as happens for opposite
-sides of a nondegenerate rectangle. -/
-theorem opposite_rectangle_edges_positive_translated_overlap
-    (a b θ : Euclidean 2) (hab : a ≠ b) (hθ : θ ≠ 0)
-    (hperp : inner (𝕜 := ℝ) θ (b - a) = 0) :
-    θ ≠ 0 ∧ inner (𝕜 := ℝ) θ (b - a) = 0 ∧
-      0 < edgeLengthMeasure a b
-        (openSegment ℝ a b ∩ translate θ (openSegment ℝ (θ + a) (θ + b))) := by
-  refine ⟨hθ, hperp, ?_⟩
-  have htranslate :
-      translate θ (openSegment ℝ (θ + a) (θ + b)) = openSegment ℝ a b := by
-    simpa only [translate, add_comm] using openSegment_translate_preimage ℝ θ a b
-  rw [htranslate, inter_self, edgeLengthMeasure,
-    Measure.restrict_apply (measurableSet_openEdge a b hab), inter_self,
-    hausdorffMeasure_openEdge]
-  exact edist_pos.mpr hab
-
-end RieszEuclidean
-
-/- Source: RieszEuclidean/TriangleCrossing.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-open MeasureTheory Filter Topology
-namespace RieszEuclidean
-
-/-- The literal open standard triangle in the Euclidean plane. -/
-def standardTriangle (s : ℝ) : Set (Euclidean 2) :=
-  {x | 0 < x 0 ∧ 0 < x 1 ∧ x 0 + x 1 < s}
-
-/-- The relative interior of the horizontal edge of the standard triangle. -/
-def standardTriangleEdge (s : ℝ) : Set (Euclidean 2) :=
-  {x | 0 < x 0 ∧ x 1 = 0 ∧ x 0 < s}
-
-/-- The second coordinate is the fixed inward normal coordinate on the bottom edge. -/
-theorem standardTriangleEdge_translation_normal_zero (s : ℝ) (t θ : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) (htθ : t + θ ∈ standardTriangleEdge s) :
-    θ 1 = 0 := by
-  have h := htθ.2.1
-  simp only [PiLp.add_apply, ht.2.1, zero_add] at h
-  exact h
-
-/-- Near each point of the open bottom edge, triangle membership is exactly positivity
-of the common inward normal coordinate. -/
-theorem standardTriangleEdge_local_halfplane (s : ℝ) (t : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) :
-    ∀ᶠ u in nhds t, u ∈ standardTriangle s ↔ 0 < u 1 := by
-  have hc (i : Fin 2) : Continuous (fun x : Euclidean 2 => x i) :=
-    (continuous_apply i).comp (PiLp.continuous_equiv 2 (fun _ : Fin 2 => ℝ))
-  have hleft : ∀ᶠ u in nhds t, 0 < u 0 :=
-    (isOpen_lt continuous_const (hc 0)).mem_nhds ht.1
-  have hsum : ∀ᶠ u in nhds t, u 0 + u 1 < s :=
-    (isOpen_lt ((hc 0).add (hc 1)) continuous_const).mem_nhds
-      (by simpa only [Set.mem_setOf_eq, ht.2.1, add_zero] using ht.2.2)
-  filter_upwards [hleft, hsum] with u hu hv
-  exact ⟨fun h => h.2.1, fun h => ⟨hu, h, hv⟩⟩
-
-/-- Translations between two points of the bottom edge preserve which side enters
-the actual triangle in sufficiently small neighborhoods. -/
-theorem standardTriangleEdge_same_direction_nhds (s : ℝ) (t θ : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) (htθ : t + θ ∈ standardTriangleEdge s) :
-    ∀ᶠ u in nhds t, u + θ ∈ standardTriangle s ↔ u ∈ standardTriangle s := by
-  have hnormal := standardTriangleEdge_translation_normal_zero s t θ ht htθ
-  have hshift : Tendsto (fun u : Euclidean 2 => u + θ) (nhds t) (nhds (t + θ)) :=
-    (continuous_id.add continuous_const).continuousAt
-  filter_upwards [standardTriangleEdge_local_halfplane s t ht,
-    hshift.eventually (standardTriangleEdge_local_halfplane s (t + θ) htθ)] with u hu hv
-  rw [hu, hv]
-  simp only [PiLp.add_apply, hnormal, add_zero]
-
-/-- Along any approaching sequence, every surviving translated bottom-edge point
-crosses in the same direction. -/
-theorem standardTriangleEdge_same_direction (s : ℝ) (t θ : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) (htθ : t + θ ∈ standardTriangleEdge s)
-    (ts : ℕ → Euclidean 2) (hts : Tendsto ts atTop (nhds t)) :
-    ∀ᶠ j in atTop, ts j + θ ∈ standardTriangle s ↔ ts j ∈ standardTriangle s :=
-  hts.eventually (standardTriangleEdge_same_direction_nhds s t θ ht htθ)
-
-/-- A finite intersection of strict supporting halfspaces in actual Euclidean space. -/
-def strictHalfspaceIntersection {d : ℕ} {ι : Type*}
-    (normal : ι → Euclidean d) (offset : ι → ℝ) : Set (Euclidean d) :=
-  {x | ∀ i, offset i < inner (𝕜 := ℝ) x (normal i)}
-
-/-- At a point with exactly one active supporting constraint, membership in the
-polyhedron is locally determined by that constraint's inward normal. -/
-theorem strictHalfspaceIntersection_local_halfspace {d : ℕ} {ι : Type*} [Fintype ι]
-    (normal : ι → Euclidean d) (offset : ι → ℝ) (j : ι) (t : Euclidean d)
-    (hstrict : ∀ i, i ≠ j → offset i < inner (𝕜 := ℝ) t (normal i)) :
-    ∀ᶠ u in nhds t, u ∈ strictHalfspaceIntersection normal offset ↔
-      offset j < inner (𝕜 := ℝ) u (normal j) := by
-  have hother : ∀ i, ∀ᶠ u in nhds t,
-      i ≠ j → offset i < inner (𝕜 := ℝ) u (normal i) := by
-    intro i
-    by_cases hij : i = j
-    · exact Eventually.of_forall (fun _ h => (h hij).elim)
-    · have hi : ∀ᶠ u in nhds t, offset i < inner (𝕜 := ℝ) u (normal i) :=
-        (isOpen_lt continuous_const (by fun_prop)).mem_nhds (hstrict i hij)
-      exact hi.mono (fun _ h _ => h)
-  filter_upwards [eventually_all.mpr hother] with u hu
-  constructor
-  · exact fun h => h j
-  · intro h i
-    by_cases hij : i = j
-    · simpa only [hij] using h
-    · exact hu i hij
-
-/-- Two points in the relative interior of the same supporting face have identical
-local crossing direction, with their tangential translation explicitly retained. -/
-theorem strictHalfspaceIntersection_same_direction {d : ℕ} {ι : Type*} [Fintype ι]
-    (normal : ι → Euclidean d) (offset : ι → ℝ) (j : ι) (t θ : Euclidean d)
-    (hactive : inner (𝕜 := ℝ) t (normal j) = offset j)
-    (hactiveθ : inner (𝕜 := ℝ) (t + θ) (normal j) = offset j)
-    (hstrict : ∀ i, i ≠ j → offset i < inner (𝕜 := ℝ) t (normal i))
-    (hstrictθ : ∀ i, i ≠ j → offset i < inner (𝕜 := ℝ) (t + θ) (normal i)) :
-    ∀ᶠ u in nhds t, u + θ ∈ strictHalfspaceIntersection normal offset ↔
-      u ∈ strictHalfspaceIntersection normal offset := by
-  have hn : inner (𝕜 := ℝ) θ (normal j) = 0 := by
-    rw [inner_add_left, hactive] at hactiveθ
-    linarith
-  have hshift : Tendsto (fun u : Euclidean d => u + θ) (nhds t) (nhds (t + θ)) :=
-    (continuous_id.add continuous_const).continuousAt
-  filter_upwards [strictHalfspaceIntersection_local_halfspace normal offset j t hstrict,
-    hshift.eventually (strictHalfspaceIntersection_local_halfspace
-      normal offset j (t + θ) hstrictθ)] with u hu hv
-  rw [hu, hv, inner_add_left, hn, add_zero]
-
 end RieszEuclidean
 
 /- Source: RieszEuclidean/PolygonGeometry.lean -/
@@ -13867,707 +15848,6 @@ theorem SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_nonze
 
 end RieszEuclidean
 
-/- Source: RieszEuclidean/TriangleBoundary.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-open MeasureTheory Filter Topology
-namespace RieszEuclidean
-
-/-- The closed triangle defined by its three weak supporting inequalities. -/
-def closedStandardTriangle (s : ℝ) : Set (Euclidean 2) :=
-  {x | 0 ≤ x 0 ∧ 0 ≤ x 1 ∧ x 0 + x 1 ≤ s}
-
-/-- A point on the horizontal coordinate axis. -/
-def standardHorizontalPoint (a : ℝ) : Euclidean 2 :=
-  (WithLp.equiv 2 (Fin 2 → ℝ)).symm ![a, 0]
-
-theorem standardTriangle_isOpen (s : ℝ) : IsOpen (standardTriangle s) := by
-  have hc (i : Fin 2) : Continuous (fun x : Euclidean 2 => x i) :=
-    (continuous_apply i).comp (PiLp.continuous_equiv 2 (fun _ : Fin 2 => ℝ))
-  exact (isOpen_lt continuous_const (hc 0)).inter
-    ((isOpen_lt continuous_const (hc 1)).inter (isOpen_lt ((hc 0).add (hc 1)) continuous_const))
-
-theorem closedStandardTriangle_isClosed (s : ℝ) : IsClosed (closedStandardTriangle s) := by
-  have hc (i : Fin 2) : Continuous (fun x : Euclidean 2 => x i) :=
-    (continuous_apply i).comp (PiLp.continuous_equiv 2 (fun _ : Fin 2 => ℝ))
-  exact (isClosed_le continuous_const (hc 0)).inter
-    ((isClosed_le continuous_const (hc 1)).inter (isClosed_le ((hc 0).add (hc 1)) continuous_const))
-
-theorem standardTriangle_subset_closedStandardTriangle (s : ℝ) :
-    standardTriangle s ⊆ closedStandardTriangle s :=
-  fun _ hx => ⟨hx.1.le, hx.2.1.le, hx.2.2.le⟩
-
-theorem closedStandardTriangle_interior (s : ℝ) :
-    interior (closedStandardTriangle s) = standardTriangle s := by
-  let p (i : Fin 2) : Euclidean 2 →L[ℝ] ℝ := PiLp.proj 2 (fun _ : Fin 2 => ℝ) i
-  have hp (i : Fin 2) : Function.Surjective (p i) := by
-    intro a
-    refine ⟨(WithLp.equiv 2 (Fin 2 → ℝ)).symm (fun _ => a), rfl⟩
-  have hsum : Function.Surjective (p 0 + p 1) := by
-    intro a
-    refine ⟨standardHorizontalPoint a, ?_⟩
-    simp [p, PiLp.proj, standardHorizontalPoint]
-  change interior ((p 0 ⁻¹' Set.Ici 0) ∩
-    ((p 1 ⁻¹' Set.Ici 0) ∩ ((p 0 + p 1) ⁻¹' Set.Iic s))) = _
-  rw [interior_inter, interior_inter, (p 0).interior_preimage (hp 0),
-    (p 1).interior_preimage (hp 1), (p 0 + p 1).interior_preimage hsum,
-    interior_Ici, interior_Iic]
-  rfl
-
-theorem closedStandardTriangle_convex (s : ℝ) : Convex ℝ (closedStandardTriangle s) := by
-  intro x hx y hy a b ha hb hab
-  change 0 ≤ a * x 0 + b * y 0 ∧ 0 ≤ a * x 1 + b * y 1 ∧
-    (a * x 0 + b * y 0) + (a * x 1 + b * y 1) ≤ s
-  refine ⟨add_nonneg (mul_nonneg ha hx.1) (mul_nonneg hb hy.1),
-    add_nonneg (mul_nonneg ha hx.2.1) (mul_nonneg hb hy.2.1), ?_⟩
-  calc
-    a * x 0 + b * y 0 + (a * x 1 + b * y 1) =
-        a * (x 0 + x 1) + b * (y 0 + y 1) := by ring
-    _ ≤ a * s + b * s := add_le_add
-      (mul_le_mul_of_nonneg_left hx.2.2 ha) (mul_le_mul_of_nonneg_left hy.2.2 hb)
-    _ = s := by rw [← add_mul, hab, one_mul]
-
-theorem standardTriangle_nonempty (s : ℝ) (hs : 0 < s) : (standardTriangle s).Nonempty := by
-  refine ⟨(WithLp.equiv 2 (Fin 2 → ℝ)).symm ![s / 3, s / 3], ?_⟩
-  change 0 < s / 3 ∧ 0 < s / 3 ∧ s / 3 + s / 3 < s
-  constructor
-  · positivity
-  constructor
-  · positivity
-  · linarith
-
-theorem standardTriangle_closure (s : ℝ) (hs : 0 < s) :
-    closure (standardTriangle s) = closedStandardTriangle s := by
-  have h := (closedStandardTriangle_convex s).closure_interior_eq_closure_of_nonempty_interior
-    (by rw [closedStandardTriangle_interior]; exact standardTriangle_nonempty s hs)
-  simpa only [closedStandardTriangle_interior, (closedStandardTriangle_isClosed s).closure_eq] using h
-
-theorem closedStandardTriangle_norm_le (s : ℝ) (hs : 0 ≤ s)
-    {x : Euclidean 2} (hx : x ∈ closedStandardTriangle s) : ‖x‖ ≤ s := by
-  have hsq : ‖x‖ ^ 2 = (x 0) ^ 2 + (x 1) ^ 2 := by
-    rw [PiLp.norm_sq_eq_of_L2, Fin.sum_univ_two]
-    simp only [Real.norm_eq_abs, sq_abs]
-  have hprod := mul_nonneg hx.1 hx.2.1
-  have hsum := add_nonneg hx.1 hx.2.1
-  nlinarith [hx.2.2, norm_nonneg x]
-
-theorem closedStandardTriangle_isCompact (s : ℝ) (hs : 0 ≤ s) :
-    IsCompact (closedStandardTriangle s) := by
-  apply (isCompact_closedBall (0 : Euclidean 2) s).of_isClosed_subset
-    (closedStandardTriangle_isClosed s)
-  intro x hx
-  simpa only [Metric.mem_closedBall, dist_zero_right] using closedStandardTriangle_norm_le s hs hx
-
-
-/-- The standard triangle is bounded in the ambient Euclidean plane. -/
-theorem standardTriangle_isBounded (s : ℝ) (hs : 0 ≤ s) :
-    Bornology.IsBounded (standardTriangle s) :=
-  (closedStandardTriangle_isCompact s hs).isBounded.subset
-    (standardTriangle_subset_closedStandardTriangle s)
-
-/-- Its ordinary frontier is its closed triangle minus its open interior. -/
-theorem standardTriangle_frontier (s : ℝ) (hs : 0 < s) :
-    frontier (standardTriangle s) = closedStandardTriangle s \ standardTriangle s := by
-  rw [frontier, standardTriangle_closure s hs, (standardTriangle_isOpen s).interior_eq]
-
-/-- Convexity gives Lebesgue-null boundary for the actual Euclidean triangle. -/
-theorem standardTriangle_volume_frontier (s : ℝ) :
-    volume (frontier (standardTriangle s)) = 0 := by
-  have hc : Convex ℝ (standardTriangle s) := by
-    rw [← closedStandardTriangle_interior]
-    exact (closedStandardTriangle_convex s).interior
-  exact hc.addHaar_frontier volume
-
-/-- The bottom-edge coordinate description is literally the nondegenerate open segment. -/
-theorem standardTriangleEdge_eq_openSegment (s : ℝ) (hs : 0 < s) :
-    standardTriangleEdge s = openSegment ℝ (0 : Euclidean 2) (standardHorizontalPoint s) := by
-  rw [openSegment_eq_image_lineMap]
-  ext x
-  constructor
-  · intro hx
-    refine ⟨x 0 / s, ⟨div_pos hx.1 hs, (div_lt_one hs).mpr hx.2.2⟩, ?_⟩
-    rw [AffineMap.lineMap_apply_module]
-    apply PiLp.ext
-    intro i
-    fin_cases i
-    · change (1 - x 0 / s) * 0 + x 0 / s * s = x 0
-      field_simp
-    · change (1 - x 0 / s) * 0 + x 0 / s * 0 = x 1
-      simp only [mul_zero, add_zero, hx.2.1]
-  · rintro ⟨t, ht, rfl⟩
-    rw [AffineMap.lineMap_apply_module]
-    change 0 < (1 - t) * 0 + t * s ∧ (1 - t) * 0 + t * 0 = 0 ∧
-      (1 - t) * 0 + t * s < s
-    simp only [mul_zero, zero_add, add_zero]
-    exact ⟨mul_pos ht.1 hs, trivial, by nlinarith [ht.2]⟩
-
-/-- Every point of the selected bottom edge is on the actual frontier. -/
-theorem standardTriangleEdge_subset_frontier (s : ℝ) (hs : 0 < s) :
-    standardTriangleEdge s ⊆ frontier (standardTriangle s) := by
-  rw [standardTriangle_frontier s hs]
-  intro x hx
-  refine ⟨⟨hx.1.le, by simp only [hx.2.1]; rfl, ?_⟩, ?_⟩
-  · simpa only [hx.2.1, add_zero] using hx.2.2.le
-  · intro h
-    simpa only [hx.2.1, lt_self_iff_false] using h.2.1
-
-/-- Removing the open bottom edge leaves just the vertical and diagonal supports,
-including all three vertices. -/
-theorem standardTriangle_remainder_subset_supports (s : ℝ) (hs : 0 < s) :
-    frontier (standardTriangle s) \ standardTriangleEdge s ⊆
-      {x : Euclidean 2 | x 0 = 0} ∪ {x | x 0 + x 1 = s} := by
-  rw [standardTriangle_frontier s hs]
-  rintro x ⟨⟨hx, hout⟩, hedge⟩
-  by_contra hn
-  have h₀ : x 0 ≠ 0 := fun h => hn (Or.inl h)
-  have hsum : x 0 + x 1 ≠ s := fun h => hn (Or.inr h)
-  have hx₀ : 0 < x 0 := lt_of_le_of_ne hx.1 (Ne.symm h₀)
-  have hxsum : x 0 + x 1 < s := lt_of_le_of_ne hx.2.2 hsum
-  have hx₁ : x 1 = 0 := by
-    by_contra hn₁
-    exact hout ⟨hx₀, lt_of_le_of_ne hx.2.1 (Ne.symm hn₁), hxsum⟩
-  exact hedge ⟨hx₀, hx₁, by simpa only [hx₁, add_zero] using hxsum⟩
-
-/-- A point on the vertical coordinate axis. -/
-def standardVerticalPoint (a : ℝ) : Euclidean 2 :=
-  (WithLp.equiv 2 (Fin 2 → ℝ)).symm ![0, a]
-
-/-- Pairing with the horizontal unit vector extracts the first coordinate. -/
-theorem inner_standardHorizontalPoint_one (x : Euclidean 2) :
-    inner (𝕜 := ℝ) x (standardHorizontalPoint 1) = x 0 := by
-  simp [PiLp.inner_apply, Fin.sum_univ_two, standardHorizontalPoint]
-
-/-- Pairing with the vertical unit vector extracts the second coordinate. -/
-theorem inner_standardVerticalPoint_one (x : Euclidean 2) :
-    inner (𝕜 := ℝ) x (standardVerticalPoint 1) = x 1 := by
-  simp [PiLp.inner_apply, Fin.sum_univ_two, standardVerticalPoint]
-
-/-- The two endpoints determining bottom-edge length are distinct. -/
-theorem standardHorizontalPoint_ne_zero (s : ℝ) (hs : 0 < s) :
-    standardHorizontalPoint s ≠ 0 := by
-  intro h
-  have h₀ := congrArg (fun x : Euclidean 2 => x 0) h
-  exact hs.ne' h₀
-
-/-- Every translate of the other two edges is null, including the zero translation. -/
-theorem standardTriangle_edgeLength_remainder_null (s : ℝ) (hs : 0 < s)
-    (θ : Euclidean 2) :
-    edgeLengthMeasure 0 (standardHorizontalPoint s)
-      (translate θ (frontier (standardTriangle s) \ standardTriangleEdge s)) = 0 := by
-  have hsub : translate θ (frontier (standardTriangle s) \ standardTriangleEdge s) ⊆
-      translate θ {x : Euclidean 2 | x 0 = 0} ∪
-        translate θ {x : Euclidean 2 | x 0 + x 1 = s} :=
-    fun _ hx => standardTriangle_remainder_subset_supports s hs hx
-  apply measure_mono_null hsub
-  apply measure_union_null
-  · have h := edgeLengthMeasure_translate_hyperplane 0 (standardHorizontalPoint s)
-      (standardHorizontalPoint 1) θ 0
-      (by simpa only [sub_zero, inner_standardHorizontalPoint_one] using hs.ne')
-    simpa only [inner_standardHorizontalPoint_one] using h
-  · have h := edgeLengthMeasure_translate_hyperplane 0 (standardHorizontalPoint s)
-      (standardHorizontalPoint 1 + standardVerticalPoint 1) θ s
-      (by
-        rw [sub_zero, inner_add_right, inner_standardHorizontalPoint_one,
-          inner_standardVerticalPoint_one]
-        change s + 0 ≠ 0
-        simpa only [add_zero] using hs.ne')
-    simpa only [inner_add_right, inner_standardHorizontalPoint_one,
-      inner_standardVerticalPoint_one] using h
-
-/-- Tonelli discards exactly the translated boundary remainder, preserving the whole
-bottom-edge jump, including all tangential frequencies. -/
-theorem exists_clean_standardTriangle_edge_point (s : ℝ) (hs : 0 < s)
-    (σ : Measure (Euclidean 2)) [SFinite σ] :
-    ∃ t ∈ standardTriangleEdge s,
-      σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0 := by
-  let ν := edgeLengthMeasure 0 (standardHorizontalPoint s)
-  haveI : IsFiniteMeasure ν := edgeLengthMeasure_finite _ _
-  have hab : (0 : Euclidean 2) ≠ standardHorizontalPoint s :=
-    (standardHorizontalPoint_ne_zero s hs).symm
-  haveI : NeZero ν := ⟨fun h =>
-    (edgeLengthMeasure_univ_pos 0 (standardHorizontalPoint s) hab).ne'
-      (by change ν Set.univ = 0; rw [h]; rfl)⟩
-  have hE : MeasurableSet (standardTriangleEdge s) := by
-    rw [standardTriangleEdge_eq_openSegment s hs]
-    exact measurableSet_openEdge _ _ hab
-  have hF : MeasurableSet (frontier (standardTriangle s) \ standardTriangleEdge s) :=
-    isClosed_frontier.measurableSet.diff hE
-  have hm : MeasurableSet {p : Euclidean 2 × Euclidean 2 |
-      p.1 + p.2 ∉ frontier (standardTriangle s) \ standardTriangleEdge s} :=
-    (hF.preimage (measurable_fst.add measurable_snd)).compl
-  have hsections : ∀ᵐ θ ∂σ, ∀ᵐ t ∂ν,
-      t + θ ∉ frontier (standardTriangle s) \ standardTriangleEdge s := by
-    apply Eventually.of_forall
-    intro θ
-    exact compl_mem_ae_iff.mpr (standardTriangle_edgeLength_remainder_null s hs θ)
-  have hswap := (Measure.ae_ae_comm (μ := ν) (ν := σ) hm).mpr hsections
-  have hedge : ∀ᵐ t ∂ν, t ∈ standardTriangleEdge s := by
-    rw [standardTriangleEdge_eq_openSegment s hs]
-    exact edgeLengthMeasure_ae_edge _ _ hab
-  have hgood : ∀ᵐ t ∂ν, t ∈ standardTriangleEdge s ∧
-      σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0 := by
-    filter_upwards [hswap, hedge] with t ht he
-    exact ⟨he, compl_mem_ae_iff.mp ht⟩
-  exact hgood.exists
-
-/-- Bottom-edge points are approached from both ambient open sides of the triangle. -/
-theorem standardTriangleEdge_two_sided_closure (s : ℝ) (hs : 0 < s)
-    (t : Euclidean 2) (ht : t ∈ standardTriangleEdge s) :
-    t ∈ closure (standardTriangle s) ∧ t ∈ closure (closure (standardTriangle s))ᶜ := by
-  have hf := standardTriangleEdge_subset_frontier s hs ht
-  refine ⟨frontier_subset_closure hf, ?_⟩
-  rw [closure_compl, standardTriangle_closure s hs, closedStandardTriangle_interior]
-  rw [(standardTriangle_isOpen s).frontier_eq] at hf
-  exact hf.2
-
-/-- Any Lebesgue-conull parameter set approaches the selected edge from inside and
-from the strict exterior in the ambient plane. -/
-theorem exists_conull_sequences_standardTriangle_two_sides (s : ℝ) (hs : 0 < s)
-    {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0)
-    (t : Euclidean 2) (ht : t ∈ standardTriangleEdge s) :
-    (∃ ts : ℕ → Euclidean 2, (∀ j, ts j ∈ G ∩ standardTriangle s) ∧
-      Tendsto ts atTop (nhds t)) ∧
-    (∃ ts : ℕ → Euclidean 2, (∀ j, ts j ∈ G ∩ (closure (standardTriangle s))ᶜ) ∧
-      Tendsto ts atTop (nhds t)) := by
-  have h := standardTriangleEdge_two_sided_closure s hs t ht
-  exact exists_conull_sequences_two_sides hG (standardTriangle_isOpen s) h.1 h.2
-
-end RieszEuclidean
-
-/- Source: RieszEuclidean/TriangleSymbolLimits.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-open MeasureTheory Filter Topology
-namespace RieszEuclidean
-
-/-- The full surviving bottom-edge jump, retaining tangential translations. -/
-def standardTriangleJump (s : ℝ) (t : Euclidean 2) : Set (Euclidean 2) :=
-  {θ | t + θ ∈ standardTriangleEdge s}
-
-/-- The full edge jump is a measurable frequency set. -/
-theorem standardTriangleJump_measurableSet (s : ℝ) (hs : 0 < s) (t : Euclidean 2) :
-    MeasurableSet (standardTriangleJump s t) := by
-  have he : MeasurableSet (standardTriangleEdge s) := by
-    rw [standardTriangleEdge_eq_openSegment s hs]
-    exact measurableSet_openEdge _ _ (standardHorizontalPoint_ne_zero s hs).symm
-  exact he.preimage (measurable_const.add measurable_id)
-
-/-- The invariant zero frequency always belongs to the edge jump. -/
-theorem zero_mem_standardTriangleJump (s : ℝ) (t : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) : 0 ∈ standardTriangleJump s t := by
-  simpa only [standardTriangleJump, Set.mem_setOf_eq, add_zero] using ht
-
-/-- Every retained jump frequency is tangential to the chosen bottom edge. -/
-theorem standardTriangleJump_normal_zero (s : ℝ) (t : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) {θ : Euclidean 2}
-    (hθ : θ ∈ standardTriangleJump s t) : θ 1 = 0 :=
-  standardTriangleEdge_translation_normal_zero s t θ ht hθ
-
-/-- Jump frequencies lie outside the original open-domain symbol. -/
-theorem standardTriangleJump_not_mem (s : ℝ) (t : Euclidean 2)
-    {θ : Euclidean 2} (hθ : θ ∈ standardTriangleJump s t) :
-    t + θ ∉ standardTriangle s := by
-  intro h
-  have he : (t + θ) 1 = 0 := hθ.2.1
-  exact (ne_of_gt h.2.1) he
-
-/-- Arbitrary interior approaches eventually turn on each retained jump frequency. -/
-theorem standardTriangleJump_interior_eventually (s : ℝ) (t θ : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) (hθ : θ ∈ standardTriangleJump s t)
-    {ts : ℕ → Euclidean 2} (hts : Tendsto ts atTop (nhds t))
-    (hin : ∀ n, ts n ∈ standardTriangle s) :
-    ∀ᶠ n in atTop, cutoffSymbol (standardTriangle s) (ts n) θ = 1 := by
-  filter_upwards [standardTriangleEdge_same_direction s t θ ht hθ ts hts] with n hn
-  exact Set.indicator_of_mem (hn.mpr (hin n)) _
-
-/-- Arbitrary strict exterior approaches eventually turn off each retained frequency. -/
-theorem standardTriangleJump_exterior_eventually (s : ℝ) (t θ : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) (hθ : θ ∈ standardTriangleJump s t)
-    {ts : ℕ → Euclidean 2} (hts : Tendsto ts atTop (nhds t))
-    (hout : ∀ n, ts n ∉ closure (standardTriangle s)) :
-    ∀ᶠ n in atTop, cutoffSymbol (standardTriangle s) (ts n) θ = 0 := by
-  filter_upwards [standardTriangleEdge_same_direction s t θ ht hθ ts hts] with n hn
-  exact Set.indicator_of_not_mem (fun h => hout n (subset_closure (hn.mp h))) _
-
-/-- At a clean bottom point the interior symbol gains the entire edge jump. -/
-theorem standardTriangle_cutoffSymbol_interior_ae_tendsto (s : ℝ)
-    (t : Euclidean 2) (ht : t ∈ standardTriangleEdge s)
-    (σ : Measure (Euclidean 2))
-    (hclean : σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0)
-    {ts : ℕ → Euclidean 2} (hts : Tendsto ts atTop (nhds t))
-    (hin : ∀ n, ts n ∈ standardTriangle s) :
-    ∀ᵐ θ ∂σ, Tendsto (fun n => cutoffSymbol (standardTriangle s) (ts n) θ) atTop
-      (nhds (cutoffSymbol (standardTriangle s) t θ +
-        (standardTriangleJump s t).indicator (fun _ => (1 : ℂ)) θ)) := by
-  have hae : ∀ᵐ θ ∂σ,
-      t + θ ∉ frontier (standardTriangle s) \ standardTriangleEdge s :=
-    compl_mem_ae_iff.mpr hclean
-  filter_upwards [hae] with θ hθ
-  by_cases hj : θ ∈ standardTriangleJump s t
-  · have hn := standardTriangleJump_not_mem s t hj
-    simpa only [cutoffSymbol, Set.indicator_of_not_mem hn, Set.indicator_of_mem hj,
-      zero_add] using
-      tendsto_const_nhds.congr' ((standardTriangleJump_interior_eventually s t θ ht hj hts hin).mono (fun _ h => h.symm))
-  · have hoff : t + θ ∉ frontier (standardTriangle s) := fun h => hθ ⟨h, hj⟩
-    simpa only [Set.indicator_of_not_mem hj, add_zero] using
-      tendsto_cutoffSymbol_off_frontier hts hoff
-
-/-- At the same clean point the exterior symbol keeps the original open-domain value. -/
-theorem standardTriangle_cutoffSymbol_exterior_ae_tendsto (s : ℝ)
-    (t : Euclidean 2) (ht : t ∈ standardTriangleEdge s)
-    (σ : Measure (Euclidean 2))
-    (hclean : σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0)
-    {ts : ℕ → Euclidean 2} (hts : Tendsto ts atTop (nhds t))
-    (hout : ∀ n, ts n ∉ closure (standardTriangle s)) :
-    ∀ᵐ θ ∂σ, Tendsto (fun n => cutoffSymbol (standardTriangle s) (ts n) θ) atTop
-      (nhds (cutoffSymbol (standardTriangle s) t θ)) := by
-  have hae : ∀ᵐ θ ∂σ,
-      t + θ ∉ frontier (standardTriangle s) \ standardTriangleEdge s :=
-    compl_mem_ae_iff.mpr hclean
-  filter_upwards [hae] with θ hθ
-  by_cases hj : θ ∈ standardTriangleJump s t
-  · have hn := standardTriangleJump_not_mem s t hj
-    simpa only [cutoffSymbol, Set.indicator_of_not_mem hn] using
-      tendsto_const_nhds.congr' ((standardTriangleJump_exterior_eventually s t θ ht hj hts hout).mono (fun _ h => h.symm))
-  · exact tendsto_cutoffSymbol_off_frontier hts (fun h => hθ ⟨h, hj⟩)
-
-/-- The jump is the whole translated open edge interval on the tangent line. -/
-theorem standardTriangleJump_eq_tangent_interval (s : ℝ) (t : Euclidean 2)
-    (ht : t ∈ standardTriangleEdge s) :
-    standardTriangleJump s t =
-      {θ : Euclidean 2 | θ 1 = 0 ∧ -(t 0) < θ 0 ∧ θ 0 < s - t 0} := by
-  ext θ
-  change (0 < t 0 + θ 0 ∧ t 1 + θ 1 = 0 ∧ t 0 + θ 0 < s) ↔ _
-  rw [ht.2.1, zero_add]
-  constructor
-  · rintro ⟨h₀, h₁, h₂⟩
-    exact ⟨h₁, by linarith, by linarith⟩
-  · rintro ⟨h₁, h₀, h₂⟩
-    exact ⟨by linarith, h₁, by linarith⟩
-
-/-- Every ambient conull set supplies both boundary approaches at one point clean
-for the entire control measure, with the actual shifted-indicator limits. -/
-theorem exists_standardTriangle_boundary_symbol_limits (s : ℝ) (hs : 0 < s)
-    (σ : Measure (Euclidean 2)) [SFinite σ]
-    {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0) :
-    ∃ t ∈ standardTriangleEdge s,
-      σ {θ | t + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0 ∧
-      (∃ ts : ℕ → Euclidean 2,
-        (∀ n, ts n ∈ G ∩ standardTriangle s) ∧ Tendsto ts atTop (nhds t) ∧
-        ∀ᵐ θ ∂σ, Tendsto (fun n => cutoffSymbol (standardTriangle s) (ts n) θ) atTop
-          (nhds (cutoffSymbol (standardTriangle s) t θ +
-            (standardTriangleJump s t).indicator (fun _ => (1 : ℂ)) θ))) ∧
-      (∃ ts : ℕ → Euclidean 2,
-        (∀ n, ts n ∈ G ∩ (closure (standardTriangle s))ᶜ) ∧ Tendsto ts atTop (nhds t) ∧
-        ∀ᵐ θ ∂σ, Tendsto (fun n => cutoffSymbol (standardTriangle s) (ts n) θ) atTop
-          (nhds (cutoffSymbol (standardTriangle s) t θ))) := by
-  obtain ⟨t, ht, hc⟩ := exists_clean_standardTriangle_edge_point s hs σ
-  obtain ⟨⟨tin, hin, htin⟩, ⟨tout, hout, htout⟩⟩ :=
-    exists_conull_sequences_standardTriangle_two_sides s hs hG t ht
-  exact ⟨t, ht, hc,
-    ⟨tin, hin, htin, standardTriangle_cutoffSymbol_interior_ae_tendsto s t ht σ hc htin
-      (fun n => (hin n).2)⟩,
-    ⟨tout, hout, htout, standardTriangle_cutoffSymbol_exterior_ae_tendsto s t ht σ hc htout
-      (fun n => (hout n).2)⟩⟩
-
-end RieszEuclidean
-
-/- Source: RieszEuclidean/TriangleCutoffObstruction.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-open MeasureTheory Filter Topology
-namespace RieszEuclidean
-
-/-- Actual triangle cutoffs have orthogonal strong limits with the complete edge jump. -/
-theorem exists_standardTriangle_cutoff_limits {H : Type*}
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    (s : ℝ) (hs : 0 < s) {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0)
-    {t₀ : Euclidean 2} (hx : t₀ ∈ standardTriangleEdge s)
-    (σ : H → Measure (Euclidean 2)) (hfinite : ∀ f, IsFiniteMeasure (σ f))
-    (hclean : ∀ f, σ f {θ | t₀ + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0)
-    (P : G → H →L[ℂ] H)
-    (hP : ∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t)
-    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (standardTriangle s) t θ‖ ^ 2 ∂σ f)
-    (hdiff : ∀ a b f, ‖P a f - P b f‖ ^ 2 =
-      ∫ θ, ‖cutoffSymbol (standardTriangle s) a θ - cutoffSymbol (standardTriangle s) b θ‖ ^ 2 ∂σ f) :
-    ∃ (tm tp : ℕ → G) (Rm Rp : H →L[ℂ] H),
-      (∀ n, (tm n : Euclidean 2) ∉ closure (standardTriangle s) ∧ (tp n : Euclidean 2) ∈ (standardTriangle s)) ∧
-      Tendsto (fun n => (tm n : Euclidean 2)) atTop (𝓝 t₀) ∧
-      Tendsto (fun n => (tp n : Euclidean 2)) atTop (𝓝 t₀) ∧
-      (‖Rm‖ ≤ 1 ∧ IsSelfAdjoint Rm ∧ Rm.comp Rm = Rm) ∧
-      (‖Rp‖ ≤ 1 ∧ IsSelfAdjoint Rp ∧ Rp.comp Rp = Rp) ∧
-      (∀ f, Tendsto (fun n => P (tm n) f) atTop (𝓝 (Rm f))) ∧
-      (∀ f, Tendsto (fun n => P (tp n) f) atTop (𝓝 (Rp f))) ∧
-      (∀ f, ‖Rm f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (standardTriangle s) t₀ θ‖ ^ 2 ∂σ f) ∧
-      (∀ f, ‖Rp f‖ ^ 2 = ∫ θ, ‖boundaryJumpSymbol (standardTriangle s) t₀ (standardTriangleJump s t₀) θ‖ ^ 2 ∂σ f) := by
-  obtain ⟨⟨tp', hp', htp⟩, ⟨tm', hm', htm⟩⟩ :=
-    exists_conull_sequences_standardTriangle_two_sides s hs hG t₀ hx
-  let tp : ℕ → G := fun n => ⟨tp' n, (hp' n).1⟩
-  let tm : ℕ → G := fun n => ⟨tm' n, (hm' n).1⟩
-  have ha (t : ℕ → G) (f : H) (n : ℕ) :
-      AEStronglyMeasurable (cutoffSymbol (standardTriangle s) (t n)) (σ f) :=
-    (measurable_cutoffSymbol (standardTriangle_isOpen s).measurableSet (t n)).aestronglyMeasurable
-  have hb (t : ℕ → G) (f : H) (n : ℕ) :
-      ∀ᵐ θ ∂σ f, ‖cutoffSymbol (standardTriangle s) (t n) θ‖ ≤ 1 :=
-    Filter.Eventually.of_forall (norm_cutoffSymbol_le_one (standardTriangle s) (t n))
-  obtain ⟨Rm, hRm, hRms, hRmi, hRmt, hRmn⟩ :=
-    exists_projection_of_spectral_symbol_limit (l := atTop) (fun n => P (tm n))
-      (fun n => (hP (tm n)).1) (fun n => (hP (tm n)).2.1)
-      (fun n => (hP (tm n)).2.2) σ hfinite
-      (fun n => cutoffSymbol (standardTriangle s) (tm n)) (cutoffSymbol (standardTriangle s) t₀) (ha tm) (hb tm)
-      (fun f => standardTriangle_cutoffSymbol_exterior_ae_tendsto s t₀ hx (σ f) (hclean f) htm
-        (fun n => (hm' n).2))
-      (fun f i j => hdiff (tm i) (tm j) f) (fun f n => hnorm (tm n) f)
-  obtain ⟨Rp, hRp, hRps, hRpi, hRpt, hRpn⟩ :=
-    exists_projection_of_spectral_symbol_limit (l := atTop) (fun n => P (tp n))
-      (fun n => (hP (tp n)).1) (fun n => (hP (tp n)).2.1)
-      (fun n => (hP (tp n)).2.2) σ hfinite
-      (fun n => cutoffSymbol (standardTriangle s) (tp n)) (boundaryJumpSymbol (standardTriangle s) t₀ (standardTriangleJump s t₀)) (ha tp) (hb tp)
-      (fun f => standardTriangle_cutoffSymbol_interior_ae_tendsto s t₀ hx (σ f) (hclean f) htp
-        (fun n => (hp' n).2))
-      (fun f i j => hdiff (tp i) (tp j) f) (fun f n => hnorm (tp n) f)
-  exact ⟨tm, tp, Rm, Rp, fun n => ⟨(hm' n).2, (hp' n).2⟩, htm, htp,
-    ⟨hRm, hRms, hRmi⟩, ⟨hRp, hRps, hRpi⟩, hRmt, hRpt, hRmn, hRpn⟩
-
-/-- The complete triangle edge jump obstructs a common subunit gap to a continuous
-orthogonal comparison family at a point clean for all the given spectral measures. -/
-theorem standardTriangle_clean_cutoffs_comparison_obstruction {H : Type}
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    (s : ℝ) (hs : 0 < s) {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0)
-    {t₀ : Euclidean 2} (hx : t₀ ∈ standardTriangleEdge s)
-    (σ : H → Measure (Euclidean 2)) (hfinite : ∀ f, IsFiniteMeasure (σ f))
-    (hclean : ∀ f, σ f {θ | t₀ + θ ∈ frontier (standardTriangle s) \ standardTriangleEdge s} = 0)
-    (P : G → H →L[ℂ] H)
-    (hP : ∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t)
-    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (standardTriangle s) t θ‖ ^ 2 ∂σ f)
-    (hdiff : ∀ a b f, ‖P a f - P b f‖ ^ 2 =
-      ∫ θ, ‖cutoffSymbol (standardTriangle s) a θ - cutoffSymbol (standardTriangle s) b θ‖ ^ 2 ∂σ f)
-    (u : H) (hu : ‖u‖ = 1) (hσu : σ u = Measure.dirac 0)
-    (M : Euclidean 2 → H →L[ℂ] H) (hM : ContinuousAt M t₀)
-    (hMs : IsSelfAdjoint (M t₀)) (hMi : (M t₀).comp (M t₀) = M t₀)
-    {γ : ℝ} (hγ : γ < 1) (hgap : ∀ t : G, ‖P t - M t‖ ≤ γ) : False := by
-  obtain ⟨tm, tp, Rm, Rp, _, htm, htp, hRm, hRp, hRmt, hRpt, hRmn, hRpn⟩ :=
-    exists_standardTriangle_cutoff_limits s hs hG hx σ hfinite hclean P hP hnorm hdiff
-  obtain ⟨_, _, hstrict⟩ := boundary_jump_cutoff_ranges_strict
-    (standardTriangle_isOpen s).measurableSet t₀ (standardTriangleJump_measurableSet s hs t₀)
-    (fun _ h => standardTriangleJump_not_mem s t₀ h) (zero_mem_standardTriangleJump s t₀ hx)
-    σ hfinite Rm Rp hRm.2.1 hRp.2.1 hRm.2.2 hRp.2.2 hRmn hRpn u hu hσu
-  let Rminus : OrthProjection H := ⟨Rm, hRm.2.2, hRm.2.1.isSymmetric⟩
-  let Rplus : OrthProjection H := ⟨Rp, hRp.2.2, hRp.2.1.isSymmetric⟩
-  let Q : OrthProjection H := ⟨M t₀, hMi, hMs.isSymmetric⟩
-  exact OrthProjection.moving_comparison_obstruction
-    (fun n => P (tm n)) (fun n => P (tp n))
-    (fun n => M (tm n)) (fun n => M (tp n)) Rminus Rplus Q γ hγ
-    hRmt hRpt (hM.tendsto.comp htm) (hM.tendsto.comp htp)
-    (fun n => hgap (tm n)) (fun n => hgap (tp n)) hstrict
-
-/-- The actual triangle geometry excludes a uniform subunit gap for spectral cutoffs
-with the stated norm and difference identities and a common control measure.
-Constructing those analytic identities from an exponential Riesz basis is separate. -/
-theorem standardTriangle_cutoffs_continuous_comparison_obstruction {H : Type}
-    [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-    (s : ℝ) (hs : 0 < s) {G : Set (Euclidean 2)} (hG : volume Gᶜ = 0)
-    (σ : H → Measure (Euclidean 2)) (hfinite : ∀ f, IsFiniteMeasure (σ f))
-    (μ : Measure (Euclidean 2)) [SFinite μ] (hdom : ∀ f, σ f ≪ μ)
-    (P : G → H →L[ℂ] H)
-    (hP : ∀ t, ‖P t‖ ≤ 1 ∧ IsSelfAdjoint (P t) ∧ (P t).comp (P t) = P t)
-    (hnorm : ∀ t f, ‖P t f‖ ^ 2 = ∫ θ, ‖cutoffSymbol (standardTriangle s) t θ‖ ^ 2 ∂σ f)
-    (hdiff : ∀ a b f, ‖P a f - P b f‖ ^ 2 =
-      ∫ θ, ‖cutoffSymbol (standardTriangle s) a θ - cutoffSymbol (standardTriangle s) b θ‖ ^ 2 ∂σ f)
-    (u : H) (hu : ‖u‖ = 1) (hσu : σ u = Measure.dirac 0)
-    (M : Euclidean 2 → H →L[ℂ] H) (hM : Continuous M)
-    (hMs : ∀ t, IsSelfAdjoint (M t)) (hMi : ∀ t, (M t).comp (M t) = M t)
-    {γ : ℝ} (hγ : γ < 1) (hgap : ∀ t : G, ‖P t - M t‖ ≤ γ) : False := by
-  obtain ⟨t₀, ht₀, hclean⟩ := exists_clean_standardTriangle_edge_point s hs μ
-  exact standardTriangle_clean_cutoffs_comparison_obstruction s hs hG ht₀ σ hfinite
-    (fun f => hdom f hclean) P hP hnorm hdiff u hu hσu
-    M hM.continuousAt (hMs t₀) (hMi t₀) hγ hgap
-
-end RieszEuclidean
-
-/- Source: RieszEuclidean/TriangleAnalyticAssembly.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-open MeasureTheory Filter Topology
-namespace RieszEuclidean.SeparatedConfiguration
-
-/-- The actual triangle Fourier-to-bump hull gap contradicts the stationary boundary
-jump, assuming only existence of representing measures for the hull correlations. -/
-theorem standardTriangle_hull_gap_obstruction {δ r M γ : ℝ}
-    (s : ℝ) (hspos : 0 < s) (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
-    [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)] [CompactSpace (hull Γ)]
-    (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
-    (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ)
-    (σ : Lp ℂ 2 μ → Measure (Euclidean 2))
-    (hσ : ∀ f, RepresentsCorrelation (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
-    (hr : 2 * r < δ) (b : SchwartzMap (Euclidean 2) ℂ)
-    (hcompact : HasCompactSupport b) (hs : ∀ x, r ≤ ‖x‖ → b x = 0)
-    (hn : ‖b.toLp 2 volume‖ = 1) (hM : 0 ≤ M) (hb : ∀ x, ‖b x‖ ≤ M)
-    (hγ : 0 ≤ γ) (hγlt : γ < 1)
-    (hgap : ∀ Δ : hull Γ,
-      ‖(fourierProjection (standardTriangle s) (standardTriangle_isOpen s).measurableSet).op -
-        (isometryRangeProjection (bumpSynthesis Δ.val.separated hr b hs hn)).op‖ ≤ γ) : False := by
-  letI := separableSpace_hullLp hδ Γ μ
-  obtain ⟨v, _, hν, hdom⟩ := exists_spectralControlMeasure
-    (hullKoopmanUnitary hδ Γ μ hμ) (hullKoopmanUnitary_zero hδ Γ μ hμ)
-    σ hσ (Lp.const 2 μ (1 : ℂ)) norm_stationary_one
-  letI := hν
-  have hfin : volume (standardTriangle s) ≠ ⊤ :=
-    (standardTriangle_isBounded s hspos.le).measure_lt_top.ne
-  obtain ⟨_, hG, P, hP, _, hnorm, hdiff, hPg⟩ :=
-    exists_stationary_cutoff_family_with_comparison_gap hδ Γ μ hμ σ hσ
-      (spectralControlMeasure σ v) hdom (standardTriangle s)
-      (standardTriangle_isOpen s).measurableSet hfin (standardTriangle_volume_frontier s)
-      hr b hcompact hs hn hM hb hγ hgap
-  have hnorm' : ∀ t f, ‖P t f‖ ^ 2 =
-      ∫ θ, ‖cutoffSymbol (standardTriangle s) t θ‖ ^ 2 ∂σ f := by
-    intro t f
-    letI := (hσ f).1
-    rw [integral_cutoffSymbol_sq (σ f) (standardTriangle s)
-      (standardTriangle_isOpen s).measurableSet]
-    exact hnorm t f
-  have hσone : σ (Lp.const 2 μ (1 : ℂ)) = Measure.dirac 0 :=
-    (hσ _).unique (represents_hullCorrelation_one hδ Γ μ hμ)
-  exact standardTriangle_cutoffs_continuous_comparison_obstruction s hspos hG
-    σ (fun f => (hσ f).1) (spectralControlMeasure σ v) hdom P hP hnorm' hdiff
-    (Lp.const 2 μ (1 : ℂ)) norm_stationary_one hσone
-    (stationaryComparison hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb)
-    (continuous_stationaryComparison hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb)
-    (stationaryComparison_isSelfAdjoint hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb)
-    (stationaryComparison_idempotent hδ Γ μ hμ hr.le b b.continuous hcompact hs hM hb
-      (integral_sq_norm_schwartz_of_toLp_norm_one b hn)) hγlt hPg
-
-/-- For the literal standard triangle, the exponential Riesz basis assumption reduces
-given representing measures on stationary hulls. -/
-theorem standardTriangle_no_exponentialRieszBasis_of_hull_representations
-    (s : ℝ) (hspos : 0 < s)
-    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
-      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
-      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
-      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
-      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
-        ∀ f, RepresentsCorrelation
-          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
-    (Λ : Set (Euclidean 2)) : ¬ HasExponentialRieszBasis (standardTriangle s) Λ := by
-  intro hB
-  obtain ⟨δ, r, hδ, _, hr, Γ, b, hs, hn, _, hcompact, _, γ, hγ, hγlt, hgap⟩ :=
-    exists_riesz_basis_uniform_hull_gap (standardTriangle_isOpen s).measurableSet
-      (standardTriangle_isBounded s hspos.le) hB
-  letI : MeasurableSpace (hull Γ) := borel (hull Γ)
-  letI : BorelSpace (hull Γ) := ⟨rfl⟩
-  letI : CompactSpace (hull Γ) := isCompact_iff_compactSpace.mp (isCompact_hull hδ Γ)
-  obtain ⟨μ, hμprob, hμ⟩ := exists_hull_invariant_probability hδ Γ
-  letI := hμprob
-  obtain ⟨σ, hσ⟩ := hrep hδ Γ μ hμ
-  exact standardTriangle_hull_gap_obstruction s hspos hδ Γ μ hμ σ hσ hr b hcompact hs hn
-    (show 0 ≤ SchwartzMap.seminorm ℝ 0 0 b from apply_nonneg _ _)
-    (SchwartzMap.norm_le_seminorm ℝ b) hγ hγlt (fun Δ => hgap Δ.val Δ.property)
-
-end RieszEuclidean.SeparatedConfiguration
-
-/- Source: RieszEuclidean/TriangleAffineAssembly.lean -/
-run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
-noncomputable section
-open MeasureTheory Filter Topology
-namespace RieszEuclidean
-
-/-- The open triangle with vertices `a`, `b`, `c`, expressed by positive barycentric
-coordinates. Nondegeneracy is imposed separately by independence of its two edges. -/
-def vertexTriangle (a b c : Euclidean 2) : Set (Euclidean 2) :=
-  {y | ∃ u v : ℝ, 0 < u ∧ 0 < v ∧ u + v < 1 ∧
-    y = a + u • (b - a) + v • (c - a)}
-
-/-- Nondegenerate edge vectors define an invertible map from the standard coordinates. -/
-def triangleLinearEquiv (a b c : Euclidean 2)
-    (h : LinearIndependent ℝ ![b - a, c - a]) : Euclidean 2 ≃L[ℝ] Euclidean 2 :=
-  (EuclideanSpace.equiv (Fin 2) ℝ).trans
-    (basisOfLinearIndependentOfCardEqFinrank h (by simp [Euclidean])).equivFun.symm.toContinuousLinearEquiv
-
-/-- The normal-form map sends standard coordinates to the two actual edge vectors. -/
-theorem triangleLinearEquiv_apply (a b c : Euclidean 2)
-    (h : LinearIndependent ℝ ![b - a, c - a]) (x : Euclidean 2) :
-    triangleLinearEquiv a b c h x = x 0 • (b - a) + x 1 • (c - a) := by
-  simp [triangleLinearEquiv, Basis.equivFun_symm_apply, Fin.sum_univ_two]
-
-/-- Every ordinary nondegenerate vertex triangle is an affine image of the standard triangle. -/
-theorem vertexTriangle_eq_affine_image (a b c : Euclidean 2)
-    (h : LinearIndependent ℝ ![b - a, c - a]) :
-    vertexTriangle a b c = (planeAffine a (triangleLinearEquiv a b c h)) '' standardTriangle 1 := by
-  ext y
-  constructor
-  · rintro ⟨u, v, hu, hv, huv, rfl⟩
-    let x : Euclidean 2 := (WithLp.equiv 2 (Fin 2 → ℝ)).symm ![u, v]
-    refine ⟨x, ⟨hu, hv, huv⟩, ?_⟩
-    change a + triangleLinearEquiv a b c h x = _
-    rw [triangleLinearEquiv_apply]
-    change a + (u • (b - a) + v • (c - a)) = _
-    abel
-  · rintro ⟨x, ⟨h0, h1, hsum⟩, rfl⟩
-    refine ⟨x 0, x 1, h0, h1, hsum, ?_⟩
-    change a + triangleLinearEquiv a b c h x = _
-    rw [triangleLinearEquiv_apply]
-    abel
-
-/-- The affine reduction covers arbitrary noncollinear triples of vertices. -/
-theorem vertexTriangle_basis_iff (a b c : Euclidean 2)
-    (h : LinearIndependent ℝ ![b - a, c - a]) :
-    (∃ Λ, HasExponentialRieszBasis (vertexTriangle a b c) Λ) ↔
-      ∃ Λ, HasExponentialRieszBasis (standardTriangle 1) Λ := by
-  rw [vertexTriangle_eq_affine_image a b c h]
-  exact exists_exponentialRieszBasis_affine_iff _ _ _
-
-open SeparatedConfiguration in
-/-- Every actual nondegenerate vertex triangle has no exponential Riesz basis,
-given representing measures for the stationary hull correlations. -/
-theorem vertexTriangle_no_exponentialRieszBasis_of_hull_representations
-    (a b c : Euclidean 2) (h : LinearIndependent ℝ ![b - a, c - a])
-    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
-      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
-      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
-      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
-      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
-        ∀ f, RepresentsCorrelation
-          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
-    (Λ : Set (Euclidean 2)) : ¬ HasExponentialRieszBasis (vertexTriangle a b c) Λ := by
-  intro hB
-  rw [vertexTriangle_eq_affine_image a b c h] at hB
-  exact standardTriangle_no_exponentialRieszBasis_of_hull_representations 1 zero_lt_one hrep
-    ((affineFrequency (triangleLinearEquiv a b c h)) '' Λ)
-    (hasExponentialRieszBasis_affine_pullback a (triangleLinearEquiv a b c h)
-      (standardTriangle 1) Λ hB)
-
-/-- Affine independence of three vertices gives precisely the edge independence
-used in the explicit normal form. -/
-theorem vertex_edges_linearIndependent_of_affineIndependent (a b c : Euclidean 2)
-    (h : AffineIndependent ℝ ![a, b, c]) : LinearIndependent ℝ ![b - a, c - a] := by
-  have he := (affineIndependent_iff_linearIndependent_vsub ℝ ![a, b, c] 0).mp h
-  let e : Fin 2 → {j : Fin 3 // j ≠ 0} := fun i => ⟨i.succ, Fin.succ_ne_zero i⟩
-  have hi : Function.Injective e := by
-    intro i j hij
-    exact Fin.succ_injective _ (congrArg Subtype.val hij)
-  convert he.comp e hi using 1
-  ext i
-  fin_cases i <;> rfl
-
-open SeparatedConfiguration in
-/-- The conditional triangle theorem for arbitrary noncollinear vertex triples,
-with no affine-image assumption in its statement. -/
-theorem noncollinear_triangle_no_exponentialRieszBasis_of_hull_representations
-    (a b c : Euclidean 2) (h : ¬ Collinear ℝ (Set.range ![a, b, c]))
-    (hrep : ∀ {δ : ℝ} (hδ : 0 < δ) (Γ : SeparatedConfiguration 2 δ)
-      [MeasurableSpace (hull Γ)] [BorelSpace (hull Γ)]
-      (μ : Measure (hull Γ)) [IsProbabilityMeasure μ]
-      (hμ : ∀ z : Euclidean 2, MeasurePreserving (hullTranslate hδ Γ z) μ μ),
-      ∃ σ : Lp ℂ 2 μ → Measure (Euclidean 2),
-        ∀ f, RepresentsCorrelation
-          (unitaryCorrelation (hullKoopmanUnitary hδ Γ μ hμ) f) (σ f))
-    (Λ : Set (Euclidean 2)) : ¬ HasExponentialRieszBasis (vertexTriangle a b c) Λ :=
-  vertexTriangle_no_exponentialRieszBasis_of_hull_representations a b c
-    (vertex_edges_linearIndependent_of_affineIndependent a b c
-      (affineIndependent_iff_not_collinear.mpr h)) hrep Λ
-
-end RieszEuclidean
-
 /- Source: RieszEuclidean/UnconditionalGeometry.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 noncomputable section
@@ -14637,6 +15917,236 @@ theorem unpairedMaximalSide_no_exponentialRieszBasis
     (fun hδ Γ _ _ μ _ hμ => exists_hull_spectralMeasures hδ Γ μ hμ) Λ
 
 end SeparatedConfiguration
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConvexBoundary.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- Every neighborhood of a point in the closure of an open Euclidean set
+has positive measure in that set. -/
+theorem positive_neighborhood_inter_of_mem_closure {d : ℕ}
+    {Ω : Set (Euclidean d)} (hΩ : IsOpen Ω) {t : Euclidean d}
+    (ht : t ∈ closure Ω) {V : Set (Euclidean d)} (hV : V ∈ nhds t) :
+    0 < volume (V ∩ Ω) := by
+  obtain ⟨W, hWV, hW, htW⟩ := _root_.mem_nhds_iff.mp hV
+  have hn := mem_closure_iff_nhds.mp ht W (hW.mem_nhds htW)
+  exact ((hW.inter hΩ).measure_pos volume hn).trans_le
+    (measure_mono (Set.inter_subset_inter_left Ω hWV))
+
+/-- An open nonempty convex domain is regular open. In particular, its boundary
+is approachable from the strict exterior as well as from the domain. -/
+theorem convex_boundary_two_sided {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : IsOpen Ω) (hn : Ω.Nonempty) (hc : Convex ℝ Ω)
+    {t : Euclidean d} (ht : t ∈ frontier Ω) :
+    ∀ V ∈ nhds t, 0 < volume (V ∩ Ω) ∧
+      0 < volume (V ∩ (closure Ω)ᶜ) := by
+  have hi : interior (closure Ω) = Ω := by
+    rw [hc.interior_closure_eq_interior_of_nonempty_interior
+      (hΩ.interior_eq.symm ▸ hn), hΩ.interior_eq]
+  have he : t ∈ closure (closure Ω)ᶜ := by
+    rw [closure_compl, hi]
+    exact (hΩ.frontier_eq ▸ ht).2
+  intro V hV
+  exact ⟨positive_neighborhood_inter_of_mem_closure hΩ
+    (frontier_subset_closure ht) hV,
+    positive_neighborhood_inter_of_mem_closure isClosed_closure.isOpen_compl he hV⟩
+
+/-- For convex domains, the boundary-measure criterion only needs the finite
+nonzero boundary measure and its translated non-overlap property. Boundary
+Lebesgue-nullity and two-sided neighborhood positivity follow from convexity. -/
+theorem convex_no_exponentialRieszBasis_of_boundary_measure {d : ℕ}
+    (Ω : Set (Euclidean d)) (hΩ : IsOpen Ω) (hn : Ω.Nonempty)
+    (hc : Convex ℝ Ω) (hb : Bornology.IsBounded Ω)
+    (ν : Measure (Euclidean d)) [IsFiniteMeasure ν] (hν : ν ≠ 0)
+    (hsupport : ν (frontier Ω)ᶜ = 0)
+    (hoverlap : ∀ θ : Euclidean d, θ ≠ 0 →
+      ν (frontier Ω ∩ RieszEuclidean.translate θ (frontier Ω)) = 0)
+    (Λ : Set (Euclidean d)) : ¬ HasExponentialRieszBasis Ω Λ := by
+  apply SeparatedConfiguration.no_exponentialRieszBasis_of_general_boundary
+    Ω ⟨hΩ, hn⟩ hb (hc.addHaar_frontier volume) ν hν hsupport hoverlap
+  have hs : ∀ᵐ t ∂ν, t ∈ frontier Ω := by
+    simpa only [compl_compl] using compl_mem_ae_iff.mpr hsupport
+  filter_upwards [hs] with t ht
+  exact convex_boundary_two_sided hΩ hn hc ht
+
+/-- A finite positive measure on a boundary patch suffices; no global strict
+convexity or global curvature condition enters the analytic argument. -/
+theorem convex_no_exponentialRieszBasis_of_boundary_patch {d : ℕ}
+    (Ω : Set (Euclidean d)) (hΩ : IsOpen Ω) (hn : Ω.Nonempty)
+    (hc : Convex ℝ Ω) (hb : Bornology.IsBounded Ω)
+    (μ : Measure (Euclidean d)) (U : Set (Euclidean d))
+    (hUS : U ⊆ frontier Ω)
+    (hpos : μ U ≠ 0) (hfin : μ U ≠ ⊤)
+    (hoverlap : ∀ θ : Euclidean d, θ ≠ 0 →
+      μ (U ∩ RieszEuclidean.translate θ (frontier Ω)) = 0)
+    (Λ : Set (Euclidean d)) : ¬ HasExponentialRieszBasis Ω Λ := by
+  let ν := μ.restrict U
+  haveI : IsFiniteMeasure ν := ⟨by simpa [ν] using hfin.lt_top⟩
+  have hnν : ν ≠ 0 := by
+    intro hz
+    have hu := congrArg (fun m : Measure (Euclidean d) => m Set.univ) hz
+    simp [ν, hpos] at hu
+  apply convex_no_exponentialRieszBasis_of_boundary_measure Ω hΩ hn hc hb ν hnν
+  · rw [Measure.restrict_apply isClosed_frontier.measurableSet.compl]
+    apply measure_mono_null (t := ∅) _ (measure_empty)
+    intro x hx
+    exact hx.1 (hUS hx.2)
+  · intro θ hθ
+    change (μ.restrict U) (frontier Ω ∩ (fun x => x + θ) ⁻¹' frontier Ω) = 0
+    have hm : MeasurableSet (frontier Ω ∩ (fun x => x + θ) ⁻¹' frontier Ω) :=
+      isClosed_frontier.measurableSet.inter
+        (isClosed_frontier.measurableSet.preimage
+          (continuous_id.add continuous_const).measurable)
+    rw [Measure.restrict_apply hm]
+    apply measure_mono_null _ (hoverlap θ hθ)
+    intro x hx
+    exact ⟨hx.2, hx.1.2⟩
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConvexTranslatedOverlap.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Filter Topology
+namespace RieszEuclidean
+
+/-- On a C² convex boundary, a patch of singleton supporting faces meets every
+nontrivial translated boundary in a surface-null set. The proof derives the
+transverse regular levels from the defining functions; transversality is not an
+additional nullity assumption. -/
+theorem c2_patch_translated_overlap_null {n : ℕ} (hn : 2 ≤ n)
+    {Ω U : Set (Euclidean n)} (hΩ : IsOpen Ω) (hc : Convex ℝ Ω)
+    (hC : HasC2Boundary Ω) (hU : U ⊆ frontier Ω)
+    (hface : ∀ x ∈ U, ∀ L : Euclidean n →L[ℝ] ℝ, L ≠ 0 →
+      FunctionalSupportsAt (closure Ω) x L → FunctionalSingletonFace (closure Ω) x L)
+    {θ : Euclidean n} (hθ : θ ≠ 0) :
+    (Measure.hausdorffMeasure ((n - 1 : ℕ) : ℝ))
+      (U ∩ translate θ (frontier Ω)) = 0 := by
+  classical
+  let μ : Measure (Euclidean n) := Measure.hausdorffMeasure ((n - 1 : ℕ) : ℝ)
+  haveI : NoAtoms μ := Measure.noAtoms_hausdorff _ (by exact_mod_cast (show 0 < n - 1 by omega))
+  by_cases hopp : ∃ x ∈ U, ∃ (L M : Euclidean n →L[ℝ] ℝ) (c : ℝ),
+      L ≠ 0 ∧ FunctionalSupportsAt (closure Ω) x L ∧
+      FunctionalSupportsAt (closure Ω) (x + θ) M ∧ M = c • L ∧ c < 0
+  · obtain ⟨x, hx, L, M, c, hL0, hL, hM, he, hc⟩ := hopp
+    have hs := functional_opposite_inter_subset_singleton hL hM
+      (hface x hx L hL0 hL) he hc
+    change μ (U ∩ translate θ (frontier Ω)) = 0
+    apply measure_mono_null (t := {x}) _ (measure_singleton x)
+    intro z hz
+    exact hs ⟨frontier_subset_closure (hU hz.1), frontier_subset_closure hz.2⟩
+  · apply regular_levels_hausdorff_null (F := ℝ × ℝ)
+    intro x hx
+    obtain ⟨f, L, hf, hL0, hf0, hL, hSf⟩ :=
+      exists_supporting_defining_function hΩ hc hC (hU hx.1)
+    obtain ⟨g, M, hg, hM0, hg0, hM, hSg⟩ :=
+      exists_supporting_defining_function hΩ hc hC hx.2
+    have hnonprop : ∀ c : ℝ, M ≠ c • L := by
+      intro c he
+      have hc0 : c ≠ 0 := by
+        intro hz
+        apply hM0
+        simp [hz] at he
+        exact he
+      rcases lt_or_gt_of_ne hc0 with hcneg | hcpos
+      · exact hopp ⟨x, hx.1, L, M, c, hL0, hL, hM, he, hcneg⟩
+      · have hy := functional_support_points_eq
+          (frontier_subset_closure (hU hx.1)) (frontier_subset_closure hx.2)
+          hL hM (hface x hx.1 L hL0 hL) he hcpos
+        exact hθ (add_left_cancel (hy.trans (add_zero x).symm))
+    have hsurj := prod_functionals_surjective L M hL0 hnonprop
+    have hdim := prod_functionals_kernel_dim L M hsurj
+    have hgshift : HasStrictFDerivAt (fun z => g (z + θ)) M x := by
+      simpa using hg.comp x ((hasStrictFDerivAt_id x).add_const θ)
+    refine ⟨fun z => (f z, g (z + θ)), L.prod M, hf.prodMk hgshift,
+      LinearMap.range_eq_top.mpr hsurj, by omega, ?_⟩
+    have hSg' : ∀ᶠ z in nhds x, z + θ ∈ frontier Ω ↔ g (z + θ) = 0 :=
+      ((continuous_id.add continuous_const).tendsto x).eventually hSg
+    filter_upwards [hSf, hSg'] with z hz₁ hz₂
+    intro hz
+    apply Prod.ext
+    · exact ((hz₁.mp (hU hz.1)).trans hf0.symm)
+    · exact ((hz₂.mp hz.2).trans hg0.symm)
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/ConvexDomainTheorem.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+open MeasureTheory Topology
+namespace RieszEuclidean
+
+/-- Corollary 8.1: no bounded nonempty open convex domain with C² boundary in
+dimension at least two admits an exponential Riesz basis. All geometric and
+surface-measure inputs are derived from the domain hypotheses. -/
+theorem convex_C2_no_exponentialRieszBasis {n : ℕ} (hn : 2 ≤ n)
+    (Ω : Set (Euclidean n)) (hΩ : IsOpen Ω) (hne : Ω.Nonempty)
+    (hc : Convex ℝ Ω) (hb : Bornology.IsBounded Ω) (hC : HasC2Boundary Ω)
+    (Λ : Set (Euclidean n)) : ¬ HasExponentialRieszBasis Ω Λ := by
+  obtain ⟨C⟩ := exists_convex_curved_patch (by omega : 0 < n) hΩ hc hb hne hC
+  obtain ⟨K, hK, hpos, hfin⟩ := C.exists_positive_finite_subpatch
+  apply convex_no_exponentialRieszBasis_of_boundary_patch Ω hΩ hne hc hb
+    (Measure.hausdorffMeasure ((n-1 : ℕ) : ℝ)) K (fun x hx => (hK hx).2) hpos hfin
+  intro θ hθ
+  apply measure_mono_null (Set.inter_subset_inter_left _ hK)
+  exact c2_patch_translated_overlap_null hn hΩ hc hC (fun _ hx => hx.2)
+    C.singleton_faces hθ
+
+end RieszEuclidean
+
+/- Source: RieszEuclidean/IntervalRectangleRemarks.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+noncomputable section
+
+open MeasureTheory Set
+
+namespace RieszEuclidean
+
+/-- The boundary of a nondegenerate real interval has positive counting mass in
+its overlap with a nonzero translate: translating by the interval length sends
+the left endpoint to the right endpoint. -/
+theorem interval_boundary_positive_translated_overlap (a b : ℝ) (hab : a < b) :
+    b - a ≠ 0 ∧
+      0 < (Measure.dirac a + Measure.dirac b)
+        (frontier (Ioo a b) ∩
+          (fun x : ℝ => x + (b - a)) ⁻¹' frontier (Ioo a b)) := by
+  constructor
+  · linarith
+  · rw [frontier_Ioo hab]
+    have ha : a ∈ ({a, b} : Set ℝ) ∩
+        (fun x : ℝ => x + (b - a)) ⁻¹' ({a, b} : Set ℝ) := by
+      constructor
+      · simp
+      · simp only [mem_preimage, mem_insert_iff, mem_singleton_iff]
+        exact Or.inr (by ring)
+    have hdirac : Measure.dirac a
+        (({a, b} : Set ℝ) ∩
+          (fun x : ℝ => x + (b - a)) ⁻¹' ({a, b} : Set ℝ)) = 1 := by
+      rw [Measure.dirac_apply_of_mem ha]
+    rw [Measure.add_apply, hdirac]
+    simp
+
+/-- Two distinct parallel edges related by a perpendicular translation have
+their full positive edge length in translated overlap, as happens for opposite
+sides of a nondegenerate rectangle. -/
+theorem opposite_rectangle_edges_positive_translated_overlap
+    (a b θ : Euclidean 2) (hab : a ≠ b) (hθ : θ ≠ 0)
+    (hperp : inner (𝕜 := ℝ) θ (b - a) = 0) :
+    θ ≠ 0 ∧ inner (𝕜 := ℝ) θ (b - a) = 0 ∧
+      0 < edgeLengthMeasure a b
+        (openSegment ℝ a b ∩ translate θ (openSegment ℝ (θ + a) (θ + b))) := by
+  refine ⟨hθ, hperp, ?_⟩
+  have htranslate :
+      translate θ (openSegment ℝ (θ + a) (θ + b)) = openSegment ℝ a b := by
+    simpa only [translate, add_comm] using openSegment_translate_preimage ℝ θ a b
+  rw [htranslate, inter_self, edgeLengthMeasure,
+    Measure.restrict_apply (measurableSet_openEdge a b hab), inter_self,
+    hausdorffMeasure_openEdge]
+  exact edist_pos.mpr hab
+
 end RieszEuclidean
 
 /- Source: RieszEuclidean/WeakPointLimits.lean -/
@@ -15225,5 +16735,59 @@ theorem unpaired_maximal_side_polygon_no_exponentialRieszBasis
     ¬ HasExponentialRieszBasis (strictHalfspaceIntersection normal offset) Λ := by
   exact SeparatedConfiguration.unpairedMaximalSide_no_exponentialRieszBasis
     normal offset hn hface hbounded S hS hunpaired Λ
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+/-- The revised manuscript's bump characterization, in both directions. -/
+theorem initial_bumps_iff {d : ℕ} {Ω Λ : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hb : Bornology.IsBounded Ω) :
+    HasExponentialRieszBasis Ω Λ ↔
+    ∃ δ r : ℝ, 0 < δ ∧ Separated δ Λ ∧ 0 < r ∧ 2 * r < δ ∧
+      ∃ b : SchwartzMap (Euclidean d) ℂ,
+        HasCompactSupport b ∧ ‖b.toLp 2 volume‖ = 1 ∧
+        (∀ ξ, (b ξ).im = 0 ∧ 0 ≤ (b ξ).re) ∧
+        (∀ ξ, r ≤ ‖ξ‖ → b ξ = 0) ∧
+        (∃ c : ℝ, 0 < c ∧ ∀ x ∈ closure Ω, c ≤ ‖Real.fourierIntegralInv b x‖) ∧
+        ∃ V : SeqL2 Λ →ₗᵢ[ℂ] FullL2 d,
+          (∀ i : Λ, V (lp.single 2 i 1) =
+            translationL2 (-(i : Euclidean d)) (b.toLp 2 volume)) ∧
+          ‖(fourierProjection Ω hΩ).op - (isometryRangeProjection V).op‖ < 1 :=
+  exponentialRieszBasis_iff_initial_bump_gap hΩ hb
+
+/-- Convex-domain reduction with an explicit boundary-measure hypothesis.
+This does not assert that C² regularity supplies that measure. -/
+theorem convex_boundary_measure_no_exponentialRieszBasis {d : ℕ}
+    (Ω : Set (Euclidean d)) (hΩ : IsOpen Ω) (hn : Ω.Nonempty)
+    (hc : Convex ℝ Ω) (hb : Bornology.IsBounded Ω)
+    (ν : Measure (Euclidean d)) [IsFiniteMeasure ν] (hν : ν ≠ 0)
+    (hsupport : ν (frontier Ω)ᶜ = 0)
+    (hoverlap : ∀ θ : Euclidean d, θ ≠ 0 →
+      ν (frontier Ω ∩ RieszEuclidean.translate θ (frontier Ω)) = 0)
+    (Λ : Set (Euclidean d)) : ¬ HasExponentialRieszBasis Ω Λ :=
+  convex_no_exponentialRieszBasis_of_boundary_measure Ω hΩ hn hc hb ν hν hsupport hoverlap Λ
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+/-- The maximum identity used in the revised proof of Lemma 2.2. -/
+theorem projection_gap_maximum {H : Type} [NormedAddCommGroup H]
+    [InnerProductSpace ℂ H] (P Q : OrthProjection H) :
+    ‖P.op - Q.op‖ = max ‖(1 - P.op).comp Q.op‖ ‖(1 - Q.op).comp P.op‖ :=
+  P.norm_sub_eq_max_complement Q
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+/-- Every bounded nonempty convex open domain with C² boundary in dimension at
+least two has no exponential Riesz basis. -/
+theorem convex_C2_no_exponentialRieszBasis {n : ℕ} (hn : 2 ≤ n)
+    (Ω : Set (Euclidean n)) (hΩ : IsOpen Ω) (hne : Ω.Nonempty)
+    (hc : Convex ℝ Ω) (hb : Bornology.IsBounded Ω) (hC : HasC2Boundary Ω)
+    (Λ : Set (Euclidean n)) : ¬ HasExponentialRieszBasis Ω Λ :=
+  RieszEuclidean.convex_C2_no_exponentialRieszBasis hn Ω hΩ hne hc hb hC Λ
 
 end RieszEuclidean.Results

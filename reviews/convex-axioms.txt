@@ -1,0 +1,1288 @@
+'RieszEuclidean.OrthProjection.gap_iff_rangeIso' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.nested_not_both_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.between_adjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.between_lower_bound_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.between_antilipschitz_of_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.complement_comp_norm_le_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.norm_sub_eq_max_complement' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.weaklyConverges_const' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.WeaklyConverges.translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.WeaklyConverges.separated' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.gap_le_of_two_strong_limits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.gap_le_of_moving_comparison' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.OrthProjection.moving_comparison_obstruction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_fourier_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourier_conj_eq_conj_inverse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_fourier_mul_conj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.schwartz_parseval' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.schwartz_toL2_inner' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.schwartz_fourier_inner' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.schwartz_fourier_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactSchwartz' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.local_approx_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.smooth_compact_uniform_approx' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.eLpNorm_two_le_of_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compact_exists_schwartz_eLpNorm_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.memLp_exists_schwartz_eLpNorm_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.schwartz_toL2_denseRange' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.schwartzL2_dense' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierL2CLM_subtype' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierL2CLM_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierL2_dense' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierL2_surjective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierL2Equiv_schwartz' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierL2Equiv_symm_schwartz' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.paperFourierL2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.paperFourierL2_schwartz' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainCutoff_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainCutoff_norm_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainProjection' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection_transform' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainCutoff_eq_self_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection_mem_range_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.schwartz_L2_inner' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierL2_pairing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierL2Equiv_eq_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inverseFourier_conj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_inverseFourier_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_inverseFourier_mul_conj' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.paperFourierL2_pairing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.paperFourierL2_eq_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainCutoff_integrable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection_integral_transform' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.phaseIndicator_integrable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inverseFourier_phaseIndicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_domain_inverseFourier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translationL2_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translationL2_integrable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainKernel_integral_translation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection_translation_integrable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection_translation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.synthesis_columns_separated' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.imaginary_phase_sub_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.phase_exp_sub_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exponential_eq_phase' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exponential_sub_le_on_ball' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.riesz_frequencies_separated' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_schwartz_bump' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_toLp_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_normalized_schwartz_bump' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inverseFourier_exponential' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_norm_eq_re' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_fourier_near_mass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_fourier_lower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_fourier_lower_on_ball' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_integral_re_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_bump_fourier_lower' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_translates_disjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translated_bump_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translated_bumps_orthonormal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.orthonormalSynthesis' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.orthonormalSynthesis_single' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpSynthesis' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isometryRangeProjection' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isometryRangeProjection_range' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.l2Multiplier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.l2Multiplier_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.l2Multiplier_norm_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.l2MultiplierLM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.l2MultiplierCLM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.l2Multiplier_inv_mul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.l2MultiplierEquiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inverseFourier_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.paperFourierL2_translated_bump' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.l2MultiplierEquiv_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpFourierMultiplier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainRestriction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainRestriction_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainRestriction_norm_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainRestrictionLM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainRestrictionCLM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpFourierMultiplier_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_synthesis_coordinate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.seqL2_ext_on_single' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_synthesis_identity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainExtension' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainExtension_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainExtension_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainRestriction_extension' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainExtension_restriction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainExtensionLI' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainExtension_range' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierDomainEmbedding' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierDomainEmbedding_range' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierDomainEmbedding_restriction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isometryRangeEquiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isometryRangeEquiv_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.rangeIso_of_synthesis' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.initial_bump_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_initial_bump_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.Separated.finite_inter_compact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.Separated.countable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.Separated.isClosed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compact_uniform_separated_count' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.WeaklyConverges.moving_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_compact_lt_top' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_finiteOnCompacts' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_eq_encard' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_eq_ncard' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_uniform_compact_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactRestriction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactRestriction_subsequence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactRestrictions_diagonal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.WeaklyConverges.mem_of_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorff_eventually_matching' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorff_mem_of_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorff_separated' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactRestriction_limit_mono' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactRestriction_limit_interior' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.windowLimitSet' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.weaklyConverges_of_window_limits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.separated_weak_subsequence' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.WeaklyConverges.tendsto_infEdist' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.ext' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.profile' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.profile_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.profile_isEmbedding' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.tendsto_of_weaklyConverges' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.seqCompactSpace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.compactSpace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.weaklyConverges_of_tendsto' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.tendsto_iff_weaklyConverges' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.translate_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.translate_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.orthonormalSynthesis_adjoint_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isometryRangeProjection_eq_sum_of_coefficients' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.translated_bump_inner_schwartz' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finite_bump_coefficients_schwartz' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_schwartz_finite_expansion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finite_bump_sum_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finite_bump_sum_eq_kernel_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_schwartz_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_hasCompactSupport_of_radius' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_bumpKernel_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_bumpKernel_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fullL2_norm_sq_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_bumpKernel_integral_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_integral_eq_zero_of_radius' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_tendsto_compact_schwartz' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compact_exists_compactSchwartz_eLpNorm_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.memLp_exists_compactSchwartz_eLpNorm_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_compactSchwartz_L2_dist_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_stronglyConverges' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_stronglyConverges_of_weaklyConverges' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.translationL2_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translationL2_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactSchwartzTranslate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactSchwartzTranslate_toLp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_translation_compact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactSchwartz_toL2_denseRange' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_translation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_eq_of_surjective_isometry_intertwines' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translationL2_surjective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_gap_translation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_gap_hull_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_uniform_bump_projection_hull_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_riesz_basis_uniform_hull_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.orbit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hull' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.mem_hull' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.isCompact_hull' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.translate_mem_hull' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullTranslate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_hullTranslate' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.rieszMeasure_isProbability' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.rieszMeasure_measurePreserving' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.meanFunctionals' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isClosed_normalized_positive' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isCompact_meanFunctionals' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.evaluation_mem_meanFunctionals' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.meanFunctionals_clusterPt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.mean_clusterPt_eq_of_tendsto_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_invariant_mean_of_averages' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.meanToFunctional' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_invariant_probability_of_averages' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.euclideanBox' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurableSet_euclideanBox' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.volume_euclideanBox' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.volume_euclideanBox_pos_lt_top' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxProbabilityMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxProbabilityMeasure_isProbability' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_box_observable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxAverageLinear' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_boxAverageLinear_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxAverage' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxAverage_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxAverage_mem_meanFunctionals' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxNorm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.mem_euclideanBox_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxNorm_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxNorm_add_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxNorm_neg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.euclideanBox_mono' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.innerBox_subset_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translateBox_subset_outer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.box_symmDiff_subset_shell' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.volume_real_euclideanBox' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.volume_real_box_symmDiff_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.box_shell_ratio_tendsto_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.box_symmDiff_ratio_tendsto_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_setIntegral_sub_le_symmDiff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurableSet_translate_region' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.volume_translate_region' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.setIntegral_add_right_region' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxProbability_integral_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrableOn_bounded_observable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_box_translation_error_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.box_translation_error_tendsto_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_invariant_probability_euclidean_action' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.exists_hull_invariant_probability' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.koopmanIsometry' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_koopman' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.koopmanIsometry_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.koopmanIsometry_inverse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.koopmanUnitary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.koopmanIsometry_const' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_stationary_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullPullbackUnitary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullPullbackUnitary_apply' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hull_pullback_add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hull_pullback_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_hull_pullback' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.strongContinuous_hullPullbackUnitary' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary_apply' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.strongContinuous_hullKoopmanUnitary' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary_add' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullKoopmanUnitary_const' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.separableSpace_hullLp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_count_eq_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_count_eq_sum_of_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_integral_eq_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_integral_matching_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.WeaklyConverges.tendsto_configurationMeasure_integral' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.exists_configurationMeasure_distinguishing_test' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.countingProfile' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.countingProfile_injective' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_countingProfile' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.countingProfile_isEmbedding' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.tendsto_iff_vague' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.weaklyConverges_iff_vague' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.unitaryCorrelation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_unitaryCorrelation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_unitaryCorrelation_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.unitaryCorrelation_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.unitaryCorrelation_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.unitaryCorrelation_positiveDefinite' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.unitaryCorrelation_parallelogram' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.unitaryCorrelation_smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullCorrelation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_hullCorrelation' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullCorrelation_positiveDefinite' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hullCorrelation_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.RepresentsCorrelation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measure_eq_of_fourierChar_integral_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.RepresentsCorrelation.unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.RepresentsCorrelation.mass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.RepresentsCorrelation.unitary_mass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_fourierChar' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_hasSum_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_hasSum_inner' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_hasSum_integral_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_coordinate_inner_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_hasSum_integral_inner' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_summable_integral_norm_inner' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_integrable_coordinate_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_integrable_coordinate_inner' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hilbertBasis_countable' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_countable_hilbertBasis' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compactTestToBCF' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finiteMeasureFunctional' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_finiteMeasure_of_positive_bounded' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_compactTest_uniform_approx' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundedFunctional_eq_of_compactTests' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isCompact_positive_boundedFunctionals' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_finiteMeasure_vague_limit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measureFourier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_measureFourier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_measureFourier_le_mass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_mul_measureFourier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_integral_mul_measureFourier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_complex_zeroAtInfty_integrals_of_real' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.representsCorrelation_of_bounded_vague_limit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerWindow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_bochnerWindow_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stronglyMeasurable_bochnerWindow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_norm_bochnerWindow_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_norm_bochnerWindow_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.memLp_bochnerWindow' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.memLp_bochnerWindow_coordinate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerWindowCoordinate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerWindowCoordinate_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_bochnerWindowCoordinate_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerWindowCoordinate_correlation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inner_bochnerWindow_shift' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_inner_bochnerWindow_shift' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerApproxMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerWindowCoordinate_hasSum_energy' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerApproxMeasure_univ' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerApproxMeasure_finite' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerApproxMeasure_mass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bochnerApproxMeasure_fourier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_representsCorrelation_unitary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_unitary_spectralMeasures' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.exists_hull_spectralMeasures' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.representsCorrelation_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.represents_hullCorrelation_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.RepresentsCorrelation.add' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.RepresentsCorrelation.smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralMeasure_parallelogram' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralMeasure_smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_unitary_smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_integratedUnitary_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitaryLinear' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitaryCLM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitaryCLM_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_integratedUnitaryCLM_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary_congr_ae' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_unitaryCorrelation_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_kernel_character' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_fourier_gram_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourier_gram_factor' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_fourier_gram' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary_spectral_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol_eq_fourierInv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_integratedKernelSymbol_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.adjointKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_adjointKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.unitary_inner_neg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary_adjoint_pairing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitaryCLM_adjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.adjointKernel_involutive' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol_adjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelConvolution' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_integratedKernelConvolution' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_unitary_convolution_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary_convolution' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitaryCLM_convolution' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol_convolution' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_unit_sequence_scalar_approximants' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_integratedUnitary_le_symbol' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_integratedUnitaryCLM_le_symbol' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitaryCLM_eq_of_symbol_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralMeasure_set_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralMeasure_univ' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralMeasure_set_le_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralMeasure_null_of_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralControlWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tsum_spectralControlWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralControlWeight_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralControlMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralControlMeasure_probability' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralControlMeasure_null_seq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.spectralMeasure_absolutelyContinuous_control' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_spectralControlMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalTranslationUnitary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalTranslationUnitary_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalModulation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalModulation_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inverseFourier_translate_character' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.paperFourierL2_physicalTranslation_integrable' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.paperFourierL2_physicalTranslation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalTranslation_correlation_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalSpectralMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_physicalSpectralDensity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalSpectralMeasure_finite' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalSpectralMeasure_absolutelyContinuous' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.represents_physicalTranslationCorrelation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalSpectralMeasure_mass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalSpectralMeasure_singleton_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.eq_zero_of_physicalTranslation_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.eq_zero_of_translationL2_invariant' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physicalSpectralMeasure_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physical_boundarySymbols_ae_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.physical_boundarySymbol_norms_equal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourierProjection_insert_zero_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight_le_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight_neg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_fejerWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight_eq_zero_of_coordinate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.isCompact_euclideanBox' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight_eq_zero_outside' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hasCompactSupport_fejerWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_fejerWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_fejerWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_fejerWeight_smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_integral_fejerWeight_smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_integral_norm_fejerWeight_smul_sub' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.mem_euclideanBox_iff_coordinates' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.euclideanBox_inter_translate_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.overlap_interval_length' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.volume_euclideanBox_inter_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.volume_real_euclideanBox_inter_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight_eq_normalized_overlap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_sq_norm_fullL2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_sq_norm_fullL2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inverseFourier_sq_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inverseFourier_box_indicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerKernel_eq_box_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerKernel_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerKernel_integrable_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boxNorm_smul' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.smul_euclideanBox_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.box_exponential_integral_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerKernel_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerKernel_integral_closedBall_scale' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_fejerKernel_tail' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.smoothedIndicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_smoothedIndicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.smoothedIndicator_mem_Icc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_indicator_constant_ball' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.abs_smoothedIndicator_sub_le_tail' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_smoothedIndicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerCutoff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_fejerCutoff_integrand' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerCutoff_mem_Icc' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_fejerCutoff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_fejerKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurable_fejerCutoff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_box_indicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.box_indicator_autocorrelation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerWeight_eq_box_autocorrelation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol_fejerWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourier_domain_indicator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fourier_modulated_fejerWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.smoothedIndicator_eq_domain_integral' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_fejerWeight_domainKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol_fejerWeight_domainKernel' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.translatedExceptionalMass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.goodParameters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurable_translatedExceptionalMass' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translatedExceptionalMass_ae_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurableSet_goodParameters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.volume_compl_goodParameters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.frontier_goodParameters' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.mem_goodParameters_frontier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_clm_of_strong_limit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_clm_of_pointwise_cauchy' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strong_limit_apply_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strong_limit_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strong_limit_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strong_limit_isSelfAdjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_projection_of_cauchy_contractions' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary_spectral_difference_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary_cauchy_of_symbol_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strong_limit_spectral_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_integratedUnitary_limit_spectral_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedUnitary_idempotence_defect_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_spectral_cutoff_of_symbol_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strong_limit_spectral_difference_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainKernel_eq_fourier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_domainKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_domainKernel_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.domainKernel_neg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finiteFilterKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_finiteFilterKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.adjointKernel_finiteFilterKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finiteFilter' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finiteFilter_isSelfAdjoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol_finiteFilterKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integratedKernelSymbol_finiteFilterKernel_eq_fejerCutoff' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.norm_finiteFilter_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.cutoffSymbol' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.cutoffSymbol_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerCutoff_ae_tendsto_of_goodParameter' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finiteFilterKernel_ae_symbol_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_stationary_cutoff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_cutoffSymbol_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stationary_cutoff_difference_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_stationary_cutoff_family' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_active_unique' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_support_subsingleton' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.summable_bumpKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_eq_single' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_bumpKernel_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_eq_zero_of_two_mul_lt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_hermitian' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_eq_single_right' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_bump_cross' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_bump_cross' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_product_eq_cross' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_eq_zero_of_no_active' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_bumpKernel_product' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_bumpKernel_product' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bumpKernel_locally_finite_sum' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_bumpKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_bumpKernel_of_hasCompactSupport' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.configurationMeasure_integral_eq_tsum_complex' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.continuous_configurationMeasure_integral_complex' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.bumpKernelTest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_bumpKernelTest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_configuration_bumpKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_bumpKernelTest_family' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_configuration_bumpKernel_joint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_exp_mul_I_sub_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_exponential_sub_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.modulatedOperatorValue' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_modulatedOperator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_modulatedOperatorValue_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.modulatedOperatorLinear' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.modulatedOperator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.modulatedOperator_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_modulatedOperator_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_modulatedOperator_sub_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerOperatorKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.aestronglyMeasurable_fejerOperatorKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_fejerOperatorKernel_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerModulatedOperator' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fejerModulatedOperator_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_fejerModulatedOperator_sub_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_fejer_envelope_error' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_fejerModulatedOperator_error' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stationaryKernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_stationaryKernel_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stationaryKernel_eq_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stationaryKernel_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stationaryKernel_adjoint_coefficient' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryMultiplier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryMultiplier_coe' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.norm_stationaryMultiplier_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryMultiplier_eq_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryKernelOperator' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryKernelOperator_coe' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.norm_stationaryKernelOperator_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryKernelOperator_eq_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryKernelOperator_inner' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryKernelOperator_adjoint' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.continuousL2Multiplier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_continuousL2Multiplier_sub_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuous_continuousL2Multiplier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stationaryEnvelope' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_stationaryEnvelope' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_stationaryEnvelope_moment' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryCoefficient' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_stationaryCoefficient' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_stationaryKernelOperator_apply' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.comparisonIntegrand' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_comparisonIntegrand_apply' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.norm_comparisonIntegrand_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparison' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparison_apply' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.norm_stationaryComparison_sub_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparison_isSelfAdjoint' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.continuousL2Multiplier_coe' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuousL2MultiplierVectorLinear' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuousL2MultiplierVectorCLM' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.continuousL2MultiplierVectorCLM_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_continuousL2Multiplier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_continuousMap_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_stationaryKernel_product' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.comparisonIntegrand_comp_coe' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_comparisonIntegrand_uncurry' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_comparisonIntegrand_product' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_comparisonIntegrand_product' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_modulated_comparison_product' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparison_sq_apply' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_comparison_convolution' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparison_sq_convolution' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.comparisonProductCoefficient' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_comparisonProductCoefficient' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.comparisonProductCoefficient_eq_zero' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_comparisonProductCoefficient' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_comparisonProductCoefficient' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.comparisonIntegrand_product_eq_multiplier' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_comparisonIntegrand_product' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparison_idempotent' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.stationary_integral_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stationary_integrable_comp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_weighted_stationary_square' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_weighted_stationary_square' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.averagedTest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.averagedBoxWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_averagedTest_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurable_averagedTest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.stronglyMeasurable_averagedBoxWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_averagedBoxWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.averagedBoxWeight_nonneg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_averagedBoxWeight' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_averagedTest_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.ae_memLp_averagedTest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_sq_norm_lp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_averagedTest_energy' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hasCompactSupport_averagedTest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.averagedTest_congr_ae' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hull_averagedTest_energy' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.fullL2OfMemLp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fullL2OfMemLp_coe_ae' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.fullL2OfMemLp_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.aestronglyMeasurable_integral_sq_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.memLp_fullL2OfMemLp_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_fullL2OfMemLp_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.averagedTestL2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.averagedTestL2_coe_ae' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.ae_integrable_averagedTest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.memLp_norm_averagedTestL2' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_norm_averagedTestL2_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.hull_averagedTestL2_norm_energy' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.integral_product_le_of_squared_energies' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_averaged_scalar_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_operator_le_of_pairing_bound' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_operator_le_of_averaged_scalar_pairings' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_sub_le_of_strong_filter_limits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrableOn_box_difference' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_box_difference_eq_overlap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.normalized_integral_box_difference' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_fourier_pairing_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inner_fourierProjection_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inner_finiteFilter' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_stationary_pairing_Lp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.normalized_stationary_fourier_form' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.translated_bump_inner_memLp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.finite_bump_coefficients_memLp' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_memLp_finite_expansion' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_memLp_kernel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.bump_projection_memLp_pairing' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.averagedTest_cross' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.bump_projection_averagedTest_pairing' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_triple_swap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.measurableEmbedding_hullTranslate' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_covariant_bump_pairing' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_covariant_bump_pairing_Lp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_hull_square_parameters' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparisonAverage' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparisonAverage_apply' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.stationaryComparisonAverage_pairing' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.tendsto_stationaryComparisonAverage_error' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_covariant_bump_box_triple' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_covariant_bump_box_triple_Lp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.normalized_averaged_bump_scalar_form' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.normalized_averaged_bump_scalar_form_continuous' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.inner_bumpProjection_averagedTest' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_bumpProjection_averagedTest' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_bumpProjection_averagedTest' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_bumpProjection_averagedTest_Lp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_bumpProjection_averagedTest_Lp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.averagedTest_phase_product' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.averagedTest_kernel_product' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inner_fourierProjection_averagedTest' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integral_triple_swap_first' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_stationary_fourier_box_triple' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.normalized_stationary_fourier_form_continuous' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_fourierProjection_averagedTest' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_fourierProjection_averagedTest' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_stationary_fourier_box_triple_Lp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integral_fourierProjection_averagedTest_Lp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.integrable_fourierProjection_averagedTest_Lp' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.canonical_averaged_bump_pairing' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.canonical_averaged_fourier_pairing' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.norm_finiteFilter_sub_stationaryComparisonAverage_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.norm_stationaryCutoff_sub_comparison_le' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.exists_stationary_cutoff_family_with_comparison_gap' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.integral_sq_norm_schwartz_of_toLp_norm_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.continuous_stationaryComparison' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.volume_sphere_eq_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.sphere_inter_translate_subset_hyperplane' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorffMeasure_translated_subspace_sphere' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.sphere_inter_translate_subset_subspace_sphere' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.hausdorffMeasure_sphere_inter_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.sphere_surfaceMeasure_inter_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.ball_subset_projection_sphere' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorffMeasure_sphere_zero_pos_of_unit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorffMeasure_sphere_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.sphere_surfaceMeasure_univ_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.sphere_surfaceMeasure_translate' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorffMeasure_contDiff_image_closedBall_lt_top' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.stereoToFun_norm_le_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorffMeasure_hemisphere_lt_top' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorffMeasure_unit_sphere_lt_top' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorffMeasure_sphere_lt_top' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.sphereSurfaceMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.sphere_boundary_measure_properties' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundary_exceptional_mass_ae_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_clean_boundary_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_clean_boundary_point_of_overlap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_conull_sequence_in_open' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_conull_sequences_two_sides' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.interiorBoundarySymbol' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.tendsto_cutoffSymbol_off_frontier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.cutoffSymbol_exterior_ae_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.cutoffSymbol_interior_ae_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.interiorBoundarySymbol_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.interiorBoundarySymbol_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundarySymbol_norm_sq_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundarySymbol_dirac_norms' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.cauchy_of_spectral_symbol_difference' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.limit_norm_of_spectral_symbols' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_projection_of_spectral_difference_limit' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.exists_projection_of_spectral_symbol_limit' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.projection_right_absorption_of_norm_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.projection_left_absorption_of_norm_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.projection_range_le_of_norm_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.projection_eq_self_of_norm_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.projection_range_lt_of_unit_witness' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurable_cutoffSymbol' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.norm_cutoffSymbol_le_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_cutoffSymbol_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_interiorBoundarySymbol_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_boundary_cutoff_limits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundary_cutoff_ranges_strict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundary_cutoffs_continuous_comparison_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.sphere_point_two_sided_closure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_conull_sequences_sphere_two_sides' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_sphere_clean_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.sphere_cutoffs_continuous_comparison_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.boundaryJumpSymbol' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundaryJumpSymbol_idempotent' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundaryJumpSymbol_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundaryJumpSymbol_norm_sq_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.integrable_boundaryJumpSymbol_norm_sq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundaryJumpSymbol_dirac_norms' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundary_jump_cutoff_ranges_strict' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.sphere_stationary_hull_gap_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.not_hasExponentialRieszBasis_ball_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.not_hasExponentialRieszBasis_ball' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.not_exists_exponentialRieszBasis_ball' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.mem_closure_of_positive_neighborhood_measure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_clean_two_sided_boundary_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.general_boundary_hull_gap_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.no_exponentialRieszBasis_of_general_boundary_and_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.no_exponentialRieszBasis_of_general_boundary' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.edgeLengthMeasure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurableSet_openEdge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hausdorffMeasure_openEdge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.edgeLengthMeasure_finite' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.edgeLengthMeasure_univ_pos' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.edgeLengthMeasure_ae_edge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.openEdge_inter_translate_hyperplane_subsingleton' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.edgeLengthMeasure_translate_hyperplane' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inner_translation_eq_zero_of_same_hyperplane' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translate_hyperplane_eq_self_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.edgeLengthMeasure_translate_null_of_subset_hyperplane' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.planarEdgeNormal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inner_planarEdgeNormal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.segment_subset_planar_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.edgeLengthMeasure_translate_nonparallel_segment' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.edgeLengthMeasure_translate_finite' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.edgeLengthMeasure_translate_polygon_remainder' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.standardTriangle' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleEdge' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleEdge_translation_normal_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleEdge_local_halfplane' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleEdge_same_direction_nhds' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleEdge_same_direction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_local_halfspace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_same_direction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedStandardTriangle' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardHorizontalPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_isOpen' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedStandardTriangle_isClosed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_subset_closedStandardTriangle' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.closedStandardTriangle_interior' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedStandardTriangle_convex' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_nonempty' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_closure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedStandardTriangle_norm_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedStandardTriangle_isCompact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_isBounded' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_frontier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_volume_frontier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleEdge_eq_openSegment' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleEdge_subset_frontier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_remainder_subset_supports' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardVerticalPoint' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inner_standardHorizontalPoint_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.inner_standardVerticalPoint_one' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardHorizontalPoint_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_edgeLength_remainder_null' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_clean_standardTriangle_edge_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleEdge_two_sided_closure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_conull_sequences_standardTriangle_two_sides' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.standardTriangleJump' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleJump_measurableSet' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.zero_mem_standardTriangleJump' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleJump_normal_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleJump_not_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleJump_interior_eventually' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangleJump_exterior_eventually' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_cutoffSymbol_interior_ae_tendsto' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.standardTriangle_cutoffSymbol_exterior_ae_tendsto' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.standardTriangleJump_eq_tangent_interval' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_standardTriangle_boundary_symbol_limits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.strictSupportingFace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_isOpen' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measurableSet_strictSupportingFace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_closure_le' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_remainder_subset_supports' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.strictSupportingFace_segment_subset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_remainder_edgeLength_null' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.exists_clean_strictSupportingFace_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_not_pos_parallel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_no_opposite_of_odd_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_normal_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.odd_strictSupportingFaces_exists_unpaired' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.planar_inner_ne_zero_of_not_parallel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.odd_strictSupportingFaces_exists_transverse' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_parallel_eq_neg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFaces_parallel_card_le_two' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_eventually_other' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_two_sided_closure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_subset_frontier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_conull_sequences_strictSupportingFace_two_sides' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.strictSupportingFace_exists_distinct_points' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.odd_strictSupportingFaces_exists_clean_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_convex' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_volume_frontier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_same_direction' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supportingFaceJump' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supportingFaceJump_measurableSet' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.zero_mem_supportingFaceJump' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supportingFaceJump_normal_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supportingFaceJump_not_mem' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supportingFaceJump_interior_eventually' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supportingFaceJump_exterior_eventually' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.polygonFace_cutoffSymbol_interior_ae_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.polygonFace_cutoffSymbol_exterior_ae_tendsto' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_clean_unpairedSupportingFace_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_unpairedSupportingFace_boundary_symbol_limits' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.interval_boundary_positive_translated_overlap' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.opposite_rectangle_edges_positive_translated_overlap' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.exists_standardTriangle_cutoff_limits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.standardTriangle_clean_cutoffs_comparison_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.standardTriangle_cutoffs_continuous_comparison_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.standardTriangle_hull_gap_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.standardTriangle_no_exponentialRieszBasis_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.vertexTriangle' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.triangleLinearEquiv' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.triangleLinearEquiv_apply' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.vertexTriangle_eq_affine_image' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.vertexTriangle_basis_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.vertexTriangle_no_exponentialRieszBasis_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.vertex_edges_linearIndependent_of_affineIndependent' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.noncollinear_triangle_no_exponentialRieszBasis_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.noncollinear_triangle_no_exponentialRieszBasis' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.exists_polygonFace_cutoff_limits' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.polygonFace_clean_cutoffs_comparison_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.unpairedSupportingFace_cutoffs_continuous_comparison_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.unpairedSupportingFace_hull_gap_obstruction' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.unpairedSupportingFace_no_exponentialRieszBasis_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.oddSupportingPolygon_no_exponentialRieszBasis_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.weakHalfspaceIntersection' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.weakHalfspaceIntersection_isClosed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.weakHalfspaceIntersection_convex' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_closure_eq_weak' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_subset_closed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFace_isClosed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFace_convex' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_closure_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_nonempty_of_face' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFace_subset_frontier' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFace_isCompact' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.compact_convex_planar_support_eq_segment' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFace_eq_segment' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.IsMaximalBoundarySegment' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.boundary_segment_subset_closedSupportingFace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_index_eq_of_mem_closed' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFace_injective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFace_isMaximalBoundarySegment' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.isMaximalBoundarySegment_iff_closedSupportingFace' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.supportingFaceEquivMaximalBoundarySegments' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.maximalBoundarySegments_card' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.leftEndpoint_not_mem_strictSupportingFace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_eq_openSegment' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.maximalBoundarySegment_exists_unique_face' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_frontier_eq_faces' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.BoundarySegmentsParallel' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supporting_segments_parallel_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.closedSupportingFaces_parallel_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_unpaired_normal_of_maximal_side' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.unpairedMaximalSide_no_exponentialRieszBasis_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.normalizedSupportNormal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.normalizedSupportOffset' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.normalizedSupportNormal_norm' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictHalfspaceIntersection_normalize' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictSupportingFace_normalize' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_nonzero_normals_and_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_nonzero_normals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.unpairedMaximalSide_no_exponentialRieszBasis' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.planeAffine_map' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exponential_planeAffine' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.hasExponentialRieszBasis_affine_pullback' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_exponentialRieszBasis_affine_iff' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.not_hasExponentialRieszBasis_ellipsoid_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.SeparatedConfiguration.not_exists_exponentialRieszBasis_ellipsoid_of_hull_representations' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.not_hasExponentialRieszBasis_ellipsoid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.not_exists_exponentialRieszBasis_ellipsoid' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exponentialRieszBasis_of_bump_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exponentialRieszBasis_iff_initial_bump_gap' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SupportsAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.SingletonSupportingFace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supporting_points_eq_of_same_normal' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.translated_inter_subset_singleton_of_opposite_normals' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.patch_translated_inter_null_of_transverse_null' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.singletonSupportingFace_of_local' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.farthest_point_support' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.FunctionalSupportsAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.FunctionalSingletonFace' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.defining_derivative_supports' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_supporting_defining_function' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.functional_support_points_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.functional_opposite_inter_subset_singleton' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.functional_range_eq_top' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supporting_functional_proportional' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.supporting_functional_strict_interior' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.prod_functionals_surjective' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.prod_functionals_kernel_dim' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.regular_level_locally_hausdorff_null' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.measure_null_of_locally_null' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.regular_levels_hausdorff_null' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.smooth_chart_hausdorff_null' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.countable_smooth_charts_hausdorff_null' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.positive_neighborhood_inter_of_mem_closure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.convex_boundary_two_sided' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.convex_no_exponentialRieszBasis_of_boundary_measure' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.convex_no_exponentialRieszBasis_of_boundary_patch' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.HasC2Boundary' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.implicit_data_contDiffAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.regular_implicit_contDiffAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.second_derivative_nonpos_at_local_max' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.contact_curve_acceleration' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.second_derivative_along_line' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.contact_chart_second_derivative' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.negative_bilinear_perturbation' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.negative_bilinear_eventually' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictConcaveOn_of_hessian_neg' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.linear_height_hessian' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.functional_singleton_face_of_local' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.strictConcave_chart_singleton_faces' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_convex_contact_point' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.contact_chart_strictConcavity' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.regular_boundary_chart' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.CurvedBoundaryPatch' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.exists_convex_curved_patch' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.c2_patch_translated_overlap_null' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.chart_positive_finite_measure' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RieszEuclidean.CurvedBoundaryPatch.exists_positive_finite_subpatch' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RieszEuclidean.convex_C2_no_exponentialRieszBasis' depends on axioms: [propext, Classical.choice, Quot.sound]
+Checked 987 transitive axiom reports; standard Lean axioms only.

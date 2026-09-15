@@ -16,23 +16,16 @@ sources:
   id: https://github.com/joaquimortega/RieszEuclidean/blob/main/paper/RieszEuclidean.tex
   type: article
   relationship: formalizes
-  note: Complete formalization; source fingerprint and all obligations are in blueprint/manifest.json.
+  note: The exact revised manuscript fingerprint and all 32 proved obligations are recorded in blueprint/manifest.json.
 status:
-  scope: All 25 blueprint obligations are proved, including Euclidean Fourier analysis,
-    initial bump projections, the compact hull, stationary probability and Koopman system,
-    and continuous Fejer approximation. Given representing spectral measures, the control
-    measure and actual stationary cutoff family are proved. Scalar spectral measures are constructed
-    for strongly continuous unitary representations on separable complex Hilbert spaces, the exact
-    Bochner scope used by the manuscript. The modules implement the actual averaging gap and ball,
-    triangle, ellipsoid, general-boundary and finite irredundant supporting-halfspace polygon
-    conclusions with nonzero normals and nonempty faces, together
-    with physical translation spectra and the interval/rectangle remarks. The
-    unconditional wrappers discharge the stationary representation hypotheses. The independent
-    public-statement and transitive-axiom audit is complete.
+  scope: All 32 blueprint obligations are proved, including the revised Section 2 bump equivalence
+    and adjoint/closed-range projection proof, and the unconditional Section 8 theorem for bounded
+    nonempty open convex C2 domains in dimensions at least two. Earlier ball, triangle, ellipsoid,
+    general-boundary and polygon results are retained.
   sorry_count: 0
   sorry_in_definitions: 0
-  sorry_count_note: All proof modules and public results are audited. No theorem is implemented
-    by a placeholder; the zero count is confirmed alongside kernel and axiom checks.
+  sorry_count_note: All proof modules and public results are audited. No theorem is implemented by
+    a placeholder; the zero count is confirmed alongside kernel and axiom checks.
   axioms:
   - propext
   - Classical.choice
@@ -41,77 +34,116 @@ status:
   - declaration: RieszEuclidean.exists_unitary_spectralMeasures
     file: RieszEuclidean/BochnerExistence.lean
     sorry_count: 0
-    axioms: [propext, Classical.choice, Quot.sound]
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
     comparator_config: standalone/comparator.json
     literature_dependencies: []
   - declaration: RieszEuclidean.not_hasExponentialRieszBasis_ball
     file: RieszEuclidean/BallEllipsoidTheorems.lean
     sorry_count: 0
-    axioms: [propext, Classical.choice, Quot.sound]
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
     comparator_config: standalone/comparator.json
     literature_dependencies: []
   - declaration: RieszEuclidean.not_exists_exponentialRieszBasis_ellipsoid
     file: RieszEuclidean/BallEllipsoidTheorems.lean
     sorry_count: 0
-    axioms: [propext, Classical.choice, Quot.sound]
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
     comparator_config: standalone/comparator.json
     literature_dependencies: []
   - declaration: RieszEuclidean.noncollinear_triangle_no_exponentialRieszBasis
     file: RieszEuclidean/UnconditionalGeometry.lean
     sorry_count: 0
-    axioms: [propext, Classical.choice, Quot.sound]
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
     comparator_config: standalone/comparator.json
     literature_dependencies: []
   - declaration: RieszEuclidean.SeparatedConfiguration.no_exponentialRieszBasis_of_general_boundary
     file: RieszEuclidean/UnconditionalGeometry.lean
     sorry_count: 0
-    axioms: [propext, Classical.choice, Quot.sound]
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
     comparator_config: standalone/comparator.json
     literature_dependencies: []
   - declaration: RieszEuclidean.SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_nonzero_normals
     file: RieszEuclidean/UnconditionalGeometry.lean
     sorry_count: 0
-    axioms: [propext, Classical.choice, Quot.sound]
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
     comparator_config: standalone/comparator.json
     literature_dependencies: []
   - declaration: RieszEuclidean.SeparatedConfiguration.unpairedMaximalSide_no_exponentialRieszBasis
     file: RieszEuclidean/UnconditionalGeometry.lean
     sorry_count: 0
-    axioms: [propext, Classical.choice, Quot.sound]
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
+  - declaration: RieszEuclidean.convex_C2_no_exponentialRieszBasis
+    file: RieszEuclidean/ConvexDomainTheorem.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
     comparator_config: standalone/comparator.json
     literature_dependencies: []
 fidelity:
-  divergences: The basis predicate uses actual restricted Lebesgue L² and
-    exp(2πi inner(ξ,x)); Mathlib conjugates the first inner-product argument.
-    Hull compactness uses Hausdorff limits on compact Euclidean windows and
-    countable extended-distance probes, and its topology is proved equivalent
-    to Beurling local matching and vague counting-measure convergence. The
-    Bochner theorem is formalized for scalar correlations of strongly continuous
-    unitary representations on separable complex Hilbert spaces. Polygon results
-    use finite irredundant supporting-halfspace presentations with nonzero normals
-    and nonempty faces.
+  divergences: The basis predicate uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)); Mathlib
+    conjugates the first inner-product argument. Hull compactness uses Hausdorff limits on compact
+    Euclidean windows and countable extended-distance probes, and its topology is proved equivalent
+    to Beurling local matching and vague counting-measure convergence. The Bochner theorem is formalized
+    for scalar correlations of strongly continuous unitary representations on separable complex Hilbert
+    spaces. Polygon results use finite irredundant supporting-halfspace presentations with nonzero
+    normals and nonempty faces. C2 boundary regularity is encoded by regular local defining functions;
+    strict curvature is recorded by a quantitative negative radial chart Hessian with an affine inverse.
+    A smaller chart image supplies the finite positive surface measure.
 alignment:
   namespace: RieszEuclidean
   complete_mapping: blueprint/manifest.json
   statements:
   - source: Lemma 2.1
-    lean: RieszEuclidean.OrthProjection.gap_iff_rangeIso
+    lean: RieszEuclidean.exponentialRieszBasis_iff_initial_bump_gap
     status: proved
   - source: Lemma 2.2
+    lean: RieszEuclidean.OrthProjection.gap_iff_rangeIso
+    status: proved
+  - source: Lemma 2.3
     lean: RieszEuclidean.OrthProjection.nested_not_both_gap
     status: proved
-  - source: Section 8 affine transport
-    lean: RieszEuclidean.exists_exponentialRieszBasis_affine_iff
+  - source: Lemma 8.2
+    lean: RieszEuclidean.exists_convex_curved_patch
     status: proved
-  - source: Theorems 1.1 and 7.1, Corollary 8.1, polygon and general-boundary remarks
-    status: proved and independently audited
+  - source: Lemma 8.3
+    lean: RieszEuclidean.c2_patch_translated_overlap_null
+    status: proved
+  - source: Corollary 8.1
+    lean: RieszEuclidean.convex_C2_no_exponentialRieszBasis
+    status: proved
+  - source: Theorems 1.1 and 7.1, polygon and general-boundary remarks
+    status: proved
 review:
-  status: complete
-  notes: All 25 blueprint nodes are proved. Official Comparator and Lean's default
-    kernel accept the 37-target reference. Modular, public and standalone builds
-    and all 15 linters pass. The transitive audit of 931 project declarations
-    reports only propext, Classical.choice and Quot.sound. Exact scope, inputs,
-    hashes and results are recorded in reviews/bochner-progress.md.
+  status: agent-reviewed
+  notes: All 32 blueprint obligations are proved. Official Comparator and Lean default kernel accept
+    all 41 public targets. Modular, public and standalone builds and all 15 default linters pass.
+    The transitive audit of 987 declarations reports only propext, Classical.choice and Quot.sound.
+    Exact inputs and logs are recorded in reviews/convex-progress.md and reviews/convex-progress-hashes.json.
+    No independent external human review is claimed.
 classification:
   msc2020:
   - 42C15
@@ -124,34 +156,34 @@ automation:
     tool_setup: Lean 4.19.0, pinned Mathlib sources, Lake compilation, all default environment linters,
       explicit axiom audits, blueprint consistency checks and GitHub Actions builds. Reuse of author-authorized
       code is tracked in PROVENANCE.md.
-    prompting_notes: The author requested a standalone formalization of RieszEuclidean.tex,
-      authorized reuse of specified author-owned helper code, required linter fixes
-      without suppressions, and requested Comparator and formalization.yaml.
-  notes: The author authorized subagents for independent proof modules. A primary assistant
-    integrates their work and runs combined build, linter, axiom and Comparator checks.
-    No independent external human review is claimed. The author directs the mathematical
-    scope. No cost, model-version or total-time figures are reconstructed.
+    prompting_notes: The author requested a standalone formalization of RieszEuclidean.tex, authorized
+      reuse of specified author-owned helper code, required linter fixes without suppressions, and
+      requested Comparator and formalization.yaml.
+  notes: The author directs the mathematical scope. The convex extension was implemented and verified
+    by the primary assistant. Earlier work used author-authorized helper reuse as recorded in PROVENANCE.md.
+    No independent external human review is claimed.
 techniques:
 - name: Concrete Euclidean exponential synthesis
   status: implemented definitions
-  description: EuclideanSpace over Fin d, restricted Lebesgue L² and a continuous linear equivalence from
-    ℓ² of the actual frequency set. Standard coordinate vectors must equal exp(2πi inner(ξ,x)) almost
-    everywhere.
+  description: EuclideanSpace over Fin d, restricted Lebesgue L² and a continuous linear equivalence
+    from ℓ² of the actual frequency set. Standard coordinate vectors must equal exp(2πi inner(ξ,x))
+    almost everywhere.
   files:
   - RieszEuclidean/Basic.lean
 - name: Projection gap and moving comparison
   status: proved conditional operator lemmas
-  description: The norm gap below one is equivalent to an invertible restriction between projection ranges.
-    Strictly included ranges cannot both satisfy this gap relative to one projection. Uniform gaps survive
-    simultaneous strong limits, and norm convergence of the comparison family supplies the common boundary
-    projection. The paper-specific families and their final contradiction are proved downstream.
+  description: The norm gap below one is equivalent to an invertible restriction between projection
+    ranges. Strictly included ranges cannot both satisfy this gap relative to one projection. Uniform
+    gaps survive simultaneous strong limits, and norm convergence of the comparison family supplies
+    the common boundary projection. The paper-specific families and their final contradiction are
+    proved downstream.
   files:
   - RieszEuclidean/ProjectionGap.lean
   - RieszEuclidean/MovingComparison.lean
 - name: Beurling local matching
   status: compact metrizable configuration space and continuous real action proved
-  description: Weak convergence is defined by two-sided matching on every bounded ball. The proof uses
-    metric triangle inequalities to retain the separation constant. Real translation invariance
+  description: Weak convergence is defined by two-sided matching on every bounded ball. The proof
+    uses metric triangle inequalities to retain the separation constant. Real translation invariance
     is proved for arbitrary configurations.
   files:
   - RieszEuclidean/Basic.lean
@@ -159,35 +191,34 @@ techniques:
 - name: Affine transport of actual synthesis
   status: proved
   description: A measurable equivalence with finite nonzero constant Jacobian induces an L² equivalence.
-    Unit-modulus coefficient weights and reindexing give an ℓ² isometry. For an arbitrary invertible affine
-    map, the inverse absolute determinant gives the measure factor and the real adjoint gives the transpose
-    frequency map. The 2π phase identity transports the exact synthesis columns.
+    Unit-modulus coefficient weights and reindexing give an ℓ² isometry. For an arbitrary invertible
+    affine map, the inverse absolute determinant gives the measure factor and the real adjoint gives
+    the transpose frequency map. The 2π phase identity transports the exact synthesis columns.
   files:
   - RieszEuclidean/L2Transport.lean
   - RieszEuclidean/Affine.lean
 - name: Euclidean Fourier and bump projections
   status: initial Fourier constructions, normalized bumps and initial gap proved
-  description: Bilinear Fubini and Schwartz inversion prove Parseval. Compact-support smooth
-    approximation and an explicit L² estimate prove Schwartz density. The Fourier isometry on
-    this dense subspace extends continuously; norm preservation and closed dense range give
-    a unitary map. Its inverse supplies the positive-sign convention. Indicator multiplication
-    on actual L² representatives is an orthogonal projection, and unitary conjugation gives
-    the Fourier cutoff. Schwartz test pairings and uniqueness for locally integrable functions
-    prove L¹∩L² integral agreement for both signs. Fourier transposition with phased domain
-    indicators gives the convolution kernel for every L¹∩L² input. Haar translation invariance
-    gives cutoff commutation first on L¹∩L², then density extends it to all L². A lower
-    synthesis-column bound and a uniform phase estimate prove frequency separation. Smooth
-    radial bumps are converted to Schwartz functions and normalized in actual Euclidean L².
-    A phase perturbation estimate gives a positive uniform Fourier lower bound after choosing
-    the radius small enough. Separation makes distinct translated supports disjoint, proving
-    orthonormality in actual Euclidean L². Orthogonal-family summation constructs isometric
-    synthesis V, and V composed with its adjoint is the orthogonal range projection.
-    The exact Fourier formula for translated bumps, bounded invertible multiplication and
-    contraction from ambient L² to the restricted domain measure are constructed.
-    Equality on coordinate vectors and continuity establish the synthesis identity on all
-    square-summable coefficients. Zero extension identifies the domain projection range;
-    unitary conjugation identifies the Fourier projection range. The synthesis identity
-    induces a range isomorphism, and the projection-gap theorem gives distance less than one.
+  description: Bilinear Fubini and Schwartz inversion prove Parseval. Compact-support smooth approximation
+    and an explicit L² estimate prove Schwartz density. The Fourier isometry on this dense subspace
+    extends continuously; norm preservation and closed dense range give a unitary map. Its inverse
+    supplies the positive-sign convention. Indicator multiplication on actual L² representatives
+    is an orthogonal projection, and unitary conjugation gives the Fourier cutoff. Schwartz test
+    pairings and uniqueness for locally integrable functions prove L¹∩L² integral agreement for both
+    signs. Fourier transposition with phased domain indicators gives the convolution kernel for every
+    L¹∩L² input. Haar translation invariance gives cutoff commutation first on L¹∩L², then density
+    extends it to all L². A lower synthesis-column bound and a uniform phase estimate prove frequency
+    separation. Smooth radial bumps are converted to Schwartz functions and normalized in actual
+    Euclidean L². A phase perturbation estimate gives a positive uniform Fourier lower bound after
+    choosing the radius small enough. Separation makes distinct translated supports disjoint, proving
+    orthonormality in actual Euclidean L². Orthogonal-family summation constructs isometric synthesis
+    V, and V composed with its adjoint is the orthogonal range projection. The exact Fourier formula
+    for translated bumps, bounded invertible multiplication and contraction from ambient L² to the
+    restricted domain measure are constructed. Equality on coordinate vectors and continuity establish
+    the synthesis identity on all square-summable coefficients. Zero extension identifies the domain
+    projection range; unitary conjugation identifies the Fourier projection range. The synthesis
+    identity induces a range isomorphism, and the projection-gap theorem gives distance less than
+    one.
   files:
   - RieszEuclidean/FourierL2.lean
   - RieszEuclidean/SchwartzDensity.lean
@@ -212,49 +243,43 @@ techniques:
   - RieszEuclidean/InitialGap.lean
 - name: Stationary compact hull and scalar Bochner measures
   status: stationary system, vague equivalence and scalar Bochner measures proved
-  description: Simultaneous Hausdorff subsequence extraction on integer-radius compact windows
-    is proved, together with inclusion and interior compatibility of the window limits.
-    Hausdorff convergence preserves separation and gives uniform two-sided point matching.
-    The window limits assemble into a Beurling weak limit, proving subsequence extraction
-    for every uniformly separated sequence while preserving its separation constant.
-    Extended distances at a countable dense set induce a metrizable topology; its convergence
-    is equivalent to Beurling local matching. Sequential compactness yields compactness, and
-    moving-translation convergence yields joint continuity of the real action.
-    Closedness, countability, finiteness in compact regions and uniform counting bounds
-    are proved for separated configurations. The configuration counting measure is finite on
-    compact sets. Local matching is preserved under convergent translation vectors.
-    The compact orbit closure carries the restricted continuous action. Actual Euclidean
-    boxes have volume (2R)^d, and normalized box averages are positive and have norm at most
-    one. A fixed translation changes a box only within a fixed-thickness shell whose
-    relative volume tends to zero. Integral symmetric-difference bounds yield vanishing
-    translation error. Banach-Alaoglu supplies an invariant weak-star cluster functional;
-    Riesz-Markov-Kakutani gives an invariant probability measure. The full construction
-    is proved for continuous Euclidean actions and specialized to the paper's translation
-    hull. The Koopman operators use pullback by T_{-z} to realize the manuscript
-    convention U_z f(Γ)=f(Γ+z). They form a strongly continuous unitary representation
-    on the separable stationary L² space, with invariant unit constant. Finite injective
-    point matchings control test integrals and prove weak-to-vague convergence. Compactly
-    supported bumps separate configurations; the continuous counting-test map is then an
-    embedding by compactness, proving the converse. Actual hull correlations are continuous
-    and positive definite. Fourier-character uniqueness determines representing measures
-    and their total mass. The invariant constant has Dirac spectrum at zero; spectral
-    parallelogram and homogeneity identities hold when representing measures are supplied.
-    Strongly continuous unitary orbits admit L¹ integrated operators with the expected
-    norm bound. Their squared norm is the iterated integral of the correlation Gram kernel.
-    Absolute product integrability and Fourier-character factorization justify both
-    Fubini exchanges and give the spectral norm identity for a supplied representing
-    measure. The symbol equals the positive Euclidean Fourier transform, and its
-    square is integrable against every finite spectral measure.
-    Kernel involution gives the operator adjoint and conjugates the Fourier symbol.
-    The integrable convolution kernel permits Fubini; convolution composes operators
-    and multiplies symbols. These algebra identities are proved without spectral
-    measure existence. Separability gives a dense sequence of normalized vectors. Positive
-    summable weights form a probability control measure; homogeneity, the parallelogram
-    estimate and vector approximation prove domination of every spectral measure. The
-    spectral norm identity proves the uniform symbol operator bound. Normalized windows
-    in the original Hilbert space, scalar Hilbert-basis coordinates and bounded vague
-    limits construct the supplied representing family for every vector of a separable
-    strongly continuous unitary representation.
+  description: Simultaneous Hausdorff subsequence extraction on integer-radius compact windows is
+    proved, together with inclusion and interior compatibility of the window limits. Hausdorff convergence
+    preserves separation and gives uniform two-sided point matching. The window limits assemble into
+    a Beurling weak limit, proving subsequence extraction for every uniformly separated sequence
+    while preserving its separation constant. Extended distances at a countable dense set induce
+    a metrizable topology; its convergence is equivalent to Beurling local matching. Sequential compactness
+    yields compactness, and moving-translation convergence yields joint continuity of the real action.
+    Closedness, countability, finiteness in compact regions and uniform counting bounds are proved
+    for separated configurations. The configuration counting measure is finite on compact sets. Local
+    matching is preserved under convergent translation vectors. The compact orbit closure carries
+    the restricted continuous action. Actual Euclidean boxes have volume (2R)^d, and normalized box
+    averages are positive and have norm at most one. A fixed translation changes a box only within
+    a fixed-thickness shell whose relative volume tends to zero. Integral symmetric-difference bounds
+    yield vanishing translation error. Banach-Alaoglu supplies an invariant weak-star cluster functional;
+    Riesz-Markov-Kakutani gives an invariant probability measure. The full construction is proved
+    for continuous Euclidean actions and specialized to the paper's translation hull. The Koopman
+    operators use pullback by T_{-z} to realize the manuscript convention U_z f(Γ)=f(Γ+z). They form
+    a strongly continuous unitary representation on the separable stationary L² space, with invariant
+    unit constant. Finite injective point matchings control test integrals and prove weak-to-vague
+    convergence. Compactly supported bumps separate configurations; the continuous counting-test
+    map is then an embedding by compactness, proving the converse. Actual hull correlations are continuous
+    and positive definite. Fourier-character uniqueness determines representing measures and their
+    total mass. The invariant constant has Dirac spectrum at zero; spectral parallelogram and homogeneity
+    identities hold when representing measures are supplied. Strongly continuous unitary orbits admit
+    L¹ integrated operators with the expected norm bound. Their squared norm is the iterated integral
+    of the correlation Gram kernel. Absolute product integrability and Fourier-character factorization
+    justify both Fubini exchanges and give the spectral norm identity for a supplied representing
+    measure. The symbol equals the positive Euclidean Fourier transform, and its square is integrable
+    against every finite spectral measure. Kernel involution gives the operator adjoint and conjugates
+    the Fourier symbol. The integrable convolution kernel permits Fubini; convolution composes operators
+    and multiplies symbols. These algebra identities are proved without spectral measure existence.
+    Separability gives a dense sequence of normalized vectors. Positive summable weights form a probability
+    control measure; homogeneity, the parallelogram estimate and vector approximation prove domination
+    of every spectral measure. The spectral norm identity proves the uniform symbol operator bound.
+    Normalized windows in the original Hilbert space, scalar Hilbert-basis coordinates and bounded
+    vague limits construct the supplied representing family for every vector of a separable strongly
+    continuous unitary representation.
   files:
   - RieszEuclidean/WindowWeakLimit.lean
   - RieszEuclidean/DistanceProfile.lean
@@ -289,16 +314,15 @@ techniques:
   - RieszEuclidean/SymbolBound.lean
 - name: Continuous Fejer approximation and stationary cutoffs
   status: Fejer and stationary cutoff constructions proved
-  description: Actual coordinate-box overlaps give compactly supported weights. Their Fourier
-    transforms are normalized squared box transforms; Plancherel proves unit mass. Dilation
-    reduces concentration to integrable tails. The Fourier symbol of the weighted domain
-    kernel is exactly the smoothed domain indicator, bounded between zero and one and
-    converging off the frontier. Tonelli gives a measurable conull good-parameter set.
-    Scalar dominated convergence gives pointwise Cauchy finite filters. Uniform bounds
-    construct a strong operator limit, and composition and adjoint identities prove
-    self-adjointness and idempotence. A simultaneous family has spectral mass and difference
-    identities. All limits use real radii tending to infinity. The proved unitary
-    spectral-measure family and control measure discharge the existence and domination inputs.
+  description: Actual coordinate-box overlaps give compactly supported weights. Their Fourier transforms
+    are normalized squared box transforms; Plancherel proves unit mass. Dilation reduces concentration
+    to integrable tails. The Fourier symbol of the weighted domain kernel is exactly the smoothed
+    domain indicator, bounded between zero and one and converging off the frontier. Tonelli gives
+    a measurable conull good-parameter set. Scalar dominated convergence gives pointwise Cauchy finite
+    filters. Uniform bounds construct a strong operator limit, and composition and adjoint identities
+    prove self-adjointness and idempotence. A simultaneous family has spectral mass and difference
+    identities. All limits use real radii tending to infinity. The proved unitary spectral-measure
+    family and control measure discharge the existence and domination inputs.
   files:
   - RieszEuclidean/FejerWeights.lean
   - RieszEuclidean/BoxOverlap.lean
@@ -315,16 +339,16 @@ techniques:
   - RieszEuclidean/FiniteFilters.lean
   - RieszEuclidean/StationaryCutoffs.lean
 - name: Covariant comparison kernel and averaged forms
-  status: kernel identities, configuration continuity, stationary operators and actual averaging gap implemented
-  description: The actual subtype-indexed bump series has at most one active term under
-    the support and separation assumptions. This gives summability, uniform bounds,
-    finite propagation, covariance and Hermitian symmetry. Translated bump orthogonality
-    proves product integrability and the projection integral identity. Local finite sums
-    prove joint spatial continuity, including the configuration variable. The stationary
-    operators M_t are self-adjoint, idempotent and operator-norm Lipschitz. Actual compactly
-    supported averaged tests, Fourier and bump scalar expansions, energy identities and
-    Cauchy-Schwarz estimates transfer the same gap to the stationary cutoff limit using
-    the supplied spectral representations.
+  status: kernel identities, configuration continuity, stationary operators and actual averaging
+    gap implemented
+  description: The actual subtype-indexed bump series has at most one active term under the support
+    and separation assumptions. This gives summability, uniform bounds, finite propagation, covariance
+    and Hermitian symmetry. Translated bump orthogonality proves product integrability and the projection
+    integral identity. Local finite sums prove joint spatial continuity, including the configuration
+    variable. The stationary operators M_t are self-adjoint, idempotent and operator-norm Lipschitz.
+    Actual compactly supported averaged tests, Fourier and bump scalar expansions, energy identities
+    and Cauchy-Schwarz estimates transfer the same gap to the stationary cutoff limit using the supplied
+    spectral representations.
   files:
   - RieszEuclidean/BumpKernel.lean
   - RieszEuclidean/BumpKernelProjection.lean
@@ -343,12 +367,12 @@ techniques:
 - name: Geometric boundary crossing
   status: geometry and unconditional domain conclusions proved and audited
   description: Literal finite-positive Hausdorff sphere surface measure and translated-overlap nullity
-    are proved. Boundary jumps, same-direction edge crossing and the actual averaging gap assemble the
-    ball, every noncollinear triangle, affine ellipsoid, general-boundary and finite irredundant
+    are proved. Boundary jumps, same-direction edge crossing and the actual averaging gap assemble
+    the ball, every noncollinear triangle, affine ellipsoid, general-boundary and finite irredundant
     supporting-halfspace polygon with nonzero normals, nonempty faces and an unpaired maximal side
-    conclusions. The polygon presentation identifies supporting faces with maximal boundary segments and
-    yields the odd-side result. Physical translation spectra and the interval/rectangle overlap remarks are
-    formalized. The unconditional wrappers use the proved stationary hull spectral family.
+    conclusions. The polygon presentation identifies supporting faces with maximal boundary segments
+    and yields the odd-side result. Physical translation spectra and the interval/rectangle overlap
+    remarks are formalized. The unconditional wrappers use the proved stationary hull spectral family.
   files:
   - RieszEuclidean/SphereAnalyticAssembly.lean
   - RieszEuclidean/EllipsoidAnalyticAssembly.lean
@@ -377,22 +401,19 @@ comparator:
   configuration: standalone/comparator.json
   verification_log: reviews/comparator-bochner.txt
   input_hashes: reviews/comparator-bochner-hashes.json
-  verified_scope: Thirty-seven results covering the supporting interfaces, the actual
-    averaging gap, conditional geometric interfaces, scalar spectral-measure existence for
-    strongly continuous unitary representations on separable complex Hilbert spaces, and
-    unconditional ball, noncollinear-triangle, affine-ellipsoid, general-boundary and
-    supporting-halfspace polygon conclusions. The polygon results assume a finite irredundant
-    presentation with nonzero normals and nonempty faces, and cover an unpaired maximal side
-    and the odd-maximal-side consequence. The broader abstract positive-definite-function
+  verified_scope: Thirty-seven results covering the supporting interfaces, the actual averaging gap,
+    conditional geometric interfaces, scalar spectral-measure existence for strongly continuous unitary
+    representations on separable complex Hilbert spaces, and unconditional ball, noncollinear-triangle,
+    affine-ellipsoid, general-boundary and supporting-halfspace polygon conclusions. The polygon
+    results assume a finite irredundant presentation with nonzero normals and nonempty faces, and
+    cover an unpaired maximal side and the odd-maximal-side consequence. The broader abstract positive-definite-function
     form of Bochner's theorem is outside the claimed scope.
   kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
-  plan: MainResults.lean gives concrete definitions and explicit result statements,
-    and RieszEuclideanStandalone.lean gives the self-contained solution. Official
-    Comparator checks them with only propext, Classical.choice and Quot.sound
-    permitted. Tool setup and source generation are recorded separately from
-    Comparator verification.
+  plan: MainResults.lean gives concrete definitions and explicit result statements, and RieszEuclideanStandalone.lean
+    gives the self-contained solution. Official Comparator checks them with only propext, Classical.choice
+    and Quot.sound permitted. Tool setup and source generation are recorded separately from Comparator
+    verification.
   upstream: https://github.com/leanprover/comparator
-acknowledgements: Built on Lean and Mathlib; specified projection and affine helpers use
-  author-owned code credited in PROVENANCE.md. Metadata follows the mathlib-initiative
-  formalization.yaml v0.4 standard. Original
-  weak-limit credit belongs to Beurling; the manuscript cites Rudin for Bochner.
+acknowledgements: Built on Lean and Mathlib; specified projection and affine helpers use author-owned
+  code credited in PROVENANCE.md. Metadata follows the mathlib-initiative formalization.yaml v0.4
+  standard. Original weak-limit credit belongs to Beurling; the manuscript cites Rudin for Bochner.

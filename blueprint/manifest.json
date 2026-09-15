@@ -5,7 +5,7 @@
   "notice": "Each proved entry records its mathematical scope, source labels and Lean declarations.",
   "manuscript": {
     "file": "paper/RieszEuclidean.tex",
-    "sha256": "330c20c9daf939f8fa569e58925eb421fd0e1c6ab21a522dddad64a5f174abc7"
+    "sha256": "7c8062778a23e341f2151258c2b6b2614acddc4d7e3f88835cb79817c8686da5"
   },
   "nodes": [
     {
@@ -15,7 +15,7 @@
       "source_labels": [
         "eq:riesz"
       ],
-      "scope": "Concrete Euclidean L², synthesis, translation and weak-convergence definitions",
+      "scope": "Concrete Euclidean L\u00b2, synthesis, translation and weak-convergence definitions",
       "file": "RieszEuclidean/Basic.lean",
       "declarations": []
     },
@@ -27,11 +27,16 @@
         "lem:projection-distance",
         "lem:inclusion"
       ],
-      "scope": "Abstract projection-distance equivalence and strict-inclusion obstruction",
+      "scope": "Revised Section 2: maximum identity, adjoint restrictions, closed range, converse gap and strict-inclusion obstruction",
       "file": "RieszEuclidean/ProjectionGap.lean",
       "declarations": [
         "RieszEuclidean.OrthProjection.gap_iff_rangeIso",
-        "RieszEuclidean.OrthProjection.nested_not_both_gap"
+        "RieszEuclidean.OrthProjection.nested_not_both_gap",
+        "RieszEuclidean.OrthProjection.between_adjoint",
+        "RieszEuclidean.OrthProjection.between_lower_bound_sq",
+        "RieszEuclidean.OrthProjection.between_antilipschitz_of_gap",
+        "RieszEuclidean.OrthProjection.complement_comp_norm_le_gap",
+        "RieszEuclidean.OrthProjection.norm_sub_eq_max_complement"
       ]
     },
     {
@@ -77,7 +82,7 @@
       "source_labels": [
         "eq:P"
       ],
-      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection, with L¹∩L² agreement, translation commutation and the stated convolution kernel",
+      "scope": "Construct the actual unitary Euclidean Fourier transform and cutoff projection, with L\u00b9\u2229L\u00b2 agreement, translation commutation and the stated convolution kernel",
       "file": "RieszEuclidean/FourierL2.lean",
       "declarations": [
         "RieszEuclidean.integral_fourier_mul",
@@ -131,7 +136,7 @@
         "RieszEuclidean.fourierProjection_translation_integrable",
         "RieszEuclidean.fourierProjection_translation"
       ],
-      "progress": "Verified unitary Euclidean Fourier transform, integral agreement on L¹∩L² for both signs, orthogonal domain cutoff, Fourier-support range characterization, convolution formula for L¹∩L² inputs, and translation commutation on all L² for finite-measure domains.",
+      "progress": "Verified unitary Euclidean Fourier transform, integral agreement on L\u00b9\u2229L\u00b2 for both signs, orthogonal domain cutoff, Fourier-support range characterization, convolution formula for L\u00b9\u2229L\u00b2 inputs, and translation commutation on all L\u00b2 for finite-measure domains.",
       "partial_files": [
         "RieszEuclidean/SchwartzDensity.lean",
         "RieszEuclidean/FourierExtension.lean",
@@ -458,7 +463,7 @@
         "RieszEuclidean/InvariantProbability.lean",
         "RieszEuclidean/HullInvariantMeasure.lean"
       ],
-      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. The Koopman operators are constructed with the manuscript convention U_z f(Γ)=f(Γ+z), hence pullback by T_{-z}. They are unitaries, obey the additive group law, and form a strongly continuous representation on the separable stationary L² space. Constants are invariant and the constant one has norm one. Finite injective point matching controls compactly supported test integrals. Weak convergence therefore implies vague convergence. A compactly supported bump distinguishes different configurations, so the continuous counting-test map is injective; compactness makes it an embedding and proves the converse. All mathematical components compile and pass all 15 linters."
+      "progress": "The compact translation hull carries an invariant Borel probability measure, constructed from actual continuous Euclidean box averages. Coordinate-box volumes and positive normalized averaging functionals are proved. Symmetric differences lie in fixed-thickness shells whose relative volumes tend to zero; change of variables and an integral bound give vanishing translation error. Banach-Alaoglu and Riesz-Markov-Kakutani then give the invariant probability measure, both for general continuous Euclidean actions and specifically for the paper hull. The Koopman operators are constructed with the manuscript convention U_z f(\u0393)=f(\u0393+z), hence pullback by T_{-z}. They are unitaries, obey the additive group law, and form a strongly continuous representation on the separable stationary L\u00b2 space. Constants are invariant and the constant one has norm one. Finite injective point matching controls compactly supported test integrals. Weak convergence therefore implies vague convergence. A compactly supported bump distinguishes different configurations, so the continuous counting-test map is injective; compactness makes it an embedding and proves the converse. All mathematical components compile and pass all 15 linters."
     },
     {
       "id": "bochner",
@@ -552,7 +557,7 @@
         "eq:control-null",
         "rem:stationary-space"
       ],
-      "scope": "Control measure, Dirac constant spectrum, and L¹ integrated filter calculus",
+      "scope": "Control measure, Dirac constant spectrum, and L\u00b9 integrated filter calculus",
       "file": "RieszEuclidean/SpectralMeasures.lean",
       "declarations": [
         "RieszEuclidean.representsCorrelation_one",
@@ -631,7 +636,7 @@
         "RieszEuclidean.physical_boundarySymbol_norms_equal",
         "RieszEuclidean.fourierProjection_insert_zero_eq"
       ],
-      "progress": "The invariant unit constant is represented by the Dirac measure at zero. Addition, scaling and uniqueness give the spectral parallelogram and homogeneity identities. Integrated L¹ operators have the required norm, adjoint, convolution and Fourier-symbol formulas. A dense unit sequence and dyadic weights construct one probability control measure dominating every vector spectral measure. The proved unitary spectral-measure family supplies all representing measures used by this calculus. Ordinary physical translations are also diagonalized directly, with density |paperFourierL2 f|², zero mass at the origin and no nonzero invariant vector in positive dimension."
+      "progress": "The invariant unit constant is represented by the Dirac measure at zero. Addition, scaling and uniqueness give the spectral parallelogram and homogeneity identities. Integrated L\u00b9 operators have the required norm, adjoint, convolution and Fourier-symbol formulas. A dense unit sequence and dyadic weights construct one probability control measure dominating every vector spectral measure. The proved unitary spectral-measure family supplies all representing measures used by this calculus. Ordinary physical translations are also diagonalized directly, with density |paperFourierL2 f|\u00b2, zero mass at the origin and no nonzero invariant vector in positive dimension."
     },
     {
       "id": "continuous-fejer",
@@ -703,7 +708,7 @@
         "RieszEuclidean.integrable_fejerWeight_domainKernel",
         "RieszEuclidean.integratedKernelSymbol_fejerWeight_domainKernel"
       ],
-      "progress": "The full continuous Euclidean Fejér construction is proved. Product weights are exactly the normalized actual translated-box overlaps, including in dimension zero. They are nonnegative, at most one, compactly supported, and converge to one. Actual positive-sign Plancherel proves that the box Fourier kernel is nonnegative, integrable and has mass one. Euclidean dilation proves its exact scaling and vanishing tails. The smoothed indicators lie between zero and one and converge to the domain indicator off its frontier. The normalized autocorrelation identity and Fourier transposition prove both the Fourier transform of the weight and the exact w_R times domain-kernel coefficient formula. No Bochner assumption is used."
+      "progress": "The full continuous Euclidean Fej\u00e9r construction is proved. Product weights are exactly the normalized actual translated-box overlaps, including in dimension zero. They are nonnegative, at most one, compactly supported, and converge to one. Actual positive-sign Plancherel proves that the box Fourier kernel is nonnegative, integrable and has mass one. Euclidean dilation proves its exact scaling and vanishing tails. The smoothed indicators lie between zero and one and converge to the domain indicator off its frontier. The normalized autocorrelation identity and Fourier transposition prove both the Fourier transform of the weight and the exact w_R times domain-kernel coefficient formula. No Bochner assumption is used."
     },
     {
       "id": "cutoffs",
@@ -875,7 +880,7 @@
         "RieszEuclidean.SeparatedConfiguration.integral_comparisonIntegrand_product",
         "RieszEuclidean.SeparatedConfiguration.stationaryComparison_idempotent"
       ],
-      "progress": "The actual kernel is jointly continuous in the configuration and both spatial variables. L² multiplication and Koopman shifts construct the strongly continuous integrand, with an integrable compact envelope and first moment. The actual M_t integral is norm-Lipschitz and self-adjoint. Normalized kernel reproduction, continuous coefficient integration, product integrability, Fubini and the convolution-coordinate change prove actual idempotence."
+      "progress": "The actual kernel is jointly continuous in the configuration and both spatial variables. L\u00b2 multiplication and Koopman shifts construct the strongly continuous integrand, with an integrable compact envelope and first moment. The actual M_t integral is norm-Lipschitz and self-adjoint. Normalized kernel reproduction, continuous coefficient integration, product integrability, Fubini and the convolution-coordinate change prove actual idempotence."
     },
     {
       "id": "continuous-averaging",
@@ -979,7 +984,7 @@
         "RieszEuclidean.integral_sq_norm_schwartz_of_toLp_norm_one",
         "RieszEuclidean.SeparatedConfiguration.continuous_stationaryComparison"
       ],
-      "progress": "Canonical scalar tests are actual FullL2 classes on almost every hull fiber, with jointly measurable representatives, integrable scalar norm fields and exact averaged energy. Actual Fourier and bump projection pairings and scalar Cauchy–Schwarz transfer the uniform hull gap to the finite operators; strong cutoff limits and norm convergence of comparison averages transfer it to the actual good-parameter family. The stationary spectral-measure theorem supplies the required measures."
+      "progress": "Canonical scalar tests are actual FullL2 classes on almost every hull fiber, with jointly measurable representatives, integrable scalar norm fields and exact averaged energy. Actual Fourier and bump projection pairings and scalar Cauchy\u2013Schwarz transfer the uniform hull gap to the finite operators; strong cutoff limits and norm convergence of comparison averages transfer it to the actual good-parameter family. The stationary spectral-measure theorem supplies the required measures."
     },
     {
       "id": "sphere-geometry",
@@ -1012,7 +1017,7 @@
         "RieszEuclidean.sphereSurfaceMeasure",
         "RieszEuclidean.sphere_boundary_measure_properties"
       ],
-      "progress": "The literal codimension-one Hausdorff restriction to every positive-radius sphere in d≥2 is finite, nonzero, supported on the sphere and has zero measure on every nonzero translated sphere intersection. Two bounded stereographic charts give finiteness, tangent projection gives positivity, and isometric reduction to a sphere in the bisecting hyperplane gives overlap nullity. The sphere is Lebesgue null."
+      "progress": "The literal codimension-one Hausdorff restriction to every positive-radius sphere in d\u22652 is finite, nonzero, supported on the sphere and has zero measure on every nonzero translated sphere intersection. Two bounded stereographic charts give finiteness, tangent projection gives positivity, and isometric reduction to a sphere in the bisecting hyperplane gives overlap nullity. The sphere is Lebesgue null."
     },
     {
       "id": "boundary-limits",
@@ -1083,7 +1088,7 @@
       "source_labels": [
         "thm:ball"
       ],
-      "scope": "Unconditional nonexistence for every d ≥ 2 and every positive-radius ball",
+      "scope": "Unconditional nonexistence for every d \u2265 2 and every positive-radius ball",
       "file": "RieszEuclidean/SphereAnalyticAssembly.lean",
       "declarations": [
         "RieszEuclidean.SeparatedConfiguration.sphere_stationary_hull_gap_obstruction",
@@ -1335,15 +1340,18 @@
         "basic"
       ],
       "source_labels": [
-        "sec:ellipsoids"
+        "sec:triangles"
       ],
-      "scope": "Determinant-correct L² pullback, 2π phases and transpose frequency transport",
+      "scope": "Determinant-correct L\u00b2 pullback, 2\u03c0 phases and transpose frequency transport",
       "file": "RieszEuclidean/Affine.lean",
       "declarations": [
         "RieszEuclidean.planeAffine_map",
         "RieszEuclidean.exponential_planeAffine",
         "RieszEuclidean.hasExponentialRieszBasis_affine_pullback",
         "RieszEuclidean.exists_exponentialRieszBasis_affine_iff"
+      ],
+      "legacy_source_labels": [
+        "sec:ellipsoids"
       ]
     },
     {
@@ -1353,9 +1361,7 @@
         "ball-main",
         "affine-transport"
       ],
-      "source_labels": [
-        "cor:ellipsoid"
-      ],
+      "source_labels": [],
       "scope": "Unconditional nonexistence for every invertible affine ball image",
       "file": "RieszEuclidean/EllipsoidAnalyticAssembly.lean",
       "declarations": [
@@ -1364,7 +1370,10 @@
         "RieszEuclidean.not_hasExponentialRieszBasis_ellipsoid",
         "RieszEuclidean.not_exists_exponentialRieszBasis_ellipsoid"
       ],
-      "progress": "The unconditional ball result and actual affine synthesis transport exclude exponential Riesz bases on every affine image of the unit open ball under an invertible real linear map. Translation phases and transpose frequency pullback are derived."
+      "progress": "The unconditional ball result and actual affine synthesis transport exclude exponential Riesz bases on every affine image of the unit open ball under an invertible real linear map. Translation phases and transpose frequency pullback are derived. Retained from the previous manuscript; this does not formalize the new convex-domain corollary.",
+      "legacy_source_labels": [
+        "cor:ellipsoid"
+      ]
     },
     {
       "id": "public-statement-audit",
@@ -1374,147 +1383,326 @@
         "triangle-main",
         "polygon-main",
         "ellipsoid-main",
+        "general-boundary",
+        "bump-equivalence",
+        "convex-main"
+      ],
+      "source_labels": [],
+      "scope": "Independent comparison and kernel replay of all 41 current public statements",
+      "file": "MainResults.lean",
+      "declarations": [],
+      "progress": "Official Comparator and Lean default kernel accept all 41 targets, including the revised bump equivalence and unconditional convex C2-domain corollary. The current record is reviews/convex-progress.md; historical Bochner records remain separate."
+    },
+    {
+      "id": "bump-equivalence",
+      "status": "proved",
+      "dependencies": [
+        "projection-gap",
+        "separation-and-bumps"
+      ],
+      "source_labels": [
+        "lem:bumps"
+      ],
+      "scope": "Both directions of the revised bump characterization, with Fourier lower bound on the closure",
+      "file": "RieszEuclidean/BumpEquivalence.lean",
+      "declarations": [
+        "RieszEuclidean.exponentialRieszBasis_of_bump_gap",
+        "RieszEuclidean.exponentialRieszBasis_iff_initial_bump_gap"
+      ]
+    },
+    {
+      "id": "convex-support",
+      "status": "proved",
+      "dependencies": [
+        "basic"
+      ],
+      "source_labels": [],
+      "scope": "Local-to-global singleton supporting faces, farthest-point support, and equal/opposite normal cases",
+      "file": "RieszEuclidean/ConvexSupport.lean",
+      "declarations": [
+        "RieszEuclidean.SupportsAt",
+        "RieszEuclidean.SingletonSupportingFace",
+        "RieszEuclidean.supporting_points_eq_of_same_normal",
+        "RieszEuclidean.translated_inter_subset_singleton_of_opposite_normals",
+        "RieszEuclidean.patch_translated_inter_null_of_transverse_null",
+        "RieszEuclidean.singletonSupportingFace_of_local",
+        "RieszEuclidean.farthest_point_support",
+        "RieszEuclidean.FunctionalSupportsAt",
+        "RieszEuclidean.FunctionalSingletonFace",
+        "RieszEuclidean.defining_derivative_supports",
+        "RieszEuclidean.exists_supporting_defining_function",
+        "RieszEuclidean.functional_support_points_eq",
+        "RieszEuclidean.functional_opposite_inter_subset_singleton",
+        "RieszEuclidean.functional_range_eq_top",
+        "RieszEuclidean.supporting_functional_proportional",
+        "RieszEuclidean.supporting_functional_strict_interior",
+        "RieszEuclidean.prod_functionals_surjective",
+        "RieszEuclidean.prod_functionals_kernel_dim"
+      ]
+    },
+    {
+      "id": "regular-level-nullity",
+      "status": "proved",
+      "dependencies": [
+        "basic"
+      ],
+      "source_labels": [],
+      "scope": "Implicit-function parametrizations and local-to-global Hausdorff nullity above the derivative-kernel dimension",
+      "file": "RieszEuclidean/RegularLevelNullity.lean",
+      "declarations": [
+        "RieszEuclidean.regular_level_locally_hausdorff_null",
+        "RieszEuclidean.measure_null_of_locally_null",
+        "RieszEuclidean.regular_levels_hausdorff_null",
+        "RieszEuclidean.smooth_chart_hausdorff_null",
+        "RieszEuclidean.countable_smooth_charts_hausdorff_null"
+      ]
+    },
+    {
+      "id": "convex-boundary-reduction",
+      "status": "proved",
+      "dependencies": [
         "general-boundary"
       ],
       "source_labels": [],
-      "scope": "Independent concrete statement comparison and transitive axiom audits",
-      "file": "MainResults.lean",
-      "declarations": [],
-      "progress": "Official Comparator and Lean's default kernel accept all 37 public targets. Modular, public and standalone builds pass with all 15 linters. The reference and solution theorem types match, a traversal of 48,710 reachable constants finds no project declaration mismatch, standalone extraction is byte-for-byte current, and the 931-declaration transitive axiom audit uses only propext, Classical.choice and Quot.sound."
+      "scope": "Convex boundary-nullity, two-sided neighborhood positivity and the conditional boundary-patch reduction",
+      "file": "RieszEuclidean/ConvexBoundary.lean",
+      "declarations": [
+        "RieszEuclidean.positive_neighborhood_inter_of_mem_closure",
+        "RieszEuclidean.convex_boundary_two_sided",
+        "RieszEuclidean.convex_no_exponentialRieszBasis_of_boundary_measure",
+        "RieszEuclidean.convex_no_exponentialRieszBasis_of_boundary_patch"
+      ]
+    },
+    {
+      "id": "convex-curved-patch",
+      "status": "proved",
+      "dependencies": [
+        "convex-support",
+        "regular-level-nullity"
+      ],
+      "source_labels": [
+        "lem:convex-patch",
+        "eq:convex-support"
+      ],
+      "scope": "Derive a nonempty positively curved patch and singleton supporting faces from the bounded convex C2-domain hypotheses",
+      "file": "RieszEuclidean/ConvexCurvedPatch.lean",
+      "declarations": [
+        "RieszEuclidean.HasC2Boundary",
+        "RieszEuclidean.implicit_data_contDiffAt",
+        "RieszEuclidean.regular_implicit_contDiffAt",
+        "RieszEuclidean.second_derivative_nonpos_at_local_max",
+        "RieszEuclidean.contact_curve_acceleration",
+        "RieszEuclidean.second_derivative_along_line",
+        "RieszEuclidean.contact_chart_second_derivative",
+        "RieszEuclidean.negative_bilinear_perturbation",
+        "RieszEuclidean.negative_bilinear_eventually",
+        "RieszEuclidean.strictConcaveOn_of_hessian_neg",
+        "RieszEuclidean.linear_height_hessian",
+        "RieszEuclidean.functional_singleton_face_of_local",
+        "RieszEuclidean.strictConcave_chart_singleton_faces",
+        "RieszEuclidean.exists_convex_contact_point",
+        "RieszEuclidean.contact_chart_strictConcavity",
+        "RieszEuclidean.regular_boundary_chart",
+        "RieszEuclidean.CurvedBoundaryPatch",
+        "RieszEuclidean.exists_convex_curved_patch"
+      ],
+      "progress": "Containing-ball contact, C2 implicit chart, negative radial Hessian, uniform persistence and strict concavity give a relatively open patch with singleton supporting faces. Curvature is recorded as a quantitative chart-Hessian inequality."
+    },
+    {
+      "id": "convex-translated-overlap",
+      "status": "proved",
+      "dependencies": [
+        "convex-curved-patch",
+        "regular-level-nullity"
+      ],
+      "source_labels": [
+        "lem:convex-translates",
+        "eq:convex-intersection"
+      ],
+      "scope": "Connect C2 defining functions and normals to the regular-level theorem to prove translated surface-null intersections",
+      "file": "RieszEuclidean/ConvexTranslatedOverlap.lean",
+      "declarations": [
+        "RieszEuclidean.c2_patch_translated_overlap_null"
+      ],
+      "progress": "Regular defining derivatives supply supporting functionals. Nonproportional pairs give a codimension-two implicit level. Positive proportionality is excluded and negative proportionality forces a singleton intersection."
+    },
+    {
+      "id": "convex-main",
+      "status": "proved",
+      "dependencies": [
+        "convex-translated-overlap",
+        "convex-boundary-reduction"
+      ],
+      "source_labels": [
+        "sec:convex",
+        "cor:convex"
+      ],
+      "scope": "Prove finite positive surface measure on the patch and derive the unconditional convex C2-domain corollary",
+      "file": "RieszEuclidean/ConvexDomainTheorem.lean",
+      "declarations": [
+        "RieszEuclidean.chart_positive_finite_measure",
+        "RieszEuclidean.CurvedBoundaryPatch.exists_positive_finite_subpatch",
+        "RieszEuclidean.convex_C2_no_exponentialRieszBasis"
+      ],
+      "progress": "A small chart image has positive finite Hausdorff measure by Lipschitz bounds for the chart and its affine inverse. Restricting to this patch supplies all hypotheses of the general boundary criterion."
     }
   ],
   "proof_source_sha256": {
     "RieszEuclidean/Affine.lean": "35c2391c553d950022745fe6acb37d46c13fb5f1ba572bb99f26144e21659cfc",
-    "RieszEuclidean/Basic.lean": "b327924ac4e000dddb26b0c8ded32990ad44ae25005292817d03eb0f97b3971d",
-    "RieszEuclidean/L2Transport.lean": "e3cdda30408b9099c91a03cb15be9b0f89cbc582bb3189c1c866fa1373914b30",
-    "RieszEuclidean/MovingComparison.lean": "803e8223f483bb2f1cafe4c96a5e528968d3b9cd12efb449d80a4e02a8b48f3b",
-    "RieszEuclidean/ProjectionGap.lean": "c638358de389fd9cd8c6373e8880573f9591527c42adfbb0a2445cbfe269e840",
-    "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad",
-    "RieszEuclidean/FourierL2.lean": "45ba96a77e8d8387a865b629c90f2e4c7bd55c7cbc8435288612c1680ab5d2af",
-    "RieszEuclidean/SchwartzDensity.lean": "570ceaeb9aa219f32a96bc44adf07b6d9b50a65d21145f5724d65b523330fa2b",
-    "RieszEuclidean/FourierExtension.lean": "bb4932648e07a23df20700ccc56acac82391a9d892b487f1b73f6f88812592ad",
-    "RieszEuclidean/CutoffProjection.lean": "852b21a2371e7174983077167380ba2e7366b3790ccf8aff806fc262bbaad3d6",
-    "RieszEuclidean/FourierAgreement.lean": "82c90e9ab3d10f9ac2d26bf0d7b4c6715cd8fc47c3252fa8cd19a4109d29783e",
-    "RieszEuclidean/FourierKernel.lean": "982155c2bace338ec8ca28009f28abfb58ab68d659bc48e1dc0ff89f7d6b978e",
-    "RieszEuclidean/FourierTranslations.lean": "3d208c81d9a46fd13df0485736675190f6a917185361239969395733337b112c",
-    "RieszEuclidean/Separation.lean": "94ed43c38cfeb481b1a529d4b5a89d3fd26a6fea1cb2263b0182b65b7002ea8f",
-    "RieszEuclidean/Bumps.lean": "b8d43bec27cf438b44819c05ccc95544131db1c02deef30c9d79b2169cfa0159",
-    "RieszEuclidean/BumpFourier.lean": "ac7c19daa5f750404c410db8d231e0ccd8ffdf2cd7936998a7938be92df00f0e",
-    "RieszEuclidean/BumpTranslates.lean": "e07fd60b7ac6f4f483da786fbad422f88932660685fc670e5356b1dd99a2f8cd",
-    "RieszEuclidean/BumpSynthesis.lean": "ad4975c8b11ee0434afda5414e52528f9e1881c78d4b887c4ba746b1d9528b52",
-    "RieszEuclidean/L2Multiplier.lean": "479d6b0c3700bfc86cb834f0e2b610e6f7f715506a0db20688ca0947670b34ed",
-    "RieszEuclidean/BumpTransform.lean": "0015bb085ea8451c283f016927dcc924954396e0893984405abe9765760e3264",
-    "RieszEuclidean/BumpMultiplier.lean": "a204ff10ca05679859dfa26b5437a6e345c6c5299fb7627ce5de922d43066abf",
-    "RieszEuclidean/DomainRestriction.lean": "0784c1d25e08687921466128507082ca8ba74f974fc5ba49f793513d08ba8b8b",
-    "RieszEuclidean/BumpIdentity.lean": "1047e5b1376f2abf82f30cda86f290783bb692ee81ebda759718462cb1190246",
-    "RieszEuclidean/DomainExtension.lean": "3deefd2e6caee23508d9b420c16b75e531cf81a5573bac8fe3100693b0854300",
-    "RieszEuclidean/FourierRange.lean": "08d020e28f05c87f6ff973573131949378c42c1bc45014c7786f449d2bd73899",
-    "RieszEuclidean/RangeIso.lean": "bfcac709a843ba2360fc91f7d64d52fa41c6a445d65c01854655ffa76f0bda15",
-    "RieszEuclidean/InitialGap.lean": "bdf60edbf37170b363a7776afd195dda454f613316393a5c9b0d99a238360b87",
-    "RieszEuclidean/SeparatedConfigurations.lean": "71dcd01c05fa8e1f3ec6bbada271a46522aaf72d4fbd4914f51e7deaecc6bf76",
-    "RieszEuclidean/MovingTranslations.lean": "cf50d58897c2c071b45014600d6c1dd2b6b8c6c4efe21d3c4048ffa62b347c8c",
-    "RieszEuclidean/ConfigurationMeasure.lean": "93b8666c23e647403f2b34f4880e0fca0bb1e1e4d64447604bf91b21cde41502",
-    "RieszEuclidean/LocalExtraction.lean": "fe6b186fc3b531565916b05eb7d73417d2b540bf056ad4a119cfa8168ef462a1",
-    "RieszEuclidean/WeakPointLimits.lean": "487dfa943d654798fbc4d979c134f569a70e9d0a4d92225d806659e37719d935",
-    "RieszEuclidean/HausdorffMatching.lean": "a0bc8e0e97df049de0e93f455b9f001697c0b31142e6844f992e84451ad36791",
-    "RieszEuclidean/WindowCompatibility.lean": "f89303a522774658d63472501d8c01c5093cfb9642c85c09f4148c32c9fcbb81",
-    "RieszEuclidean/WindowWeakLimit.lean": "ba96050e0b58c705b547abcb2942a6cbeb7c9ce6d06187b02cfa0db2c94a7997",
-    "RieszEuclidean/DistanceProfile.lean": "ba9e9472672e9e01fa72933f3c428578ed948299126e60c94fb8f4405cccfc4f",
-    "RieszEuclidean/ConfigurationTopology.lean": "6b1dde596c9d111f31ce845ea4654da48f6572f58a53e6b0045fbb557dd1fff5",
-    "RieszEuclidean/TranslationHull.lean": "d55e8e4782ae0f8b97a951f8e45c31132609ff1bcc8f6da5037e2061cde680e8",
-    "RieszEuclidean/PositiveFunctionalMeasure.lean": "8e1a20f9e4f28d15f6fe79dde16a7163ff61301237d338bc3a7f518e0d03d39c",
-    "RieszEuclidean/CompactMeans.lean": "6397cf7e9a16513b91de4c75d7cc83b08a1935cf40e9e8dd417d87f3450bb6ed",
-    "RieszEuclidean/MeanRepresentation.lean": "c98ba8a678096ef123d0111e4ef92d912f54b8b8af89f95a3a5f14bb42826eab",
-    "RieszEuclidean/EuclideanBoxes.lean": "f044398c6b8909088a28368679cef23d89bde7bab28c331fb9a289b1fd69ad0d",
-    "RieszEuclidean/BoxAverages.lean": "a497b8c26e00aa2cf9420a1b34f974fdfa4469dc3912bdbbeb390591b3d477b9",
-    "RieszEuclidean/BoxBoundary.lean": "b4325829c9803b6139655a042e5736e6a505eca641de43983871451ca15912a2",
-    "RieszEuclidean/IntegralSymmDiff.lean": "2ea1172a43cdcb4e2f33c94a8efaae6bcb53bde936269c02bba6dbad3c81a6f2",
-    "RieszEuclidean/BoxTranslationIntegral.lean": "eba1aa503805b629183ee6afbcd66b7d732bb6a199188d813257b88d36c9d85e",
-    "RieszEuclidean/InvariantProbability.lean": "0f8a6da2bcde0701a01c29f91c618ba1e95c74c141c75f67661aac88f4553458",
-    "RieszEuclidean/HullInvariantMeasure.lean": "ca19e26fd0181d71de1e6f49aa6119a235eb304c151c3f8f0f6be089c465258f",
-    "RieszEuclidean/Koopman.lean": "c1547db24b51a47fec561038ba610c13249108ff4676689c814f52fb07b0a06d",
-    "RieszEuclidean/VagueConvergence.lean": "e2885a9b3a9ae992496db5dcb5669c95f603c8393dfdbbed9f7c7233274cf657",
-    "RieszEuclidean/Correlations.lean": "4d9764bfdde7277c0a682f717d5cae296305370bfd722bcfb2630ff20a318d0d",
-    "RieszEuclidean/SpectralMeasures.lean": "b377cd44f84bd5e9271bfb1f0e3a5f76a980c697ddd0d4d5a899e1d01128a60d",
-    "RieszEuclidean/IntegratedUnitary.lean": "38ef236cd542314ae3c203308bc65a7dc1ec0f3a0816146153410b1f843bad77",
-    "RieszEuclidean/SpectralNorm.lean": "7ecc280e704ef3c34ec57b0928ced318bcb192f890119ee993686fa20b723ed5",
-    "RieszEuclidean/IntegratedAlgebra.lean": "2957c6bf58d37401a1e9b658d7dd2b2559008e131fc788925b999b000f298688",
-    "RieszEuclidean/UnitSphereApproximation.lean": "72f2a422c723cc874c30e168af3ec9968e064a3ee5b029eaa763983753cc3f9c",
-    "RieszEuclidean/SymbolBound.lean": "9ee1e4adc98926e4c73e3c0b60abee3b1a3acbac1e0ab06cd05c355d564a1631",
-    "RieszEuclidean/ControlMeasure.lean": "6cf91b71b11218143cfa714552678fdc197b1ad92880c8f0cbde4f0c3a042176",
-    "RieszEuclidean/FejerWeights.lean": "df5aefdb0f7ac6acd87bb9fe797a42a92d457265c68e8a9b6f90212442a37e29",
-    "RieszEuclidean/BoxOverlap.lean": "4b0f654495850b8a66154595da8fc25d49962d368f357f7e18e21277aacb2862",
-    "RieszEuclidean/GoodParameters.lean": "83db2c847490bb071d86ab13bd8d772a66042cec83a1944d8463ae8ad4ce77cb",
-    "RieszEuclidean/StrongOperatorLimits.lean": "76a9221ddbbcaa529c8bd2d3514236d32ea4cda22ff551e65b2523553bf101d0",
-    "RieszEuclidean/FejerKernel.lean": "c55106b54cd07f8a4db92371cd79174c31ff979a83ee9c73977bcb1614145709",
-    "RieszEuclidean/FejerConcentration.lean": "9e26a4eeb9f11f1852915f040d07e786a2faf672c0f433d287ae648d1cad68db",
     "RieszEuclidean/ApproximateCutoffs.lean": "b15c213f844b5f7e6d962cb4bf295115252d90fb8178c31f37ad2fb52351c3b8",
-    "RieszEuclidean/SmoothedFejer.lean": "781f45dbf3d8b2d8400f672a8eeadd7e6447109f39c668842435b6e2bf23697c",
-    "RieszEuclidean/FejerFourier.lean": "d2ed6859e86a23e1e74a37162ee1f9698a4de91446475bd6958c428b5f848d98",
-    "RieszEuclidean/FejerCoefficients.lean": "811765e204174c2eb9de76544bb922335e729ee2515a1aeacb13625c0ef21f1c",
-    "RieszEuclidean/SpectralCutoffLimits.lean": "b6dd593427d464f68fc6a14fab7713dce24f16e7a82aa0a38afbacef066b09b8",
-    "RieszEuclidean/SpectralCutoffDifference.lean": "cd91bcb12ae716decd2045db332b8415348e8f713bc9b49786099f6b7f990d75",
-    "RieszEuclidean/FiniteFilters.lean": "9dc37b1bb7cad193cd3eb1a0e1c50065971aa3bb842e89212a108c8381613005",
-    "RieszEuclidean/BumpKernel.lean": "bddc97e6c17194a3196915de9e1748582555c360bdac40e59f2fd08717e5d162",
-    "RieszEuclidean/StationaryCutoffs.lean": "ca0ddd372fe423119177d4785dd9fb7f28636fa30e9aa3c0a0317ff225cc9f6b",
-    "RieszEuclidean/BumpKernelProjection.lean": "ac901aa5b417f6a09491f96c0452ac055fa8cfa2951fea1dbd9614105176635c",
-    "RieszEuclidean/BumpKernelContinuity.lean": "ceba0c91fec327ebef69c1ccc54c188519d14a30a0e5829ed64b2808c48e9bed",
-    "RieszEuclidean/ConfigurationKernel.lean": "b585960e39b29bd036232f9c43d6e3c4d4c1cc3da69c3b7b95f89103bb50d019",
-    "RieszEuclidean/ModulatedOperator.lean": "f1ffcba5d3a04ac5f2b12a4ecbc0cbecc78edf0a7c3f8ef0186989a1367b79e3",
-    "RieszEuclidean/StationaryKernel.lean": "0ba44110bb4eaf6dc7aceec7026ae986d942de9c7eb66478f8570337cdd674a9",
-    "RieszEuclidean/StationaryComparison.lean": "d07f9547664b4cbaed238c321e3df2385bb5d0714e64101ee6952b7ead8ffd7f",
-    "RieszEuclidean/ContinuousMultiplierIntegral.lean": "4615827f9107c3b8c3fb0081aa203a4d40e7ab594eb753d48278d2fe8b7b0ffe",
-    "RieszEuclidean/StationaryComparisonProjection.lean": "ff0177b4b7a008ac9f2cb6709bcdaaed9a16966d191a2871ba78662ab6b1f45a",
-    "RieszEuclidean/BumpProjectionLimits.lean": "aa7c321a825bf353423301e97921bdc26c1c5232fcaa95ed9a5ae1315ae390f7",
-    "RieszEuclidean/HullGap.lean": "d1b68b0dafd2ea0cfbe24345b577f8c398dac81a9e3df8a61a961a2d50cf8e51",
-    "RieszEuclidean/SphereGeometry.lean": "a8ec8f3915f144a1d86b3dc404f4e638d05f86071034d7de32aa673ebcbde8bd",
-    "RieszEuclidean/SphereFiniteness.lean": "63b04ae3897f338f6e695968d8657d1879d756b026f88750ac58182dde4a929d",
-    "RieszEuclidean/SphereBoundaryMeasure.lean": "d666c648efaffeba5f7caa9cdeaa39baa6b84438a4148b4ed284a178cb1b98a2",
-    "RieszEuclidean/BoundaryFubini.lean": "ba4ef115cd0d82c065bebcea4b0bf7a69270b349c612af4659b16ffd4d1c09c2",
-    "RieszEuclidean/BoundarySymbols.lean": "309954cd869fc0880559bca6cbead072777ec082d7a4812579340903bbbaaf73",
-    "RieszEuclidean/BoundaryOperatorLimits.lean": "b9d021513daf7ef5f6067ef6dcb2c9788300c30827ba6a43893eeeb6f003e7dd",
-    "RieszEuclidean/ProjectionOrder.lean": "ea823da671727021116198eff563d0fb546b3ad7a0d1866e47061052ee0edf95",
-    "RieszEuclidean/BoundaryCutoffLimits.lean": "b2504f445db6225afe36087b61ed1ea564a48abd0ddb8dd889e58b9d7cff13bf",
-    "RieszEuclidean/SphereBoundaryApproach.lean": "23a19770c7e7d0c3efac5eb5a30946efb8360f6950941257a10c9c801531f538",
-    "RieszEuclidean/SphereCutoffObstruction.lean": "e974a56987ee85399a252e5e3e4ba73afe8e16570a240968f91402c91d9bdbe9",
-    "RieszEuclidean/AveragedTests.lean": "d54e3f7a1c1876137b073a8f40b3fc3513232b4738b4f9ed8d6d8bffb9b57c0b",
-    "RieszEuclidean/AveragedTestNorms.lean": "43e7306be4420662b14bf947d814b02449e2f6c0bacdccd8456b44f5c62b63a1",
-    "RieszEuclidean/AveragedGap.lean": "fdf769ee32e4e8f0d5a66333824531cb41576a6bb46d605a9b097513c9344bea",
-    "RieszEuclidean/AveragedFourierForm.lean": "3faf410fd7b7cff4d6b8cd79b5462b5c2c1ab33af16f175d5c5af7d08c0143b2",
-    "RieszEuclidean/BumpBoxKernel.lean": "ae67d95346b1f92df7245aa26a71fb104c8537f2e5d7319e38215632d74f3f6f",
     "RieszEuclidean/AveragedBumpForm.lean": "08902c9a4e2c37fb2cdccb5044690d1583b722b6a2b888b28d510f549eb2c6da",
-    "RieszEuclidean/AveragedFourierExpansion.lean": "7a81a792d3239e24b547518e1564b403d1edf344b0fa161e219466e24d496182",
     "RieszEuclidean/AveragedCanonicalForms.lean": "8854b8b44e3da3a43e33645694c4731575aaff8a880c950e586d2e7ab441a55e",
     "RieszEuclidean/AveragedFiniteGap.lean": "005299f853cfd814d129c1a476fefc85e61b1b3e1343faac8556b5fd7159978d",
+    "RieszEuclidean/AveragedFourierExpansion.lean": "7a81a792d3239e24b547518e1564b403d1edf344b0fa161e219466e24d496182",
+    "RieszEuclidean/AveragedFourierForm.lean": "3faf410fd7b7cff4d6b8cd79b5462b5c2c1ab33af16f175d5c5af7d08c0143b2",
+    "RieszEuclidean/AveragedGap.lean": "fdf769ee32e4e8f0d5a66333824531cb41576a6bb46d605a9b097513c9344bea",
     "RieszEuclidean/AveragedLimitGap.lean": "051cd26fa39370e57a0a2152c5605607d10798c36e13666f581c92f3e4eb8ac7",
-    "RieszEuclidean/StationaryAssemblyHelpers.lean": "c575e89c23fe7638617aecfda5fc10892e67a541c6e2027f965fedfbb5ca6a60",
-    "RieszEuclidean/SphereAnalyticAssembly.lean": "3411e6a347e833f40db05f6da5dea5e89aedac867a5b6c778f92616208d242d2",
-    "RieszEuclidean/EllipsoidAnalyticAssembly.lean": "ddbfa4ecbb15f7890aa028ae132a077126617b67c305f6c43bd90481c0afbbdf",
-    "RieszEuclidean/EdgeGeometry.lean": "f0640cf8a8ca08ff1079576404dc37b802d95ee4bf4536ed6ec0c61bbb7d181f",
-    "RieszEuclidean/TriangleCrossing.lean": "0793b0595e00bc69bc0a1abc5f5bf61d2270453353af773ea1f40092985dd986",
-    "RieszEuclidean/TriangleBoundary.lean": "1915b7cd047091e85c698c771ab4b1b5c9b70f1d7841653a6a0a8eb978e46e40",
-    "RieszEuclidean/TriangleSymbolLimits.lean": "1bc078c5cad989e150ee47792a0244486779a8e77362f2b01b7d583bf30a9576",
-    "RieszEuclidean/PolygonGeometry.lean": "6a29ca175e7a37dad424df82f66ec4711fbbe8c2c52a38db6ce17e695f60122f",
-    "RieszEuclidean/PolygonParity.lean": "1cdeb81d89da9ea67cb5dc066a5b3e2926b5348d888a4cbb812953e2756d4881",
-    "RieszEuclidean/PolygonLocalGeometry.lean": "91067c7d321abd0f701518aed4747f086aaafcb359950c3670cfc80948e553b4",
-    "RieszEuclidean/PolygonSymbolLimits.lean": "98405c690516dd92cf87545786c8e63aa5910bcd7b3dc592795b855162e07c9d",
-    "RieszEuclidean/BoundaryJumpLimits.lean": "a9af3774ad634f5106438b1c9497c1c15d1f0f070d02fd6a26da3c28a230db32",
-    "RieszEuclidean/TriangleCutoffObstruction.lean": "bfe59a256f5f402c2b873060132590e38130116ff79641bfb5d5d57db2897e7f",
-    "RieszEuclidean/TriangleAnalyticAssembly.lean": "4baab26fc09fad63ddfbff11b4ccea296325d69ea439c360295e35d402bdab93",
-    "RieszEuclidean/TriangleAffineAssembly.lean": "0010c6fbe415af382e50007c2c577caaf81e7baf1e39e698dced533dff2a711e",
-    "RieszEuclidean/GeneralBoundaryAssembly.lean": "a4852c2b4e9065078f01b75ee7d80efc67f678f6e4cbdbb0fc44b2dd02e5fd4c",
-    "RieszEuclidean/PolygonCutoffObstruction.lean": "e007b2ae01b177a83ad3f0632bd1fbc9e26520d739da7a8353e132e6a171a326",
-    "RieszEuclidean/PolygonAnalyticAssembly.lean": "189f873dec68b4c00e3a810c702944cd984be8b12c689aabac5114c4bfcb4109",
-    "RieszEuclidean/IntervalRectangleRemarks.lean": "a940f11342a5b1e063cc4f2df0bf5d4a7b3ad9bcb925c1417074071735092494",
-    "RieszEuclidean/PhysicalTranslationSpectrum.lean": "d53e1e9fa58d977f200cce7bc0b6ef77bf6798e7ab7b964e4a9fc2480a29fb8c",
-    "RieszEuclidean/PolygonPresentation.lean": "4fc3af2e3c4f8add3b9bd9be837d18a89511bd569eb1785a086b2098ff4db3c1",
-    "RieszEuclidean/BochnerCoordinateWindows.lean": "89ac0ea80d32b7956e776019bea8486c3260a39f397eae9c9da151258820ace8",
-    "RieszEuclidean/BochnerMeasureLimit.lean": "d0374496d01bcd639bc6cdf0f588954af76381e52aca9743035601dccaa1dd49",
-    "RieszEuclidean/BochnerFourierLimit.lean": "ccb9e6894de40250d5d44511aaa786a859da8b7bdb22e24c46a26466c728a199",
-    "RieszEuclidean/BochnerWindows.lean": "b3bc753b38955f49da066573b4e5652f0bb5f85530b8c0a25d2015a6afd0cc73",
-    "RieszEuclidean/BochnerApproximateMeasures.lean": "400d2dc9917505a300bd607ad269a3f9e2fdda4b20d005f4e235e58cdf589f34",
-    "RieszEuclidean/BochnerExistence.lean": "a9f9365e688eca167767e14f130521887f58a5ca22f8ce2f069f03af9189b332",
+    "RieszEuclidean/AveragedTestNorms.lean": "43e7306be4420662b14bf947d814b02449e2f6c0bacdccd8456b44f5c62b63a1",
+    "RieszEuclidean/AveragedTests.lean": "d54e3f7a1c1876137b073a8f40b3fc3513232b4738b4f9ed8d6d8bffb9b57c0b",
     "RieszEuclidean/BallEllipsoidTheorems.lean": "f5ae0465c0d1688ee6753fd75922299f465665eca11558a60c7a82a3fd7a0c88",
-    "RieszEuclidean/UnconditionalGeometry.lean": "d99bc744645916f43c9abe3544b5d33efef33f1d7a5a364156a3123fff2da439"
+    "RieszEuclidean/Basic.lean": "b327924ac4e000dddb26b0c8ded32990ad44ae25005292817d03eb0f97b3971d",
+    "RieszEuclidean/BochnerApproximateMeasures.lean": "400d2dc9917505a300bd607ad269a3f9e2fdda4b20d005f4e235e58cdf589f34",
+    "RieszEuclidean/BochnerCoordinateWindows.lean": "89ac0ea80d32b7956e776019bea8486c3260a39f397eae9c9da151258820ace8",
+    "RieszEuclidean/BochnerExistence.lean": "a9f9365e688eca167767e14f130521887f58a5ca22f8ce2f069f03af9189b332",
+    "RieszEuclidean/BochnerFourierLimit.lean": "ccb9e6894de40250d5d44511aaa786a859da8b7bdb22e24c46a26466c728a199",
+    "RieszEuclidean/BochnerMeasureLimit.lean": "d0374496d01bcd639bc6cdf0f588954af76381e52aca9743035601dccaa1dd49",
+    "RieszEuclidean/BochnerWindows.lean": "b3bc753b38955f49da066573b4e5652f0bb5f85530b8c0a25d2015a6afd0cc73",
+    "RieszEuclidean/BoundaryCutoffLimits.lean": "b2504f445db6225afe36087b61ed1ea564a48abd0ddb8dd889e58b9d7cff13bf",
+    "RieszEuclidean/BoundaryFubini.lean": "ba4ef115cd0d82c065bebcea4b0bf7a69270b349c612af4659b16ffd4d1c09c2",
+    "RieszEuclidean/BoundaryJumpLimits.lean": "a9af3774ad634f5106438b1c9497c1c15d1f0f070d02fd6a26da3c28a230db32",
+    "RieszEuclidean/BoundaryOperatorLimits.lean": "b9d021513daf7ef5f6067ef6dcb2c9788300c30827ba6a43893eeeb6f003e7dd",
+    "RieszEuclidean/BoundarySymbols.lean": "309954cd869fc0880559bca6cbead072777ec082d7a4812579340903bbbaaf73",
+    "RieszEuclidean/BoxAverages.lean": "a497b8c26e00aa2cf9420a1b34f974fdfa4469dc3912bdbbeb390591b3d477b9",
+    "RieszEuclidean/BoxBoundary.lean": "b4325829c9803b6139655a042e5736e6a505eca641de43983871451ca15912a2",
+    "RieszEuclidean/BoxOverlap.lean": "4b0f654495850b8a66154595da8fc25d49962d368f357f7e18e21277aacb2862",
+    "RieszEuclidean/BoxTranslationIntegral.lean": "eba1aa503805b629183ee6afbcd66b7d732bb6a199188d813257b88d36c9d85e",
+    "RieszEuclidean/BumpBoxKernel.lean": "ae67d95346b1f92df7245aa26a71fb104c8537f2e5d7319e38215632d74f3f6f",
+    "RieszEuclidean/BumpEquivalence.lean": "d820660b298c0a613125da13363d128807d948f253eccd44f05ae6b10e7b34be",
+    "RieszEuclidean/BumpFourier.lean": "ac7c19daa5f750404c410db8d231e0ccd8ffdf2cd7936998a7938be92df00f0e",
+    "RieszEuclidean/BumpIdentity.lean": "1047e5b1376f2abf82f30cda86f290783bb692ee81ebda759718462cb1190246",
+    "RieszEuclidean/BumpKernel.lean": "bddc97e6c17194a3196915de9e1748582555c360bdac40e59f2fd08717e5d162",
+    "RieszEuclidean/BumpKernelContinuity.lean": "ceba0c91fec327ebef69c1ccc54c188519d14a30a0e5829ed64b2808c48e9bed",
+    "RieszEuclidean/BumpKernelProjection.lean": "ac901aa5b417f6a09491f96c0452ac055fa8cfa2951fea1dbd9614105176635c",
+    "RieszEuclidean/BumpMultiplier.lean": "a204ff10ca05679859dfa26b5437a6e345c6c5299fb7627ce5de922d43066abf",
+    "RieszEuclidean/BumpProjectionLimits.lean": "aa7c321a825bf353423301e97921bdc26c1c5232fcaa95ed9a5ae1315ae390f7",
+    "RieszEuclidean/BumpSynthesis.lean": "ad4975c8b11ee0434afda5414e52528f9e1881c78d4b887c4ba746b1d9528b52",
+    "RieszEuclidean/BumpTransform.lean": "0015bb085ea8451c283f016927dcc924954396e0893984405abe9765760e3264",
+    "RieszEuclidean/BumpTranslates.lean": "e07fd60b7ac6f4f483da786fbad422f88932660685fc670e5356b1dd99a2f8cd",
+    "RieszEuclidean/Bumps.lean": "b8d43bec27cf438b44819c05ccc95544131db1c02deef30c9d79b2169cfa0159",
+    "RieszEuclidean/C2Boundary.lean": "093d37227092bd3f82a7d3a9cda9b149a4084c7e8043775dea9d998988383808",
+    "RieszEuclidean/ChartSurfaceMeasure.lean": "c8efd7e299c074e500f920a8a2a2b4850bcc44f1ad62d3f6577db1c0262746c3",
+    "RieszEuclidean/CompactMeans.lean": "6397cf7e9a16513b91de4c75d7cc83b08a1935cf40e9e8dd417d87f3450bb6ed",
+    "RieszEuclidean/ConcaveChartFaces.lean": "b2688b711c3a7793cad3505f1e650a8f757aa918fdb385016352e6a31c07f66c",
+    "RieszEuclidean/ConfigurationKernel.lean": "b585960e39b29bd036232f9c43d6e3c4d4c1cc3da69c3b7b95f89103bb50d019",
+    "RieszEuclidean/ConfigurationMeasure.lean": "93b8666c23e647403f2b34f4880e0fca0bb1e1e4d64447604bf91b21cde41502",
+    "RieszEuclidean/ConfigurationTopology.lean": "6b1dde596c9d111f31ce845ea4654da48f6572f58a53e6b0045fbb557dd1fff5",
+    "RieszEuclidean/ContactChartConcavity.lean": "8c441a9decdccf568bfe11f1ec34f2564319a69c1e60e6afe51e3462feed4f0b",
+    "RieszEuclidean/ContactCurvature.lean": "a4dde09bbc81daec0a5af636c2bb5c62bbef447db271f423abf93143303d68b9",
+    "RieszEuclidean/ContinuousMultiplierIntegral.lean": "4615827f9107c3b8c3fb0081aa203a4d40e7ab594eb753d48278d2fe8b7b0ffe",
+    "RieszEuclidean/ControlMeasure.lean": "6cf91b71b11218143cfa714552678fdc197b1ad92880c8f0cbde4f0c3a042176",
+    "RieszEuclidean/ConvexBoundary.lean": "278db61f9c6c9efb806413c104168a7d0f811fe02b8c600b9b3c4c508ec4a093",
+    "RieszEuclidean/ConvexContactPoint.lean": "5c839bf23c8d8e960d18a5d8db0cf03ff2a7ad469831c750fecffd1cf5b6f6f7",
+    "RieszEuclidean/ConvexCurvedPatch.lean": "f5f074d12a784bfda51da995c9de54b2397396ddbe04b30d9e423699a8a25cf2",
+    "RieszEuclidean/ConvexDefiningFunctions.lean": "dcb24051c8b11fccc2daaa642bbe5514a9c24361a3eba121c0718c330ef4b963",
+    "RieszEuclidean/ConvexDomainTheorem.lean": "e4c7defb74656d08436caf17a0c78a97379cc0b3e9e665a966cb9c6bdb468489",
+    "RieszEuclidean/ConvexSupport.lean": "f87b0ef40ca9c166bd8a161da29053747d82424aae5e47ee32aaab879a4626ea",
+    "RieszEuclidean/ConvexTranslatedOverlap.lean": "a6a62a5808508f712437bcd33aaa73619a425d0fda0972a85b2327db0d48b517",
+    "RieszEuclidean/Correlations.lean": "4d9764bfdde7277c0a682f717d5cae296305370bfd722bcfb2630ff20a318d0d",
+    "RieszEuclidean/CutoffProjection.lean": "852b21a2371e7174983077167380ba2e7366b3790ccf8aff806fc262bbaad3d6",
+    "RieszEuclidean/DirectionalSecondDerivative.lean": "e0db91a27f90be82d9c370d5af7d15be2e412e72ea5b6c591a4d76736277eb01",
+    "RieszEuclidean/DistanceProfile.lean": "ba9e9472672e9e01fa72933f3c428578ed948299126e60c94fb8f4405cccfc4f",
+    "RieszEuclidean/DomainExtension.lean": "3deefd2e6caee23508d9b420c16b75e531cf81a5573bac8fe3100693b0854300",
+    "RieszEuclidean/DomainRestriction.lean": "0784c1d25e08687921466128507082ca8ba74f974fc5ba49f793513d08ba8b8b",
+    "RieszEuclidean/EdgeGeometry.lean": "f0640cf8a8ca08ff1079576404dc37b802d95ee4bf4536ed6ec0c61bbb7d181f",
+    "RieszEuclidean/EllipsoidAnalyticAssembly.lean": "ddbfa4ecbb15f7890aa028ae132a077126617b67c305f6c43bd90481c0afbbdf",
+    "RieszEuclidean/EuclideanBoxes.lean": "f044398c6b8909088a28368679cef23d89bde7bab28c331fb9a289b1fd69ad0d",
+    "RieszEuclidean/FejerCoefficients.lean": "811765e204174c2eb9de76544bb922335e729ee2515a1aeacb13625c0ef21f1c",
+    "RieszEuclidean/FejerConcentration.lean": "9e26a4eeb9f11f1852915f040d07e786a2faf672c0f433d287ae648d1cad68db",
+    "RieszEuclidean/FejerFourier.lean": "d2ed6859e86a23e1e74a37162ee1f9698a4de91446475bd6958c428b5f848d98",
+    "RieszEuclidean/FejerKernel.lean": "c55106b54cd07f8a4db92371cd79174c31ff979a83ee9c73977bcb1614145709",
+    "RieszEuclidean/FejerWeights.lean": "df5aefdb0f7ac6acd87bb9fe797a42a92d457265c68e8a9b6f90212442a37e29",
+    "RieszEuclidean/FiniteFilters.lean": "9dc37b1bb7cad193cd3eb1a0e1c50065971aa3bb842e89212a108c8381613005",
+    "RieszEuclidean/FourierAgreement.lean": "82c90e9ab3d10f9ac2d26bf0d7b4c6715cd8fc47c3252fa8cd19a4109d29783e",
+    "RieszEuclidean/FourierExtension.lean": "bb4932648e07a23df20700ccc56acac82391a9d892b487f1b73f6f88812592ad",
+    "RieszEuclidean/FourierKernel.lean": "982155c2bace338ec8ca28009f28abfb58ab68d659bc48e1dc0ff89f7d6b978e",
+    "RieszEuclidean/FourierL2.lean": "45ba96a77e8d8387a865b629c90f2e4c7bd55c7cbc8435288612c1680ab5d2af",
+    "RieszEuclidean/FourierRange.lean": "08d020e28f05c87f6ff973573131949378c42c1bc45014c7786f449d2bd73899",
+    "RieszEuclidean/FourierTranslations.lean": "3d208c81d9a46fd13df0485736675190f6a917185361239969395733337b112c",
+    "RieszEuclidean/GeneralBoundaryAssembly.lean": "a4852c2b4e9065078f01b75ee7d80efc67f678f6e4cbdbb0fc44b2dd02e5fd4c",
+    "RieszEuclidean/GoodParameters.lean": "83db2c847490bb071d86ab13bd8d772a66042cec83a1944d8463ae8ad4ce77cb",
+    "RieszEuclidean/HausdorffMatching.lean": "a0bc8e0e97df049de0e93f455b9f001697c0b31142e6844f992e84451ad36791",
+    "RieszEuclidean/HessianConcavity.lean": "c83bd80a4e33eeb281eff9df20d9288a8361d3690687363f3ad3abcbe3c0db87",
+    "RieszEuclidean/HullGap.lean": "d1b68b0dafd2ea0cfbe24345b577f8c398dac81a9e3df8a61a961a2d50cf8e51",
+    "RieszEuclidean/HullInvariantMeasure.lean": "ca19e26fd0181d71de1e6f49aa6119a235eb304c151c3f8f0f6be089c465258f",
+    "RieszEuclidean/InitialGap.lean": "bdf60edbf37170b363a7776afd195dda454f613316393a5c9b0d99a238360b87",
+    "RieszEuclidean/IntegralSymmDiff.lean": "2ea1172a43cdcb4e2f33c94a8efaae6bcb53bde936269c02bba6dbad3c81a6f2",
+    "RieszEuclidean/IntegratedAlgebra.lean": "2957c6bf58d37401a1e9b658d7dd2b2559008e131fc788925b999b000f298688",
+    "RieszEuclidean/IntegratedUnitary.lean": "38ef236cd542314ae3c203308bc65a7dc1ec0f3a0816146153410b1f843bad77",
+    "RieszEuclidean/IntervalRectangleRemarks.lean": "a940f11342a5b1e063cc4f2df0bf5d4a7b3ad9bcb925c1417074071735092494",
+    "RieszEuclidean/InvariantProbability.lean": "0f8a6da2bcde0701a01c29f91c618ba1e95c74c141c75f67661aac88f4553458",
+    "RieszEuclidean/Koopman.lean": "c1547db24b51a47fec561038ba610c13249108ff4676689c814f52fb07b0a06d",
+    "RieszEuclidean/L2Multiplier.lean": "479d6b0c3700bfc86cb834f0e2b610e6f7f715506a0db20688ca0947670b34ed",
+    "RieszEuclidean/L2Transport.lean": "e3cdda30408b9099c91a03cb15be9b0f89cbc582bb3189c1c866fa1373914b30",
+    "RieszEuclidean/LinearHeightHessian.lean": "8f6e2a6dc869a6d140777b313c5f4805889f48a159acb34158acebb0730f7b5c",
+    "RieszEuclidean/LocalExtraction.lean": "fe6b186fc3b531565916b05eb7d73417d2b540bf056ad4a119cfa8168ef462a1",
+    "RieszEuclidean/MeanRepresentation.lean": "c98ba8a678096ef123d0111e4ef92d912f54b8b8af89f95a3a5f14bb42826eab",
+    "RieszEuclidean/ModulatedOperator.lean": "f1ffcba5d3a04ac5f2b12a4ecbc0cbecc78edf0a7c3f8ef0186989a1367b79e3",
+    "RieszEuclidean/MovingComparison.lean": "803e8223f483bb2f1cafe4c96a5e528968d3b9cd12efb449d80a4e02a8b48f3b",
+    "RieszEuclidean/MovingTranslations.lean": "cf50d58897c2c071b45014600d6c1dd2b6b8c6c4efe21d3c4048ffa62b347c8c",
+    "RieszEuclidean/NegativeBilinear.lean": "1ace0082e7339960f7693a9381cf1018bf5f417aadfc87a3dc0fb337b376a206",
+    "RieszEuclidean/PhysicalTranslationSpectrum.lean": "d53e1e9fa58d977f200cce7bc0b6ef77bf6798e7ab7b964e4a9fc2480a29fb8c",
+    "RieszEuclidean/PolygonAnalyticAssembly.lean": "189f873dec68b4c00e3a810c702944cd984be8b12c689aabac5114c4bfcb4109",
+    "RieszEuclidean/PolygonCutoffObstruction.lean": "e007b2ae01b177a83ad3f0632bd1fbc9e26520d739da7a8353e132e6a171a326",
+    "RieszEuclidean/PolygonGeometry.lean": "6a29ca175e7a37dad424df82f66ec4711fbbe8c2c52a38db6ce17e695f60122f",
+    "RieszEuclidean/PolygonLocalGeometry.lean": "91067c7d321abd0f701518aed4747f086aaafcb359950c3670cfc80948e553b4",
+    "RieszEuclidean/PolygonParity.lean": "1cdeb81d89da9ea67cb5dc066a5b3e2926b5348d888a4cbb812953e2756d4881",
+    "RieszEuclidean/PolygonPresentation.lean": "4fc3af2e3c4f8add3b9bd9be837d18a89511bd569eb1785a086b2098ff4db3c1",
+    "RieszEuclidean/PolygonSymbolLimits.lean": "98405c690516dd92cf87545786c8e63aa5910bcd7b3dc592795b855162e07c9d",
+    "RieszEuclidean/PositiveFunctionalMeasure.lean": "8e1a20f9e4f28d15f6fe79dde16a7163ff61301237d338bc3a7f518e0d03d39c",
+    "RieszEuclidean/ProjectionGap.lean": "6d6dec87aed5de1961a4081ffc09fb2b498284c583c60a653922bc6e1ab53afb",
+    "RieszEuclidean/ProjectionOrder.lean": "ea823da671727021116198eff563d0fb546b3ad7a0d1866e47061052ee0edf95",
+    "RieszEuclidean/RangeIso.lean": "bfcac709a843ba2360fc91f7d64d52fa41c6a445d65c01854655ffa76f0bda15",
+    "RieszEuclidean/RegularBoundaryChart.lean": "ef8ae46584d0193305f65fb8980b16954d1872fb18471272acb2e660c4400d8f",
+    "RieszEuclidean/RegularLevelNullity.lean": "70aa1b105e6ff7ea7e432832f793b3924966a4cfd1b37171c19df6ad8ca392f5",
+    "RieszEuclidean/SchwartzDensity.lean": "570ceaeb9aa219f32a96bc44adf07b6d9b50a65d21145f5724d65b523330fa2b",
+    "RieszEuclidean/SecondDerivativeTest.lean": "4b705aff5316e91aabafe834c00f2dbe8abfc08b9fb2d9f30a25bcf800f8f7ef",
+    "RieszEuclidean/SeparatedConfigurations.lean": "71dcd01c05fa8e1f3ec6bbada271a46522aaf72d4fbd4914f51e7deaecc6bf76",
+    "RieszEuclidean/Separation.lean": "94ed43c38cfeb481b1a529d4b5a89d3fd26a6fea1cb2263b0182b65b7002ea8f",
+    "RieszEuclidean/SmoothImplicitChart.lean": "c8075f713dbb42c92a78a22785ebd37dc33bc103550a5134065b7f4a1bfbe75f",
+    "RieszEuclidean/SmoothedFejer.lean": "781f45dbf3d8b2d8400f672a8eeadd7e6447109f39c668842435b6e2bf23697c",
+    "RieszEuclidean/SpectralCutoffDifference.lean": "cd91bcb12ae716decd2045db332b8415348e8f713bc9b49786099f6b7f990d75",
+    "RieszEuclidean/SpectralCutoffLimits.lean": "b6dd593427d464f68fc6a14fab7713dce24f16e7a82aa0a38afbacef066b09b8",
+    "RieszEuclidean/SpectralMeasures.lean": "b377cd44f84bd5e9271bfb1f0e3a5f76a980c697ddd0d4d5a899e1d01128a60d",
+    "RieszEuclidean/SpectralNorm.lean": "7ecc280e704ef3c34ec57b0928ced318bcb192f890119ee993686fa20b723ed5",
+    "RieszEuclidean/SphereAnalyticAssembly.lean": "3411e6a347e833f40db05f6da5dea5e89aedac867a5b6c778f92616208d242d2",
+    "RieszEuclidean/SphereBoundaryApproach.lean": "23a19770c7e7d0c3efac5eb5a30946efb8360f6950941257a10c9c801531f538",
+    "RieszEuclidean/SphereBoundaryMeasure.lean": "d666c648efaffeba5f7caa9cdeaa39baa6b84438a4148b4ed284a178cb1b98a2",
+    "RieszEuclidean/SphereCutoffObstruction.lean": "e974a56987ee85399a252e5e3e4ba73afe8e16570a240968f91402c91d9bdbe9",
+    "RieszEuclidean/SphereFiniteness.lean": "63b04ae3897f338f6e695968d8657d1879d756b026f88750ac58182dde4a929d",
+    "RieszEuclidean/SphereGeometry.lean": "a8ec8f3915f144a1d86b3dc404f4e638d05f86071034d7de32aa673ebcbde8bd",
+    "RieszEuclidean/StationaryAssemblyHelpers.lean": "c575e89c23fe7638617aecfda5fc10892e67a541c6e2027f965fedfbb5ca6a60",
+    "RieszEuclidean/StationaryComparison.lean": "d07f9547664b4cbaed238c321e3df2385bb5d0714e64101ee6952b7ead8ffd7f",
+    "RieszEuclidean/StationaryComparisonProjection.lean": "ff0177b4b7a008ac9f2cb6709bcdaaed9a16966d191a2871ba78662ab6b1f45a",
+    "RieszEuclidean/StationaryCutoffs.lean": "ca0ddd372fe423119177d4785dd9fb7f28636fa30e9aa3c0a0317ff225cc9f6b",
+    "RieszEuclidean/StationaryKernel.lean": "0ba44110bb4eaf6dc7aceec7026ae986d942de9c7eb66478f8570337cdd674a9",
+    "RieszEuclidean/StrongOperatorLimits.lean": "76a9221ddbbcaa529c8bd2d3514236d32ea4cda22ff551e65b2523553bf101d0",
+    "RieszEuclidean/SupportingDerivative.lean": "9fdf819b7e80f98aa9f49acc6287dfa8604d3ee1822f35f87abdf5138761f209",
+    "RieszEuclidean/SurfaceNullity.lean": "650d8d61235aa82f506f46fa57e54d576a4f80ac9315905423ab5f6e9658df17",
+    "RieszEuclidean/SymbolBound.lean": "9ee1e4adc98926e4c73e3c0b60abee3b1a3acbac1e0ab06cd05c355d564a1631",
+    "RieszEuclidean/TranslationHull.lean": "d55e8e4782ae0f8b97a951f8e45c31132609ff1bcc8f6da5037e2061cde680e8",
+    "RieszEuclidean/TransverseLinearAlgebra.lean": "0bea7fe28415ac57e7569356d739391adc4a9d1ebb69cd3b76441d5958fcce5e",
+    "RieszEuclidean/TriangleAffineAssembly.lean": "0010c6fbe415af382e50007c2c577caaf81e7baf1e39e698dced533dff2a711e",
+    "RieszEuclidean/TriangleAnalyticAssembly.lean": "4baab26fc09fad63ddfbff11b4ccea296325d69ea439c360295e35d402bdab93",
+    "RieszEuclidean/TriangleBoundary.lean": "1915b7cd047091e85c698c771ab4b1b5c9b70f1d7841653a6a0a8eb978e46e40",
+    "RieszEuclidean/TriangleCrossing.lean": "0793b0595e00bc69bc0a1abc5f5bf61d2270453353af773ea1f40092985dd986",
+    "RieszEuclidean/TriangleCutoffObstruction.lean": "bfe59a256f5f402c2b873060132590e38130116ff79641bfb5d5d57db2897e7f",
+    "RieszEuclidean/TriangleSymbolLimits.lean": "1bc078c5cad989e150ee47792a0244486779a8e77362f2b01b7d583bf30a9576",
+    "RieszEuclidean/UnconditionalGeometry.lean": "d99bc744645916f43c9abe3544b5d33efef33f1d7a5a364156a3123fff2da439",
+    "RieszEuclidean/UnitSphereApproximation.lean": "72f2a422c723cc874c30e168af3ec9968e064a3ee5b029eaa763983753cc3f9c",
+    "RieszEuclidean/VagueConvergence.lean": "e2885a9b3a9ae992496db5dcb5669c95f603c8393dfdbbed9f7c7233274cf657",
+    "RieszEuclidean/WeakLimits.lean": "38ce5aa99889d75fc9ebd29d45b920253000e32f03e92740858a3956fae269ad",
+    "RieszEuclidean/WeakPointLimits.lean": "487dfa943d654798fbc4d979c134f569a70e9d0a4d92225d806659e37719d935",
+    "RieszEuclidean/WindowCompatibility.lean": "f89303a522774658d63472501d8c01c5093cfb9642c85c09f4148c32c9fcbb81",
+    "RieszEuclidean/WindowWeakLimit.lean": "ba96050e0b58c705b547abcb2942a6cbeb7c9ce6d06187b02cfa0db2c94a7997"
   }
 }

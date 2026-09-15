@@ -8,6 +8,7 @@ import Mathlib.Tactic.Linarith
 
 /-! Blueprint: blueprint/README.md#projection-gap. -/
 noncomputable section
+open scoped NNReal
 namespace RieszEuclidean
 
 variable (H : Type) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -100,40 +101,75 @@ instance range_completeSpace [CompleteSpace H] (P : OrthProjection H) :
 def between (P Q : OrthProjection H) : Q.range →L[ℂ] P.range :=
   (P.op.comp Q.range.subtypeL).codRestrict P.range (fun x => ⟨x, rfl⟩)
 
+/-- The reverse restriction is exactly the Hilbert-space adjoint. -/
+theorem between_adjoint [CompleteSpace H] (P Q : OrthProjection H) :
+    (P.between Q).adjoint = Q.between P := by
+  symm
+  apply (ContinuousLinearMap.eq_adjoint_iff _ _).mpr
+  intro y x
+  change inner (𝕜 := ℂ) (Q.op y) (x : H) = inner (𝕜 := ℂ) (y : H) (P.op x)
+  rw [Q.symmetric, (Q.mem_range_iff x).mp x.property,
+    ← P.symmetric, (P.mem_range_iff y).mp y.property]
+
+/-- Pythagoras gives the manuscript's squared lower bound on the restriction. -/
+theorem between_lower_bound_sq (P Q : OrthProjection H) (x : Q.range) :
+    (1 - ‖P.op - Q.op‖ ^ 2) * ‖x‖ ^ 2 ≤ ‖P.between Q x‖ ^ 2 := by
+  have hx : Q.op x = x := (Q.mem_range_iff x).mp x.property
+  have hb := (P.op - Q.op).le_opNorm (x : H)
+  simp only [ContinuousLinearMap.sub_apply, hx] at hb
+  rw [norm_sub_rev] at hb
+  have hs := pow_le_pow_left₀ (norm_nonneg _) hb 2
+  have hp := P.norm_sq_decomposition (x : H)
+  change (1 - ‖P.op - Q.op‖ ^ 2) * ‖(x : H)‖ ^ 2 ≤ ‖P.op x‖ ^ 2
+  nlinarith [hs]
+
+/-- A strict gap makes the restriction bounded below, hence its range closed. -/
+theorem between_antilipschitz_of_gap (P Q : OrthProjection H)
+    (hgap : ‖P.op - Q.op‖ < 1) :
+    ∃ K : ℝ≥0, AntilipschitzWith K (P.between Q) := by
+  let c := 1 - ‖P.op - Q.op‖
+  have hc : 0 < c := sub_pos.mpr hgap
+  refine ⟨⟨c⁻¹, inv_nonneg.mpr hc.le⟩, (P.between Q).antilipschitz_of_bound ?_⟩
+  intro x
+  have hx : Q.op x = x := (Q.mem_range_iff x).mp x.property
+  have hb := (P.op - Q.op).le_opNorm (x : H)
+  simp only [ContinuousLinearMap.sub_apply, hx] at hb
+  rw [norm_sub_rev] at hb
+  have ht := norm_add_le ((x : H) - P.op x) (P.op x)
+  rw [sub_add_cancel] at ht
+  have hl : c * ‖(x : H)‖ ≤ ‖P.op x‖ := by dsimp [c]; nlinarith
+  change ‖(x : H)‖ ≤ c⁻¹ * ‖P.op x‖
+  rw [inv_mul_eq_div]
+  exact (le_div_iff₀ hc).mpr (by simpa only [mul_comm] using hl)
+
+/-- The manuscript's closed-range and adjoint proof of the forward implication. -/
 theorem rangeIso_of_gap [CompleteSpace H] (P Q : OrthProjection H)
     (hgap : ‖P.op - Q.op‖ < 1) : RangeIso P Q := by
   let A := P.between Q
   let B := Q.between P
-  have hnorm : ‖1 - A.comp B‖ ≤ ‖P.op - Q.op‖ := by
-    apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _)
-    intro x
-    have hx : P.op x = x := (P.mem_range_iff x).mp x.property
-    change ‖(x : H) - P.op (Q.op x)‖ ≤ ‖P.op - Q.op‖ * ‖(x : H)‖
-    calc
-      ‖(x : H) - P.op (Q.op x)‖ = ‖P.op ((P.op - Q.op) x)‖ := by
-        simp only [ContinuousLinearMap.sub_apply, map_sub, P.apply_idempotent, hx]
-      _ ≤ ‖(P.op - Q.op) x‖ := P.norm_op_apply_le _
-      _ ≤ ‖P.op - Q.op‖ * ‖(x : H)‖ := (P.op - Q.op).le_opNorm x
-  have hunit : IsUnit (A.comp B) := by
-    simpa only [sub_sub_cancel] using
-      isUnit_one_sub_of_norm_lt_one (x := 1 - A.comp B) (hnorm.trans_lt hgap)
-  have hsurj : Function.Surjective A := by
-    have hAB := (ContinuousLinearMap.isUnit_iff_bijective.mp hunit).surjective
-    intro y
-    obtain ⟨x, hx⟩ := hAB y
-    exact ⟨B x, hx⟩
-  have hinj : Function.Injective A := by
-    apply (injective_iff_map_eq_zero A).mpr
-    intro x hx
-    have hPx : P.op x = 0 := congrArg Subtype.val hx
-    have hQx : Q.op x = x := (Q.mem_range_iff x).mp x.property
-    have hbound := (P.op - Q.op).le_opNorm (x : H)
-    simp only [ContinuousLinearMap.sub_apply, hPx, hQx, _root_.zero_sub, norm_neg] at hbound
-    have hxzero : ‖(x : H)‖ = 0 := by
-      nlinarith [norm_nonneg (x : H)]
-    exact Subtype.ext (norm_eq_zero.mp hxzero)
+  obtain ⟨K, hA⟩ := P.between_antilipschitz_of_gap Q hgap
+  have hgap' : ‖Q.op - P.op‖ < 1 := by rwa [norm_sub_rev]
+  obtain ⟨J, hB⟩ := Q.between_antilipschitz_of_gap P hgap'
+  have hclosed : IsClosed (Set.range A) := hA.isClosed_range A.uniformContinuous
+  letI : CompleteSpace (LinearMap.range A) := hclosed.completeSpace_coe
+  have horth : (LinearMap.range A)ᗮ = ⊥ := by
+    apply le_antisymm _ bot_le
+    intro y hy
+    have hBy : B y = 0 := by
+      apply ext_inner_left ℂ
+      intro x
+      have hi := (Submodule.mem_orthogonal _ _).mp hy (A x) ⟨x, rfl⟩
+      change inner (𝕜 := ℂ) x (B y) = inner (𝕜 := ℂ) x 0
+      rw [inner_zero_right]
+      change inner (𝕜 := ℂ) x (Q.between P y) = 0
+      rw [← P.between_adjoint Q]
+      exact (ContinuousLinearMap.adjoint_inner_right A x y).trans hi
+    have hy0 : y = 0 := hB.injective (hBy.trans (map_zero B).symm)
+    exact hy0
+  have hsurj : Function.Surjective A :=
+    LinearMap.range_eq_top.mp (Submodule.orthogonal_eq_bot_iff.mp horth)
   exact ⟨ContinuousLinearEquiv.ofBijective A
-    (LinearMap.ker_eq_bot.mpr hinj) (LinearMap.range_eq_top.mpr hsurj), fun _ => rfl⟩
+    (LinearMap.ker_eq_bot.mpr hA.injective) (LinearMap.range_eq_top.mpr hsurj), fun _ => rfl⟩
 
 theorem lower_bounds_of_rangeIso (P Q : OrthProjection H) (h : RangeIso P Q) :
     ∃ c : ℝ, 0 < c ∧ c ≤ 1 ∧
@@ -218,6 +254,59 @@ theorem bound_on_kernel_of_complement_bound (P Q : OrthProjection H) {b : ℝ}
     apply (mul_le_mul_left hpos).mp
     nlinarith only [hprod]
 
+/-- Either complementary component is bounded by the projection gap. -/
+theorem complement_comp_norm_le_gap (P Q : OrthProjection H) :
+    ‖(1 - P.op).comp Q.op‖ ≤ ‖P.op - Q.op‖ := by
+  apply ContinuousLinearMap.opNorm_le_bound _ (norm_nonneg _)
+  intro x
+  have he : ((1 - P.op).comp Q.op) x = -((P.op - Q.op) (Q.op x)) := by
+    simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.sub_apply,
+      ContinuousLinearMap.one_apply, Q.apply_idempotent, neg_sub]
+  rw [he, norm_neg]
+  exact ((P.op - Q.op).le_opNorm _).trans
+    (mul_le_mul_of_nonneg_left (Q.norm_op_apply_le x) (norm_nonneg _))
+
+/-- The exact maximum identity displayed in manuscript Lemma 2.2. -/
+theorem norm_sub_eq_max_complement (P Q : OrthProjection H) :
+    ‖P.op - Q.op‖ = max ‖(1 - P.op).comp Q.op‖ ‖(1 - Q.op).comp P.op‖ := by
+  let b := max ‖(1 - P.op).comp Q.op‖ ‖(1 - Q.op).comp P.op‖
+  have hb : 0 ≤ b := (norm_nonneg _).trans (le_max_left _ _)
+  have hP : ∀ x ∈ Q.range, ‖x - P.op x‖ ≤ b * ‖x‖ := by
+    intro x hx
+    have he : ((1 - P.op).comp Q.op) x = x - P.op x := by
+      simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.sub_apply,
+        ContinuousLinearMap.one_apply, (Q.mem_range_iff x).mp hx]
+    rw [← he]
+    exact (((1 - P.op).comp Q.op).le_opNorm x).trans
+      (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg x))
+  have hQ : ∀ y ∈ P.range, ‖y - Q.op y‖ ≤ b * ‖y‖ := by
+    intro y hy
+    have he : ((1 - Q.op).comp P.op) y = y - Q.op y := by
+      simp only [ContinuousLinearMap.comp_apply, ContinuousLinearMap.sub_apply,
+        ContinuousLinearMap.one_apply, (P.mem_range_iff y).mp hy]
+    rw [← he]
+    exact (((1 - Q.op).comp P.op).le_opNorm y).trans
+      (mul_le_mul_of_nonneg_right (le_max_right _ _) (norm_nonneg y))
+  apply le_antisymm
+  · apply ContinuousLinearMap.opNorm_le_bound _ hb
+    intro x
+    have h₁ := P.bound_on_kernel_of_complement_bound Q hb hQ (x - Q.op x)
+      (by rw [map_sub, Q.apply_idempotent, _root_.sub_self])
+    have h₂ := hP (Q.op x) ⟨x, rfl⟩
+    have hs₁ := pow_le_pow_left₀ (norm_nonneg _) h₁ 2
+    have hs₂ := pow_le_pow_left₀ (norm_nonneg _) h₂ 2
+    have hs : ‖(P.op - Q.op) x‖ ^ 2 ≤ (b * ‖x‖) ^ 2 := by
+      calc
+        ‖(P.op - Q.op) x‖ ^ 2 =
+            ‖P.op (x - Q.op x)‖ ^ 2 + ‖Q.op x - P.op (Q.op x)‖ ^ 2 :=
+          P.norm_sub_apply_sq Q x
+        _ ≤ (b * ‖x - Q.op x‖) ^ 2 + (b * ‖Q.op x‖) ^ 2 := add_le_add hs₁ hs₂
+        _ = b ^ 2 * (‖Q.op x‖ ^ 2 + ‖x - Q.op x‖ ^ 2) := by ring
+        _ = (b * ‖x‖) ^ 2 := by rw [Q.norm_sq_decomposition, mul_pow]
+    nlinarith [mul_nonneg hb (norm_nonneg x), norm_nonneg ((P.op - Q.op) x)]
+  · apply max_le (P.complement_comp_norm_le_gap Q)
+    simpa only [norm_sub_rev] using Q.complement_comp_norm_le_gap P
+
 theorem gap_of_rangeIso (P Q : OrthProjection H) (h : RangeIso P Q) :
     ‖P.op - Q.op‖ < 1 := by
   obtain ⟨c, hc, hc₁, hP, hQ⟩ := P.lower_bounds_of_rangeIso Q h
@@ -227,30 +316,25 @@ theorem gap_of_rangeIso (P Q : OrthProjection H) (h : RangeIso P Q) :
   have hb₁ : b < 1 := by nlinarith [sq_pos_of_pos hc]
   have hPcomp := P.complement_bound_of_lower Q hc.le hb hb_sq hP
   have hQcomp := Q.complement_bound_of_lower P hc.le hb hb_sq hQ
-  apply lt_of_le_of_lt _ hb₁
-  apply ContinuousLinearMap.opNorm_le_bound _ hb
-  intro x
-  have h₁ := P.bound_on_kernel_of_complement_bound Q hb hQcomp (x - Q.op x)
-    (by rw [map_sub, Q.apply_idempotent, _root_.sub_self])
-  have h₂ := hPcomp (Q.op x) ⟨x, rfl⟩
-  have h₁sq := pow_le_pow_left₀ (norm_nonneg _) h₁ 2
-  have h₂sq := pow_le_pow_left₀ (norm_nonneg _) h₂ 2
-  have hsq : ‖(P.op - Q.op) x‖ ^ 2 ≤ (b * ‖x‖) ^ 2 := by
-    calc
-      ‖(P.op - Q.op) x‖ ^ 2 =
-          ‖P.op (x - Q.op x)‖ ^ 2 + ‖Q.op x - P.op (Q.op x)‖ ^ 2 :=
-        P.norm_sub_apply_sq Q x
-      _ ≤ (b * ‖x - Q.op x‖) ^ 2 + (b * ‖Q.op x‖) ^ 2 := add_le_add h₁sq h₂sq
-      _ = b ^ 2 * (‖Q.op x‖ ^ 2 + ‖x - Q.op x‖ ^ 2) := by ring
-      _ = (b * ‖x‖) ^ 2 := by rw [Q.norm_sq_decomposition, mul_pow]
-  nlinarith [mul_nonneg hb (norm_nonneg x), norm_nonneg ((P.op - Q.op) x)]
+  rw [P.norm_sub_eq_max_complement Q]
+  apply lt_of_le_of_lt (max_le ?_ ?_) hb₁
+  · apply ContinuousLinearMap.opNorm_le_bound _ hb
+    intro x
+    change ‖Q.op x - P.op (Q.op x)‖ ≤ b * ‖x‖
+    exact (hPcomp (Q.op x) ⟨x, rfl⟩).trans
+      (mul_le_mul_of_nonneg_left (Q.norm_op_apply_le x) hb)
+  · apply ContinuousLinearMap.opNorm_le_bound _ hb
+    intro x
+    change ‖P.op x - Q.op (P.op x)‖ ≤ b * ‖x‖
+    exact (hQcomp (P.op x) ⟨x, rfl⟩).trans
+      (mul_le_mul_of_nonneg_left (P.norm_op_apply_le x) hb)
 
-/-- GAP-01: manuscript Lemma 2.1. -/
+/-- GAP-01: manuscript Lemma 2.2. -/
 theorem gap_iff_rangeIso [CompleteSpace H] (P Q : OrthProjection H) :
     ‖P.op - Q.op‖ < 1 ↔ RangeIso P Q := by
   exact ⟨P.rangeIso_of_gap Q, P.gap_of_rangeIso Q⟩
 
-/-- GAP-02: Lemma 2.2; infinite-dimensional nesting, not rank counting. -/
+/-- GAP-02: Lemma 2.3; infinite-dimensional nesting, not rank counting. -/
 theorem nested_not_both_gap [CompleteSpace H] (Rminus Rplus M : OrthProjection H)
     (hnest : Rminus.range < Rplus.range) :
     ¬ (‖Rminus.op - M.op‖ < 1 ∧ ‖Rplus.op - M.op‖ < 1) := by
