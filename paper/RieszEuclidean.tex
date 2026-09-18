@@ -184,12 +184,24 @@ boundary produces two strong limits of the cutoff projections with
 strictly nested ranges. Norm continuity of $M_t$ places both limits at
 distance at most $\gamma$ from $M_{t_0}$, giving a contradiction.
 
+The translation-hull construction belongs to the established theory of
+point set dynamical systems; see Lenz--Stollmann \cite{LenzStollmann} and
+Bj\"orklund, Hartnick and Pogorzelski \cite{BjorklundHartnickPogorzelski}.
+Its applications to sampling and interpolation are developed by
+Enstad--Raum \cite{EnstadRaum}. Averaging inequalities over invariant
+probability measures on hulls also plays a central role in
+\cite{EnstadRaum,EnstadVanVelthoven}. Here we use this framework to
+transfer a uniform distance estimate between projections to a stationary
+Hilbert space, where a boundary crossing produces the obstruction.
+
 Sections~\ref{sec:bumps}--\ref{sec:distance} establish the analytic
 construction for any bounded open domain with boundary of Lebesgue measure
 zero. Section~\ref{sec:sphere} supplies the geometric step for balls,
 Section~\ref{sec:triangles} treats triangles, and Section~\ref{sec:convex}
 extends the result to nonempty bounded convex open sets with $C^2$
 boundary.
+
+\subsection*{Note} The non-existence of Riesz basis of exponentials in balls and triangles has been independently obtained with a different proof by Zhiqiang Wan in \cite{Wan}. We were aware of his result in the final stage of preparing our manuscript. Since the methods are different and there are domains, such as the smooth convex open sets, not covered in \cite{Wan}, we offer this proof here.
 
 \subsection*{Acknowledgments}
 The author thanks Joaquim Bruna for extensive discussions on the manuscript.
@@ -446,6 +458,17 @@ would be detected by another nonnegative continuous test function.
 Uniform separation prevents more than one point from approaching a limit
 point.
 
+The topology in \eqref{eq:weak-sets} is the restriction of the
+Chabauty--Fell topology; see
+\cite[Appendix~A, Proposition~A.1]{BjorklundHartnickPogorzelski}.
+Lemma~\ref{lem:hull} is a standard consequence of compactness and
+metrizability of that space and continuity of its translation action:
+\cite[Proposition~2.2(ii)]{EnstadRaum}, with $U=B(0,\delta/2)$, shows
+that the class of $\delta$-separated sets is closed. See also
+\cite[Theorem~1.2, Proposition~1.3 and Remark~1.5(c)]{LenzStollmann}
+for the Euclidean topology and hull construction. We include a proof
+using counting measures.
+
 \begin{lemma}\label{lem:hull}
 The space of $\delta$-separated subsets of $\R^n$, including the empty
 set, is compact and metrizable in the topology \eqref{eq:weak-sets}.
@@ -514,6 +537,10 @@ Consequently, a strong limit of orthogonal projections is an orthogonal
 projection: the projections are uniformly bounded, and
 \eqref{eq:strong-products} preserves idempotence.
 
+The local matching of centers used in the next proof is the separated
+case of \cite[Proposition~2.3]{EnstadRaum}; see also
+\cite[Lemma~2.2]{EnstadVanVelthoven}. Compact support of the bumps
+then gives strong convergence of the associated projections.
 
 \begin{lemma}\label{lem:strong-Q}
 If $\Gamma_j\to\Gamma$ in $X$, then $Q_{\Gamma_j}\to Q_\Gamma$
@@ -546,7 +573,11 @@ Since $P$ is nonzero, the empty set cannot belong to $X$: its projection
 is zero and would have distance one from $P$. By
 Lemma~\ref{lem:projection-distance} and \eqref{eq:bump-synthesis}, each
 configuration in $X$ is again the frequency set of an exponential
-Riesz basis for $L^2(\Omega)$. Only the uniform projection estimate will be needed below.
+Riesz basis for $L^2(\Omega)$. Preservation of the Riesz and frame
+properties under hull limits is also established in
+\cite[Proposition~3.8 and Theorem~3.9]{EnstadRaum}; for separated
+sets the bounds are preserved without loss. Only the uniform projection
+estimate will be needed below.
 
 \subsection{Translation averaging}
 
@@ -555,6 +586,12 @@ probability measure. The associated translation operators are strongly
 continuous, and the constant function has norm one. This invariant vector
 will detect the spectral jump at the boundary.}
 
+The following construction is the usual F\o lner averaging argument for
+an invariant probability measure on a compact hull. In the sampling
+setting, see \cite[proof of Theorem~2.16, Steps~2--3]{EnstadRaum};
+see also the amenability discussion in
+\cite[Section~2.3]{EnstadVanVelthoven}. Neither unique ergodicity nor
+finite local complexity is needed here.
 
 Put $C_R=[-R,R]^n$ and define a probability measure on $X$ by
 \[
@@ -834,6 +871,11 @@ Moreover it vanishes for $|y|>2r$. Define
 This is an $\Hh$-valued integral with norm at most
 $\|f\|\int\|k_y\|_\infty\,dy$.
 
+Covariant operator families over point set dynamical systems are studied
+in \cite[Sections~2--3]{LenzStollmann}. The construction here uses the
+explicit bump kernel to obtain operators on $L^2(X,\mu)$; the next
+proof verifies their projection property and norm continuity directly.
+
 \begin{proposition}\label{prop:M}
 Every $M_t$ is an orthogonal projection. The family is Lipschitz continuous
 in operator norm:
@@ -964,6 +1006,13 @@ because the test functions preserve the averaged squared norm. We then
 pass to a strong limit for the spectral cutoffs and a norm limit for the
 comparison operators.}
 
+Related arguments integrating frame inequalities over an invariant hull
+measure occur in \cite[Theorem~3.12]{EnstadRaum} and
+\cite[Theorem~3.5]{EnstadVanVelthoven}. Those results relate frame
+bounds to covolumes. Here the averaged forms
+\eqref{eq:average-Q}--\eqref{eq:average-P} instead transfer the
+operator-norm distance bound between the two projections, with the same
+constant $\gamma$.
 
 \begin{proposition}\label{prop:distance}
 For every $t\in\mathcal G$,
@@ -1544,6 +1593,13 @@ edited by L.~Carleson, P.~Malliavin, J.~Neuberger and J.~Wermer,
 Contemporary Mathematicians, Birkh\"auser, Boston, 1989.
 See the Mittag--Leffler lectures on balayage and interpolation.
 
+\bibitem{BjorklundHartnickPogorzelski}
+M.~Bj\"orklund, T.~Hartnick and F.~Pogorzelski,
+\emph{Aperiodic order and spherical diffraction, I: auto-correlation of
+regular model sets},
+Proc. Lond. Math. Soc. (3) \textbf{116} (2018), no.~4, 957--996.
+\href{https://doi.org/10.1112/plms.12091}{doi:10.1112/plms.12091}.
+
 \bibitem{BrunaMassanedaOrtegaCerda}
 J.~Bruna, X.~Massaneda and J.~Ortega-Cerdà,
 \emph{Connections between signal processing and complex analysis},
@@ -1555,6 +1611,20 @@ A.~Debernardi and N.~Lev,
 \emph{Riesz bases of exponentials for convex polytopes with symmetric faces},
 J.~Eur. Math. Soc. \textbf{24} (2022), no.~8, 3017--3029.
 \href{https://doi.org/10.4171/JEMS/1158}{doi:10.4171/JEMS/1158}.
+
+\bibitem{EnstadRaum}
+U.~Enstad and S.~Raum,
+\emph{A dynamical approach to sampling and interpolation in unimodular
+groups},
+Trans. Amer. Math. Soc. \textbf{378} (2025), no.~3, 1975--2006.
+\href{https://doi.org/10.1090/tran/9326}{doi:10.1090/tran/9326}.
+\href{https://arxiv.org/abs/2207.05125}{arXiv:2207.05125}.
+
+\bibitem{EnstadVanVelthoven}
+U.~Enstad and J.~T.~van Velthoven,
+\emph{On the Calder\'on sum formula for wavelet systems},
+preprint, 2026.
+\href{https://arxiv.org/abs/2602.10766}{arXiv:2602.10766}.
 
 \bibitem{Fuglede}
 B.~Fuglede,
@@ -1612,6 +1682,13 @@ G.~Kozma, S.~Nitzan and A.~Olevskii,
 Rev. Mat. Iberoam. \textbf{39} (2023), no.~6, 2007--2016.
 \href{https://doi.org/10.4171/RMI/1411}{doi:10.4171/RMI/1411}.
 
+\bibitem{LenzStollmann}
+D.~Lenz and P.~Stollmann,
+\emph{Delone dynamical systems and associated random operators},
+in \emph{Operator Algebras and Mathematical Physics}
+(Constan\c{t}a, 2001), Theta, Bucharest, 2003, 267--285.
+\href{https://arxiv.org/abs/math-ph/0202042}{arXiv:math-ph/0202042}.
+
 \bibitem{LevTselishchev}
 N.~Lev and A.~Tselishchev,
 \emph{Unconditional Schauder frames of exponentials and of uniformly bounded
@@ -1639,6 +1716,12 @@ Interscience Tracts in Pure and Applied Mathematics, vol.~12,
 Interscience Publishers, New York, 1962.
 See Section~1.4.3, p.~19 (Bochner's theorem).
 \href{https://doi.org/10.1002/9781118165621}{Publisher's edition}.
+
+\bibitem{Wan}
+Z.~Wan,
+\emph{Sets with no Riesz bases of exponentials},
+preprint, 2026.
+\href{https://arxiv.org/abs/2609.16674}{arXiv:2609.16674}.
 
 \bibitem{Zakharov}
 D.~Zakharov,
