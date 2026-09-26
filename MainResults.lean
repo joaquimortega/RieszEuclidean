@@ -3,9 +3,10 @@ import RieszEuclidean
 /-!
 # Implemented result statements and concrete definitions
 
-This compact Comparator reference states thirty-seven proved results, including
+This compact Comparator reference states proved results, including
 spectral-measure existence for the stationary representation and unconditional
-geometric nonexistence conclusions. Wrapper proofs use the modular library
+geometric nonexistence conclusions, and complete-minimal existence modulo the
+explicit Titchmarsh–Lions hypothesis. Wrapper proofs use the modular library
 without placeholders or warning suppressions.
 -/
 noncomputable section
@@ -609,5 +610,100 @@ theorem convex_C2_no_exponentialRieszBasis {n : ℕ} (hn : 2 ≤ n)
     (hc : Convex ℝ Ω) (hb : Bornology.IsBounded Ω) (hC : HasC2Boundary Ω)
     (Λ : Set (Euclidean n)) : ¬ HasExponentialRieszBasis Ω Λ :=
   RieszEuclidean.convex_C2_no_exponentialRieszBasis hn Ω hΩ hne hc hb hC Λ
+
+/-- The entire quotient lemma used in the complete-minimal construction. -/
+theorem entire_quotient_finite_exponential_type {d : ℕ}
+    {A D G : CompleteMinimal.ComplexEuclidean d → ℂ}
+    (hA : Differentiable ℂ A) (hD : Differentiable ℂ D) (hG : Differentiable ℂ G)
+    (hproduct : ∀ z, A z = D z * G z) (hD0 : D 0 ≠ 0)
+    (hAtype : CompleteMinimal.FiniteExponentialType A)
+    (hDtype : CompleteMinimal.FiniteExponentialType D) :
+    CompleteMinimal.FiniteExponentialType G :=
+  CompleteMinimal.finiteExponentialType_entire_quotient hA hD hG hproduct hD0 hAtype hDtype
+
+/-- An entire function of finite type with polynomial real growth is the
+Fourier transform of an actual compactly supported distribution. -/
+theorem paley_wiener_schwartz {d : ℕ} {F : CompleteMinimal.ComplexEuclidean d → ℂ}
+    (hF : Differentiable ℂ F) (htype : CompleteMinimal.FiniteExponentialType F)
+    (hreal : ∃ N : ℕ, ∃ C : ℝ, 0 ≤ C ∧ ∀ x : Euclidean d,
+      ‖F (CompleteMinimal.realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N) :
+    ∃ u : CompleteMinimal.TemperedDistribution d,
+      CompleteMinimal.CompactlySupportedDistribution u ∧
+      ∀ φ : SchwartzMap (Euclidean d) ℂ,
+        CompleteMinimal.distributionFourier u φ =
+          ∫ x, F (CompleteMinimal.realToComplex x) * φ x :=
+  CompleteMinimal.paleyWienerSchwartz hF htype hreal
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+open CompleteMinimal in
+/-- Complete and ordinary minimal exponentials on every bounded nonempty open convex domain,
+with locally finite frequencies and John-supported duals, assuming Titchmarsh–Lions. -/
+theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
+    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          ∀ ξ, SupportedOn Ω (g ξ) E :=
+  CompleteMinimal.complete_minimal_bounded_open_convex hd hTL hne hbounded hopen hconvex
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+open CompleteMinimal in
+/-- The same selected frequencies work on all measurable intermediate domains;
+the actual John-supported dual family is incomplete outside a proper support region. -/
+theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
+    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧ interior E ⊆ Ω ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          (∀ ξ, SupportedOn Ω (g ξ) E) ∧
+          (∀ (D : Set (Euclidean d)), MeasurableSet D →
+            interior E ≤ᵐ[volume] D → D ≤ᵐ[volume] Ω →
+            ∃ hD : volume D ≠ ⊤,
+              IsCompleteExponential D hD Λ ∧ IsMinimalExponential D hD Λ ∧
+              IsBiorthogonal (exponentialFamily D hD Λ)
+                (fun ξ => domainToDomain Ω D hopen.measurableSet (g ξ)) ∧
+              ∀ ξ, SupportedOn D (domainToDomain Ω D hopen.measurableSet (g ξ)) E) ∧
+          (0 < volume (Ω \ E) → ¬ IsComplete g) ∧
+          (interior E ⊂ Ω → ¬ IsComplete g) :=
+  CompleteMinimal.complete_minimal_scope hd hTL hne hbounded hopen hconvex
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+open CompleteMinimal in
+/-- Actual interpolation spaces: nesting, binomial dimension, localized support,
+and exact orthogonal annihilators of the later frequency spheres. -/
+theorem normalized_interpolation_spaces (n : ℕ) (hTL : TitchmarshLions (n + 1))
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (hconvex : Convex ℝ Ω)
+    (hJ : IsJohnEllipsoid (closure Ω) (Metric.closedBall (0 : Euclidean (n + 1)) 1))
+    (hB : Metric.ball (0 : Euclidean (n + 1)) 1 ⊆ Ω) :
+    Monotone (normalizedInterpolationSpace n Ω hΩ hbounded) ∧
+    ∀ N : ℕ,
+      Module.finrank ℂ (normalizedInterpolationSpace n Ω hΩ hbounded N) =
+        Nat.choose (2 * N + (n + 1)) (n + 1) ∧
+      (∀ f : DomainL2 Ω,
+        f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N →
+          SupportedOn Ω f (Metric.closedBall 0 1)) ∧
+      (∀ f : DomainL2 Ω,
+        f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N ↔
+          ∀ x ∈ laterSpheres (ballZeroRadius n) N,
+            inner (𝕜 := ℂ) f (exponentialL2 Ω hbounded.measure_lt_top.ne x) = 0) :=
+  CompleteMinimal.normalized_interpolation_spaces n hTL Ω hΩ hbounded hconvex hJ hB
 
 end RieszEuclidean.Results

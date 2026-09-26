@@ -1,19 +1,41 @@
+import Mathlib.Algebra.MvPolynomial.CommRing
+import Mathlib.Algebra.MvPolynomial.Polynomial
+import Mathlib.Algebra.Order.Archimedean.Basic
+import Mathlib.Algebra.Polynomial.Degree.SmallDegree
+import Mathlib.Algebra.Polynomial.Div
+import Mathlib.Algebra.Polynomial.Roots
+import Mathlib.Analysis.Analytic.IsolatedZeros
+import Mathlib.Analysis.Analytic.OfScalars
+import Mathlib.Analysis.Analytic.Polynomial
 import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.Calculus.ContDiff.Defs
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.FDeriv.Analytic
 import Mathlib.Analysis.Calculus.Implicit
 import Mathlib.Analysis.Calculus.InverseFunctionTheorem.ContDiff
+import Mathlib.Analysis.Calculus.LineDeriv.IntegrationByParts
 import Mathlib.Analysis.Calculus.LocalExtr.Basic
 import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.Calculus.ParametricIntegral
+import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
+import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.Complex.PhragmenLindelof
 import Mathlib.Analysis.Complex.RealDeriv
 import Mathlib.Analysis.Convex.Deriv
+import Mathlib.Analysis.Convex.Hull
 import Mathlib.Analysis.Convex.Measure
 import Mathlib.Analysis.Convex.Topology
 import Mathlib.Analysis.Convolution
 import Mathlib.Analysis.Distribution.AEEqOfIntegralContDiff
 import Mathlib.Analysis.Distribution.FourierSchwartz
+import Mathlib.Analysis.Fourier.AddCircle
+import Mathlib.Analysis.Fourier.FourierTransformDeriv
+import Mathlib.Analysis.Fourier.RiemannLebesgueLemma
 import Mathlib.Analysis.InnerProductSpace.Adjoint
 import Mathlib.Analysis.InnerProductSpace.Basic
 import Mathlib.Analysis.InnerProductSpace.Calculus
@@ -21,29 +43,63 @@ import Mathlib.Analysis.InnerProductSpace.Dual
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Analysis.InnerProductSpace.Orthonormal
 import Mathlib.Analysis.InnerProductSpace.PiL2
+import Mathlib.Analysis.InnerProductSpace.Projection
 import Mathlib.Analysis.InnerProductSpace.l2Space
+import Mathlib.Analysis.Normed.Algebra.Exponential
 import Mathlib.Analysis.Normed.Module.Convex
 import Mathlib.Analysis.Normed.Module.WeakDual
 import Mathlib.Analysis.Normed.Operator.Banach
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 import Mathlib.Analysis.Normed.Order.Lattice
 import Mathlib.Analysis.NormedSpace.OperatorNorm.Completeness
+import Mathlib.Analysis.NormedSpace.Pointwise
 import Mathlib.Analysis.NormedSpace.Real
+import Mathlib.Analysis.PSeries
 import Mathlib.Analysis.RCLike.Basic
+import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
+import Mathlib.Analysis.SpecialFunctions.Complex.Arg
+import Mathlib.Analysis.SpecialFunctions.Complex.Log
+import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Exponential
+import Mathlib.Analysis.SpecialFunctions.Gamma.Beta
+import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
+import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+import Mathlib.Analysis.SpecialFunctions.Integrals
+import Mathlib.Analysis.SpecialFunctions.JapaneseBracket
+import Mathlib.Analysis.SpecialFunctions.Log.PosLog
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Analysis.SpecialFunctions.Sqrt
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
+import Mathlib.Data.Finsupp.Multiset
 import Mathlib.Data.Set.Card
+import Mathlib.Data.Sym.Card
 import Mathlib.Geometry.Manifold.Instances.Sphere
+import Mathlib.Geometry.Manifold.PartitionOfUnity
 import Mathlib.LinearAlgebra.AffineSpace.FiniteDimensional
+import Mathlib.LinearAlgebra.Basis.VectorSpace
+import Mathlib.LinearAlgebra.Dimension.Finrank
+import Mathlib.LinearAlgebra.Dimension.StrongRankCondition
 import Mathlib.LinearAlgebra.Dual.Lemmas
+import Mathlib.LinearAlgebra.FiniteDimensional.Basic
 import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import Mathlib.LinearAlgebra.Finsupp.LinearCombination
+import Mathlib.LinearAlgebra.Lagrange
+import Mathlib.LinearAlgebra.LinearIndependent.Defs
+import Mathlib.LinearAlgebra.Matrix.SchurComplement
+import Mathlib.LinearAlgebra.Multilinear.Basis
+import Mathlib.MeasureTheory.Constructions.HaarToSphere
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Function.ContinuousMapDense
 import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
+import Mathlib.MeasureTheory.Function.Holder
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Function.LocallyIntegrable
 import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
@@ -55,8 +111,11 @@ import Mathlib.MeasureTheory.Integral.Bochner.Basic
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 import Mathlib.MeasureTheory.Integral.Bochner.Set
 import Mathlib.MeasureTheory.Integral.BoundedContinuousFunction
+import Mathlib.MeasureTheory.Integral.DivergenceTheorem
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
+import Mathlib.MeasureTheory.Integral.Pi
 import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.MeasureTheory.Integral.RieszMarkovKakutani.Real
 import Mathlib.MeasureTheory.Measure.CharacteristicFunction
@@ -68,34 +127,52 @@ import Mathlib.MeasureTheory.Measure.HasOuterApproxClosed
 import Mathlib.MeasureTheory.Measure.Hausdorff
 import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
+import Mathlib.MeasureTheory.Measure.OpenPos
 import Mathlib.MeasureTheory.Measure.Prod
 import Mathlib.MeasureTheory.Measure.Real
 import Mathlib.MeasureTheory.Measure.SeparableMeasure
 import Mathlib.MeasureTheory.Measure.Typeclasses.NoAtoms
 import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
+import Mathlib.Order.Filter.Cofinite
+import Mathlib.Order.Hom.Set
+import Mathlib.Order.OrderIsoNat
+import Mathlib.RingTheory.MvPolynomial.Basic
+import Mathlib.RingTheory.MvPolynomial.Homogeneous
+import Mathlib.RingTheory.MvPolynomial.MonomialOrder.DegLex
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 import Mathlib.Topology.Algebra.Group.Pointwise
 import Mathlib.Topology.Algebra.Indicator
+import Mathlib.Topology.Algebra.Module.Basic
+import Mathlib.Topology.Algebra.Module.LinearMap
+import Mathlib.Topology.Algebra.Module.StrongTopology
+import Mathlib.Topology.Algebra.MvPolynomial
 import Mathlib.Topology.Bases
+import Mathlib.Topology.Compactness.SigmaCompact
 import Mathlib.Topology.ContinuousMap.BoundedCompactlySupported
 import Mathlib.Topology.ContinuousMap.Compact
 import Mathlib.Topology.ContinuousMap.CompactlySupported
 import Mathlib.Topology.ContinuousMap.Ordered
 import Mathlib.Topology.ContinuousMap.ZeroAtInfty
 import Mathlib.Topology.EMetricSpace.Paracompact
+import Mathlib.Topology.Instances.Real.Lemmas
 import Mathlib.Topology.MetricSpace.Bounded
 import Mathlib.Topology.MetricSpace.Closeds
 import Mathlib.Topology.MetricSpace.HausdorffDimension
+import Mathlib.Topology.MetricSpace.HausdorffDistance
 import Mathlib.Topology.MetricSpace.Polish
 import Mathlib.Topology.Metrizable.Basic
 import Mathlib.Topology.Metrizable.CompletelyMetrizable
 import Mathlib.Topology.Metrizable.Real
 import Mathlib.Topology.Metrizable.Urysohn
 import Mathlib.Topology.Order.Compact
+import Mathlib.Topology.Order.IntermediateValue
+import Mathlib.Topology.Order.MonotoneConvergence
 import Mathlib.Topology.Sequences
 import Mathlib.Topology.UniformSpace.Cauchy
 import Mathlib.Topology.UniformSpace.HeineCantor
@@ -110,6 +187,8 @@ existence, and the unconditional geometric conclusions of the manuscript.
 
 /- Source: RieszEuclidean/Basic.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-!
 # Concrete Euclidean synthesis semantics
 
@@ -171,9 +250,13 @@ def affineBall {d : ℕ} (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean 
   (fun x => a + A x) '' Metric.ball 0 R
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/L2Transport.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-! General L² pullback and unit-phase reindexing. -/
 noncomputable section
 open MeasureTheory MeasureTheory.Measure Filter Topology
@@ -322,9 +405,13 @@ end Sequences
 
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/Affine.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-! Invertible affine changes of domain and the transpose change of frequencies. -/
 
 noncomputable section
@@ -460,9 +547,13 @@ theorem exists_exponentialRieszBasis_affine_iff (a : (Euclidean d)) (A : (Euclid
     exact ⟨_, h⟩
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ApproximateCutoffs.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Set MeasureTheory Filter
 namespace RieszEuclidean
 /-- A probability kernel smoothed against the actual translated indicator. -/
@@ -573,9 +664,12 @@ theorem tendsto_smoothedIndicator {d : ℕ} {k : ℝ → Euclidean d → ℝ}
     have h := abs_smoothedIndicator_sub_le_tail (hk R hR) (hpos R hR) (hmass R hR) hΩ x ε hlocal
     linarith [(abs_le.mp h).2]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/FourierL2.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 open scoped FourierTransform
@@ -646,9 +740,13 @@ theorem schwartz_fourier_norm {d : ℕ} (f : SchwartzMap (Euclidean d) ℂ) :
     norm_nonneg (f.toLp 2)]
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SchwartzDensity.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open scoped ContDiff
 open Metric Set Function MeasureTheory
@@ -775,9 +873,13 @@ theorem schwartz_toL2_denseRange (d : ℕ) :
   exact ENNReal.toReal_lt_of_lt_ofReal hg
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/Bumps.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 set_option maxHeartbeats 800000
 open scoped ContDiff
@@ -839,9 +941,13 @@ theorem exists_normalized_schwartz_bump {d : ℕ} {r : ℝ} (hr : 0 < r) :
     rw [hb]
     simpa using inv_pos.mpr hN
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/FourierExtension.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -931,9 +1037,13 @@ theorem paperFourierL2_schwartz (d : ℕ) (f : SchwartzMap (Euclidean d) ℂ) :
     (Filter.Eventually.of_forall (fun x => congrFun
       (SchwartzMap.fourierTransformCLE_symm_apply ℂ f) x))
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ProjectionGap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-! Blueprint: blueprint/README.md#projection-gap. -/
 noncomputable section
 open scoped NNReal
@@ -1315,9 +1425,13 @@ theorem gap_le_of_strong_limit (P : ℕ → H →L[ℂ] H) (R M : H →L[ℂ] H)
 
 end OrthProjection
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/CutoffProjection.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Set
 namespace RieszEuclidean
@@ -1419,9 +1533,13 @@ theorem fourierProjection_mem_range_iff {d : ℕ} (Ω : Set (Euclidean d))
     rw [fourierProjection_transform]
     exact (domainCutoff_eq_self_iff Ω hΩ _).mpr h
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/FourierAgreement.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- Pairing an arbitrary L² function with a Schwartz test function. -/
@@ -1510,9 +1628,12 @@ theorem paperFourierL2_eq_integral {d : ℕ} (f : FullL2 d)
     ∫ x, Real.fourierIntegralInv f x * starRingEnd ℂ (g x : ℂ) at h
   simpa only [Complex.conj_ofReal, Complex.real_smul, mul_comm] using h
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/FourierKernel.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Set
 namespace RieszEuclidean
@@ -1604,9 +1725,13 @@ theorem fourierProjection_kernel {d : ℕ} (Ω : Set (Euclidean d))
       rw [hx]
     _ = _ := integral_domain_inverseFourier Ω hΩ hfin hf v
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/FourierTranslations.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -1664,9 +1789,13 @@ theorem fourierProjection_translation {d : ℕ} (Ω : Set (Euclidean d))
     exact fourierProjection_translation_integrable Ω hΩ hfin t _
       (g.integrable.congr (g.coeFn_toLp 2 volume).symm)
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BumpTranslates.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- Separated centres force distinct small bump translates to have disjoint supports. -/
@@ -1702,9 +1831,12 @@ theorem translated_bumps_orthonormal {d : ℕ} {δ r : ℝ} {Λ : Set (Euclidean
   rw [hi, hj]
   rcases bump_translates_disjoint hΛ hr b hs hij x with h | h <;> simp [h]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BumpKernel.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 namespace RieszEuclidean
 
 /-- The concrete kernel obtained by summing the rank-one bump kernels over a configuration. -/
@@ -1820,9 +1952,12 @@ theorem bumpKernel_translate {d : ℕ} (Γ : Set (Euclidean d))
   simp only [add_sub_add_right_eq_sub]
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/EuclideanBoxes.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set
 open scoped ENNReal
 namespace RieszEuclidean
@@ -1857,9 +1992,12 @@ theorem boxProbabilityMeasure_isProbability (d : ℕ) {R : ℝ} (hR : 0 < R) :
     smul_eq_mul]
   exact ENNReal.inv_mul_cancel hp.ne' hf.ne
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/CompactMeans.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Set Metric Topology
 namespace RieszEuclidean
 /-- Positive normalized functionals in the weak-star unit ball. -/
@@ -1917,9 +2055,12 @@ theorem exists_invariant_mean_of_averages {X I : Type*} [TopologicalSpace X] [Co
   obtain ⟨L, hL, hc⟩ := meanFunctionals_clusterPt A hA
   exact ⟨L, hL, fun i f => mean_clusterPt_eq_of_tendsto_sub hc (T i f) f (hT i f)⟩
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BoxAverages.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- Continuous observables along a continuous orbit are integrable over a normalized box. -/
@@ -1965,9 +2106,12 @@ theorem boxAverage_mem_meanFunctionals {d : ℕ} {X : Type*}
   · intro f hf
     exact integral_nonneg (fun y => hf (a y))
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BoxBoundary.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Set MeasureTheory Filter
 open scoped symmDiff
 namespace RieszEuclidean
@@ -2068,9 +2212,12 @@ theorem box_symmDiff_ratio_tendsto_zero {d : ℕ} (z : Euclidean d) :
     exact div_le_div_of_nonneg_right (volume_real_box_symmDiff_le R z hR)
       (pow_nonneg (by positivity) _)
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/IntegralSymmDiff.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set
 open scoped symmDiff
 namespace RieszEuclidean
@@ -2098,9 +2245,12 @@ theorem norm_setIntegral_sub_le_symmDiff {α : Type*} [MeasurableSpace α]
       norm_integral_le_of_norm_le hi (Filter.Eventually.of_forall hb)
     _ = _ := by rw [integral_indicator_const C hm, smul_eq_mul, mul_comm]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BoxTranslationIntegral.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set Filter
 open scoped symmDiff
 namespace RieszEuclidean
@@ -2165,9 +2315,12 @@ theorem box_translation_error_tendsto_zero {d : ℕ} {g : Euclidean d → ℝ} (
     exact norm_box_translation_error_le hg hC z hR
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/PositiveFunctionalMeasure.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set CompactlySupportedContinuousMap
 open scoped CompactlySupported
 namespace RieszEuclidean
@@ -2208,9 +2361,12 @@ theorem rieszMeasure_measurePreserving {X : Type*} [TopologicalSpace X] [T2Space
     _ = Λ g := hInv g
     _ = ∫ x, f x ∂RealRMK.rieszMeasure hΛ := (RealRMK.integral_rieszMeasure hΛ g).symm
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/MeanRepresentation.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory CompactlySupportedContinuousMap
 open scoped CompactlySupported
 namespace RieszEuclidean
@@ -2239,9 +2395,12 @@ theorem exists_invariant_probability_of_averages {X I : Type*}
   intro f
   exact hInv i f.toContinuousMap
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/InvariantProbability.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter
 namespace RieszEuclidean
 /-- A jointly continuous additive Euclidean action on a nonempty compact metrizable
@@ -2270,9 +2429,12 @@ theorem exists_invariant_probability_euclidean_action {d : ℕ} {X : Type*}
       ∫ y, f (T y x₀) ∂boxProbabilityMeasure d ((n : ℝ) + 1)) atTop (nhds 0)
     simpa only [a, ContinuousMap.coe_mk, hadd] using he
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/WeakLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-! Elementary facts about Beurling weak limits. Hull compactness and the
 invariant probability measure remain separate blueprint obligations. -/
 noncomputable section
@@ -2347,9 +2509,13 @@ theorem WeaklyConverges.separated {δ : ℝ} {Γ : ℕ → Set (Euclidean d)}
   linarith
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SeparatedConfigurations.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Set Metric
 namespace RieszEuclidean
 /-- Uniformly separated configurations have finitely many points in each compact region. -/
@@ -2433,9 +2599,12 @@ theorem compact_uniform_separated_count {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   haveI : Finite ↥(Γ ∩ K) := Finite.of_injective f hinj
   simpa only [Nat.card_coe_set_eq] using Nat.card_le_card_of_injective f hinj
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/LocalExtraction.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter TopologicalSpace
 namespace RieszEuclidean
 /-- Restrict a closed configuration to a compact region as a closed subset of that region. -/
@@ -2461,9 +2630,12 @@ theorem compactRestrictions_diagonal {d : ℕ}
     (fun n (k : ℕ) => compactRestriction (Metric.closedBall 0 (k + 1 : ℝ)) (Γ n) (hΓ n))
   exact ⟨C, φ, hφ, fun k => ((continuous_apply k).tendsto C).comp hc⟩
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/HausdorffMatching.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter TopologicalSpace Metric EMetric
 namespace RieszEuclidean
 /-- Hausdorff convergence gives uniform two-sided matching of points. -/
@@ -2526,9 +2698,12 @@ theorem hausdorff_separated {α : Type*} [MetricSpace α] {δ : ℝ}
   rw [dist_comm a x] at ht
   linarith
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/WindowCompatibility.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter TopologicalSpace Metric
 namespace RieszEuclidean
 /-- Hausdorff limits on nested windows are compatible with inclusion. -/
@@ -2581,9 +2756,12 @@ theorem compactRestriction_limit_interior {d : ℕ} {K L : Set (Euclidean d)}
     hxa.trans_le (min_le_right _ _)
   linarith
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/WindowWeakLimit.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter TopologicalSpace Metric Set
 namespace RieszEuclidean
 /-- The ambient configuration assembled from the limits on compact windows. -/
@@ -2638,9 +2816,12 @@ theorem separated_weak_subsequence {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   have hw := weaklyConverges_of_window_limits (fun n => hc (φ n)) hC
   exact ⟨windowLimitSet C, hw.separated (fun n => hs (φ n)), φ, hφ, hw⟩
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/DistanceProfile.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter TopologicalSpace Metric EMetric Set
 namespace RieszEuclidean
 /-- Beurling weak convergence implies convergence of extended distances to configurations. -/
@@ -2682,9 +2863,12 @@ theorem WeaklyConverges.tendsto_infEdist {d : ℕ}
       linarith
     exact (infEdist_le_edist_of_mem ha).trans_lt ((edist_lt_ofReal.mpr hxa).trans hrb)
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/MovingTranslations.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter
 namespace RieszEuclidean
 /-- Local matching is preserved when the translation vectors also converge. -/
@@ -2727,9 +2911,12 @@ theorem WeaklyConverges.moving_translate {d : ℕ} {Γ : ℕ → Set (Euclidean 
     rw [dist_add_left, dist_comm z₀ (z j)] at ht
     linarith
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/ConfigurationTopology.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter TopologicalSpace Metric EMetric Set Topology
 open scoped ENNReal
 namespace RieszEuclidean
@@ -2850,9 +3037,12 @@ theorem tendsto_iff_weaklyConverges {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   ext (RieszEuclidean.translate_add y z Γ.carrier)
 end SeparatedConfiguration
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/TranslationHull.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Set Topology
 namespace RieszEuclidean.SeparatedConfiguration
 /-- The real translation orbit of a configuration. -/
@@ -2892,9 +3082,12 @@ theorem continuous_hullTranslate {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   exact (continuous_translate hδ).comp
     (continuous_fst.prodMk (continuous_subtype_val.comp continuous_snd))
 end RieszEuclidean.SeparatedConfiguration
+end
 
 /- Source: RieszEuclidean/HullInvariantMeasure.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory TopologicalSpace
 namespace RieszEuclidean.SeparatedConfiguration
 /-- The paper's compact translation hull carries a translation-invariant Borel
@@ -2917,9 +3110,12 @@ theorem exists_hull_invariant_probability {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
     rw [translate_add, add_comm z y]
   · exact ⟨Γ, mem_hull Γ⟩
 end RieszEuclidean.SeparatedConfiguration
+end
 
 /- Source: RieszEuclidean/Koopman.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 open scoped ENNReal
 namespace RieszEuclidean
@@ -3132,9 +3328,12 @@ theorem separableSpace_hullLp {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   infer_instance
 end SeparatedConfiguration
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/L2Multiplier.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 noncomputable section
 namespace RieszEuclidean
@@ -3225,9 +3424,13 @@ theorem l2MultiplierEquiv_coe {α : Type} [MeasurableSpace α] {μ : Measure α}
     (l2MultiplierEquiv m hm hC hc hl f : α → ℂ) =ᵐ[μ] fun x => m x * f x :=
   l2Multiplier_coe m hm hC f
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/StationaryKernel.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -3453,9 +3656,13 @@ theorem stationaryKernelOperator_adjoint {d : ℕ} {δ r M : ℝ} (hδ : 0 < δ)
   exact stationaryKernelOperator_inner hδ Γ μ hμ hr b hs hM hb y hm hmn f g
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BumpKernelContinuity.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter Topology
 
 namespace RieszEuclidean
@@ -3520,9 +3727,12 @@ theorem continuous_bumpKernel_of_hasCompactSupport {d : ℕ} {δ : ℝ}
   exact (not_lt_of_ge hx) hn
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/ConfigurationMeasure.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 namespace RieszEuclidean
 open MeasureTheory
 /-- The counting measure of a Euclidean configuration, with one unit mass per point. -/
@@ -3578,9 +3788,12 @@ theorem configurationMeasure_uniform_compact_bound {d : ℕ} {δ : ℝ} (hδ : 0
   rw [configurationMeasure_eq_ncard Γ hK.measurableSet (hΓ.finite_inter_compact hδ hK)]
   exact_mod_cast hN Γ hΓ
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/VagueConvergence.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set Filter Metric
 open scoped ENNReal CompactlySupported
 namespace RieszEuclidean
@@ -3806,9 +4019,12 @@ theorem weaklyConverges_iff_vague {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   exact (SeparatedConfiguration.tendsto_iff_weaklyConverges (Γ := A) (Γ₀ := B) hδ).symm.trans
     (SeparatedConfiguration.tendsto_iff_vague hδ)
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/ConfigurationKernel.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 open scoped CompactlySupported
 namespace RieszEuclidean
@@ -3977,9 +4193,12 @@ theorem continuous_configuration_bumpKernel_joint {d : ℕ} {δ : ℝ} (hδ : 0 
   · congr 1
     exact (integral_bumpKernelTest p.1.separated hδ b hb hc q₀.1 q₀.2).symm
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/FejerWeights.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter Set MeasureTheory
 namespace RieszEuclidean
 /-- The continuous Fejér weight for the coordinate box of half-side length `R`. -/
@@ -4099,9 +4318,12 @@ theorem tendsto_integral_norm_fejerWeight_smul_sub {d : ℕ} {E : Type*}
   apply Filter.Tendsto.congr' (he.mono fun _ hR => hR.symm)
   simpa using (tendsto_const_nhds (x := ∫ y, ‖f y‖)).sub h
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/ModulatedOperator.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set
 namespace RieszEuclidean
 /-- The unit-speed complex exponential is Lipschitz with constant one. -/
@@ -4324,9 +4546,12 @@ theorem tendsto_fejerModulatedOperator_error (A : Euclidean d → H →L[ℂ] H)
   filter_upwards [Filter.eventually_gt_atTop (0 : ℝ)] with R hR
   exact norm_fejerModulatedOperator_sub_le A hA hC hbound (t R) hR
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/StationaryComparison.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -4514,9 +4739,13 @@ theorem stationaryComparison_isSelfAdjoint (t : Euclidean d) :
 end Comparison
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ContinuousMultiplierIntegral.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 variable {X : Type} [TopologicalSpace X] [CompactSpace X]
@@ -4565,9 +4794,12 @@ theorem integral_continuousMap_apply {Y : Type*} [MeasurableSpace Y]
     (∫ y, c y ∂ν) x = ∫ y, c y x ∂ν := by
   exact ((ContinuousMap.evalCLM ℂ x).integral_comp_comm hc).symm
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BumpKernelProjection.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 
 namespace RieszEuclidean
@@ -4696,9 +4928,12 @@ theorem integral_bumpKernel_product {d : ℕ} {δ r : ℝ} {Γ : Set (Euclidean 
     simp only [bumpKernel_eq_zero_of_no_active Γ b hv, zero_mul, integral_zero]
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/StationaryComparisonProjection.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -5000,9 +5235,13 @@ theorem stationaryComparison_idempotent (hn : (∫ x, ‖b x‖ ^ 2) = 1) (t : E
 end Projection
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BoxOverlap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Set MeasureTheory
 namespace RieszEuclidean
 /-- Membership in a positive-radius coordinate box is a coordinatewise bound. -/
@@ -5075,9 +5314,12 @@ theorem fejerWeight_eq_normalized_overlap {d : ℕ} {R : ℝ} (hR : 0 < R)
   congr 1
   rw [sub_div, div_self (show 2 * R ≠ 0 by positivity)]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/Correlations.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open scoped BigOperators
 namespace RieszEuclidean
 variable {d : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -5181,9 +5423,12 @@ theorem hullCorrelation_one {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   norm_num
 end SeparatedConfiguration
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/IntegratedUnitary.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 variable {d : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -5270,9 +5515,12 @@ theorem integratedUnitary_norm_sq [CompleteSpace H]
   simp only [inner_smul_left, inner_smul_right, starRingEnd_apply]
   ring
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/SpectralMeasures.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory RealInnerProductSpace
 open scoped ENNReal NNReal
 namespace RieszEuclidean
@@ -5394,9 +5642,12 @@ theorem spectralMeasure_smul {d : ℕ} {H : Type*}
   rw [he] at hc
   exact hc.unique (hf.smul (‖c‖₊ ^ 2))
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/SpectralNorm.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 variable {d : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -5559,9 +5810,12 @@ theorem integrable_integratedKernelSymbol_sq {a : Euclidean d → ℂ} (ha : Int
   ext θ
   simp [← Complex.ofReal_pow]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/IntegratedAlgebra.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 variable {d : ℕ} {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -5731,9 +5985,12 @@ theorem integratedKernelSymbol_convolution {a b : Euclidean d → ℂ}
       integral_convolution (ContinuousLinearMap.mul ℂ ℂ)
         (integrable_kernel_character ha θ) (integrable_kernel_character hb θ)
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/FejerKernel.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-!
 # Normalized Euclidean box Fejér kernels
 
@@ -5838,9 +6095,13 @@ theorem fejerKernel_integrable_integral (d : ℕ) {R : ℝ} (hR : 0 < R) :
   exact inv_mul_cancel₀ (ENNReal.toReal_pos hp.ne' hf.ne).ne'
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/FejerFourier.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Set MeasureTheory
 namespace RieszEuclidean
 /-- The complex indicator of a finite-radius box is integrable. -/
@@ -5896,9 +6157,12 @@ theorem integratedKernelSymbol_fejerWeight {d : ℕ} {R : ℝ} (hR : 0 < R)
   simp only [← starRingEnd_apply, RCLike.mul_conj, integratedKernelSymbol_eq_fourierInv]
   simp [fejerKernel]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/FejerCoefficients.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Set MeasureTheory
 open scoped FourierTransform
 namespace RieszEuclidean
@@ -5974,9 +6238,12 @@ theorem integratedKernelSymbol_fejerWeight_domainKernel {d : ℕ} {R : ℝ} (hR 
       exact Filter.Eventually.of_forall fun ξ => by
         by_cases hξ : ξ ∈ Ω <;> simp [hξ]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/FejerConcentration.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-!
 # Concentration of Euclidean box Fejér kernels
 
@@ -6060,9 +6327,13 @@ theorem tendsto_fejerKernel_tail (d : ℕ) {ε : ℝ} (hε : 0 < ε) :
     fejerKernel_integral_closedBall_scale d hR hε.le]
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SmoothedFejer.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-!
 # Concrete smoothed box Fejér cutoffs
 
@@ -6125,9 +6396,13 @@ theorem measurable_fejerCutoff {d : ℕ} {Ω : Set (Euclidean d)}
   exact hm.stronglyMeasurable.integral_prod_right'.measurable
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SymbolBound.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 
 namespace RieszEuclidean
@@ -6206,9 +6481,12 @@ theorem integratedUnitaryCLM_eq_of_symbol_eq [CompleteSpace H]
   exact sub_eq_zero.mp hf
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/FiniteFilters.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- The domain kernel is the negative-sign transform of its indicator. -/
@@ -6328,9 +6606,12 @@ theorem norm_finiteFilter_le {d : ℕ} {H : Type*}
   have hb := fejerCutoff_mem_Icc hΩ hR (t + θ)
   simpa only [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hb.1] using hb.2
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/AveragedFourierForm.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Set
 namespace RieszEuclidean
@@ -6500,9 +6781,13 @@ theorem normalized_stationary_fourier_form {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   ring
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/AveragedTests.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set
 namespace RieszEuclidean
 variable {X : Type*} [MeasurableSpace X] {μ : Measure X}
@@ -6684,9 +6969,12 @@ theorem hull_averagedTest_energy {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
     ae_memLp_averagedTest _ hT hμ f hR t, integral_averagedTest_energy _ hT hμ f hR t⟩
 end SeparatedConfiguration
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BumpSynthesis.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -6738,9 +7026,13 @@ theorem isometryRangeProjection_range {H K : Type} [NormedAddCommGroup H]
     have hy := DFunLike.congr_fun he y
     exact congrArg e hy
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BumpProjectionLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- Synthesis analysis coefficients are the actual inner products with family vectors. -/
@@ -7155,9 +7447,12 @@ theorem bump_projection_stronglyConverges_of_weaklyConverges {d : ℕ} {δ r : �
       (isometryRangeProjection (bumpSynthesis Γ₀.separated hr b hs hn)).op :=
   bump_projection_stronglyConverges hδ hr b hs hn (SeparatedConfiguration.tendsto_of_weaklyConverges hΓ)
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BumpBoxKernel.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- The translated bump coefficient is its actual scalar integral against a L² input. -/
@@ -7252,9 +7547,12 @@ theorem bump_projection_memLp_pairing {d : ℕ} {δ r : ℝ}
   rw [hvf, hvg]
   simp [RCLike.inner_apply, mul_comm]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/AveragedBumpForm.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean.SeparatedConfiguration
@@ -7726,9 +8024,13 @@ theorem integrable_bumpProjection_averagedTest_Lp {d : ℕ} {δ r M : ℝ} (hδ 
     f g Δ R t _ _ hf hg]
   rw [integral_prod _ hΔ]
 end RieszEuclidean.SeparatedConfiguration
+end
+end
 
 /- Source: RieszEuclidean/AveragedFourierExpansion.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Set
 namespace RieszEuclidean
@@ -8020,9 +8322,13 @@ theorem integrable_fourierProjection_averagedTest_Lp {d : ℕ} {δ : ℝ} (hδ :
   rw [integral_prod _ hΔ]
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/AveragedTestNorms.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set Filter
 namespace RieszEuclidean
 
@@ -8175,9 +8481,12 @@ theorem hull_averagedTestL2_norm_energy {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
 end SeparatedConfiguration
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/AveragedCanonicalForms.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean.SeparatedConfiguration
@@ -8224,9 +8533,13 @@ theorem canonical_averaged_fourier_pairing {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
   exact ⟨integrable_fourierProjection_averagedTest_Lp hδ Γ μ hμ Ω hΩ hfin t hR f g _ _ hf hg hfi,
     integral_fourierProjection_averagedTest_Lp hδ Γ μ hμ Ω hΩ hfin t hR f g _ _ hf hg hfi⟩
 end RieszEuclidean.SeparatedConfiguration
+end
+end
 
 /- Source: RieszEuclidean/AveragedGap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
 /-- Scalar Cauchy–Schwarz with the exact averaged test energies. -/
@@ -8304,9 +8617,12 @@ theorem norm_sub_le_of_strong_filter_limits {ι H : Type*}
   exact ((A i - B i).le_opNorm f).trans
     (mul_le_mul_of_nonneg_right hi (norm_nonneg f))
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/Separation.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-! Uniform separation of the frequencies of an exponential Riesz basis. -/
 
 noncomputable section
@@ -8422,9 +8738,13 @@ theorem riesz_frequencies_separated {d : ℕ} {Ω Λ : Set (Euclidean d)}
   dsimp [K] at h
   nlinarith
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BumpFourier.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- Integral form of the positive-sign Fourier transform in the paper's notation. -/
@@ -8528,9 +8848,12 @@ theorem exists_bump_fourier_lower {d : ℕ} {Ω : Set (Euclidean d)}
   · intro x hx
     exact bump_fourier_lower_on_ball b hp hR.le hz hsmall (hbound x hx)
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BumpTransform.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- Translation of a bump introduces exactly the paper's exponential phase. -/
@@ -8560,9 +8883,12 @@ theorem paperFourierL2_translated_bump {d : ℕ} (b : SchwartzMap (Euclidean d) 
     filter_upwards [translated_bump_coe b t] with ξ hξ
     rw [hξ]
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BumpMultiplier.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 noncomputable section
 namespace RieszEuclidean
@@ -8580,9 +8906,13 @@ def bumpFourierMultiplier {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSe
     exact hl x hx
   exact l2MultiplierEquiv (Real.fourierIntegralInv b) hm hu hc hl'
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/DomainRestriction.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -8620,9 +8950,13 @@ def domainRestrictionLM {d : ℕ} (Ω : Set (Euclidean d)) : FullL2 d →ₗ[ℂ
 def domainRestrictionCLM {d : ℕ} (Ω : Set (Euclidean d)) : FullL2 d →L[ℂ] DomainL2 Ω :=
   (domainRestrictionLM Ω).mkContinuous 1 (fun f => by simpa using domainRestriction_norm_le Ω f)
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BumpIdentity.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- The domain multiplier has its exact Fourier representative. -/
@@ -8682,9 +9016,12 @@ theorem bump_synthesis_identity {d : ℕ} {Ω Λ : Set (Euclidean d)}
   intro i
   exact bump_synthesis_coordinate hΩ b V hV S hS hc hl i
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/DomainExtension.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Set
 namespace RieszEuclidean
@@ -8761,9 +9098,13 @@ theorem domainExtension_range {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : Measurab
     rw [domainExtension_restriction]
     exact ((domainProjection Ω hΩ).mem_range_iff f).mp hf
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/FourierRange.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -8800,9 +9141,13 @@ theorem fourierDomainEmbedding_restriction {d : ℕ} (Ω : Set (Euclidean d)) (h
     (domainExtension Ω hΩ (domainRestriction Ω (paperFourierL2 d f)))) = _
   rw [LinearIsometryEquiv.apply_symm_apply, domainExtension_restriction, fourierProjection_transform]
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/RangeIso.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 namespace RieszEuclidean
 /-- An isometry identifies its source with any equal range submodule. -/
@@ -8832,9 +9177,13 @@ theorem rangeIso_of_synthesis {A B H : Type} [NormedAddCommGroup A] [InnerProduc
   rw [ContinuousLinearEquiv.symm_apply_apply]
   exact (h a).symm
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/InitialGap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 namespace RieszEuclidean
 /-- The concrete bump projection has distance less than one from the Fourier projection. -/
@@ -8880,9 +9229,12 @@ theorem exists_initial_bump_gap {d : ℕ} {Ω Λ : Set (Euclidean d)}
   exact ⟨δ, r, hδ, hΛ, hr, hrδ, b, hs, hn, hp, hz, ⟨c, hc, hl⟩,
     V, hV, initial_bump_gap hΩ b V hV S hS hc hl⟩
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/HullGap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
 /-- Composition of actual L² translations agrees with addition of their real parameters. -/
@@ -9062,9 +9414,12 @@ theorem exists_riesz_basis_uniform_hull_gap {d : ℕ} {Ω Λ : Set (Euclidean d)
   refine ⟨δ, r, hδ, hr, hrδ, Γ, b, hz, hn, rfl, hbs, hp, ?_⟩
   exact exists_uniform_bump_projection_hull_gap Ω hΩ hb.measure_lt_top.ne Γ hδ hrδ b hz hn hgap
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/AveragedFiniteGap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean.SeparatedConfiguration
@@ -9115,9 +9470,13 @@ theorem norm_finiteFilter_sub_stationaryComparisonAverage_le {d : ℕ} {δ r M �
           (mul_le_mul_of_nonneg_right (hgap Δ) (norm_nonneg _))) (norm_nonneg _)
       _ = _ := by ring
 end RieszEuclidean.SeparatedConfiguration
+end
+end
 
 /- Source: RieszEuclidean/GoodParameters.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-!
 # Almost every translation avoids a null exceptional set
 
@@ -9190,9 +9549,13 @@ theorem mem_goodParameters_frontier {d : ℕ} (σ : Measure (Euclidean d))
   Iff.rfl
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/StrongOperatorLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter Topology
 
 namespace RieszEuclidean
@@ -9283,9 +9646,12 @@ theorem exists_projection_of_cauchy_contractions [CompleteSpace H]
     strong_limit_idempotent A B hA hB hidem, hB⟩
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/SpectralCutoffLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 
 namespace RieszEuclidean
@@ -9495,9 +9861,12 @@ theorem exists_spectral_cutoff_of_symbol_tendsto [CompleteSpace H]
     strong_limit_spectral_norm_sq U hU hadd ha f (hσ f) hb (ht f) (hB f)⟩
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/SpectralCutoffDifference.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 
 namespace RieszEuclidean
@@ -9548,9 +9917,12 @@ theorem strong_limit_spectral_difference_sq
     (integratedUnitary_spectral_difference_sq U hU hadd (ha i) (hc i) f hσ).symm)
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/StationaryCutoffs.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-!
 # Stationary spectral cutoffs from the actual finite filters
 
@@ -9717,9 +10089,13 @@ theorem exists_stationary_cutoff_family {d : ℕ} {H : Type*}
       Ω hΩ hfin s.property t.property (hPt s f) (hPt t f)
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/AveragedLimitGap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean.SeparatedConfiguration
@@ -9801,9 +10177,13 @@ theorem exists_stationary_cutoff_family_with_comparison_gap {d : ℕ} {δ r M γ
   intro t
   exact norm_stationaryCutoff_sub_comparison_le hδ Γ μ hμ Ω hΩ hfin hr b hcompact hs hn hM hb hγ hgap t (P t) (hlim t)
 end RieszEuclidean.SeparatedConfiguration
+end
+end
 
 /- Source: RieszEuclidean/BoundarySymbols.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 noncomputable section
 namespace RieszEuclidean
@@ -9880,9 +10260,13 @@ theorem boundarySymbol_dirac_norms {d : ℕ} (Ω : Set (Euclidean d))
       (∫ θ, ‖interiorBoundarySymbol Ω t θ‖ ^ 2 ∂Measure.dirac 0) = 1 := by
   simp [cutoffSymbol, interiorBoundarySymbol, ht]
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/PhysicalTranslationSpectrum.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 open scoped NNReal ENNReal
@@ -10057,9 +10441,13 @@ theorem fourierProjection_insert_zero_eq {d : ℕ} (hd : 0 < d)
   rw [hleft, hright]
   by_cases hmem : θ ∈ Ω <;> simp [hmem, hθ]
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BochnerWindows.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Set
 namespace RieszEuclidean
@@ -10181,9 +10569,13 @@ theorem integral_inner_bochnerWindow_shift {R : ℝ} (hR : 0 < R)
   rw [hw, Complex.ofReal_div]
   ring
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BochnerCoordinateWindows.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -10325,9 +10717,13 @@ theorem exists_countable_hilbertBasis [CompleteSpace H] [TopologicalSpace.Separa
   obtain ⟨s, e, _⟩ := exists_hilbertBasis ℂ H
   exact ⟨s, hilbertBasis_countable e, ⟨e⟩⟩
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BochnerApproximateMeasures.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 open scoped ENNReal NNReal
@@ -10397,9 +10793,13 @@ theorem bochnerApproxMeasure_fourier [Countable ι] {R : ℝ} (hR : 0 < R)
   exact (hilbertBasis_hasSum_integral_inner e _ _ hv hw hi hj).tsum_eq.trans
     (integral_inner_bochnerWindow_shift hR U hadd f y)
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BochnerMeasureLimit.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Set Filter Topology
 open scoped CompactlySupported BoundedContinuousFunction ZeroAtInfty
 namespace RieszEuclidean
@@ -10551,9 +10951,12 @@ theorem exists_finiteMeasure_vague_limit {X : Type*} [TopologicalSpace X]
   exact (WeakDual.eval_continuous f.toBCF).continuousAt.tendsto.comp ht
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BochnerFourierLimit.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory RealInnerProductSpace Filter
 open scoped ZeroAtInfty Topology
 
@@ -10674,9 +11077,12 @@ theorem representsCorrelation_of_bounded_vague_limit {d : ℕ}
   exact ⟨inferInstance, congrFun (Measure.eq_of_ae_eq hae hcφ (continuous_measureFourier μ))⟩
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/BochnerExistence.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -10731,9 +11137,13 @@ theorem exists_hull_spectralMeasures {d : ℕ} {δ : ℝ} (hδ : 0 < δ)
     (strongContinuous_hullKoopmanUnitary hδ Γ μ hμ) (hullKoopmanUnitary_add hδ Γ μ hμ)
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/UnitSphereApproximation.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter Topology
 
 namespace RieszEuclidean
@@ -10774,9 +11184,12 @@ theorem exists_unit_sequence_scalar_approximants
     simp [hn]
 
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/ControlMeasure.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory
 open scoped ENNReal NNReal
 namespace RieszEuclidean
@@ -10895,9 +11308,12 @@ theorem exists_spectralControlMeasure [TopologicalSpace.SeparableSpace H]
   exact ⟨h, hh, spectralControlMeasure_probability U h0 σ hσ h hh,
     spectralMeasure_absolutelyContinuous_control U h0 σ hσ h hdense⟩
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/StationaryAssemblyHelpers.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -10925,9 +11341,13 @@ theorem continuous_stationaryComparison {d : ℕ} {δ r M : ℝ} (hδ : 0 < δ)
   simpa only [dist_eq_norm] using norm_stationaryComparison_sub_le hδ Γ μ hμ hr b hbc hcompact hs hM hb t s
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SphereGeometry.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Metric
 namespace RieszEuclidean
@@ -11110,9 +11530,13 @@ theorem sphere_surfaceMeasure_translate {d : ℕ} (hd : 2 ≤ d)
   exact hausdorffMeasure_sphere_inter_translate hd a θ hθ r
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SphereFiniteness.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Metric Set
 open scoped ENNReal
 namespace RieszEuclidean
@@ -11215,9 +11639,12 @@ theorem hausdorffMeasure_sphere_lt_top {d : ℕ} (hd : 1 ≤ d)
     (by positivity) _)) (ENNReal.mul_lt_top (by simp)
       (hausdorffMeasure_unit_sphere_lt_top hd))
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/SphereBoundaryMeasure.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Metric
 namespace RieszEuclidean
@@ -11259,9 +11686,13 @@ theorem sphere_boundary_measure_properties {d : ℕ} (hd : 2 ≤ d)
     exact sphere_surfaceMeasure_translate hd a θ hθ r
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BoundaryFubini.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
 /-- Fubini reverses null translated overlaps, excluding the unavoidable zero frequency. -/
@@ -11327,9 +11758,12 @@ theorem exists_conull_sequences_two_sides {d : ℕ} {G Ω : Set (Euclidean d)}
   ⟨exists_conull_sequence_in_open hG hΩ hin,
     exists_conull_sequence_in_open hG isClosed_closure.isOpen_compl hout⟩
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/SphereBoundaryApproach.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Metric Filter Topology
 namespace RieszEuclidean
@@ -11362,9 +11796,13 @@ theorem exists_conull_sequences_sphere_two_sides {d : ℕ}
     exists_conull_sequences_two_sides hG Metric.isOpen_ball h.2.1 h.2.2
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BoundaryOperatorLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
 variable {ι X H : Type*} [MeasurableSpace X]
@@ -11463,9 +11901,12 @@ theorem exists_projection_of_spectral_symbol_limit [CompleteSpace H]
   exact limit_norm_of_spectral_symbols (fun i => P i f) (σ f) a
     (ha f) (hb f) (ht f) (hnorm f) (hQt f)
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/ProjectionOrder.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open scoped ComplexInnerProductSpace
 namespace RieszEuclidean
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
@@ -11535,9 +11976,12 @@ theorem projection_range_lt_of_unit_witness (P Q : H →L[ℂ] H)
   rw [hz, norm_zero] at hu
   norm_num at hu
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/MovingComparison.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-!
 # Passing to a moving comparison projection
 
@@ -11594,9 +12038,13 @@ theorem moving_comparison_obstruction [CompleteSpace H]
         hplus hMplus hgapplus).trans_lt hγ⟩
 
 end RieszEuclidean.OrthProjection
+end
+end
 
 /- Source: RieszEuclidean/BoundaryCutoffLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
 /-- The concrete translated-domain symbol is bounded and measurable. -/
@@ -11736,9 +12184,12 @@ theorem boundary_cutoffs_continuous_comparison_obstruction {d : ℕ} {H : Type}
     hRmt hRpt (hM.tendsto.comp htm) (hM.tendsto.comp htp)
     (fun n => hgap (tm n)) (fun n => hgap (tp n)) hstrict
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/SphereCutoffObstruction.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open MeasureTheory Filter Topology Metric
 namespace RieszEuclidean
 /-- The literal sphere geometry selects one boundary point clean for every dominated measure. -/
@@ -11776,9 +12227,12 @@ theorem sphere_cutoffs_continuous_comparison_obstruction {d : ℕ} {H : Type}
     σ hfinite (fun f => hdom f hclean) P hP hnorm hdiff u hu hσu
     M hM.continuousAt (hMs t₀) (hMi t₀) hγ hgap
 end RieszEuclidean
+end
 
 /- Source: RieszEuclidean/SphereAnalyticAssembly.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Metric
 namespace RieszEuclidean.SeparatedConfiguration
@@ -11847,9 +12301,13 @@ theorem not_hasExponentialRieszBasis_ball_of_hull_representations {d : ℕ}
   exact sphere_stationary_hull_gap_obstruction hd a hρ hδ Γ μ hμ σ hσ hr b hcompact hs hn hγ0 hγ
     (fun Δ => hgap Δ.val Δ.property)
 end RieszEuclidean.SeparatedConfiguration
+end
+end
 
 /- Source: RieszEuclidean/EllipsoidAnalyticAssembly.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Metric
 namespace RieszEuclidean.SeparatedConfiguration
@@ -11883,9 +12341,13 @@ theorem not_exists_exponentialRieszBasis_ellipsoid_of_hull_representations {d : 
   rintro ⟨Λ, hΛ⟩
   exact not_hasExponentialRieszBasis_ellipsoid_of_hull_representations hd a A hrep Λ hΛ
 end RieszEuclidean.SeparatedConfiguration
+end
+end
 
 /- Source: RieszEuclidean/BallEllipsoidTheorems.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Metric
 namespace RieszEuclidean
@@ -11915,9 +12377,13 @@ theorem not_exists_exponentialRieszBasis_ellipsoid {d : ℕ} (hd : 2 ≤ d)
   rintro ⟨Λ, hΛ⟩
   exact not_hasExponentialRieszBasis_ellipsoid hd a A Λ hΛ
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BoundaryJumpLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -12003,9 +12469,13 @@ theorem boundary_jump_cutoff_ranges_strict {d : ℕ} {H : Type*}
   exact ⟨hmu, projection_range_lt_of_unit_witness Rm Rp hRms hRps hRmi hRpi horder u hu hmu hpu⟩
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/BumpEquivalence.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -12086,9 +12556,13 @@ theorem exponentialRieszBasis_iff_initial_bump_gap {d : ℕ} {Ω Λ : Set (Eucli
       (fun x hx => hl x (subset_closure hx)) hgap
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/C2Boundary.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Topology
 namespace RieszEuclidean
@@ -12106,9 +12580,13 @@ def HasC2Boundary {d : ℕ} (Ω : Set (Euclidean d)) : Prop :=
     (∀ x ∈ W, x ∈ frontier Ω ↔ f x = 0)
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ConvexSupport.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Topology
 namespace RieszEuclidean
@@ -12227,9 +12705,13 @@ theorem farthest_point_support {d : ℕ} {K : Set (Euclidean d)}
     exact sub_eq_zero.mp (norm_eq_zero.mp hn)
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ConvexDefiningFunctions.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -12317,9 +12799,13 @@ theorem functional_opposite_inter_subset_singleton {n : ℕ} {K : Set (Euclidean
   nlinarith
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/TransverseLinearAlgebra.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 namespace RieszEuclidean
 
@@ -12361,9 +12847,13 @@ theorem prod_functionals_kernel_dim {n : ℕ}
   simpa [Module.finrank_prod, Euclidean, Nat.add_comm] using he
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SurfaceNullity.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 open scoped ENNReal NNReal
@@ -12395,9 +12885,13 @@ theorem countable_smooth_charts_hausdorff_null {m n k : ℕ} (hmk : m < k)
   exact measure_iUnion_null (fun j => smooth_chart_hausdorff_null hmk (hf j) (hD j))
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/RegularLevelNullity.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 open scoped ENNReal NNReal
@@ -12479,9 +12973,13 @@ theorem regular_levels_hausdorff_null {n k : ℕ}
   exact ⟨hx.1.1, hx.1.2 hx.2⟩
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SupportingDerivative.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -12552,9 +13050,13 @@ theorem supporting_functional_strict_interior {n : ℕ} {Ω : Set (Euclidean n)}
   exact IsLocalMax.hasFDerivAt_eq_zero hm hd
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ConvexContactPoint.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12594,9 +13096,13 @@ theorem exists_convex_contact_point {n : ℕ} (hn : 0 < n)
   exact ⟨p, hpS, hpc, hfar⟩
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SmoothImplicitChart.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12641,9 +13147,13 @@ theorem regular_implicit_contDiffAt {n : ℕ} {f : Euclidean n → ℝ}
     _root_.sub_self, map_zero] using he
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/RegularBoundaryChart.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12683,9 +13193,13 @@ theorem regular_boundary_chart {n : ℕ} {Ω : Set (Euclidean n)}
     rwa [hfval] at hx
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/SecondDerivativeTest.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12733,9 +13247,13 @@ theorem second_derivative_nonpos_at_local_max {f : ℝ → ℝ} {a : ℝ}
   linarith [(hball hx).2.2, (hball hy).2.2]
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ContactCurvature.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12766,9 +13284,13 @@ theorem contact_curve_acceleration {n : ℕ} {q : ℝ → Euclidean n}
   linarith
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/DirectionalSecondDerivative.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12828,9 +13350,13 @@ theorem contact_chart_second_derivative {n : ℕ}
   exact ha
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/NegativeBilinear.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12872,9 +13398,13 @@ theorem negative_bilinear_eventually
   exact he.mono fun _ hy => negative_bilinear_perturbation hneg hy
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/LinearHeightHessian.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12898,9 +13428,13 @@ theorem linear_height_hessian
   exact congrArg (fun A : E →L[ℝ] E →L[ℝ] ℝ => A v v) hh
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/HessianConcavity.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12945,9 +13479,13 @@ theorem strictConcaveOn_of_hessian_neg
   simpa only [q, zero_smul, add_zero, one_smul, add_sub_cancel] using hh
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ContactChartConcavity.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -12991,9 +13529,13 @@ theorem contact_chart_strictConcavity {n : ℕ}
     exact he
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ConcaveChartFaces.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -13073,9 +13615,13 @@ theorem strictConcave_chart_singleton_faces {n : ℕ}
   simp only [m, map_add, map_smul, lt_self_iff_false] at hh
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ConvexCurvedPatch.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open Filter Topology
 namespace RieszEuclidean
@@ -13159,9 +13705,13 @@ theorem exists_convex_curved_patch {n : ℕ} (hn : 0 < n)
   exact (ht.eventually (Metric.ball_mem_nhds p hδ)).and (hforward.mono fun _ hu => hu.1)
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ChartSurfaceMeasure.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 open scoped NNReal ENNReal
@@ -13238,9 +13788,17435 @@ theorem CurvedBoundaryPatch.exists_positive_finite_subpatch {n : ℕ}
   rwa [hd] at hh
 
 end RieszEuclidean
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalBasic.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Complete and minimal families of actual domain exponentials
+
+Completeness and minimality refer to the topological closure of the complex
+linear span. In the biorthogonality convention below the test vector occurs
+in the first argument, because Mathlib's inner product is linear in its second
+argument. No bound on the norms of the biorthogonal vectors is imposed.
+-/
+
+noncomputable section
+
+open MeasureTheory
+open scoped ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+section Hilbert
+
+variable {ι H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+
+/-- The closed complex linear span of a family. -/
+def closedSpan (v : ι → H) : Submodule ℂ H :=
+  (Submodule.span ℂ (Set.range v)).topologicalClosure
+
+/-- Completeness means density of the complex linear span. -/
+def IsComplete (v : ι → H) : Prop := closedSpan v = ⊤
+
+/-- Ordinary minimality: every vector lies outside the closed span of the others. -/
+def IsMinimal (v : ι → H) : Prop :=
+  ∀ i, v i ∉ (Submodule.span ℂ (v '' {j | j ≠ i})).topologicalClosure
+
+/-- Biorthogonality, with the linear argument of the inner product on the right. -/
+def IsBiorthogonal (v w : ι → H) : Prop := by
+  classical
+  exact ∀ i j, inner (𝕜 := ℂ) (w i) (v j) = if i = j then 1 else 0
+
+/-- A continuous inner-product functional that vanishes on the generators
+vanishes on their closed span. -/
+theorem inner_zero_on_closedSpan {v : ι → H} {w : H}
+    (h : ∀ i, inner (𝕜 := ℂ) w (v i) = 0) {u : H}
+    (hu : u ∈ closedSpan v) : inner (𝕜 := ℂ) w u = 0 := by
+  have hs : Submodule.span ℂ (Set.range v) ≤ LinearMap.ker (innerSL ℂ w) := by
+    apply Submodule.span_le.mpr
+    rintro _ ⟨i, rfl⟩
+    exact h i
+  exact (Submodule.topologicalClosure_minimal _ hs
+    (ContinuousLinearMap.isClosed_ker (innerSL ℂ w))) hu
+
+/-- Existence of individual biorthogonal vectors proves ordinary minimality. -/
+theorem IsBiorthogonal.isMinimal {v w : ι → H} (h : IsBiorthogonal v w) :
+    IsMinimal v := by
+  classical
+  intro i hi
+  have hs : Submodule.span ℂ (v '' {j | j ≠ i}) ≤ LinearMap.ker (innerSL ℂ (w i)) := by
+    apply Submodule.span_le.mpr
+    rintro _ ⟨j, hj, rfl⟩
+    change inner (𝕜 := ℂ) (w i) (v j) = 0
+    simpa [IsBiorthogonal, hj, Ne.symm hj] using h i j
+  have hz : inner (𝕜 := ℂ) (w i) (v i) = 0 :=
+    (Submodule.topologicalClosure_minimal _ hs
+      (ContinuousLinearMap.isClosed_ker (innerSL ℂ (w i)))) hi
+  have hone : inner (𝕜 := ℂ) (w i) (v i) = 1 := by simpa using h i i
+  exact one_ne_zero (hone.symm.trans hz)
+
+/-- A family is complete exactly when its orthogonal annihilator is zero. -/
+theorem isComplete_iff_annihilator [CompleteSpace H] (v : ι → H) :
+    IsComplete v ↔ ∀ w : H, (∀ i, inner (𝕜 := ℂ) w (v i) = 0) → w = 0 := by
+  constructor
+  · intro hv w hw
+    apply (inner_self_eq_zero (𝕜 := ℂ)).mp
+    apply inner_zero_on_closedSpan hw
+    change closedSpan v = ⊤ at hv
+    rw [hv]
+    trivial
+  · intro hv
+    apply (Submodule.topologicalClosure_eq_top_iff
+      (K := Submodule.span ℂ (Set.range v))).mpr
+    apply (Submodule.eq_bot_iff _).mpr
+    intro w hw
+    apply hv w
+    intro i
+    exact (Submodule.mem_orthogonal' _ _).mp hw (v i)
+      (Submodule.subset_span (Set.mem_range_self i))
+
+/-- On a complete family the individual biorthogonal vectors are unique. -/
+theorem IsComplete.biorthogonal_unique [CompleteSpace H] {v w z : ι → H}
+    (hv : IsComplete v) (hw : IsBiorthogonal v w) (hz : IsBiorthogonal v z) : w = z := by
+  funext i
+  apply sub_eq_zero.mp
+  apply (isComplete_iff_annihilator v).mp hv
+  intro j
+  rw [inner_sub_left, hw i j, hz i j, sub_self]
+
+end Hilbert
+
+section Exponentials
+
+variable {d : ℕ}
+
+/-- Every real-frequency exponential is continuous on physical Euclidean space. -/
+theorem continuous_exponential (ξ : Euclidean d) : Continuous (exponential ξ) := by
+  unfold exponential
+  fun_prop
+
+/-- Finite volume suffices for a real-frequency exponential to belong to L². -/
+theorem exponential_memLp (Ω : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (ξ : Euclidean d) : MemLp (exponential ξ) 2 (volume.restrict Ω) := by
+  haveI : IsFiniteMeasure (volume.restrict Ω) := ⟨by simpa using hfinite.lt_top⟩
+  apply MemLp.of_bound (continuous_exponential ξ).aestronglyMeasurable 1
+  exact Filter.Eventually.of_forall fun x => (exponential_norm ξ x).le
+
+/-- In particular, every bounded measurable domain has actual L² exponential vectors.
+Measurability of the domain is unnecessary for this integrability assertion. -/
+theorem exponential_memLp_of_bounded (Ω : Set (Euclidean d))
+    (hbounded : Bornology.IsBounded Ω) (ξ : Euclidean d) :
+    MemLp (exponential ξ) 2 (volume.restrict Ω) :=
+  exponential_memLp Ω hbounded.measure_lt_top.ne ξ
+
+/-- The actual L² class of the real exponential on a finite-volume domain. -/
+def exponentialL2 (Ω : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (ξ : Euclidean d) : DomainL2 Ω :=
+  (exponential_memLp Ω hfinite ξ).toLp (exponential ξ)
+
+/-- The L² class agrees almost everywhere with the paper's positive Fourier exponential. -/
+theorem exponentialL2_ae (Ω : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (ξ : Euclidean d) :
+    (exponentialL2 Ω hfinite ξ : Euclidean d → ℂ) =ᵐ[volume.restrict Ω] exponential ξ :=
+  (exponential_memLp Ω hfinite ξ).coeFn_toLp
+
+/-- The domain inner product against an exponential is its actual set integral.
+The conjugation records Mathlib's convention explicitly. -/
+theorem inner_exponentialL2 (Ω : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (ξ : Euclidean d) (f : DomainL2 Ω) :
+    inner (𝕜 := ℂ) f (exponentialL2 Ω hfinite ξ) =
+      ∫ x in Ω, exponential ξ x * star (f x) := by
+  rw [L2.inner_def]
+  apply integral_congr_ae
+  filter_upwards [exponentialL2_ae Ω hfinite ξ] with x hx
+  rw [hx]
+  simp
+
+/-- With the exponential in the first argument the integral has negative Fourier phase. -/
+theorem exponentialL2_inner (Ω : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (ξ : Euclidean d) (f : DomainL2 Ω) :
+    inner (𝕜 := ℂ) (exponentialL2 Ω hfinite ξ) f =
+      ∫ x in Ω, f x * star (exponential ξ x) := by
+  rw [L2.inner_def]
+  apply integral_congr_ae
+  filter_upwards [exponentialL2_ae Ω hfinite ξ] with x hx
+  rw [hx]
+  simp
+
+/-- The frequency set itself indexes the family, so every frequency occurs once. -/
+def exponentialFamily (Ω : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (Λ : Set (Euclidean d)) : Λ → DomainL2 Ω :=
+  fun ξ => exponentialL2 Ω hfinite ξ.val
+
+/-- Completeness of actual domain exponentials. -/
+def IsCompleteExponential (Ω : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (Λ : Set (Euclidean d)) : Prop :=
+  IsComplete (exponentialFamily Ω hfinite Λ)
+
+/-- Minimality of actual domain exponentials. -/
+def IsMinimalExponential (Ω : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (Λ : Set (Euclidean d)) : Prop :=
+  IsMinimal (exponentialFamily Ω hfinite Λ)
+
+/-- A domain L² vector is supported on a physical subset up to a null set. -/
+def SupportedOn (Ω : Set (Euclidean d)) (f : DomainL2 Ω)
+    (A : Set (Euclidean d)) : Prop :=
+  ∀ᵐ x ∂volume.restrict Ω, x ∉ A → f x = 0
+
+/-- Every domain vector is supported in its measurable physical domain. -/
+theorem supportedOn_domain (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : SupportedOn Ω f Ω := by
+  filter_upwards [ae_restrict_mem hΩ] with x hx
+  exact fun hn => (hn hx).elim
+
+/-- The a.e. support definition agrees with the indicator formulation. -/
+theorem supportedOn_iff_indicator (Ω A : Set (Euclidean d)) (f : DomainL2 Ω) :
+    SupportedOn Ω f A ↔ A.indicator (fun x => f x) =ᵐ[volume.restrict Ω] f := by
+  classical
+  constructor
+  · intro h
+    filter_upwards [h] with x hx
+    by_cases hA : x ∈ A
+    · simp [hA]
+    · simp [hA, hx hA]
+  · intro h
+    filter_upwards [h] with x hx
+    intro hA
+    simpa [hA] using hx.symm
+
+/-- Support on the empty set forces the domain L² vector to be zero. -/
+theorem supportedOn_empty_iff (Ω : Set (Euclidean d)) (f : DomainL2 Ω) :
+    SupportedOn Ω f ∅ ↔ f = 0 := by
+  rw [supportedOn_iff_indicator]
+  simp only [Set.indicator_empty, Pi.zero_apply]
+  constructor
+  · intro h
+    apply Lp.ext
+    exact h.symm.trans (Lp.coeFn_zero _ _ _).symm
+  · rintro rfl
+    exact (Lp.coeFn_zero _ _ _).symm
+
+/-- A larger physical support set also supports the vector. -/
+theorem SupportedOn.mono {Ω A B : Set (Euclidean d)} {f : DomainL2 Ω}
+    (hf : SupportedOn Ω f A) (hAB : A ⊆ B) : SupportedOn Ω f B := by
+  filter_upwards [hf] with x hx
+  exact fun hB => hx (fun hA => hB (hAB hA))
+
+/-- Completeness is equivalent to absence of a nonzero orthogonal domain L² function. -/
+theorem isCompleteExponential_iff_annihilator (Ω : Set (Euclidean d))
+    (hfinite : volume Ω ≠ ⊤) (Λ : Set (Euclidean d)) :
+    IsCompleteExponential Ω hfinite Λ ↔
+      ∀ f : DomainL2 Ω,
+        (∀ ξ : Λ, inner (𝕜 := ℂ) f (exponentialL2 Ω hfinite ξ.val) = 0) → f = 0 :=
+  isComplete_iff_annihilator (exponentialFamily Ω hfinite Λ)
+
+/-- Individual domain L² biorthogonals prove minimality of the exponential system. -/
+theorem biorthogonal_exponentials_minimal (Ω : Set (Euclidean d))
+    (hfinite : volume Ω ≠ ⊤) (Λ : Set (Euclidean d)) (g : Λ → DomainL2 Ω)
+    (hg : IsBiorthogonal (exponentialFamily Ω hfinite Λ) g) :
+    IsMinimalExponential Ω hfinite Λ :=
+  hg.isMinimal
+
+end Exponentials
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalEllipsoid.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Closed ellipsoids and the John maximality predicate
+
+A full-dimensional ellipsoid is the image of the closed unit ball by an actual
+invertible affine map. `IsJohnEllipsoid` asks only for containment and maximal
+Lebesgue volume. In particular, neither existence nor uniqueness is part of its
+definition.
+-/
+
+noncomputable section
+
+open MeasureTheory Metric
+open scoped ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- The closed, full-dimensional ellipsoid with center `a` and invertible shape `A`. -/
+def closedEllipsoid (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    Set (Euclidean d) :=
+  (planeAffine a A) '' closedBall (0 : Euclidean d) 1
+
+/-- Full-dimensional closed ellipsoids, with no singular shapes admitted. -/
+def IsEllipsoid (E : Set (Euclidean d)) : Prop :=
+  ∃ a : Euclidean d, ∃ A : Euclidean d ≃L[ℝ] Euclidean d, E = closedEllipsoid a A
+
+/-- A John ellipsoid is a contained full-dimensional ellipsoid of maximal volume
+among every contained full-dimensional ellipsoid. -/
+def IsJohnEllipsoid (K E : Set (Euclidean d)) : Prop :=
+  IsEllipsoid E ∧ E ⊆ K ∧
+    ∀ F : Set (Euclidean d), IsEllipsoid F → F ⊆ K → volume F ≤ volume E
+
+/-- The topological realization of the already defined affine coordinate map. -/
+def affineHomeomorph (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    Euclidean d ≃ₜ Euclidean d :=
+  A.toHomeomorph.trans (Homeomorph.addLeft a)
+
+@[simp] theorem affineHomeomorph_apply (a x : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    affineHomeomorph a A x = planeAffine a A x := rfl
+
+/-- The absolute determinant multiplying volume under affine image. -/
+def volumeFactor (A : Euclidean d ≃L[ℝ] Euclidean d) : ℝ≥0∞ :=
+  ENNReal.ofReal |LinearMap.det A.toLinearEquiv.toLinearMap|
+
+theorem volumeFactor_ne_zero (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    volumeFactor A ≠ 0 := by
+  apply ENNReal.ofReal_ne_zero_iff.mpr
+  exact abs_pos.mpr A.toLinearEquiv.isUnit_det'.ne_zero
+
+theorem volumeFactor_ne_top (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    volumeFactor A ≠ ∞ := ENNReal.ofReal_ne_top
+
+/-- Affine change of volume, valid for arbitrary sets. -/
+theorem volume_affine_image (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (S : Set (Euclidean d)) :
+    volume ((planeAffine a A) '' S) = volumeFactor A * volume S := by
+  have htrans : (fun x : Euclidean d => a + x) '' (A '' S) =
+      (fun x : Euclidean d => -a + x) ⁻¹' (A '' S) := by
+    ext x
+    constructor
+    · rintro ⟨y, hy, rfl⟩
+      simpa using hy
+    · intro hx
+      exact ⟨-a + x, hx, by simp⟩
+  change volume (((fun x : Euclidean d => a + x) ∘ A) '' S) = _
+  rw [Set.image_comp, htrans, measure_preimage_add,
+    volume.addHaar_image_continuousLinearEquiv]
+  rfl
+
+@[simp] theorem isEllipsoid_closedEllipsoid (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : IsEllipsoid (closedEllipsoid a A) :=
+  ⟨a, A, rfl⟩
+
+theorem closedEllipsoid_isCompact (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : IsCompact (closedEllipsoid a A) :=
+  (isCompact_closedBall (0 : Euclidean d) 1).image
+    (continuous_const.add A.continuous)
+
+theorem closedEllipsoid_isClosed (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : IsClosed (closedEllipsoid a A) :=
+  (closedEllipsoid_isCompact a A).isClosed
+
+theorem closedEllipsoid_measurableSet (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : MeasurableSet (closedEllipsoid a A) :=
+  (closedEllipsoid_isClosed a A).measurableSet
+
+theorem closedEllipsoid_convex (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : Convex ℝ (closedEllipsoid a A) := by
+  have h := ((convex_closedBall (0 : Euclidean d) 1).linear_image
+    A.toLinearEquiv.toLinearMap).translate a
+  simpa only [closedEllipsoid, Set.image_image, Function.comp_def] using h
+
+theorem center_mem_closedEllipsoid (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : a ∈ closedEllipsoid a A := by
+  exact ⟨0, by simp, by simp [planeAffine]⟩
+
+theorem center_mem_interior_closedEllipsoid (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : a ∈ interior (closedEllipsoid a A) := by
+  have h : (0 : Euclidean d) ∈ interior (closedBall (0 : Euclidean d) 1) :=
+    ball_subset_interior_closedBall (by simp)
+  have him : affineHomeomorph a A '' interior (closedBall (0 : Euclidean d) 1) =
+      interior (closedEllipsoid a A) :=
+    (affineHomeomorph a A).image_interior _
+  rw [← him]
+  exact ⟨0, h, by simp [affineHomeomorph, planeAffine]⟩
+
+@[simp] theorem volume_closedEllipsoid (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    volume (closedEllipsoid a A) =
+      volumeFactor A * volume (closedBall (0 : Euclidean d) 1) :=
+  volume_affine_image a A _
+
+theorem volume_closedEllipsoid_pos (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : 0 < volume (closedEllipsoid a A) := by
+  rw [volume_closedEllipsoid]
+  exact ENNReal.mul_pos (volumeFactor_ne_zero A)
+    (measure_closedBall_pos volume (0 : Euclidean d) zero_lt_one).ne'
+
+theorem volume_closedEllipsoid_ne_top (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : volume (closedEllipsoid a A) ≠ ∞ :=
+  (closedEllipsoid_isCompact a A).measure_lt_top.ne
+
+theorem IsEllipsoid.isCompact {E : Set (Euclidean d)} (hE : IsEllipsoid E) :
+    IsCompact E := by
+  obtain ⟨a, A, rfl⟩ := hE
+  exact closedEllipsoid_isCompact a A
+
+theorem IsEllipsoid.convex {E : Set (Euclidean d)} (hE : IsEllipsoid E) :
+    Convex ℝ E := by
+  obtain ⟨a, A, rfl⟩ := hE
+  exact closedEllipsoid_convex a A
+
+theorem IsEllipsoid.interior_nonempty {E : Set (Euclidean d)} (hE : IsEllipsoid E) :
+    (interior E).Nonempty := by
+  obtain ⟨a, A, rfl⟩ := hE
+  exact ⟨a, center_mem_interior_closedEllipsoid a A⟩
+
+theorem IsEllipsoid.volume_pos {E : Set (Euclidean d)} (hE : IsEllipsoid E) :
+    0 < volume E := by
+  obtain ⟨a, A, rfl⟩ := hE
+  exact volume_closedEllipsoid_pos a A
+
+theorem IsEllipsoid.volume_ne_top {E : Set (Euclidean d)} (hE : IsEllipsoid E) :
+    volume E ≠ ∞ := hE.isCompact.measure_lt_top.ne
+
+/-- Composition of affine maps stays within the same concrete class of ellipsoids. -/
+theorem affine_image_closedEllipsoid (b a : Euclidean d)
+    (B A : Euclidean d ≃L[ℝ] Euclidean d) :
+    (planeAffine b B) '' closedEllipsoid a A =
+      closedEllipsoid (b + B a) (A.trans B) := by
+  simp only [closedEllipsoid, Set.image_image]
+  apply congrArg (fun f : Euclidean d → Euclidean d => f '' closedBall (0 : Euclidean d) 1)
+  funext x
+  change b + B (a + A x) = (b + B a) + B (A x)
+  rw [map_add, add_assoc]
+
+theorem IsEllipsoid.affine_image {E : Set (Euclidean d)} (hE : IsEllipsoid E)
+    (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    IsEllipsoid ((planeAffine a A) '' E) := by
+  obtain ⟨b, B, rfl⟩ := hE
+  exact ⟨a + A b, B.trans A, affine_image_closedEllipsoid a b A B⟩
+
+/-- Interior nonemptiness already ensures the admissible family is nonempty.
+This does not assert that the supremal volume is attained. -/
+theorem exists_contained_ellipsoid {K : Set (Euclidean d)}
+    (hK : (interior K).Nonempty) : ∃ E : Set (Euclidean d), IsEllipsoid E ∧ E ⊆ K := by
+  obtain ⟨a, ha⟩ := hK
+  obtain ⟨r, hr, hsub⟩ := Metric.nhds_basis_closedBall.mem_iff.mp (mem_interior_iff_mem_nhds.mp ha)
+  let A : Euclidean d ≃L[ℝ] Euclidean d :=
+    (LinearEquiv.smulOfNeZero ℝ (Euclidean d) r hr.ne').toContinuousLinearEquiv
+  refine ⟨closedEllipsoid a A, isEllipsoid_closedEllipsoid a A, ?_⟩
+  rintro x ⟨y, hy, rfl⟩
+  apply hsub
+  change dist (a + r • y) a ≤ r
+  rw [dist_eq_norm, add_sub_cancel_left, norm_smul, Real.norm_eq_abs, abs_of_pos hr]
+  have hy' : ‖y‖ ≤ 1 := by simpa only [mem_closedBall, dist_zero_right] using hy
+  simpa using mul_le_mul_of_nonneg_left hy' hr.le
+
+/-- Every ellipsoid is itself a body for which a John ellipsoid exists. -/
+theorem IsEllipsoid.isJohnEllipsoid_self {E : Set (Euclidean d)} (hE : IsEllipsoid E) :
+    IsJohnEllipsoid E E :=
+  ⟨hE, Set.Subset.refl E, fun _ _ hF => measure_mono hF⟩
+
+theorem IsJohnEllipsoid.isEllipsoid {K E : Set (Euclidean d)}
+    (h : IsJohnEllipsoid K E) : IsEllipsoid E := h.1
+
+theorem IsJohnEllipsoid.subset {K E : Set (Euclidean d)}
+    (h : IsJohnEllipsoid K E) : E ⊆ K := h.2.1
+
+theorem IsJohnEllipsoid.volume_max {K E F : Set (Euclidean d)}
+    (h : IsJohnEllipsoid K E) (hF : IsEllipsoid F) (hFK : F ⊆ K) :
+    volume F ≤ volume E := h.2.2 F hF hFK
+
+/-- All maximizers have the same volume; equality of their sets is a separate
+geometric statement, not a consequence inserted into the definition. -/
+theorem IsJohnEllipsoid.volume_eq {K E F : Set (Euclidean d)}
+    (hE : IsJohnEllipsoid K E) (hF : IsJohnEllipsoid K F) : volume E = volume F :=
+  le_antisymm (hF.volume_max hE.isEllipsoid hE.subset)
+    (hE.volume_max hF.isEllipsoid hF.subset)
+
+/-- An equal-volume contained ellipsoid is another maximizer. -/
+theorem IsJohnEllipsoid.of_volume_eq {K E F : Set (Euclidean d)}
+    (hE : IsJohnEllipsoid K E) (hF : IsEllipsoid F) (hFK : F ⊆ K)
+    (hvol : volume F = volume E) : IsJohnEllipsoid K F := by
+  refine ⟨hF, hFK, ?_⟩
+  intro G hG hGK
+  rw [hvol]
+  exact hE.volume_max hG hGK
+
+/-- John maximality is preserved by every invertible affine change of coordinates. -/
+theorem IsJohnEllipsoid.affine_image {K E : Set (Euclidean d)}
+    (hE : IsJohnEllipsoid K E) (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    IsJohnEllipsoid ((planeAffine a A) '' K) ((planeAffine a A) '' E) := by
+  refine ⟨hE.isEllipsoid.affine_image a A, Set.image_mono hE.subset, ?_⟩
+  intro F hF hFK
+  let G := (planeAffine (-A.symm a) A.symm) '' F
+  have hG : IsEllipsoid G := hF.affine_image _ _
+  have hGK : G ⊆ K := by
+    rintro x ⟨y, hy, rfl⟩
+    obtain ⟨z, hz, rfl⟩ := hFK hy
+    simpa only [planeAffine_inverse, MeasurableEquiv.symm_apply_apply] using hz
+  have hFG : (planeAffine a A) '' G = F := by
+    rw [show G = (planeAffine (-A.symm a) A.symm) '' F from rfl,
+      planeAffine_inverse, Set.image_image]
+    simp only [Function.comp_def, MeasurableEquiv.apply_symm_apply, Set.image_id']
+  rw [← hFG, volume_affine_image a A G, volume_affine_image a A E]
+  exact mul_le_mul_left' (hE.volume_max hG hGK) _
+
+/-- The same invariance in both directions. -/
+theorem isJohnEllipsoid_affine_image_iff (K E : Set (Euclidean d))
+    (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    IsJohnEllipsoid ((planeAffine a A) '' K) ((planeAffine a A) '' E) ↔
+      IsJohnEllipsoid K E := by
+  constructor
+  · intro h
+    have h' := h.affine_image (-A.symm a) A.symm
+    simpa only [planeAffine_inverse, Set.image_image, Function.comp_def,
+      MeasurableEquiv.symm_apply_apply, Set.image_id'] using h'
+  · exact fun h => h.affine_image a A
+
+/-- The rank-one determinant formula in the concrete Euclidean space. -/
+theorem det_id_add_smulRight (f : Euclidean d →ₗ[ℝ] ℝ) (v : Euclidean d) :
+    LinearMap.det (LinearMap.id + f.smulRight v) = 1 + f v := by
+  classical
+  let b := (EuclideanSpace.basisFun (Fin d) ℝ).toBasis
+  rw [← LinearMap.det_toMatrix b]
+  have hm : LinearMap.toMatrix b b (LinearMap.id + f.smulRight v) =
+      1 + Matrix.replicateCol Unit (fun i => b.repr v i) *
+        Matrix.replicateRow Unit (fun i => f (b i)) := by
+    rw [map_add, LinearMap.toMatrix_id]
+    congr 1
+    ext i j
+    simp [LinearMap.toMatrix_apply, LinearMap.smulRight_apply,
+      Matrix.mul_apply, Matrix.replicateCol, Matrix.replicateRow, mul_comm]
+  rw [hm, Matrix.det_one_add_replicateCol_mul_replicateRow]
+  congr 1
+  rw [← b.sum_repr v]
+  simp [dotProduct, map_sum, map_smul, mul_comm]
+
+/-- Two distinct translated unit balls in a convex body admit a strictly larger
+inscribed ellipsoid, obtained by a rank-one stretch along the translation. -/
+theorem exists_larger_ellipsoid_of_translated_unitBall_subset
+    {K : Set (Euclidean d)} (hK : Convex ℝ K)
+    (hB : closedBall (0 : Euclidean d) 1 ⊆ K)
+    {t : Euclidean d} (ht : t ≠ 0)
+    (hBt : (fun x : Euclidean d => t + x) '' closedBall (0 : Euclidean d) 1 ⊆ K) :
+    ∃ E : Set (Euclidean d), IsEllipsoid E ∧ E ⊆ K ∧
+      volume (closedBall (0 : Euclidean d) 1) < volume E := by
+  let e : Euclidean d := ‖t‖⁻¹ • t
+  have he : ‖e‖ = 1 := norm_smul_inv_norm (𝕜 := ℝ) ht
+  have hnorm : 0 < ‖t‖ := norm_pos_iff.mpr ht
+  have heinner : inner (𝕜 := ℝ) e t = ‖t‖ := by
+    dsimp only [e]
+    rw [real_inner_smul_left, real_inner_self_eq_norm_sq]
+    field_simp
+    ring
+  let f : Euclidean d →L[ℝ] ℝ := innerSL ℝ e
+  let L : Euclidean d →L[ℝ] Euclidean d :=
+    ContinuousLinearMap.id ℝ (Euclidean d) + f.smulRight ((1 / 2 : ℝ) • t)
+  have hLdet : L.det = 1 + ‖t‖ / 2 := by
+    change LinearMap.det (LinearMap.id + f.toLinearMap.smulRight ((1 / 2 : ℝ) • t)) = _
+    rw [det_id_add_smulRight]
+    change 1 + inner (𝕜 := ℝ) e ((1 / 2 : ℝ) • t) = _
+    rw [real_inner_smul_right, heinner]
+    ring
+  have hdetpos : 0 < L.det := by rw [hLdet]; positivity
+  let A : Euclidean d ≃L[ℝ] Euclidean d :=
+    (L.toLinearMap.equivOfDetNeZero hdetpos.ne').toContinuousLinearEquiv
+  have hA : A.toContinuousLinearMap = L := by ext x; rfl
+  have hfac : 1 < volumeFactor A := by
+    change 1 < ENNReal.ofReal |A.toContinuousLinearMap.det|
+    rw [hA, abs_of_pos hdetpos, ← ENNReal.ofReal_one]
+    apply (ENNReal.ofReal_lt_ofReal_iff hdetpos).mpr
+    rw [hLdet]
+    linarith
+  refine ⟨closedEllipsoid ((1 / 2 : ℝ) • t) A,
+    isEllipsoid_closedEllipsoid _ _, ?_, ?_⟩
+  · rintro z ⟨x, hx, rfl⟩
+    have hxnorm : ‖x‖ ≤ 1 := by simpa only [mem_closedBall, dist_zero_right] using hx
+    have habs : |inner (𝕜 := ℝ) e x| ≤ 1 :=
+      (abs_real_inner_le_norm e x).trans (by simpa [he] using hxnorm)
+    have hcoef : (1 + inner (𝕜 := ℝ) e x) / 2 ∈ Set.Icc (0 : ℝ) 1 := by
+      rcases abs_le.mp habs with ⟨hlo, hhi⟩
+      constructor <;> linarith
+    have htx : x + t ∈ K := by
+      rw [add_comm]
+      exact hBt ⟨x, hx, rfl⟩
+    have hconv := hK.add_smul_mem (hB hx) htx hcoef
+    have hAx : A x = x + inner (𝕜 := ℝ) e x • ((1 / 2 : ℝ) • t) := by
+      change A.toContinuousLinearMap x = _
+      rw [hA]
+      rfl
+    change (1 / 2 : ℝ) • t + A x ∈ K
+    rw [hAx]
+    convert hconv using 1
+    rw [smul_smul]
+    have hscalar : (1 + inner (𝕜 := ℝ) e x) / 2 =
+        (1 / 2 : ℝ) + inner (𝕜 := ℝ) e x * (1 / 2 : ℝ) := by ring
+    rw [hscalar, add_smul]
+    abel
+  · rw [volume_closedEllipsoid]
+    have hvolpos := (measure_closedBall_pos volume (0 : Euclidean d) zero_lt_one).ne'
+    have hvolfin : volume (closedBall (0 : Euclidean d) 1) ≠ ∞ :=
+      measure_closedBall_lt_top.ne
+    simpa only [one_mul] using (ENNReal.mul_lt_mul_right hvolpos hvolfin).mpr hfac
+
+/-- In John-normalized coordinates, no nonzero translate of the closed unit ball
+is contained in the convex body. The proof uses maximality, not a uniqueness assumption. -/
+theorem IsJohnEllipsoid.eq_zero_of_translated_unitBall_subset
+    {K : Set (Euclidean d)} (hJ : IsJohnEllipsoid K (closedBall (0 : Euclidean d) 1))
+    (hK : Convex ℝ K) {t : Euclidean d}
+    (hBt : (fun x : Euclidean d => t + x) '' closedBall (0 : Euclidean d) 1 ⊆ K) : t = 0 := by
+  by_contra ht
+  obtain ⟨E, hE, hEK, hvol⟩ :=
+    exists_larger_ellipsoid_of_translated_unitBall_subset hK hJ.subset ht hBt
+  exact (not_lt_of_ge (hJ.volume_max hE hEK)) hvol
+
+@[simp] theorem closedEllipsoid_zero_refl :
+    closedEllipsoid (0 : Euclidean d) (ContinuousLinearEquiv.refl ℝ (Euclidean d)) =
+      closedBall (0 : Euclidean d) 1 := by
+  ext x
+  simp [closedEllipsoid, planeAffine]
+
+/-- An affine image of a convex body is convex. -/
+theorem convex_affine_image {K : Set (Euclidean d)} (hK : Convex ℝ K)
+    (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    Convex ℝ ((planeAffine a A) '' K) := by
+  simpa only [Set.image_image, Function.comp_def] using
+    (hK.linear_image A.toLinearEquiv.toLinearMap).translate a
+
+/-- Taking the inverse affine coordinates sends a given John ellipsoid to the unit ball. -/
+theorem IsJohnEllipsoid.normalize {K : Set (Euclidean d)}
+    {a : Euclidean d} {A : Euclidean d ≃L[ℝ] Euclidean d}
+    (hJ : IsJohnEllipsoid K (closedEllipsoid a A)) :
+    IsJohnEllipsoid ((planeAffine (-A.symm a) A.symm) '' K)
+      (closedBall (0 : Euclidean d) 1) := by
+  have h := hJ.affine_image (-A.symm a) A.symm
+  have he : (planeAffine (-A.symm a) A.symm) '' closedEllipsoid a A =
+      closedBall (0 : Euclidean d) 1 := by
+    rw [closedEllipsoid, planeAffine_inverse, Set.image_image]
+    simp only [Function.comp_def, MeasurableEquiv.symm_apply_apply, Set.image_id']
+  rw [he] at h
+  exact h
+
+/-- For any John ellipsoid of a convex body, a contained translate has zero shift. -/
+theorem IsJohnEllipsoid.eq_zero_of_translated_subset
+    {K E : Set (Euclidean d)} (hJ : IsJohnEllipsoid K E) (hK : Convex ℝ K)
+    {t : Euclidean d} (hEt : (fun x : Euclidean d => t + x) '' E ⊆ K) : t = 0 := by
+  obtain ⟨a, A, rfl⟩ := hJ.isEllipsoid
+  have hnorm := hJ.normalize
+  have hconv := convex_affine_image hK (-A.symm a) A.symm
+  have htrans : (fun x : Euclidean d => A.symm t + x) ''
+      closedBall (0 : Euclidean d) 1 ⊆ (planeAffine (-A.symm a) A.symm) '' K := by
+    rintro z ⟨x, hx, rfl⟩
+    refine ⟨t + (a + A x), hEt ⟨a + A x, ⟨x, hx, rfl⟩, rfl⟩, ?_⟩
+    change -A.symm a + A.symm (t + (a + A x)) = A.symm t + x
+    simp only [map_add, ContinuousLinearEquiv.symm_apply_apply]
+    abel
+  have ht : A.symm t = 0 := hnorm.eq_zero_of_translated_unitBall_subset hconv htrans
+  exact A.symm.injective (by simpa using ht)
+
+/-- The closed parameter family allows singular shapes during compact optimization. -/
+def admissibleParameters (K : Set (Euclidean d)) :
+    Set (Euclidean d × (Euclidean d →L[ℝ] Euclidean d)) :=
+  {p | ∀ x : closedBall (0 : Euclidean d) 1, p.1 + p.2 x ∈ K}
+
+theorem admissibleParameters_isClosed {K : Set (Euclidean d)} (hK : IsClosed K) :
+    IsClosed (admissibleParameters K) := by
+  have heq : admissibleParameters K =
+      ⋂ x : closedBall (0 : Euclidean d) 1,
+        (fun p : Euclidean d × (Euclidean d →L[ℝ] Euclidean d) => p.1 + p.2 x) ⁻¹' K := by
+    ext p
+    simp only [admissibleParameters, Set.mem_setOf_eq, Set.mem_iInter, Set.mem_preimage]
+  rw [heq]
+  exact isClosed_iInter fun x => hK.preimage
+    (continuous_fst.add (continuous_snd.clm_apply continuous_const))
+
+theorem admissibleParameters_isBounded {K : Set (Euclidean d)}
+    (hK : Bornology.IsBounded K) : Bornology.IsBounded (admissibleParameters K) := by
+  obtain ⟨R, hR, hKR⟩ := hK.exists_pos_norm_le
+  apply isBounded_iff_forall_norm_le.mpr
+  refine ⟨2 * R, ?_⟩
+  intro p hp
+  have ha : ‖p.1‖ ≤ R := by
+    have hzero := hp ⟨0, by simp⟩
+    simp only [ContinuousLinearMap.map_zero, add_zero] at hzero
+    exact hKR _ hzero
+  apply norm_prod_le_iff.mpr
+  refine ⟨by linarith, ?_⟩
+  apply ContinuousLinearMap.opNorm_le_of_unit_norm (by positivity)
+  intro x hx
+  have hax : ‖p.1 + p.2 x‖ ≤ R := hKR _ (hp ⟨x, by simp [mem_closedBall, hx]⟩)
+  calc
+    ‖p.2 x‖ = ‖(p.1 + p.2 x) - p.1‖ := by rw [add_sub_cancel_left]
+    _ ≤ ‖p.1 + p.2 x‖ + ‖p.1‖ := norm_sub_le _ _
+    _ ≤ 2 * R := by linarith
+
+/-- Including singular shapes makes the feasible parameter family closed and compact. -/
+theorem admissibleParameters_isCompact {K : Set (Euclidean d)} (hK : IsCompact K) :
+    IsCompact (admissibleParameters K) :=
+  isCompact_iff_isClosed_bounded.mpr
+    ⟨admissibleParameters_isClosed hK.isClosed, admissibleParameters_isBounded hK.isBounded⟩
+
+/-- A compact set with nonempty interior has a maximal-volume inscribed
+full-dimensional ellipsoid. Convexity is not needed for existence. -/
+theorem exists_isJohnEllipsoid {K : Set (Euclidean d)} (hK : IsCompact K)
+    (hKi : (interior K).Nonempty) : ∃ E : Set (Euclidean d), IsJohnEllipsoid K E := by
+  obtain ⟨E₀, ⟨a₀, A₀, rfl⟩, hE₀K⟩ := exists_contained_ellipsoid hKi
+  have h₀ : (a₀, A₀.toContinuousLinearMap) ∈ admissibleParameters K := by
+    intro x
+    exact hE₀K ⟨x, x.property, rfl⟩
+  obtain ⟨p, hp, hmax⟩ := (admissibleParameters_isCompact hK).exists_isMaxOn
+    ⟨(a₀, A₀.toContinuousLinearMap), h₀⟩
+    ((ContinuousLinearMap.continuous_det.comp continuous_snd).abs.continuousOn)
+  have hdetpos : 0 < |p.2.det| :=
+    (abs_pos.mpr A₀.toLinearEquiv.isUnit_det'.ne_zero).trans_le (hmax h₀)
+  have hdet : LinearMap.det p.2.toLinearMap ≠ 0 := abs_pos.mp hdetpos
+  let A := (p.2.toLinearMap.equivOfDetNeZero hdet).toContinuousLinearEquiv
+  have hA : A.toContinuousLinearMap = p.2 := by
+    ext x
+    rfl
+  refine ⟨closedEllipsoid p.1 A, isEllipsoid_closedEllipsoid p.1 A, ?_, ?_⟩
+  · rintro x ⟨y, hy, rfl⟩
+    change p.1 + A y ∈ K
+    have he : A y = p.2 y := congrArg (fun f : Euclidean d →L[ℝ] Euclidean d => f y) hA
+    rw [he]
+    exact hp ⟨y, hy⟩
+  · intro F hF hFK
+    obtain ⟨b, B, rfl⟩ := hF
+    have hB : (b, B.toContinuousLinearMap) ∈ admissibleParameters K := by
+      intro x
+      exact hFK ⟨x, x.property, rfl⟩
+    rw [volume_closedEllipsoid, volume_closedEllipsoid]
+    apply mul_le_mul_right'
+    apply ENNReal.ofReal_le_ofReal
+    change |B.toContinuousLinearMap.det| ≤ |A.toContinuousLinearMap.det|
+    rw [hA]
+    exact hmax hB
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalAffine.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Affine transport of actual complete and minimal exponential families. -/
+
+noncomputable section
+
+open MeasureTheory MeasureTheory.Measure Filter Topology
+open scoped ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+section Families
+
+variable {ι κ H K : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+    [NormedAddCommGroup K] [InnerProductSpace ℂ K]
+
+theorem mem_closed_span_image_iff (E : H ≃L[ℂ] K) (s : Set H) (x : H) :
+    E x ∈ (Submodule.span ℂ (E '' s)).topologicalClosure ↔
+      x ∈ (Submodule.span ℂ s).topologicalClosure := by
+  have hs : (Submodule.span ℂ (E '' s) : Set K) =
+      E '' (Submodule.span ℂ s : Set H) := by
+    simpa only [Submodule.map_coe] using
+      congrArg (fun P : Submodule ℂ K => (P : Set K))
+        (Submodule.map_span E.toLinearMap s).symm
+  change E x ∈ closure (Submodule.span ℂ (E '' s) : Set K) ↔
+    x ∈ closure (Submodule.span ℂ s : Set H)
+  rw [hs]
+  change E.toHomeomorph x ∈ closure (E.toHomeomorph '' (Submodule.span ℂ s : Set H)) ↔ _
+  rw [← E.toHomeomorph.image_closure]
+  constructor
+  · rintro ⟨y, hy, he⟩
+    have hh : y = x := E.toHomeomorph.injective he
+    simpa only [hh] using hy
+  · intro hx
+    exact ⟨x, hx, rfl⟩
+
+/-- A bounded invertible linear map preserves completeness. -/
+theorem IsComplete.linearEquiv {v : ι → H} (hv : IsComplete v) (E : H ≃L[ℂ] K) :
+    IsComplete (fun i => E (v i)) := by
+  change (Submodule.span ℂ (Set.range (fun i => E (v i)))).topologicalClosure = ⊤
+  apply top_unique
+  intro y _
+  obtain ⟨x, rfl⟩ := E.surjective y
+  change E x ∈ (Submodule.span ℂ (Set.range (E ∘ v))).topologicalClosure
+  rw [Set.range_comp]
+  apply (mem_closed_span_image_iff E (Set.range v) x).mpr
+  change x ∈ closedSpan v
+  rw [show closedSpan v = ⊤ from hv]
+  trivial
+
+/-- A bounded invertible linear map preserves ordinary minimality. -/
+theorem IsMinimal.linearEquiv {v : ι → H} (hv : IsMinimal v) (E : H ≃L[ℂ] K) :
+    IsMinimal (fun i => E (v i)) := by
+  intro i hi
+  apply hv i
+  have he : (fun j => E (v j)) '' {j | j ≠ i} = E '' (v '' {j | j ≠ i}) :=
+    (Set.image_image E v _).symm
+  rw [he] at hi
+  exact (mem_closed_span_image_iff E _ _).mp hi
+
+/-- Multiplying individual generators by nonzero scalars leaves their span unchanged. -/
+theorem span_weighted_image (v : ι → H) (c : ι → ℂ) (hc : ∀ i, c i ≠ 0) (s : Set ι) :
+    Submodule.span ℂ ((fun i => c i • v i) '' s) = Submodule.span ℂ (v '' s) := by
+  apply le_antisymm
+  · apply Submodule.span_le.mpr
+    rintro _ ⟨i, hi, rfl⟩
+    exact Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, hi, rfl⟩)
+  · apply Submodule.span_le.mpr
+    rintro _ ⟨i, hi, rfl⟩
+    have h := Submodule.smul_mem (Submodule.span ℂ ((fun j => c j • v j) '' s))
+      (c i)⁻¹ (Submodule.subset_span ⟨i, hi, rfl⟩)
+    simpa [smul_smul, hc i] using h
+
+theorem IsComplete.weighted {v : ι → H} (hv : IsComplete v)
+    (c : ι → ℂ) (hc : ∀ i, c i ≠ 0) : IsComplete (fun i => c i • v i) := by
+  unfold IsComplete closedSpan at hv ⊢
+  simpa only [← Set.image_univ, span_weighted_image v c hc Set.univ] using hv
+
+theorem IsMinimal.weighted {v : ι → H} (hv : IsMinimal v)
+    (c : ι → ℂ) (hc : ∀ i, c i ≠ 0) : IsMinimal (fun i => c i • v i) := by
+  intro i hi
+  rw [span_weighted_image v c hc] at hi
+  have h := Submodule.smul_mem _ (c i)⁻¹ hi
+  apply hv i
+  simpa [smul_smul, hc i] using h
+
+theorem IsComplete.reindex {v : ι → H} (hv : IsComplete v) (r : κ ≃ ι) :
+    IsComplete (fun i => v (r i)) := by
+  unfold IsComplete closedSpan at hv ⊢
+  have hr : Set.range (fun i => v (r i)) = Set.range v := by
+    ext x
+    constructor
+    · rintro ⟨i, rfl⟩; exact ⟨r i, rfl⟩
+    · rintro ⟨i, rfl⟩; exact ⟨r.symm i, by simp⟩
+  rwa [hr]
+
+theorem IsMinimal.reindex {v : ι → H} (hv : IsMinimal v) (r : κ ≃ ι) :
+    IsMinimal (fun i => v (r i)) := by
+  intro i hi
+  apply hv (r i)
+  have hr : (fun j => v (r j)) '' {j | j ≠ i} = v '' {j | j ≠ r i} := by
+    ext x
+    constructor
+    · rintro ⟨j, hj, rfl⟩
+      exact ⟨r j, r.injective.ne hj, rfl⟩
+    · rintro ⟨j, hj, rfl⟩
+      exact ⟨r.symm j, (by intro hh; apply hj; simpa [hh] using (r.apply_symm_apply j).symm), by simp⟩
+  rwa [hr] at hi
+
+end Families
+
+variable {d : ℕ}
+
+/-- The actual pullback L² equivalence; its norm includes the Jacobian factor. -/
+def affineL2Pullback (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d)
+    (D : Set (Euclidean d)) :
+    DomainL2 ((planeAffine a A) '' D) ≃L[ℂ] DomainL2 D :=
+  scaledL2Equiv (planeAffine a A) (planeAffine_map a A D)
+    (affineJacobian_ne_zero A) (affineJacobian_ne_top A)
+
+/-- Pullback multiplies both-vector inner products by the real Jacobian. -/
+theorem affineL2Pullback_inner (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d)
+    (D : Set (Euclidean d)) (g f : DomainL2 ((planeAffine a A) '' D)) :
+    inner (𝕜 := ℂ) (affineL2Pullback a A D g) (affineL2Pullback a A D f) =
+      (affineJacobian A).toReal • inner (𝕜 := ℂ) g f := by
+  rw [L2.inner_def, L2.inner_def]
+  have he : (∫ x, inner (𝕜 := ℂ) (g (planeAffine a A x)) (f (planeAffine a A x))
+      ∂volume.restrict D) =
+      (affineJacobian A).toReal •
+        ∫ x, inner (𝕜 := ℂ) (g x) (f x) ∂volume.restrict ((planeAffine a A) '' D) := by
+    have h := integral_map_equiv (μ := volume.restrict D) (planeAffine a A)
+      (fun x => inner (𝕜 := ℂ) (g x) (f x))
+    rw [planeAffine_map, integral_smul_measure] at h
+    exact h.symm
+  rw [← he]
+  apply integral_congr_ae
+  filter_upwards [scaledL2Equiv_ae (planeAffine a A) (planeAffine_map a A D)
+    (affineJacobian_ne_zero A) (affineJacobian_ne_top A) g,
+    scaledL2Equiv_ae (planeAffine a A) (planeAffine_map a A D)
+    (affineJacobian_ne_zero A) (affineJacobian_ne_top A) f] with x hg hf
+  simpa only [affineL2Pullback, Function.comp_apply] using
+    congrArg₂ (fun u v : ℂ => inner (𝕜 := ℂ) u v) hg hf
+
+/-- The phase identity holds for the actual L² equivalence classes. -/
+theorem affineL2Pullback_exponential (a ξ : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (himage : volume ((planeAffine a A) '' D) ≠ ⊤) :
+    affineL2Pullback a A D (exponentialL2 _ himage ξ) =
+      exponential ξ a • exponentialL2 D hD (affineFrequency A ξ) := by
+  have hq : QuasiMeasurePreserving (planeAffine a A) (volume.restrict D)
+      (volume.restrict ((planeAffine a A) '' D)) :=
+    ⟨(planeAffine a A).measurable, by rw [planeAffine_map]; exact Measure.smul_absolutelyContinuous⟩
+  apply Lp.ext
+  filter_upwards [scaledL2Equiv_ae (planeAffine a A) (planeAffine_map a A D)
+      (affineJacobian_ne_zero A) (affineJacobian_ne_top A) (exponentialL2 _ himage ξ),
+    hq.ae (exponentialL2_ae _ himage ξ),
+    Lp.coeFn_smul (exponential ξ a) (exponentialL2 D hD (affineFrequency A ξ)),
+    exponentialL2_ae D hD (affineFrequency A ξ)] with x hx hy hz hw
+  dsimp only [affineL2Pullback]
+  simp only [Function.comp_apply] at hx
+  rw [hx, hy, hz]
+  change exponential ξ (planeAffine a A x) = exponential ξ a *
+    (exponentialL2 D hD (affineFrequency A ξ)) x
+  rw [hw]
+  exact exponential_planeAffine a ξ x A
+
+/-- The pullback of a supported vector has the corresponding preimage support. -/
+theorem SupportedOn.affinePullback {D K : Set (Euclidean d)}
+    {g : DomainL2 ((planeAffine a A) '' D)}
+    (hg : SupportedOn ((planeAffine a A) '' D) g K) :
+    SupportedOn D (affineL2Pullback a A D g) ((planeAffine a A) ⁻¹' K) := by
+  have hq : QuasiMeasurePreserving (planeAffine a A) (volume.restrict D)
+      (volume.restrict ((planeAffine a A) '' D)) :=
+    ⟨(planeAffine a A).measurable, by rw [planeAffine_map]; exact Measure.smul_absolutelyContinuous⟩
+  filter_upwards [hq.ae hg, scaledL2Equiv_ae (planeAffine a A) (planeAffine_map a A D)
+    (affineJacobian_ne_zero A) (affineJacobian_ne_top A) g] with x hx hy
+  exact fun h => hy.trans (hx h)
+
+/-- Scalar multiplication preserves physical support. -/
+theorem SupportedOn.smul {D K : Set (Euclidean d)} {g : DomainL2 D}
+    (hg : SupportedOn D g K) (c : ℂ) : SupportedOn D (c • g) K := by
+  filter_upwards [hg, Lp.coeFn_smul c g] with x hx hy
+  intro hK
+  rw [hy]
+  change c * g x = 0
+  rw [hx hK, mul_zero]
+
+/-- The pullback formula solved for the new exponential. -/
+theorem exponentialL2_affineFrequency (a ξ : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (himage : volume ((planeAffine a A) '' D) ≠ ⊤) :
+    exponentialL2 D hD (affineFrequency A ξ) =
+      (exponential ξ a)⁻¹ • affineL2Pullback a A D (exponentialL2 _ himage ξ) := by
+  rw [affineL2Pullback_exponential, smul_smul, inv_mul_cancel₀, one_smul]
+  exact Complex.exp_ne_zero _
+
+private theorem reindexed_affine_exponentials (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) :
+    (fun η : (affineFrequency A) '' Λ => exponentialL2 D hD
+      (affineFrequency A ((Equiv.Set.image (affineFrequency A) Λ
+        (affineFrequency_injective A)).symm η).val)) =
+      exponentialFamily D hD ((affineFrequency A) '' Λ) := by
+  funext η
+  congr 1
+  exact congrArg Subtype.val
+    ((Equiv.Set.image (affineFrequency A) Λ (affineFrequency_injective A)).apply_symm_apply η)
+
+/-- Affine pullback preserves completeness of actual domain exponentials. -/
+theorem IsCompleteExponential.affinePullback (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (himage : volume ((planeAffine a A) '' D) ≠ ⊤)
+    (h : IsCompleteExponential ((planeAffine a A) '' D) himage Λ) :
+    IsCompleteExponential D hD ((affineFrequency A) '' Λ) := by
+  have hc : ∀ ξ : Λ, (exponential ξ.val a)⁻¹ ≠ 0 :=
+    fun ξ => inv_ne_zero (Complex.exp_ne_zero _)
+  have ht := (h.linearEquiv (affineL2Pullback a A D)).weighted
+    (fun ξ : Λ => (exponential ξ.val a)⁻¹) hc
+  have he : (fun ξ : Λ => (exponential ξ.val a)⁻¹ •
+      affineL2Pullback a A D (exponentialFamily _ himage Λ ξ)) =
+      (fun ξ : Λ => exponentialL2 D hD (affineFrequency A ξ.val)) := by
+    funext ξ
+    exact (exponentialL2_affineFrequency a ξ.val A D hD himage).symm
+  rw [he] at ht
+  have hr := ht.reindex
+    (Equiv.Set.image (affineFrequency A) Λ (affineFrequency_injective A)).symm
+  rwa [reindexed_affine_exponentials A D Λ hD] at hr
+
+/-- Affine pullback preserves ordinary minimality of actual domain exponentials. -/
+theorem IsMinimalExponential.affinePullback (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (himage : volume ((planeAffine a A) '' D) ≠ ⊤)
+    (h : IsMinimalExponential ((planeAffine a A) '' D) himage Λ) :
+    IsMinimalExponential D hD ((affineFrequency A) '' Λ) := by
+  have hc : ∀ ξ : Λ, (exponential ξ.val a)⁻¹ ≠ 0 :=
+    fun ξ => inv_ne_zero (Complex.exp_ne_zero _)
+  have ht := (h.linearEquiv (affineL2Pullback a A D)).weighted
+    (fun ξ : Λ => (exponential ξ.val a)⁻¹) hc
+  have he : (fun ξ : Λ => (exponential ξ.val a)⁻¹ •
+      affineL2Pullback a A D (exponentialFamily _ himage Λ ξ)) =
+      (fun ξ : Λ => exponentialL2 D hD (affineFrequency A ξ.val)) := by
+    funext ξ
+    exact (exponentialL2_affineFrequency a ξ.val A D hD himage).symm
+  rw [he] at ht
+  have hr := ht.reindex
+    (Equiv.Set.image (affineFrequency A) Λ (affineFrequency_injective A)).symm
+  rwa [reindexed_affine_exponentials A D Λ hD] at hr
+
+/-- The exact dual weight for the unnormalized L² pullback. The inverse real
+Jacobian compensates for the scaling of the inner product. -/
+def affineDualWeight (a ξ : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) : ℂ :=
+  ((affineJacobian A).toReal : ℂ)⁻¹ * star (exponential ξ a)
+
+/-- Transported dual vectors, reindexed by the transpose image of the frequencies. -/
+def affineDualPullback (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d)
+    (D Λ : Set (Euclidean d)) (g : Λ → DomainL2 ((planeAffine a A) '' D)) :
+    (affineFrequency A) '' Λ → DomainL2 D := fun η =>
+  let ξ := (Equiv.Set.image (affineFrequency A) Λ (affineFrequency_injective A)).symm η
+  affineDualWeight a ξ.val A • affineL2Pullback a A D (g ξ)
+
+/-- The Jacobian and phase corrected pullbacks are biorthogonal to the transported
+actual exponential family. -/
+theorem affineDualPullback_biorthogonal (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (himage : volume ((planeAffine a A) '' D) ≠ ⊤)
+    (g : Λ → DomainL2 ((planeAffine a A) '' D))
+    (hg : IsBiorthogonal (exponentialFamily _ himage Λ) g) :
+    IsBiorthogonal (exponentialFamily D hD ((affineFrequency A) '' Λ))
+      (affineDualPullback a A D Λ g) := by
+  classical
+  have hc : ((affineJacobian A).toReal : ℂ) ≠ 0 := by
+    exact_mod_cast ENNReal.toReal_ne_zero.mpr
+      ⟨affineJacobian_ne_zero A, affineJacobian_ne_top A⟩
+  have hi : ∀ ξ ζ : Λ,
+      inner (𝕜 := ℂ) (affineDualWeight a ξ.val A • affineL2Pullback a A D (g ξ))
+        (exponentialL2 D hD (affineFrequency A ζ.val)) = if ξ = ζ then 1 else 0 := by
+    intro ξ ζ
+    rw [exponentialL2_affineFrequency a ζ.val A D hD himage,
+      inner_smul_left, inner_smul_right, affineL2Pullback_inner]
+    change star (affineDualWeight a ξ.val A) * ((exponential ζ.val a)⁻¹ *
+      (((affineJacobian A).toReal : ℂ) *
+        inner (𝕜 := ℂ) (g ξ) (exponentialFamily _ himage Λ ζ))) = _
+    rw [hg ξ ζ]
+    by_cases hξζ : ξ = ζ
+    · subst ζ
+      simp only [if_pos rfl, affineDualWeight, star_mul, star_inv₀, star_star,
+        Complex.star_def, Complex.conj_ofReal, mul_one]
+      have hp : exponential ξ.val a ≠ 0 := Complex.exp_ne_zero _
+      field_simp
+    · simp [hξζ]
+  intro η θ
+  let r := (Equiv.Set.image (affineFrequency A) Λ (affineFrequency_injective A)).symm
+  have ht := hi (r η) (r θ)
+  have hf : affineFrequency A (r θ).val = θ.val :=
+    congrArg Subtype.val ((Equiv.Set.image (affineFrequency A) Λ
+      (affineFrequency_injective A)).apply_symm_apply θ)
+  by_cases hh : η = θ
+  · have heq : r η = r θ := congrArg r hh
+    simpa only [affineDualPullback, hf, if_pos hh, if_pos heq, exponentialFamily] using ht
+  · have hne : r η ≠ r θ := r.injective.ne hh
+    simpa only [affineDualPullback, hf, if_neg hh, if_neg hne, exponentialFamily] using ht
+
+/-- The explicitly corrected dual family keeps its transported physical support. -/
+theorem affineDualPullback_supported (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ K : Set (Euclidean d))
+    (g : Λ → DomainL2 ((planeAffine a A) '' D))
+    (hg : ∀ ξ, SupportedOn ((planeAffine a A) '' D) (g ξ) K) :
+    ∀ η, SupportedOn D (affineDualPullback a A D Λ g η) ((planeAffine a A) ⁻¹' K) := by
+  intro η
+  exact ((hg _).affinePullback).smul _
+
+/-- The transpose map is an actual topological linear equivalence, whose inverse
+is the transpose of the inverse coordinate map. -/
+def affineFrequencyEquiv (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    Euclidean d ≃L[ℝ] Euclidean d where
+  toLinearEquiv :=
+    { toLinearMap := (affineFrequency A).toLinearMap
+      invFun := affineFrequency A.symm
+      left_inv := fun ξ => by
+        apply ext_inner_right ℝ
+        intro x
+        change inner (𝕜 := ℝ) (affineFrequency A.symm (affineFrequency A ξ)) x = _
+        rw [affineFrequency_inner, affineFrequency_inner]
+        simp
+      right_inv := fun ξ => by
+        apply ext_inner_right ℝ
+        intro x
+        change inner (𝕜 := ℝ) (affineFrequency A (affineFrequency A.symm ξ)) x = _
+        rw [affineFrequency_inner, affineFrequency_inner]
+        simp }
+  continuous_toFun := (affineFrequency A).continuous
+  continuous_invFun := (affineFrequency A.symm).continuous
+
+/-- Local finiteness of a set, expressed by finite intersections with neighborhoods. -/
+def IsLocallyFiniteSet {X : Type*} [TopologicalSpace X] (Λ : Set X) : Prop :=
+  ∀ x, ∃ U ∈ nhds x, (Λ ∩ U).Finite
+
+/-- Homeomorphisms preserve local finiteness of selected frequencies. -/
+theorem IsLocallyFiniteSet.image_homeomorph {X Y : Type*}
+    [TopologicalSpace X] [TopologicalSpace Y] {Λ : Set X}
+    (hΛ : IsLocallyFiniteSet Λ) (h : X ≃ₜ Y) : IsLocallyFiniteSet (h '' Λ) := by
+  intro y
+  obtain ⟨U, hU, hfin⟩ := hΛ (h.symm y)
+  obtain ⟨W, hWU, hWopen, hyW⟩ := mem_nhds_iff.mp hU
+  refine ⟨h '' W, (h.isOpenMap W hWopen).mem_nhds ?_, ?_⟩
+  · exact ⟨h.symm y, hyW, h.apply_symm_apply y⟩
+  · apply (hfin.image h).subset
+    rintro z ⟨⟨x, hx, rfl⟩, hzW⟩
+    obtain ⟨w, hwW, heq⟩ := hzW
+    have hEq : w = x := h.injective heq
+    subst w
+    exact ⟨x, ⟨hx, hWU hwW⟩, rfl⟩
+
+/-- Both transpose and inverse-transpose frequency transport preserve local finiteness. -/
+theorem IsLocallyFiniteSet.affineFrequency {Λ : Set (Euclidean d)}
+    (hΛ : IsLocallyFiniteSet Λ) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    IsLocallyFiniteSet ((affineFrequency A) '' Λ) :=
+  hΛ.image_homeomorph (affineFrequencyEquiv A).toHomeomorph
+
+private theorem affine_inverse_image_domain (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D : Set (Euclidean d)) :
+    (planeAffine (-A.symm a) A.symm) '' ((planeAffine a A) '' D) = D := by
+  rw [planeAffine_inverse, Set.image_image]
+  simp only [Function.comp_def, MeasurableEquiv.symm_apply_apply, Set.image_id']
+
+/-- Forward domain transport uses precisely the inverse-transpose frequency map. -/
+theorem IsCompleteExponential.affineImage (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (himage : volume ((planeAffine a A) '' D) ≠ ⊤)
+    (h : IsCompleteExponential D hD Λ) :
+    IsCompleteExponential ((planeAffine a A) '' D) himage ((affineFrequency A.symm) '' Λ) := by
+  have heq := affine_inverse_image_domain a A D
+  have hfin : volume ((planeAffine (-A.symm a) A.symm) '' ((planeAffine a A) '' D)) ≠ ⊤ :=
+    heq.symm ▸ hD
+  have hh : IsCompleteExponential
+      ((planeAffine (-A.symm a) A.symm) '' ((planeAffine a A) '' D)) hfin Λ := by simpa only [heq] using h
+  exact hh.affinePullback (-A.symm a) A.symm _ Λ himage hfin
+
+/-- Ordinary minimality passes to every invertible affine image of the domain. -/
+theorem IsMinimalExponential.affineImage (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (himage : volume ((planeAffine a A) '' D) ≠ ⊤)
+    (h : IsMinimalExponential D hD Λ) :
+    IsMinimalExponential ((planeAffine a A) '' D) himage ((affineFrequency A.symm) '' Λ) := by
+  have heq := affine_inverse_image_domain a A D
+  have hfin : volume ((planeAffine (-A.symm a) A.symm) '' ((planeAffine a A) '' D)) ≠ ⊤ :=
+    heq.symm ▸ hD
+  have hh : IsMinimalExponential
+      ((planeAffine (-A.symm a) A.symm) '' ((planeAffine a A) '' D)) hfin Λ := by simpa only [heq] using h
+  exact hh.affinePullback (-A.symm a) A.symm _ Λ himage hfin
+
+/-- Finite volume is preserved by every invertible affine domain map. -/
+theorem finite_volume_affineImage (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) : volume ((planeAffine a A) '' D) ≠ ⊤ := by
+  rw [volume_affine_image]
+  exact ENNReal.mul_ne_top (volumeFactor_ne_top A) hD
+
+/-- Forward affine domain transport of an actual supported biorthogonal family. -/
+theorem exists_supported_biorthogonal_affineImage (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ K : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (himage : volume ((planeAffine a A) '' D) ≠ ⊤)
+    (g : Λ → DomainL2 D) (hg : IsBiorthogonal (exponentialFamily D hD Λ) g)
+    (hs : ∀ ξ, SupportedOn D (g ξ) K) :
+    ∃ w : (affineFrequency A.symm) '' Λ → DomainL2 ((planeAffine a A) '' D),
+      IsBiorthogonal (exponentialFamily _ himage ((affineFrequency A.symm) '' Λ)) w ∧
+      ∀ η, SupportedOn ((planeAffine a A) '' D) (w η) ((planeAffine a A) '' K) := by
+  have heq := affine_inverse_image_domain a A D
+  have hbase : ∃ hfin : volume D ≠ ⊤, ∃ g₀ : Λ → DomainL2 D,
+      IsBiorthogonal (exponentialFamily D hfin Λ) g₀ ∧
+      ∀ ξ, SupportedOn D (g₀ ξ) K := ⟨hD, g, hg, hs⟩
+  have hr : ∃ hfin : volume
+      ((planeAffine (-A.symm a) A.symm) '' ((planeAffine a A) '' D)) ≠ ⊤,
+      ∃ g₀ : Λ → DomainL2
+        ((planeAffine (-A.symm a) A.symm) '' ((planeAffine a A) '' D)),
+        IsBiorthogonal (exponentialFamily _ hfin Λ) g₀ ∧
+        ∀ ξ, SupportedOn _ (g₀ ξ) K := heq.symm ▸ hbase
+  obtain ⟨hfin, g₀, hg₀, hs₀⟩ := hr
+  refine ⟨affineDualPullback (-A.symm a) A.symm _ Λ g₀,
+    affineDualPullback_biorthogonal (-A.symm a) A.symm _ Λ himage hfin g₀ hg₀, ?_⟩
+  have hsupport : (planeAffine (-A.symm a) A.symm) ⁻¹' K = (planeAffine a A) '' K := by
+    rw [planeAffine_inverse]
+    exact (Set.image_equiv_eq_preimage_symm K (planeAffine a A).toEquiv).symm
+  simpa only [hsupport] using
+    affineDualPullback_supported (-A.symm a) A.symm _ Λ K g₀ hs₀
+
+/-- The complete and minimal system, its supported duals, and local finiteness
+transport together under an arbitrary invertible affine domain map. -/
+theorem complete_minimal_supported_affineImage (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ K : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (hcomplete : IsCompleteExponential D hD Λ)
+    (g : Λ → DomainL2 D) (hg : IsBiorthogonal (exponentialFamily D hD Λ) g)
+    (hs : ∀ ξ, SupportedOn D (g ξ) K) (hlocal : IsLocallyFiniteSet Λ) :
+    let himage := finite_volume_affineImage a A D hD
+    IsCompleteExponential ((planeAffine a A) '' D) himage ((affineFrequency A.symm) '' Λ) ∧
+      IsMinimalExponential ((planeAffine a A) '' D) himage ((affineFrequency A.symm) '' Λ) ∧
+      IsLocallyFiniteSet ((affineFrequency A.symm) '' Λ) ∧
+      ∃ w : (affineFrequency A.symm) '' Λ → DomainL2 ((planeAffine a A) '' D),
+        IsBiorthogonal (exponentialFamily _ himage ((affineFrequency A.symm) '' Λ)) w ∧
+        ∀ η, SupportedOn ((planeAffine a A) '' D) (w η) ((planeAffine a A) '' K) := by
+  dsimp only
+  obtain ⟨w, hw, hws⟩ := exists_supported_biorthogonal_affineImage a A D Λ K hD
+    (finite_volume_affineImage a A D hD) g hg hs
+  exact ⟨hcomplete.affineImage a A D Λ hD _, hw.isMinimal,
+    hlocal.affineFrequency A.symm, w, hw, hws⟩
+
+/-- When the prescribed support is a John ellipsoid, its transported support
+remains the John ellipsoid of the affine image domain. -/
+theorem john_supported_affineImage (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) (D Λ K : Set (Euclidean d))
+    (hD : volume D ≠ ⊤) (hJohn : IsJohnEllipsoid D K)
+    (g : Λ → DomainL2 D) (hg : IsBiorthogonal (exponentialFamily D hD Λ) g)
+    (hs : ∀ ξ, SupportedOn D (g ξ) K) :
+    IsJohnEllipsoid ((planeAffine a A) '' D) ((planeAffine a A) '' K) ∧
+      ∃ w : (affineFrequency A.symm) '' Λ → DomainL2 ((planeAffine a A) '' D),
+        IsBiorthogonal (exponentialFamily _ (finite_volume_affineImage a A D hD)
+          ((affineFrequency A.symm) '' Λ)) w ∧
+        ∀ η, SupportedOn ((planeAffine a A) '' D) (w η) ((planeAffine a A) '' K) :=
+  ⟨hJohn.affine_image a A, exists_supported_biorthogonal_affineImage a A D Λ K hD
+    (finite_volume_affineImage a A D hD) g hg hs⟩
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalEntireFourier.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Complex frequencies for the Fourier transform of boundedly supported functions. -/
+
+noncomputable section
+open MeasureTheory Filter Topology
+open scoped BigOperators
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Complex Euclidean frequency space with the same coordinate index as physical space. -/
+abbrev ComplexEuclidean (d : ℕ) := EuclideanSpace ℂ (Fin d)
+
+/-- Embed real frequencies coordinatewise into complex Euclidean space. -/
+def realToComplex {d : ℕ} (x : Euclidean d) : ComplexEuclidean d :=
+  (WithLp.equiv 2 (Fin d → ℂ)).symm (fun j => (x j : ℂ))
+
+@[simp] theorem realToComplex_apply {d : ℕ} (x : Euclidean d) (j : Fin d) :
+    realToComplex x j = (x j : ℂ) := rfl
+
+@[simp] theorem realToComplex_norm {d : ℕ} (x : Euclidean d) :
+    ‖realToComplex x‖ = ‖x‖ := by
+  rw [← sq_eq_sq₀ (norm_nonneg _) (norm_nonneg _)]
+  simp [PiLp.norm_sq_eq_of_L2, realToComplex]
+
+/-- The complex bilinear extension of the real Euclidean pairing. -/
+def complexPairing {d : ℕ} (x : Euclidean d) (z : ComplexEuclidean d) : ℂ :=
+  ∑ j, (x j : ℂ) * z j
+
+/-- The frequency pairing as a continuous complex-linear functional. -/
+def complexPairingCLM {d : ℕ} (x : Euclidean d) : ComplexEuclidean d →L[ℂ] ℂ :=
+  ∑ j, (x j : ℂ) • PiLp.proj 2 (fun _ : Fin d => ℂ) j
+
+@[simp] theorem complexPairingCLM_apply {d : ℕ} (x : Euclidean d)
+    (z : ComplexEuclidean d) : complexPairingCLM x z = complexPairing x z := by
+  simp [complexPairingCLM, complexPairing]
+
+@[simp] theorem complexPairing_realToComplex {d : ℕ} (x ξ : Euclidean d) :
+    complexPairing x (realToComplex ξ) = (inner (𝕜 := ℝ) x ξ : ℂ) := by
+  simp [complexPairing, PiLp.inner_apply, RCLike.inner_apply, mul_comm]
+
+theorem complexPairing_norm_le {d : ℕ} (x : Euclidean d) (z : ComplexEuclidean d) :
+    ‖complexPairing x z‖ ≤ (d : ℝ) * ‖x‖ * ‖z‖ := by
+  calc
+    ‖complexPairing x z‖ ≤ ∑ j : Fin d, ‖(x j : ℂ) * z j‖ := norm_sum_le _ _
+    _ ≤ ∑ _j : Fin d, ‖x‖ * ‖z‖ := by
+      apply Finset.sum_le_sum
+      intro j _
+      rw [norm_mul, Complex.norm_real]
+      exact mul_le_mul (PiLp.norm_apply_le x j) (PiLp.norm_apply_le z j)
+        (norm_nonneg _) (norm_nonneg _)
+    _ = (d : ℝ) * ‖x‖ * ‖z‖ := by simp [mul_assoc]
+
+/-- The negative-sign Fourier phase as a continuous complex-linear functional. -/
+def fourierPhaseCLM {d : ℕ} (x : Euclidean d) : ComplexEuclidean d →L[ℂ] ℂ :=
+  (-2 * (Real.pi : ℂ) * Complex.I) • complexPairingCLM x
+
+/-- The exponential Fourier kernel at a possibly complex frequency. -/
+def complexFourierKernel {d : ℕ} (x : Euclidean d) (z : ComplexEuclidean d) : ℂ :=
+  Complex.exp (fourierPhaseCLM x z)
+
+/-- The complex-frequency integral transform of a physical-space function. -/
+def entireFourier {d : ℕ} (f : Euclidean d → ℂ) (z : ComplexEuclidean d) : ℂ :=
+  ∫ x, f x * complexFourierKernel x z
+
+theorem entireFourier_congr {d : ℕ} {f g : Euclidean d → ℂ} (h : f =ᵐ[volume] g) :
+    entireFourier f = entireFourier g := by
+  funext z
+  apply integral_congr_ae
+  filter_upwards [h] with x hx
+  rw [hx]
+
+@[simp] theorem entireFourier_zero {d : ℕ} :
+    entireFourier (0 : Euclidean d → ℂ) = 0 := by
+  funext z
+  simp [entireFourier]
+
+theorem entireFourier_smul {d : ℕ} (c : ℂ) (f : Euclidean d → ℂ) :
+    entireFourier (c • f) = c • entireFourier f := by
+  funext z
+  simp only [entireFourier, Pi.smul_apply, smul_eq_mul, mul_assoc]
+  exact integral_const_mul _ _
+
+theorem complexPairing_continuous_left {d : ℕ} (z : ComplexEuclidean d) :
+    Continuous (fun x : Euclidean d => complexPairing x z) := by
+  unfold complexPairing
+  fun_prop
+
+theorem complexPairingCLM_continuous {d : ℕ} :
+    Continuous (complexPairingCLM : Euclidean d → ComplexEuclidean d →L[ℂ] ℂ) := by
+  unfold complexPairingCLM
+  fun_prop
+
+theorem fourierPhaseCLM_continuous {d : ℕ} :
+    Continuous (fourierPhaseCLM : Euclidean d → ComplexEuclidean d →L[ℂ] ℂ) :=
+  continuous_const.smul complexPairingCLM_continuous
+
+theorem fourierPhaseCLM_norm_le {d : ℕ} (x : Euclidean d) :
+    ‖fourierPhaseCLM x‖ ≤ 2 * Real.pi * d * ‖x‖ := by
+  have hpair : ‖complexPairingCLM x‖ ≤ (d : ℝ) * ‖x‖ := by
+    apply ContinuousLinearMap.opNorm_le_bound _ (by positivity)
+    intro z
+    simpa only [complexPairingCLM_apply, mul_assoc] using complexPairing_norm_le x z
+  calc
+    ‖fourierPhaseCLM x‖ = 2 * Real.pi * ‖complexPairingCLM x‖ := by
+      rw [fourierPhaseCLM, norm_smul (-2 * (Real.pi : ℂ) * Complex.I) (complexPairingCLM x)]
+      simp [norm_mul, Real.pi_pos.le, abs_of_nonneg]
+    _ ≤ 2 * Real.pi * ((d : ℝ) * ‖x‖) :=
+      mul_le_mul_of_nonneg_left hpair (by positivity)
+    _ = _ := by ring
+
+theorem complexFourierKernel_continuous_left {d : ℕ} (z : ComplexEuclidean d) :
+    Continuous (fun x : Euclidean d => complexFourierKernel x z) := by
+  unfold complexFourierKernel fourierPhaseCLM
+  simp only [ContinuousLinearMap.smul_apply, complexPairingCLM_apply, smul_eq_mul]
+  exact Complex.continuous_exp.comp
+    (continuous_const.mul (complexPairing_continuous_left z))
+
+theorem complexFourierKernel_norm_le {d : ℕ} (x : Euclidean d)
+    (z : ComplexEuclidean d) :
+    ‖complexFourierKernel x z‖ ≤ Real.exp (2 * Real.pi * d * ‖x‖ * ‖z‖) := by
+  rw [complexFourierKernel, Complex.norm_exp]
+  apply Real.exp_le_exp.mpr
+  calc
+    (fourierPhaseCLM x z).re ≤ ‖fourierPhaseCLM x z‖ := Complex.re_le_norm _
+    _ = 2 * Real.pi * ‖complexPairing x z‖ := by
+      simp [fourierPhaseCLM, norm_mul, Real.pi_pos.le, abs_of_nonneg]
+    _ ≤ 2 * Real.pi * ((d : ℝ) * ‖x‖ * ‖z‖) :=
+      mul_le_mul_of_nonneg_left (complexPairing_norm_le x z) (by positivity)
+    _ = _ := by ring
+
+theorem entireFourier_integrable {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (z : ComplexEuclidean d) :
+    Integrable (fun x => f x * complexFourierKernel x z) := by
+  apply (hf.norm.mul_const (Real.exp (2 * Real.pi * d * R * ‖z‖))).mono'
+    (hf.aestronglyMeasurable.mul
+      (complexFourierKernel_continuous_left z).aestronglyMeasurable)
+  filter_upwards [hsupp] with x hx
+  change ‖f x * complexFourierKernel x z‖ ≤ _
+  rw [norm_mul]
+  by_cases hfx : f x = 0
+  · simp [hfx]
+  · apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
+    exact (complexFourierKernel_norm_le x z).trans
+      (Real.exp_le_exp.mpr (by
+        apply mul_le_mul_of_nonneg_right _ (norm_nonneg _)
+        exact mul_le_mul_of_nonneg_left (hx hfx) (by positivity)))
+
+theorem entireFourier_add {d : ℕ} {f g : Euclidean d → ℂ} {R S : ℝ}
+    (hf : Integrable f) (hg : Integrable g)
+    (hfSupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R)
+    (hgSupp : ∀ᵐ x, g x ≠ 0 → ‖x‖ ≤ S) :
+    entireFourier (f + g) = entireFourier f + entireFourier g := by
+  funext z
+  simp only [entireFourier, Pi.add_apply, add_mul]
+  exact integral_add (entireFourier_integrable hf hfSupp z)
+    (entireFourier_integrable hg hgSupp z)
+
+/-- The complex-frequency transform has finite exponential type with an explicit bound. -/
+theorem entireFourier_norm_le {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (z : ComplexEuclidean d) :
+    ‖entireFourier f z‖ ≤ (∫ x, ‖f x‖) * Real.exp (2 * Real.pi * d * R * ‖z‖) := by
+  unfold entireFourier
+  calc
+    _ ≤ ∫ x, ‖f x‖ * Real.exp (2 * Real.pi * d * R * ‖z‖) := by
+      apply norm_integral_le_of_norm_le (hf.norm.mul_const _)
+      filter_upwards [hsupp] with x hx
+      rw [norm_mul]
+      by_cases hfx : f x = 0
+      · simp [hfx]
+      · apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
+        exact (complexFourierKernel_norm_le x z).trans
+          (Real.exp_le_exp.mpr (by
+            apply mul_le_mul_of_nonneg_right _ (norm_nonneg _)
+            exact mul_le_mul_of_nonneg_left (hx hfx) (by positivity)))
+    _ = _ := integral_mul_const _ _
+
+/-- The derivative of the Fourier integrand with respect to complex frequency. -/
+def entireFourierDerivativeIntegrand {d : ℕ} (f : Euclidean d → ℂ)
+    (z : ComplexEuclidean d) (x : Euclidean d) : ComplexEuclidean d →L[ℂ] ℂ :=
+  (f x * complexFourierKernel x z) • fourierPhaseCLM x
+
+theorem complexFourierKernel_hasFDerivAt {d : ℕ} (x : Euclidean d)
+    (z : ComplexEuclidean d) :
+    HasFDerivAt (complexFourierKernel x)
+      (complexFourierKernel x z • fourierPhaseCLM x) z :=
+  (fourierPhaseCLM x).hasFDerivAt.cexp
+
+theorem complexFourierKernel_realToComplex {d : ℕ} (x ξ : Euclidean d) :
+    complexFourierKernel x (realToComplex ξ) =
+      Complex.exp ((-2 * Real.pi * inner (𝕜 := ℝ) x ξ : ℝ) * Complex.I) := by
+  unfold complexFourierKernel fourierPhaseCLM
+  simp only [ContinuousLinearMap.smul_apply, complexPairingCLM_apply,
+    complexPairing_realToComplex, smul_eq_mul]
+  push_cast
+  congr 1
+  ring
+
+theorem complexFourierKernel_real_eq_star_exponential {d : ℕ} (x ξ : Euclidean d) :
+    complexFourierKernel x (realToComplex ξ) = star (exponential ξ x) := by
+  rw [complexFourierKernel_realToComplex]
+  unfold exponential
+  change Complex.exp _ = starRingEnd ℂ (Complex.exp _)
+  rw [← Complex.exp_conj]
+  congr 1
+  simp only [map_mul, map_ofNat, Complex.conj_ofReal, Complex.conj_I]
+  rw [real_inner_comm ξ x]
+  push_cast
+  ring
+
+@[simp] theorem complexFourierKernel_real_norm {d : ℕ} (x ξ : Euclidean d) :
+    ‖complexFourierKernel x (realToComplex ξ)‖ = 1 := by
+  rw [complexFourierKernel_realToComplex, Complex.norm_exp]
+  simp
+
+theorem entireFourier_realToComplex {d : ℕ} (f : Euclidean d → ℂ)
+    (ξ : Euclidean d) : entireFourier f (realToComplex ξ) = Real.fourierIntegral f ξ := by
+  rw [entireFourier, Real.fourierIntegral_eq']
+  apply integral_congr_ae
+  filter_upwards with x
+  rw [complexFourierKernel_realToComplex]
+  simp only [smul_eq_mul, mul_comm]
+
+/-- Agreement with the existing negative-sign unitary Fourier transform. -/
+theorem entireFourier_eq_fourierL2 {d : ℕ} (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ)) :
+    (fun ξ => entireFourier f (realToComplex ξ)) =ᵐ[volume]
+      (fourierL2Equiv d f : Euclidean d → ℂ) := by
+  simpa only [entireFourier_realToComplex] using (fourierL2Equiv_eq_integral f hf).symm
+
+theorem entireFourier_real_norm_le {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : Integrable f) (ξ : Euclidean d) :
+    ‖entireFourier f (realToComplex ξ)‖ ≤ ∫ x, ‖f x‖ := by
+  apply norm_integral_le_of_norm_le hf.norm
+  filter_upwards with x
+  simp [norm_mul, complexFourierKernel_real_norm]
+
+/-- Differentiation under the integral is valid in every complex direction. -/
+theorem entireFourier_hasFDerivAt {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hR : 0 ≤ R)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (z : ComplexEuclidean d) :
+    HasFDerivAt (entireFourier f)
+      (∫ x, entireFourierDerivativeIntegrand f z x) z := by
+  let bound : Euclidean d → ℝ := fun x =>
+    ‖f x‖ * Real.exp (2 * Real.pi * d * R * (‖z‖ + 1)) *
+      (2 * Real.pi * d * R)
+  have hmeas (w : ComplexEuclidean d) :
+      AEStronglyMeasurable (fun x => f x * complexFourierKernel x w) :=
+    (entireFourier_integrable hf hsupp w).aestronglyMeasurable
+  have hdmeas : AEStronglyMeasurable (entireFourierDerivativeIntegrand f z) := by
+    exact (hmeas z).smul fourierPhaseCLM_continuous.aestronglyMeasurable
+  have hbound : ∀ᵐ x, ∀ w ∈ Metric.ball z 1,
+      ‖entireFourierDerivativeIntegrand f w x‖ ≤ bound x := by
+    filter_upwards [hsupp] with x hx w hw
+    unfold entireFourierDerivativeIntegrand bound
+    rw [norm_smul (f x * complexFourierKernel x w) (fourierPhaseCLM x), norm_mul]
+    by_cases hfx : f x = 0
+    · simp [hfx]
+    · have hxR := hx hfx
+      have hwz : ‖w‖ ≤ ‖z‖ + 1 := by
+        have hd : ‖w - z‖ < 1 := by simpa only [Metric.mem_ball, dist_eq_norm] using hw
+        calc
+          ‖w‖ = ‖(w - z) + z‖ := by simp
+          _ ≤ ‖w - z‖ + ‖z‖ := norm_add_le _ _
+          _ ≤ ‖z‖ + 1 := by linarith
+      have hk : ‖complexFourierKernel x w‖ ≤
+          Real.exp (2 * Real.pi * d * R * (‖z‖ + 1)) := by
+        apply (complexFourierKernel_norm_le x w).trans
+        apply Real.exp_le_exp.mpr
+        exact mul_le_mul
+          (mul_le_mul_of_nonneg_left hxR (by positivity)) hwz
+          (norm_nonneg _) (by positivity)
+      have hp : ‖fourierPhaseCLM x‖ ≤ 2 * Real.pi * d * R :=
+        (fourierPhaseCLM_norm_le x).trans
+          (mul_le_mul_of_nonneg_left hxR (by positivity))
+      exact mul_le_mul (mul_le_mul_of_nonneg_left hk (norm_nonneg _)) hp
+        (norm_nonneg _) (by positivity)
+  have hboundInt : Integrable bound :=
+    (hf.norm.mul_const _).mul_const _
+  have hdiff : ∀ᵐ x, ∀ w ∈ Metric.ball z 1,
+      HasFDerivAt (fun w => f x * complexFourierKernel x w)
+        (entireFourierDerivativeIntegrand f w x) w := by
+    filter_upwards with x w _
+    simpa only [entireFourierDerivativeIntegrand, smul_smul] using
+      (complexFourierKernel_hasFDerivAt x w).const_mul (f x)
+  exact hasFDerivAt_integral_of_dominated_of_fderiv_le zero_lt_one
+    (Eventually.of_forall hmeas) (entireFourier_integrable hf hsupp z)
+    hdmeas hbound hboundInt hdiff
+
+theorem entireFourier_differentiable {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hR : 0 ≤ R)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) :
+    Differentiable ℂ (entireFourier f) :=
+  fun z => (entireFourier_hasFDerivAt hf hR hsupp z).differentiableAt
+
+/-- The first complex derivative is uniformly bounded on real frequencies. -/
+theorem entireFourier_real_fderiv_norm_le {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hR : 0 ≤ R)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (ξ : Euclidean d) :
+    ‖fderiv ℂ (entireFourier f) (realToComplex ξ)‖ ≤
+      (∫ x, ‖f x‖) * (2 * Real.pi * d * R) := by
+  rw [(entireFourier_hasFDerivAt hf hR hsupp (realToComplex ξ)).fderiv]
+  calc
+    _ ≤ ∫ x, ‖f x‖ * (2 * Real.pi * d * R) := by
+      apply norm_integral_le_of_norm_le (hf.norm.mul_const _)
+      filter_upwards [hsupp] with x hx
+      unfold entireFourierDerivativeIntegrand
+      rw [norm_smul (f x * complexFourierKernel x (realToComplex ξ))
+        (fourierPhaseCLM x), norm_mul, complexFourierKernel_real_norm, mul_one]
+      by_cases hfx : f x = 0
+      · simp [hfx]
+      · apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
+        exact (fourierPhaseCLM_norm_le x).trans
+          (mul_le_mul_of_nonneg_left (hx hfx) (by positivity))
+    _ = _ := integral_mul_const _ _
+
+/-- Restriction to every complex affine line is analytic. -/
+theorem entireFourier_analyticAlongLine {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hR : 0 ≤ R)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (z u : ComplexEuclidean d) :
+    AnalyticOnNhd ℂ (fun w : ℂ => entireFourier f (z + w • u)) Set.univ := by
+  apply (Complex.analyticOnNhd_univ_iff_differentiable).mpr
+  exact (entireFourier_differentiable hf hR hsupp).comp
+    ((differentiable_const z).add (differentiable_id.smul_const u))
+
+/-- Every domain L² representative has an integrable zero extension on a bounded domain. -/
+theorem domainExtension_integrable {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) (f : DomainL2 Ω) :
+    Integrable (domainExtension Ω hΩ f : Euclidean d → ℂ) := by
+  letI : IsFiniteMeasure (volume.restrict Ω) :=
+    isFiniteMeasure_restrict.mpr hbounded.measure_lt_top.ne
+  have hf : Integrable (f : Euclidean d → ℂ) (volume.restrict Ω) :=
+    (Lp.memLp f).integrable (by norm_num)
+  have hi : Integrable (Ω.indicator (f : Euclidean d → ℂ)) :=
+    (integrable_indicator_iff hΩ).mpr hf
+  exact hi.congr (domainExtension_coe Ω hΩ f).symm
+
+theorem domainExtension_supported_in_radius {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (f : DomainL2 Ω) {R : ℝ}
+    (hbound : ∀ x ∈ Ω, ‖x‖ ≤ R) :
+    ∀ᵐ x, domainExtension Ω hΩ f x ≠ 0 → ‖x‖ ≤ R := by
+  filter_upwards [domainExtension_coe Ω hΩ f] with x hx hfx
+  by_cases hxΩ : x ∈ Ω
+  · exact hbound x hxΩ
+  · exact False.elim (hfx (hx.trans (Set.indicator_of_not_mem hxΩ _)))
+
+/-- The complex Fourier transform of a domain L² function extended by zero. -/
+def domainEntireFourier {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (f : DomainL2 Ω) : ComplexEuclidean d → ℂ :=
+  entireFourier (domainExtension Ω hΩ f)
+
+/-- The complex transform, as a linear map on the actual bounded-domain L² space. -/
+def domainEntireFourierLinear {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) :
+    DomainL2 Ω →ₗ[ℂ] (ComplexEuclidean d → ℂ) where
+  toFun := domainEntireFourier Ω hΩ
+  map_add' f g := by
+    obtain ⟨R, _hR, hbound⟩ := hbounded.exists_pos_norm_le
+    have hext : domainExtension Ω hΩ (f + g) =
+        domainExtension Ω hΩ f + domainExtension Ω hΩ g :=
+      (domainExtensionLI Ω hΩ).map_add f g
+    have hae : (domainExtension Ω hΩ (f + g) : Euclidean d → ℂ) =ᵐ[volume]
+        fun x => domainExtension Ω hΩ f x + domainExtension Ω hΩ g x := by
+      rw [hext]
+      exact Lp.coeFn_add _ _
+    change entireFourier (domainExtension Ω hΩ (f + g)) =
+      entireFourier (domainExtension Ω hΩ f) + entireFourier (domainExtension Ω hΩ g)
+    rw [entireFourier_congr hae]
+    exact entireFourier_add (domainExtension_integrable hΩ hbounded f)
+      (domainExtension_integrable hΩ hbounded g)
+      (domainExtension_supported_in_radius hΩ f hbound)
+      (domainExtension_supported_in_radius hΩ g hbound)
+  map_smul' c f := by
+    have hext : domainExtension Ω hΩ (c • f) = c • domainExtension Ω hΩ f :=
+      (domainExtensionLI Ω hΩ).map_smul c f
+    have hae : (domainExtension Ω hΩ (c • f) : Euclidean d → ℂ) =ᵐ[volume]
+        (c • (domainExtension Ω hΩ f : Euclidean d → ℂ)) := by
+      rw [hext]
+      exact Lp.coeFn_smul _ _
+    change entireFourier (domainExtension Ω hΩ (c • f)) =
+      c • entireFourier (domainExtension Ω hΩ f)
+    rw [entireFourier_congr hae, entireFourier_smul]
+
+/-- Actual L² functions on a bounded domain give holomorphic complex-frequency transforms. -/
+theorem domainEntireFourier_differentiable {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) (f : DomainL2 Ω) :
+    Differentiable ℂ (domainEntireFourier Ω hΩ f) := by
+  obtain ⟨R, hR, hbound⟩ := hbounded.exists_pos_norm_le
+  exact entireFourier_differentiable (domainExtension_integrable hΩ hbounded f) hR.le
+    (domainExtension_supported_in_radius hΩ f hbound)
+
+/-- Finite exponential type for the transform of an actual bounded-domain L² class. -/
+theorem domainEntireFourier_finite_exponential_type {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) (f : DomainL2 Ω) :
+    ∃ C T : ℝ, 0 ≤ C ∧ 0 ≤ T ∧
+      ∀ z, ‖domainEntireFourier Ω hΩ f z‖ ≤ C * Real.exp (T * ‖z‖) := by
+  obtain ⟨R, hR, hbound⟩ := hbounded.exists_pos_norm_le
+  refine ⟨∫ x, ‖domainExtension Ω hΩ f x‖, 2 * Real.pi * d * R,
+    integral_nonneg (fun _ => norm_nonneg _), by positivity, ?_⟩
+  intro z
+  exact entireFourier_norm_le (domainExtension_integrable hΩ hbounded f)
+    (domainExtension_supported_in_radius hΩ f hbound) z
+
+theorem domainEntireFourier_eq_fourierL2 {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) (f : DomainL2 Ω) :
+    (fun ξ => domainEntireFourier Ω hΩ f (realToComplex ξ)) =ᵐ[volume]
+      (fourierL2Equiv d (domainExtension Ω hΩ f) : Euclidean d → ℂ) :=
+  entireFourier_eq_fourierL2 _ (domainExtension_integrable hΩ hbounded f)
+
+/-- The complex-frequency extension determines its original domain L² class. -/
+theorem domainEntireFourier_injective {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) :
+    Function.Injective (domainEntireFourier Ω hΩ) := by
+  intro f g hfg
+  apply (domainExtensionLI Ω hΩ).injective
+  apply (fourierL2Equiv d).injective
+  apply Lp.ext
+  filter_upwards [domainEntireFourier_eq_fourierL2 hΩ hbounded f,
+    domainEntireFourier_eq_fourierL2 hΩ hbounded g] with ξ hf hg
+  change fourierL2Equiv d (domainExtension Ω hΩ f) ξ =
+    fourierL2Equiv d (domainExtension Ω hΩ g) ξ
+  rw [← hf, ← hg, hfg]
+
+theorem domainEntireFourier_real_integral {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (f : DomainL2 Ω) (ξ : Euclidean d) :
+    domainEntireFourier Ω hΩ f (realToComplex ξ) =
+      ∫ x in Ω, f x * star (exponential ξ x) := by
+  unfold domainEntireFourier entireFourier
+  rw [← integral_indicator hΩ]
+  apply integral_congr_ae
+  filter_upwards [domainExtension_coe Ω hΩ f] with x hx
+  rw [hx, complexFourierKernel_real_eq_star_exponential]
+  by_cases hxΩ : x ∈ Ω
+  · simp only [Set.indicator_of_mem hxΩ]
+  · simp only [Set.indicator_of_not_mem hxΩ, zero_mul]
+
+/-- Point evaluations on real frequencies are the actual exponential inner products. -/
+theorem domainEntireFourier_real_inner {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hfinite : volume Ω ≠ ⊤) (f : DomainL2 Ω) (ξ : Euclidean d) :
+    domainEntireFourier Ω hΩ f (realToComplex ξ) =
+      inner (𝕜 := ℂ) (exponentialL2 Ω hfinite ξ) f := by
+  rw [domainEntireFourier_real_integral, exponentialL2_inner]
+
+/-- Both the transform and its first derivative are bounded on the real frequency space. -/
+theorem domainEntireFourier_real_bounds {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) (f : DomainL2 Ω) :
+    ∃ C : ℝ, ∀ ξ : Euclidean d,
+      ‖domainEntireFourier Ω hΩ f (realToComplex ξ)‖ ≤ C ∧
+      ‖fderiv ℂ (domainEntireFourier Ω hΩ f) (realToComplex ξ)‖ ≤ C := by
+  obtain ⟨R, hR, hbound⟩ := hbounded.exists_pos_norm_le
+  let A := ∫ x, ‖domainExtension Ω hΩ f x‖
+  let T : ℝ := 2 * Real.pi * d * R
+  refine ⟨max A (A * T), ?_⟩
+  intro ξ
+  constructor
+  · exact (entireFourier_real_norm_le (domainExtension_integrable hΩ hbounded f) ξ).trans
+      (le_max_left _ _)
+  · exact (entireFourier_real_fderiv_norm_le (domainExtension_integrable hΩ hbounded f)
+      hR.le (domainExtension_supported_in_radius hΩ f hbound) ξ).trans (le_max_right _ _)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalPolynomial.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+namespace RieszEuclidean.CompleteMinimal
+
+open MvPolynomial
+
+/-- Real Euclidean points used for multivariate interpolation. -/
+abbrev RealPoint (d : ℕ) := EuclideanSpace ℝ (Fin d)
+/-- Complex polynomials in the coordinate variables of Euclidean space. -/
+abbrev ComplexPolynomial (d : ℕ) := MvPolynomial (Fin d) ℂ
+
+/-- Evaluation at a real Euclidean point, embedded coordinatewise in `ℂ`. -/
+def polynomialEvaluation {d : ℕ} (x : RealPoint d) : ComplexPolynomial d →ₗ[ℂ] ℂ :=
+  (MvPolynomial.aeval fun k => (x k : ℂ)).toLinearMap
+
+@[simp]
+theorem polynomialEvaluation_apply {d : ℕ} (x : RealPoint d) (p : ComplexPolynomial d) :
+    polynomialEvaluation x p = MvPolynomial.eval (fun k => (x k : ℂ)) p := rfl
+
+private theorem exists_coordinate_ne {d : ℕ} {x y : RealPoint d} (h : x ≠ y) :
+    ∃ k, x k ≠ y k := by
+  by_contra hn
+  push_neg at hn
+  apply h
+  ext k
+  exact hn k
+
+/-- A normalized affine factor equal to one at `x` and zero at distinct `y`. -/
+def separatingFactor {d : ℕ} (x y : RealPoint d) : ComplexPolynomial d :=
+  if h : x ≠ y then
+    let k := Classical.choose (exists_coordinate_ne h)
+    (X k - C (y k : ℂ)) * C (((x k : ℂ) - (y k : ℂ))⁻¹)
+  else 1
+
+theorem separatingFactor_totalDegree_le {d : ℕ} (x y : RealPoint d) :
+    (separatingFactor x y).totalDegree ≤ 1 := by
+  classical
+  unfold separatingFactor
+  split_ifs
+  · exact (totalDegree_mul _ _).trans (by
+      simpa using totalDegree_sub_C_le (X _) (y _ : ℂ))
+  · simp
+
+@[simp]
+theorem separatingFactor_eval_self {d : ℕ} (x y : RealPoint d) :
+    eval (fun k => (x k : ℂ)) (separatingFactor x y) = 1 := by
+  classical
+  unfold separatingFactor
+  split_ifs with h
+  · have hk := Classical.choose_spec (exists_coordinate_ne h)
+    have hc : (x (Classical.choose (exists_coordinate_ne h)) : ℂ) -
+        (y (Classical.choose (exists_coordinate_ne h)) : ℂ) ≠ 0 :=
+      sub_ne_zero.mpr (Complex.ofReal_injective.ne hk)
+    simp [hc]
+  · simp
+
+@[simp]
+theorem separatingFactor_eval_other {d : ℕ} (x y : RealPoint d) (h : x ≠ y) :
+    eval (fun k => (y k : ℂ)) (separatingFactor x y) = 0 := by
+  classical
+  simp [separatingFactor, h]
+
+/-- Multivariate Lagrange polynomial for a finite family of distinct real points. -/
+def interpolationPolynomial {d : ℕ} {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (points : ι → RealPoint d) (i : ι) : ComplexPolynomial d :=
+  ∏ j ∈ Finset.univ.erase i, separatingFactor (points i) (points j)
+
+theorem interpolationPolynomial_totalDegree_le {d : ℕ} {ι : Type*}
+    [Fintype ι] [DecidableEq ι] (points : ι → RealPoint d) (i : ι) :
+    (interpolationPolynomial points i).totalDegree ≤ Fintype.card ι - 1 := by
+  classical
+  calc
+    _ ≤ ∑ j ∈ Finset.univ.erase i, (separatingFactor (points i) (points j)).totalDegree :=
+      totalDegree_finset_prod _ _
+    _ ≤ ∑ _j ∈ Finset.univ.erase i, 1 :=
+      Finset.sum_le_sum fun j _ => separatingFactor_totalDegree_le _ _
+    _ = Fintype.card ι - 1 := by simp
+
+theorem interpolationPolynomial_eval {d : ℕ} {ι : Type*} [Fintype ι]
+    [DecidableEq ι] (points : ι → RealPoint d) (hinj : Function.Injective points)
+    (i j : ι) :
+    polynomialEvaluation (points j) (interpolationPolynomial points i) =
+      if j = i then 1 else 0 := by
+  classical
+  by_cases h : j = i
+  · subst j
+    simp only [polynomialEvaluation_apply, interpolationPolynomial, map_prod]
+    apply Finset.prod_eq_one
+    intro j _
+    exact separatingFactor_eval_self _ _
+  · rw [if_neg h, polynomialEvaluation_apply]
+    simp only [interpolationPolynomial, map_prod]
+    apply Finset.prod_eq_zero (Finset.mem_erase.mpr ⟨h, Finset.mem_univ j⟩)
+    exact separatingFactor_eval_other _ _ (fun he => h (hinj he).symm)
+
+/-- Every prescribed complex value on finitely many distinct points is interpolated
+by a polynomial of total degree at most the number of points minus one. -/
+theorem exists_interpolating_polynomial {d : ℕ} {ι : Type*} [Fintype ι]
+    (points : ι → RealPoint d) (hinj : Function.Injective points) (values : ι → ℂ) :
+    ∃ p : ComplexPolynomial d, p.totalDegree ≤ Fintype.card ι - 1 ∧
+      ∀ i, polynomialEvaluation (points i) p = values i := by
+  classical
+  refine ⟨∑ i, C (values i) * interpolationPolynomial points i, ?_, ?_⟩
+  · apply totalDegree_finsetSum_le
+    intro i _
+    exact (totalDegree_mul _ _).trans (by
+      simpa using interpolationPolynomial_totalDegree_le points i)
+  · intro i
+    simp only [polynomialEvaluation_apply, map_sum, map_mul, eval_C]
+    simp_rw [← polynomialEvaluation_apply, interpolationPolynomial_eval points hinj]
+    simp
+
+/-- Evaluation restricted to the standard submodule of bounded total degree. -/
+def boundedPolynomialEvaluation {d : ℕ} (m : ℕ) (x : RealPoint d) :
+    MvPolynomial.restrictTotalDegree (Fin d) ℂ m →ₗ[ℂ] ℂ :=
+  (polynomialEvaluation x).comp (MvPolynomial.restrictTotalDegree (Fin d) ℂ m).subtype
+
+@[simp]
+theorem boundedPolynomialEvaluation_apply {d : ℕ} (m : ℕ) (x : RealPoint d)
+    (p : MvPolynomial.restrictTotalDegree (Fin d) ℂ m) :
+    boundedPolynomialEvaluation m x p = polynomialEvaluation x p := rfl
+
+/-- Simultaneous evaluation on a finite family of real points. -/
+def boundedSampling {d : ℕ} {ι : Type*} (m : ℕ) (points : ι → RealPoint d) :
+    MvPolynomial.restrictTotalDegree (Fin d) ℂ m →ₗ[ℂ] (ι → ℂ) :=
+  LinearMap.pi fun i => boundedPolynomialEvaluation m (points i)
+
+theorem boundedSampling_surjective {d m : ℕ} {ι : Type*} [Fintype ι]
+    (points : ι → RealPoint d) (hinj : Function.Injective points)
+    (hm : Fintype.card ι - 1 ≤ m) : Function.Surjective (boundedSampling m points) := by
+  intro values
+  obtain ⟨p, hp, hv⟩ := exists_interpolating_polynomial points hinj values
+  refine ⟨⟨p, (MvPolynomial.mem_restrictTotalDegree _ _ _).mpr (hp.trans hm)⟩, ?_⟩
+  ext i
+  exact hv i
+
+/-- Distinct point evaluations are linearly independent on bounded-degree polynomials
+once the bound is at least the number of points minus one. -/
+theorem boundedPolynomialEvaluation_linearIndependent {d m : ℕ} {ι : Type*} [Fintype ι]
+    (points : ι → RealPoint d) (hinj : Function.Injective points)
+    (hm : Fintype.card ι - 1 ≤ m) :
+    LinearIndependent ℂ (fun i => boundedPolynomialEvaluation m (points i)) := by
+  classical
+  apply Fintype.linearIndependent_iff.mpr
+  intro c hc i
+  obtain ⟨p, hp⟩ := boundedSampling_surjective points hinj hm
+    (Pi.single i (1 : ℂ) : ι → ℂ)
+  have hv : ∀ j, boundedPolynomialEvaluation m (points j) p =
+      (Pi.single i (1 : ℂ) : ι → ℂ) j :=
+    fun j => congrFun hp j
+  have he := LinearMap.congr_fun hc p
+  simpa [LinearMap.sum_apply, hv, Pi.single_apply] using he
+
+/-- Finite-set form of polynomial interpolation, with the degree bound `card - 1`. -/
+theorem exists_interpolating_polynomial_finset {d : ℕ} (s : Finset (RealPoint d))
+    (values : ↥s → ℂ) :
+    ∃ p : ComplexPolynomial d, p.totalDegree ≤ s.card - 1 ∧
+      ∀ x : ↥s, polynomialEvaluation x p = values x := by
+  simpa using exists_interpolating_polynomial (fun x : ↥s => x.val)
+    Subtype.val_injective values
+
+/-- A Kronecker interpolation polynomial associated to any member of a finite set. -/
+theorem exists_kronecker_polynomial_finset {d : ℕ} (s : Finset (RealPoint d))
+    (x : ↥s) :
+    ∃ p : ComplexPolynomial d, p.totalDegree ≤ s.card - 1 ∧
+      ∀ y : ↥s, polynomialEvaluation y.val p = if y = x then 1 else 0 := by
+  classical
+  exact exists_interpolating_polynomial_finset s (fun y => if y = x then 1 else 0)
+
+theorem boundedSampling_finset_surjective {d m : ℕ} (s : Finset (RealPoint d))
+    (hm : s.card - 1 ≤ m) :
+    Function.Surjective (boundedSampling m (fun x : ↥s => x.val)) := by
+  apply boundedSampling_surjective _ Subtype.val_injective
+  simpa using hm
+
+theorem boundedPolynomialEvaluation_finset_linearIndependent {d m : ℕ}
+    (s : Finset (RealPoint d)) (hm : s.card - 1 ≤ m) :
+    LinearIndependent ℂ (fun x : ↥s => boundedPolynomialEvaluation m x.val) := by
+  apply boundedPolynomialEvaluation_linearIndependent _ Subtype.val_injective
+  simpa using hm
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalAvailable.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+open MeasureTheory
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The forward part of a tail annihilator description. The tail theorem must
+produce the bounded-degree polynomial multiplying the specified Fourier factor;
+completeness of an augmented family is not part of this interface. -/
+def TailPolynomialRepresentation {d : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfinite : volume Ω ≠ ⊤) (tail : Set (Euclidean d))
+    (degree : ℕ) (multiplier : ComplexEuclidean d → ℂ) : Prop :=
+  ∀ f : DomainL2 Ω,
+    (∀ ξ ∈ tail, inner (𝕜 := ℂ) f (exponentialL2 Ω hfinite ξ) = 0) →
+    ∃ p : MvPolynomial.restrictTotalDegree (Fin d) ℂ degree,
+      ∀ z, domainEntireFourier Ω hΩ f z =
+        multiplier z * MvPolynomial.eval (fun i => z i) p.val
+
+/-- A finite polynomial interpolation set completes the later frequencies when
+the tail annihilator has the stated Fourier-polynomial representation. -/
+theorem available_exponentials_complete {d m : ℕ} (Ω : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hfinite : volume Ω ≠ ⊤) (A : Finset (Euclidean d)) (tail : Set (Euclidean d))
+    (multiplier : ComplexEuclidean d → ℂ)
+    (htail : TailPolynomialRepresentation Ω hΩ hfinite tail (2 * m) multiplier)
+    (hA : Function.Bijective (boundedSampling (2 * m) (fun x : ↥A => x.val)))
+    (hmultiplier : ∀ ξ ∈ A, multiplier (realToComplex ξ) ≠ 0) :
+    IsCompleteExponential Ω hfinite ((A : Set (Euclidean d)) ∪ tail) := by
+  apply (isCompleteExponential_iff_annihilator Ω hfinite _).mpr
+  intro f hf
+  obtain ⟨p, hp⟩ := htail f (fun ξ hξ => hf ⟨ξ, Or.inr hξ⟩)
+  have hsample : boundedSampling (2 * m) (fun x : ↥A => x.val) p = 0 := by
+    ext ξ
+    have horth : inner (𝕜 := ℂ) (exponentialL2 Ω hfinite ξ.val) f = 0 :=
+      (inner_eq_zero_symm (𝕜 := ℂ)).mp (hf ⟨ξ.val, Or.inl ξ.property⟩)
+    have hprod : multiplier (realToComplex ξ.val) *
+        polynomialEvaluation ξ.val p.val = 0 := by
+      rw [← domainEntireFourier_real_inner hΩ hfinite] at horth
+      simpa only [hp, realToComplex_apply, polynomialEvaluation_apply] using horth
+    exact (mul_eq_zero.mp hprod).resolve_left (hmultiplier ξ.val ξ.property)
+  have hpzero : p = 0 := hA.1 (hsample.trans (map_zero _).symm)
+  apply domainEntireFourier_injective hΩ hbounded
+  funext z
+  rw [hp]
+  simp only [hpzero, ZeroMemClass.coe_zero, map_zero, mul_zero]
+  exact (congrFun (domainEntireFourierLinear Ω hΩ hbounded).map_zero z).symm
+
+/-- Membership in the span of an indexed set only uses finitely many indices. -/
+theorem mem_span_image_finite {H X : Type*} [AddCommGroup H] [Module ℂ H]
+    (e : X → H) (available : Set X) {v : H}
+    (hv : v ∈ Submodule.span ℂ (e '' available)) :
+    ∃ B : Finset X, (B : Set X) ⊆ available ∧
+      v ∈ Submodule.span ℂ (e '' (B : Set X)) := by
+  classical
+  obtain ⟨B, hB, c, hc⟩ := (Submodule.mem_span_image_iff_exists_fun ℂ).mp hv
+  refine ⟨B, hB, ?_⟩
+  rw [← hc]
+  apply Submodule.sum_mem
+  intro x _
+  apply Submodule.smul_mem
+  exact Submodule.subset_span ⟨x.val, x.property, rfl⟩
+
+/-- Completeness gives a finite span approximating one target. -/
+theorem finite_span_approximates_target {H X : Type*} [NormedAddCommGroup H]
+    [InnerProductSpace ℂ H] (e : X → H) (available : Set X)
+    (hcomplete : IsComplete (fun ξ : available => e ξ.val)) (f : H) (ε : ℝ)
+    (hε : 0 < ε) :
+    ∃ B : Finset X, (B : Set X) ⊆ available ∧
+      ∃ v ∈ Submodule.span ℂ (e '' (B : Set X)), dist f v < ε := by
+  have hrange : Set.range (fun ξ : available => e ξ.val) = e '' available := by
+    ext v
+    simp
+  have hf : f ∈ (Submodule.span ℂ (e '' available)).topologicalClosure := by
+    change (Submodule.span ℂ (Set.range (fun ξ : available => e ξ.val))).topologicalClosure =
+      ⊤ at hcomplete
+    rw [hrange] at hcomplete
+    rw [hcomplete]
+    trivial
+  change f ∈ closure (Submodule.span ℂ (e '' available) : Set H) at hf
+  obtain ⟨v, hv, hdist⟩ := Metric.mem_closure_iff.mp hf ε hε
+  obtain ⟨B, hB, hvB⟩ := mem_span_image_finite e available hv
+  exact ⟨B, hB, v, hvB, hdist⟩
+
+/-- One finite subset of a complete family approximates every member of a finite
+set of targets, with any prescribed positive error. -/
+theorem finite_span_approximates_finite_targets {H X : Type*} [NormedAddCommGroup H]
+    [InnerProductSpace ℂ H] (e : X → H) (available : Set X)
+    (hcomplete : IsComplete (fun ξ : available => e ξ.val)) (targets : Finset H)
+    (ε : ℝ) (hε : 0 < ε) :
+    ∃ B : Finset X, (B : Set X) ⊆ available ∧
+      ∀ f ∈ targets, ∃ v ∈ Submodule.span ℂ (e '' (B : Set X)), dist f v < ε := by
+  classical
+  induction targets using Finset.induction_on with
+  | empty => exact ⟨∅, by simp, by simp⟩
+  | @insert f targets _ ih =>
+    obtain ⟨B, hB, v, hvB, hdist⟩ :=
+      finite_span_approximates_target e available hcomplete f ε hε
+    obtain ⟨C, hC, htargets⟩ := ih
+    refine ⟨B ∪ C, ?_, ?_⟩
+    · simpa only [Finset.coe_union] using Set.union_subset hB hC
+    · intro g hg
+      rcases Finset.mem_insert.mp hg with rfl | hg
+      · exact ⟨v, Submodule.span_mono (Set.image_mono (by
+          simpa only [Finset.coe_union] using (Set.subset_union_left :
+            (B : Set X) ⊆ (B : Set X) ∪ (C : Set X)))) hvB, hdist⟩
+      · obtain ⟨w, hw, hwε⟩ := htargets g hg
+        exact ⟨w, Submodule.span_mono (Set.image_mono (by
+          simpa only [Finset.coe_union] using (Set.subset_union_right :
+            (C : Set X) ⊆ (B : Set X) ∪ (C : Set X)))) hw, hwε⟩
+
+/-- Available actual exponentials approximate any finite collection of domain
+L² targets using finitely many available frequencies. -/
+theorem available_exponentials_approximate_finite_targets {d m : ℕ}
+    (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hfinite : volume Ω ≠ ⊤) (A : Finset (Euclidean d)) (tail : Set (Euclidean d))
+    (multiplier : ComplexEuclidean d → ℂ)
+    (htail : TailPolynomialRepresentation Ω hΩ hfinite tail (2 * m) multiplier)
+    (hA : Function.Bijective (boundedSampling (2 * m) (fun x : ↥A => x.val)))
+    (hmultiplier : ∀ ξ ∈ A, multiplier (realToComplex ξ) ≠ 0)
+    (targets : Finset (DomainL2 Ω)) (ε : ℝ) (hε : 0 < ε) :
+    ∃ B : Finset (Euclidean d), (B : Set (Euclidean d)) ⊆ (A : Set (Euclidean d)) ∪ tail ∧
+      ∀ f ∈ targets, ∃ v ∈ Submodule.span ℂ
+        (exponentialL2 Ω hfinite '' (B : Set (Euclidean d))), dist f v < ε := by
+  apply finite_span_approximates_finite_targets (exponentialL2 Ω hfinite) _
+    (available_exponentials_complete Ω hΩ hbounded hfinite A tail multiplier htail hA
+      hmultiplier) targets ε hε
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalSpherePolynomial.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+namespace RieszEuclidean.CompleteMinimal
+
+open MvPolynomial
+
+/-- A complex polynomial which vanishes on a nonempty real coordinate box is zero. -/
+theorem polynomial_eq_zero_of_real_box {n : ℕ} (P : ComplexPolynomial n)
+    (a b : Fin n → ℝ) (hab : ∀ i, a i < b i)
+    (hP : ∀ x : Fin n → ℝ, (∀ i, x i ∈ Set.Ioo (a i) (b i)) →
+      MvPolynomial.eval (fun i => (x i : ℂ)) P = 0) : P = 0 := by
+  induction n with
+  | zero =>
+    apply (MvPolynomial.isEmptyRingEquiv ℂ (Fin 0)).injective
+    change (MvPolynomial.eval (fun i => isEmptyElim i)) P = 0
+    convert hP Fin.elim0 (by intro i; exact Fin.elim0 i) using 2
+    apply congrArg MvPolynomial.eval
+    funext i
+    exact Fin.elim0 i
+  | succ n ih =>
+    let p := MvPolynomial.finSuccEquiv ℂ n P
+    have hp : ∀ x : Fin n → ℝ, (∀ i, x i ∈ Set.Ioo (a i.succ) (b i.succ)) →
+        p.map (MvPolynomial.eval (fun i => (x i : ℂ))) = 0 := by
+      intro x hx
+      apply Polynomial.eq_zero_of_infinite_isRoot
+      apply ((Set.Ioo_infinite (hab 0)).image Complex.ofReal_injective.injOn).mono
+      rintro _ ⟨y, hy, rfl⟩
+      change Polynomial.eval (y : ℂ) (p.map _) = 0
+      rw [← MvPolynomial.eval_eq_eval_mv_eval']
+      have h := hP (Fin.cons y x) (fun i => Fin.cases hy (fun j => hx j) i)
+      convert h using 2
+      apply congrArg MvPolynomial.eval
+      funext i
+      refine Fin.cases ?_ (fun j => ?_) i <;> rfl
+    apply (MvPolynomial.finSuccEquiv ℂ n).injective
+    apply Polynomial.ext
+    intro k
+    simp only [map_zero, Polynomial.coeff_zero]
+    apply ih (p.coeff k) (fun i => a i.succ) (fun i => b i.succ)
+      (fun i => hab i.succ)
+    intro x hx
+    have hk := congrArg (fun q => Polynomial.coeff q k) (hp x hx)
+    simpa using hk
+
+/-- The polynomial defining a real sphere, with complex coefficients. -/
+def spherePolynomial (n : ℕ) (r : ℝ) : ComplexPolynomial n :=
+  (∑ i, X i ^ 2) - C (r ^ 2 : ℂ)
+
+@[simp]
+theorem polynomialEvaluation_spherePolynomial {n : ℕ} (x : RealPoint n) (r : ℝ) :
+    eval (fun k => (x k : ℂ)) (spherePolynomial n r) = ((‖x‖ ^ 2 - r ^ 2 : ℝ) : ℂ) := by
+  have hnorm : ‖x‖ ^ 2 = ∑ i, x i ^ 2 := by
+    simpa [Real.norm_eq_abs, sq_abs] using PiLp.norm_sq_eq_of_L2 (fun _ : Fin n => ℝ) x
+  simp only [spherePolynomial, map_sub, map_sum, map_pow, eval_X, eval_C]
+  exact_mod_cast congrArg (fun a : ℝ => a - r ^ (2 : ℕ)) hnorm.symm
+
+theorem polynomialEvaluation_spherePolynomial_eq_zero_iff {n : ℕ}
+    (x : RealPoint n) (r : ℝ) (hr : 0 ≤ r) :
+    polynomialEvaluation x (spherePolynomial n r) = 0 ↔ ‖x‖ = r := by
+  rw [polynomialEvaluation_apply, polynomialEvaluation_spherePolynomial,
+    Complex.ofReal_eq_zero, sub_eq_zero]
+  exact sq_eq_sq₀ (norm_nonneg x) hr
+
+/-- Real-ball uniqueness, expressed by the sum of squared coordinates. -/
+theorem polynomial_eq_zero_of_real_ball {n : ℕ} (P : ComplexPolynomial n)
+    (r : ℝ) (hr : 0 < r)
+    (hP : ∀ x : Fin n → ℝ, (∑ i, x i ^ 2) < r ^ 2 →
+      MvPolynomial.eval (fun i => (x i : ℂ)) P = 0) : P = 0 := by
+  let δ : ℝ := r / (n + 1)
+  have hn : (0 : ℝ) ≤ n := Nat.cast_nonneg n
+  have hδ : 0 < δ := div_pos hr (by positivity)
+  have hrδ : r = (n + 1) * δ := by
+    dsimp [δ]
+    field_simp
+  apply polynomial_eq_zero_of_real_box P (fun _ => -δ) (fun _ => δ)
+    (fun _ => by change -δ < δ; linarith)
+  intro x hx
+  apply hP x
+  have hs : (∑ i, x i ^ 2) ≤ (n : ℝ) * δ ^ 2 := by
+    calc
+      _ ≤ ∑ _i : Fin n, δ ^ 2 := Finset.sum_le_sum fun i _ => by
+        have hi := hx i
+        change -δ < x i ∧ x i < δ at hi
+        nlinarith
+      _ = _ := by simp
+  have h₁ := mul_nonneg hn (sq_nonneg δ)
+  have h₂ := mul_nonneg (sq_nonneg (n : ℝ)) (sq_nonneg δ)
+  have h₃ := sq_pos_of_pos hδ
+  rw [hrδ]
+  nlinarith
+
+@[simp]
+theorem finSuccEquiv_spherePolynomial (n : ℕ) (r : ℝ) :
+    MvPolynomial.finSuccEquiv ℂ n (spherePolynomial (n + 1) r) =
+      Polynomial.X ^ 2 + Polynomial.C (spherePolynomial n r) := by
+  classical
+  simp only [spherePolynomial, Fin.sum_univ_succ]
+  simp only [map_sub, map_add, map_sum, map_pow,
+    MvPolynomial.finSuccEquiv_X_zero, MvPolynomial.finSuccEquiv_X_succ]
+  simp only [MvPolynomial.finSuccEquiv_apply, MvPolynomial.eval₂Hom_C,
+    RingHom.comp_apply]
+  ring
+
+/-- A sphere-vanishing polynomial is a multiple of its quadratic defining equation.
+The hypothesis is in coordinates, so it applies without choosing a Euclidean-space model. -/
+theorem spherePolynomial_dvd_of_eval_eq_zero {n : ℕ} (r : ℝ) (hr : 0 < r)
+    (P : ComplexPolynomial (n + 1))
+    (hP : ∀ x : Fin (n + 1) → ℝ, (∑ i, x i ^ 2) = r ^ 2 →
+      MvPolynomial.eval (fun i => (x i : ℂ)) P = 0) :
+    spherePolynomial (n + 1) r ∣ P := by
+  classical
+  let p := MvPolynomial.finSuccEquiv ℂ n P
+  let q : Polynomial (ComplexPolynomial n) :=
+    Polynomial.X ^ 2 + Polynomial.C (spherePolynomial n r)
+  have hq : q.Monic := Polynomial.monic_X_pow_add_C _ (by decide)
+  let s := p %ₘ q
+  have hsdeg : s.degree ≤ 1 := by
+    have h := Polynomial.degree_modByMonic_lt p hq
+    rw [Polynomial.degree_X_pow_add_C (by decide)] at h
+    change s.degree < (2 : WithBot ℕ) at h
+    cases hd : s.degree with
+    | bot => simp [hd]
+    | coe d =>
+      rw [hd] at h
+      have hd₂ : d < 2 := WithBot.coe_lt_coe.mp h
+      have hd₁ : d ≤ 1 := by omega
+      exact WithBot.coe_le_coe.mpr hd₁
+  have hsform : s = Polynomial.C (s.coeff 1) * Polynomial.X +
+      Polynomial.C (s.coeff 0) := Polynomial.eq_X_add_C_of_degree_le_one hsdeg
+  have hcoeff : ∀ k ∈ ({0, 1} : Finset ℕ), s.coeff k = 0 := by
+    intro k hk
+    apply polynomial_eq_zero_of_real_ball _ r hr
+    intro x hx
+    let t := Real.sqrt (r ^ 2 - ∑ i, x i ^ 2)
+    have ht : 0 < t := Real.sqrt_pos.2 (by linarith)
+    have htsq : t ^ 2 = r ^ 2 - ∑ i, x i ^ 2 := Real.sq_sqrt (by linarith)
+    have heval : ∀ y : ℝ, y ^ 2 = r ^ 2 - ∑ i, x i ^ 2 →
+        Polynomial.eval₂ (MvPolynomial.eval (fun i => (x i : ℂ))) (y : ℂ) s = 0 := by
+      intro y hy
+      have hp : Polynomial.eval₂ (MvPolynomial.eval (fun i => (x i : ℂ))) (y : ℂ) p = 0 := by
+        rw [← Polynomial.eval_map, ← MvPolynomial.eval_eq_eval_mv_eval']
+        have h := hP (Fin.cons y x) (by
+          simp only [Fin.sum_univ_succ, Fin.cons_zero, Fin.cons_succ]
+          linarith)
+        convert h using 2
+        apply congrArg MvPolynomial.eval
+        funext i
+        refine Fin.cases ?_ (fun j => ?_) i <;> rfl
+      have hqeval : Polynomial.eval₂ (MvPolynomial.eval (fun i => (x i : ℂ))) (y : ℂ) q = 0 := by
+        simp only [q, Polynomial.eval₂_add, Polynomial.eval₂_pow, Polynomial.eval₂_X,
+          Polynomial.eval₂_C]
+        simp only [spherePolynomial, map_sub, map_sum, map_pow, eval_X, eval_C]
+        have hc := congrArg Complex.ofReal hy
+        push_cast at hc
+        linear_combination hc
+      have hdiv := congrArg
+        (Polynomial.eval₂ (MvPolynomial.eval (fun i => (x i : ℂ))) (y : ℂ))
+        (Polynomial.modByMonic_add_div p hq)
+      simp only [Polynomial.eval₂_add, Polynomial.eval₂_mul, hqeval, zero_mul, add_zero,
+        hp] at hdiv
+      exact hdiv
+    have hplus := heval t htsq
+    have hminus := heval (-t) (by simpa using htsq)
+    rw [hsform] at hplus hminus
+    simp only [Polynomial.eval₂_add, Polynomial.eval₂_mul, Polynomial.eval₂_C,
+      Polynomial.eval₂_X, Complex.ofReal_neg] at hplus hminus
+    have htcomplex : (t : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr ht.ne'
+    have hfirst : MvPolynomial.eval (fun i => (x i : ℂ)) (s.coeff 1) = 0 := by
+      have hm : MvPolynomial.eval (fun i => (x i : ℂ)) (s.coeff 1) * (t : ℂ) = 0 := by
+        linear_combination (hplus - hminus) / 2
+      exact (mul_eq_zero.mp hm).resolve_right htcomplex
+    have hzero : MvPolynomial.eval (fun i => (x i : ℂ)) (s.coeff 0) = 0 := by
+      simpa [hfirst] using hplus
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hk
+    rcases hk with rfl | rfl
+    · exact hzero
+    · exact hfirst
+  have hs : s = 0 := by
+    rw [hsform, hcoeff 1 (by simp), hcoeff 0 (by simp)]
+    simp
+  have hdvd : q ∣ p := (Polynomial.modByMonic_eq_zero_iff_dvd hq).mp hs
+  rcases hdvd with ⟨u, hu⟩
+  refine ⟨(MvPolynomial.finSuccEquiv ℂ n).symm u, ?_⟩
+  apply (MvPolynomial.finSuccEquiv ℂ n).injective
+  simpa [p, q] using hu
+
+/-- Total degree is additive on nonzero complex polynomials. -/
+theorem complexPolynomial_totalDegree_mul {n : ℕ} (P Q : ComplexPolynomial n)
+    (hP : P ≠ 0) (hQ : Q ≠ 0) :
+    (P * Q).totalDegree = P.totalDegree + Q.totalDegree := by
+  rw [← MvPolynomial.degree_degLexDegree, MonomialOrder.degree_mul hP hQ,
+    Finsupp.degree_add, MvPolynomial.degree_degLexDegree, MvPolynomial.degree_degLexDegree]
+
+theorem spherePolynomial_totalDegree (n : ℕ) (r : ℝ) :
+    (spherePolynomial (n + 1) r).totalDegree = 2 := by
+  classical
+  have hc : MvPolynomial.coeff (Finsupp.single (0 : Fin (n + 1)) 2)
+      (spherePolynomial (n + 1) r) = 1 := by
+    simp only [spherePolynomial, coeff_sub, coeff_sum, coeff_X_pow, coeff_C]
+    simp [Finsupp.single_left_inj,
+      Finsupp.single_eq_zero]
+    intro h
+    have he := congrArg (fun f : Fin (n + 1) →₀ ℕ => f 0) h
+    norm_num at he
+  apply le_antisymm
+  · apply (totalDegree_sub _ _).trans
+    simp only [totalDegree_C, Nat.max_zero]
+    apply totalDegree_finsetSum_le
+    intro i _
+    exact (totalDegree_pow _ _).trans (by simp)
+  · have hmem : Finsupp.single (0 : Fin (n + 1)) 2 ∈
+        (spherePolynomial (n + 1) r).support := mem_support_iff.mpr (by rw [hc]; exact one_ne_zero)
+    simpa using MvPolynomial.le_totalDegree hmem
+
+/-- The sphere divisor lowers total degree by two, including the zero-polynomial case. -/
+theorem exists_spherePolynomial_quotient {n : ℕ} (r : ℝ) (hr : 0 < r)
+    (P : ComplexPolynomial (n + 1))
+    (hP : ∀ x : Fin (n + 1) → ℝ, (∑ i, x i ^ 2) = r ^ 2 →
+      MvPolynomial.eval (fun i => (x i : ℂ)) P = 0) :
+    ∃ Q : ComplexPolynomial (n + 1), P = spherePolynomial (n + 1) r * Q ∧
+      Q.totalDegree ≤ P.totalDegree - 2 := by
+  obtain ⟨Q, hQ⟩ := spherePolynomial_dvd_of_eval_eq_zero r hr P hP
+  refine ⟨Q, hQ, ?_⟩
+  by_cases hzero : Q = 0
+  · simp [hzero]
+  · have hs : spherePolynomial (n + 1) r ≠ 0 := by
+      intro h
+      have := spherePolynomial_totalDegree n r
+      simp [h] at this
+    have hdeg := complexPolynomial_totalDegree_mul _ Q hs hzero
+    rw [← hQ, spherePolynomial_totalDegree] at hdeg
+    omega
+
+/-- Euclidean-space formulation of sphere divisibility and its degree bound. -/
+theorem exists_spherePolynomial_quotient_of_norm {n : ℕ} (hn : 1 ≤ n)
+    (r : ℝ) (hr : 0 < r) (P : ComplexPolynomial n)
+    (hP : ∀ x : RealPoint n, ‖x‖ = r → polynomialEvaluation x P = 0) :
+    ∃ Q : ComplexPolynomial n, P = spherePolynomial n r * Q ∧
+      Q.totalDegree ≤ P.totalDegree - 2 := by
+  obtain ⟨m, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : n ≠ 0)
+  apply exists_spherePolynomial_quotient r hr P
+  intro x hx
+  let y : RealPoint (m + 1) := (WithLp.equiv 2 _).symm x
+  have hy : ‖y‖ ^ 2 = r ^ 2 := by
+    rw [PiLp.norm_sq_eq_of_L2]
+    simpa [y, Real.norm_eq_abs, sq_abs] using hx
+  have hynorm : ‖y‖ = r := (sq_eq_sq₀ (norm_nonneg _) hr.le).mp hy
+  simpa [y] using hP y hynorm
+
+theorem spherePolynomial_dvd_of_norm_eq_zero {n : ℕ} (hn : 1 ≤ n)
+    (r : ℝ) (hr : 0 < r) (P : ComplexPolynomial n)
+    (hP : ∀ x : RealPoint n, ‖x‖ = r → polynomialEvaluation x P = 0) :
+    spherePolynomial n r ∣ P := by
+  obtain ⟨Q, hQ, _⟩ := exists_spherePolynomial_quotient_of_norm hn r hr P hP
+  exact ⟨Q, hQ⟩
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalExtension.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Extend a finite independent family to a basis, using only the supplied
+available indices in addition to the prescribed ones. -/
+theorem exists_finite_basis_extension
+    {K V X : Type*} [Field K] [AddCommGroup V] [Module K V]
+    [FiniteDimensional K V] (f : X → V) (s : Finset X) (available : Set X)
+    (hs : LinearIndependent K (fun x : ↥s => f x.val))
+    (hspan : Submodule.span K (f '' ((s : Set X) ∪ available)) = ⊤) :
+    ∃ t : Finset X, s ⊆ t ∧ (t : Set X) ⊆ (s : Set X) ∪ available ∧
+      ∃ b : Basis ↥t K V, ∀ x, b x = f x.val := by
+  classical
+  let allowed : Set X := (s : Set X) ∪ available
+  have hsi : Set.InjOn f (s : Set X) := by
+    intro x hx y hy hxy
+    exact congrArg Subtype.val (hs.injective (show f (⟨x, hx⟩ : ↥s) =
+      f (⟨y, hy⟩ : ↥s) from hxy))
+  have himg : LinearIndepOn K id (f '' (s : Set X)) :=
+    (linearIndepOn_iff_image hsi).mp hs
+  have hst : f '' (s : Set X) ⊆ f '' allowed :=
+    Set.image_mono Set.subset_union_left
+  let b := Basis.extendLe himg hst (le_of_eq hspan.symm)
+  let candidates : Set X := allowed ∩ f ⁻¹' Set.range b
+  have hsc : (s : Set X) ⊆ candidates := by
+    intro x hx
+    exact ⟨Or.inl hx, Basis.subset_extendLe himg hst _ ⟨x, hx, rfl⟩⟩
+  have hcimage : f '' candidates = Set.range b := by
+    apply Set.Subset.antisymm
+    · rintro _ ⟨x, hx, rfl⟩
+      exact hx.2
+    · intro v hv
+      obtain ⟨x, hx, hfx⟩ := Basis.extendLe_subset himg hst _ hv
+      refine ⟨x, ⟨hx, ?_⟩, hfx⟩
+      change f x ∈ Set.range b
+      rw [hfx]
+      exact hv
+  obtain ⟨u, hsu, huc, huimage, huinj⟩ :=
+    hsi.exists_subset_injOn_subset_range_eq hsc
+  have huimage' : f '' u = Set.range b := huimage.trans hcimage
+  have hufinite : u.Finite := by
+    letI : Finite (himg.extend hst) := b.linearIndependent.finite_of_isNoetherian
+    apply Set.Finite.of_finite_image _ huinj
+    rw [huimage']
+    exact Set.finite_range b
+  let t := hufinite.toFinset
+  have htimage : f '' (t : Set X) = Set.range b := by
+    simpa [t] using huimage'
+  have htind : LinearIndependent K (fun x : ↥t => f x.val) := by
+    apply (linearIndepOn_iff_image (show Set.InjOn f (t : Set X) from by
+      simpa [t] using huinj)).mpr
+    rw [htimage]
+    exact b.linearIndependent.linearIndepOn_id
+  refine ⟨t, ?_, ?_, Basis.mk htind ?_, ?_⟩
+  · simpa [t, ← Finset.coe_subset] using hsu
+  · simpa [t, allowed] using huc.trans Set.inter_subset_left
+  · have hrange : Set.range (fun x : ↥t => f x.val) = f '' (t : Set X) := by
+      ext v
+      simp
+    rw [hrange, htimage, b.span_eq]
+  · intro x
+    exact Basis.mk_apply _ _ x
+
+/-- Bounded-degree point evaluations span the dual whenever their common
+annihilator consists only of the zero polynomial. -/
+theorem boundedPolynomialEvaluation_span_eq_top {d m : ℕ} (points : Set (RealPoint d))
+    (hzero : ∀ p : MvPolynomial.restrictTotalDegree (Fin d) ℂ m,
+      (∀ x ∈ points, boundedPolynomialEvaluation m x p = 0) → p = 0) :
+    Submodule.span ℂ (boundedPolynomialEvaluation m '' points) = ⊤ := by
+  apply Submodule.span_eq_top_of_ne_zero
+  intro p hp
+  have hn : ¬ ∀ x ∈ points, boundedPolynomialEvaluation m x p = 0 :=
+    fun h => hp (hzero p h)
+  push_neg at hn
+  obtain ⟨x, hx, hxp⟩ := hn
+  exact ⟨boundedPolynomialEvaluation m x, ⟨x, hx, rfl⟩, hxp⟩
+
+/-- An evaluation basis identifies the polynomial space with its sampled values. -/
+theorem boundedSampling_bijective_of_basis {d m : ℕ} (t : Finset (RealPoint d))
+    (b : Basis ↥t ℂ (Module.Dual ℂ (MvPolynomial.restrictTotalDegree (Fin d) ℂ m)))
+    (hb : ∀ x, b x = boundedPolynomialEvaluation m x.val) :
+    Function.Bijective (boundedSampling m (fun x : ↥t => x.val)) := by
+  let e := (Module.evalEquiv ℂ (MvPolynomial.restrictTotalDegree (Fin d) ℂ m)).trans
+    b.dualBasis.equivFun
+  have he : ⇑e = boundedSampling m (fun x : ↥t => x.val) := by
+    funext p x
+    simp [e, Basis.dualBasis_equivFun, hb, Module.evalEquiv_apply,
+      Module.Dual.eval_apply, boundedSampling]
+  rw [← he]
+  exact e.bijective
+
+/-- Conditional interpolation-basis extension. Its spanning hypothesis can be
+supplied by a separate polynomial annihilator theorem. -/
+theorem exists_bounded_interpolation_extension {d m : ℕ} (s : Finset (RealPoint d))
+    (available : Set (RealPoint d))
+    (hs : LinearIndependent ℂ (fun x : ↥s => boundedPolynomialEvaluation m x.val))
+    (hspan : Submodule.span ℂ
+      (boundedPolynomialEvaluation m '' ((s : Set (RealPoint d)) ∪ available)) = ⊤) :
+    ∃ t : Finset (RealPoint d), s ⊆ t ∧
+      (t : Set (RealPoint d)) ⊆ (s : Set (RealPoint d)) ∪ available ∧
+      Function.Bijective (boundedSampling m (fun x : ↥t => x.val)) := by
+  obtain ⟨t, hst, ht, b, hb⟩ :=
+    exists_finite_basis_extension (boundedPolynomialEvaluation m) s available hs hspan
+  exact ⟨t, hst, ht, boundedSampling_bijective_of_basis t b hb⟩
+
+/-- The extension has exactly as many points as the dimension of the polynomial space. -/
+theorem exists_bounded_interpolation_extension_with_card {d m : ℕ}
+    (s : Finset (RealPoint d)) (available : Set (RealPoint d))
+    (hs : LinearIndependent ℂ (fun x : ↥s => boundedPolynomialEvaluation m x.val))
+    (hspan : Submodule.span ℂ
+      (boundedPolynomialEvaluation m '' ((s : Set (RealPoint d)) ∪ available)) = ⊤) :
+    ∃ t : Finset (RealPoint d), s ⊆ t ∧
+      (t : Set (RealPoint d)) ⊆ (s : Set (RealPoint d)) ∪ available ∧
+      t.card = Module.finrank ℂ (MvPolynomial.restrictTotalDegree (Fin d) ℂ m) ∧
+      Function.Bijective (boundedSampling m (fun x : ↥t => x.val)) := by
+  obtain ⟨t, hst, ht, b, hb⟩ :=
+    exists_finite_basis_extension (boundedPolynomialEvaluation m) s available hs hspan
+  refine ⟨t, hst, ht, ?_, boundedSampling_bijective_of_basis t b hb⟩
+  have hc := Module.finrank_eq_card_basis b
+  rw [Subspace.dual_finrank_eq, Fintype.card_coe] at hc
+  exact hc.symm
+
+/-- An annihilator formulation of the extension theorem, useful when the
+available set is a sphere or another algebraic hypersurface. -/
+theorem exists_bounded_interpolation_extension_of_annihilator {d m : ℕ}
+    (s : Finset (RealPoint d)) (available : Set (RealPoint d))
+    (hs : LinearIndependent ℂ (fun x : ↥s => boundedPolynomialEvaluation m x.val))
+    (hzero : ∀ p : MvPolynomial.restrictTotalDegree (Fin d) ℂ m,
+      (∀ x ∈ (s : Set (RealPoint d)) ∪ available,
+        boundedPolynomialEvaluation m x p = 0) → p = 0) :
+    ∃ t : Finset (RealPoint d), s ⊆ t ∧
+      (t : Set (RealPoint d)) ⊆ (s : Set (RealPoint d)) ∪ available ∧
+      Function.Bijective (boundedSampling m (fun x : ↥t => x.val)) :=
+  exists_bounded_interpolation_extension s available hs
+    (boundedPolynomialEvaluation_span_eq_top _ hzero)
+
+/-- Surjective sampling implies independence of its component evaluation forms. -/
+theorem boundedPolynomialEvaluation_independent_of_surjective {d m : ℕ}
+    {ι : Type*} [Fintype ι] (points : ι → RealPoint d)
+    (h : Function.Surjective (boundedSampling m points)) :
+    LinearIndependent ℂ (fun i => boundedPolynomialEvaluation m (points i)) := by
+  classical
+  apply Fintype.linearIndependent_iff.mpr
+  intro c hc i
+  obtain ⟨p, hp⟩ := h (Pi.single i (1 : ℂ) : ι → ℂ)
+  have hv : ∀ j, boundedPolynomialEvaluation m (points j) p =
+      (Pi.single i (1 : ℂ) : ι → ℂ) j := fun j => congrFun hp j
+  have he := LinearMap.congr_fun hc p
+  simpa [LinearMap.sum_apply, hv, Pi.single_apply] using he
+
+/-- Independence persists when the allowed polynomial degree increases. -/
+theorem boundedPolynomialEvaluation_independent_mono {d a b : ℕ} {ι : Type*}
+    (points : ι → RealPoint d) (hab : a ≤ b)
+    (h : LinearIndependent ℂ (fun i => boundedPolynomialEvaluation a (points i))) :
+    LinearIndependent ℂ (fun i => boundedPolynomialEvaluation b (points i)) := by
+  have hsub : MvPolynomial.restrictTotalDegree (Fin d) ℂ a ≤
+      MvPolynomial.restrictTotalDegree (Fin d) ℂ b := by
+    intro p hp
+    exact (MvPolynomial.mem_restrictTotalDegree _ _ _).mpr
+      (((MvPolynomial.mem_restrictTotalDegree _ _ _).mp hp).trans hab)
+  let inc := Submodule.inclusion hsub
+  apply LinearIndependent.of_comp inc.dualMap
+  exact h
+
+/-- A polynomial vanishing at an interpolation set of degree `m - 2` inside the
+ball and on the surrounding sphere is zero in degree at most `m`. -/
+theorem polynomial_eq_zero_of_interpolation_and_sphere {d m : ℕ} (hd : 1 ≤ d)
+    (s : Finset (RealPoint d)) (r : ℝ) (hr : 0 < r)
+    (hsball : ∀ x ∈ s, ‖x‖ < r)
+    (hsampling : Function.Injective (boundedSampling (m - 2) (fun x : ↥s => x.val)))
+    (p : MvPolynomial.restrictTotalDegree (Fin d) ℂ m)
+    (hzero : ∀ x ∈ (s : Set (RealPoint d)) ∪ {x | ‖x‖ = r},
+      boundedPolynomialEvaluation m x p = 0) : p = 0 := by
+  obtain ⟨q, hpq, hqdegree⟩ := exists_spherePolynomial_quotient_of_norm hd r hr p.val
+    (fun x hx => hzero x (Or.inr hx))
+  have hqbound : q.totalDegree ≤ m - 2 := hqdegree.trans
+    (Nat.sub_le_sub_right ((MvPolynomial.mem_restrictTotalDegree _ _ _).mp p.property) 2)
+  let q' : MvPolynomial.restrictTotalDegree (Fin d) ℂ (m - 2) :=
+    ⟨q, (MvPolynomial.mem_restrictTotalDegree _ _ _).mpr hqbound⟩
+  have hqzero : boundedSampling (m - 2) (fun x : ↥s => x.val) q' = 0 := by
+    ext x
+    have hxzero := hzero x.val (Or.inl x.property)
+    have hfactor : polynomialEvaluation x.val (spherePolynomial d r) ≠ 0 := by
+      intro he
+      exact (hsball x.val x.property).ne
+        ((polynomialEvaluation_spherePolynomial_eq_zero_iff x.val r hr.le).mp he)
+    have hmul : polynomialEvaluation x.val (spherePolynomial d r) *
+        polynomialEvaluation x.val q = 0 := by
+      simpa only [boundedPolynomialEvaluation_apply, hpq, polynomialEvaluation_apply,
+        map_mul] using hxzero
+    exact (mul_eq_zero.mp hmul).resolve_left hfactor
+  have hq' : q' = 0 := hsampling (hqzero.trans (map_zero _).symm)
+  have hq : q = 0 := congrArg Subtype.val hq'
+  apply Subtype.ext
+  simpa [hq] using hpq
+
+/-- Sphere interpolation-basis extension: retain an interpolation set for degree
+`m - 2` inside the ball and add only points on its surrounding sphere. -/
+theorem exists_sphere_interpolation_extension {d m : ℕ} (hd : 1 ≤ d)
+    (s : Finset (RealPoint d)) (r : ℝ) (hr : 0 < r)
+    (hsball : ∀ x ∈ s, ‖x‖ < r)
+    (hsampling : Function.Bijective (boundedSampling (m - 2) (fun x : ↥s => x.val))) :
+    ∃ t : Finset (RealPoint d), s ⊆ t ∧
+      (t : Set (RealPoint d)) ⊆ (s : Set (RealPoint d)) ∪ {x | ‖x‖ = r} ∧
+      t.card = Module.finrank ℂ (MvPolynomial.restrictTotalDegree (Fin d) ℂ m) ∧
+      Function.Bijective (boundedSampling m (fun x : ↥t => x.val)) := by
+  have hsind := boundedPolynomialEvaluation_independent_of_surjective _ hsampling.2
+  have hsind' := boundedPolynomialEvaluation_independent_mono _ (Nat.sub_le m 2) hsind
+  apply exists_bounded_interpolation_extension_with_card s {x | ‖x‖ = r} hsind'
+  apply boundedPolynomialEvaluation_span_eq_top
+  exact polynomial_eq_zero_of_interpolation_and_sphere hd s r hr hsball hsampling.1
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalSelection.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Selection from finite interpolation stages
+
+This is the abstract selection argument in the proof of `cm:thm:main`.
+The hypotheses concern finite interpolation and one finite extension step;
+totality and the global biorthogonals are conclusions of the construction.
+-/
+
+namespace RieszEuclidean.CompleteMinimal
+
+open scoped ComplexInnerProductSpace
+
+open Classical
+
+variable {H X : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
+
+/-- An interpolating finite set at a finite frequency level. The subspace `V N`
+contains the permitted interpolants at level `N`. -/
+structure FiniteStage (e : X → H) (level : X → ℕ) (V : ℕ → Submodule ℂ H) where
+  /-- The finite set of frequencies chosen at this stage. -/
+  points : Finset X
+  /-- The largest sphere level admitted at this stage. -/
+  cutoff : ℕ
+  bounded : ∀ x ∈ points, level x ≤ cutoff
+  interpolate : ∀ x ∈ points, ∃ g ∈ V cutoff,
+    ∀ y ∈ points, @inner ℂ H _ g (e y) = if x = y then 1 else 0
+
+/-- The finite-step input: extend any interpolating stage, using only new
+frequency levels, while approximating an arbitrary finite list of targets. -/
+def HasFiniteExtensions (e : X → H) (level : X → ℕ) (V : ℕ → Submodule ℂ H) : Prop :=
+  ∀ (A : FiniteStage e level V) (targets : Finset H) (ε : ℝ), 0 < ε →
+    ∃ B : FiniteStage e level V,
+      A.points ⊆ B.points ∧ A.cutoff < B.cutoff ∧
+      (∀ x ∈ B.points, x ∉ A.points → A.cutoff < level x) ∧
+      ∀ f ∈ targets, ∃ v ∈ Submodule.span ℂ (e '' (B.points : Set X)), dist f v < ε
+
+/-- The data produced by iterating the finite extension step. -/
+structure SelectionStages (e : X → H) (level : X → ℕ)
+    (V : ℕ → Submodule ℂ H) (f : ℕ → H) where
+  /-- The sequence of finite interpolation stages. -/
+  stage : ℕ → FiniteStage e level V
+  nested : ∀ n, (stage n).points ⊆ (stage (n + 1)).points
+  increasing : ∀ n, (stage n).cutoff < (stage (n + 1)).cutoff
+  fresh : ∀ n x, x ∈ (stage (n + 1)).points → x ∉ (stage n).points →
+    (stage n).cutoff < level x
+  approximate : ∀ n j, j ≤ n →
+    ∃ v ∈ Submodule.span ℂ (e '' ((stage (n + 1)).points : Set X)),
+      dist (f j) v < 1 / (n + 1 : ℝ)
+
+/-- The elementary dependent recursion that selects all stages. -/
+theorem exists_selectionStages (e : X → H) (level : X → ℕ)
+    (V : ℕ → Submodule ℂ H) (initial : FiniteStage e level V)
+    (extend : HasFiniteExtensions e level V) (f : ℕ → H) :
+    ∃ S : SelectionStages e level V f, S.stage 0 = initial := by
+  classical
+  let next : ℕ → FiniteStage e level V → FiniteStage e level V := fun n A =>
+    Classical.choose (extend A ((Finset.range (n + 1)).image f)
+      (1 / (n + 1 : ℝ)) (by positivity))
+  have next_spec (n : ℕ) (A : FiniteStage e level V) :
+      A.points ⊆ (next n A).points ∧ A.cutoff < (next n A).cutoff ∧
+      (∀ x ∈ (next n A).points, x ∉ A.points → A.cutoff < level x) ∧
+      ∀ j ≤ n, ∃ v ∈ Submodule.span ℂ (e '' ((next n A).points : Set X)),
+        dist (f j) v < 1 / (n + 1 : ℝ) := by
+    obtain ⟨hsub, hcut, hfresh, happ⟩ := Classical.choose_spec
+      (extend A ((Finset.range (n + 1)).image f) (1 / (n + 1 : ℝ)) (by positivity))
+    refine ⟨hsub, hcut, hfresh, ?_⟩
+    intro j hj
+    exact happ (f j) (Finset.mem_image.mpr ⟨j, Finset.mem_range.mpr (by omega), rfl⟩)
+  let stages : ℕ → FiniteStage e level V := fun n => Nat.rec initial next n
+  refine ⟨{ stage := stages
+            nested := fun n => (next_spec n (stages n)).1
+            increasing := fun n => (next_spec n (stages n)).2.1
+            fresh := fun n => (next_spec n (stages n)).2.2.1
+            approximate := fun n => (next_spec n (stages n)).2.2.2 }, rfl⟩
+
+namespace SelectionStages
+
+variable {e : X → H} {level : X → ℕ} {V : ℕ → Submodule ℂ H} {f : ℕ → H}
+variable (S : SelectionStages e level V f)
+
+/-- The selected frequency set. -/
+def selected : Set X := {x | ∃ n, x ∈ (S.stage n).points}
+
+theorem points_monotone : Monotone (fun n => ((S.stage n).points : Set X)) := by
+  exact monotone_nat_of_le_succ (fun n => S.nested n)
+
+theorem cutoff_strictMono : StrictMono (fun n => (S.stage n).cutoff) :=
+  strictMono_nat_of_lt_succ S.increasing
+
+/-- Future selections cannot add points at or below an old cutoff. -/
+theorem low_level_mem (n : ℕ) {x : X} (hx : x ∈ S.selected)
+    (hlevel : level x ≤ (S.stage n).cutoff) : x ∈ (S.stage n).points := by
+  obtain ⟨m, hm⟩ := hx
+  by_cases hmn : m ≤ n
+  · exact S.points_monotone hmn hm
+  · have hnm : n ≤ m := by omega
+    clear hmn
+    induction m, hnm using Nat.le_induction with
+    | base => exact hm
+    | succ m hnm ih =>
+        by_cases hmem : x ∈ (S.stage m).points
+        · exact ih hmem
+        · have hh := S.fresh m x hm hmem
+          have hc := S.cutoff_strictMono.monotone hnm
+          omega
+
+/-- Only finitely many selected frequencies can lie in any bounded level range. -/
+theorem finite_bounded_levels (R : ℕ) : (S.selected ∩ {x | level x ≤ R}).Finite := by
+  have hc : R ≤ (S.stage R).cutoff := S.cutoff_strictMono.id_le R
+  apply (S.stage R).points.finite_toSet.subset
+  intro x hx
+  exact S.low_level_mem R hx.1 (hx.2.trans hc)
+
+/-- A bounded level set meets the selected frequencies in finitely many points. -/
+theorem finite_intersection_of_level_bounded {K : Set X} (R : ℕ)
+    (hK : ∀ x ∈ K, level x ≤ R) : (S.selected ∩ K).Finite :=
+  (S.finite_bounded_levels R).subset (fun x hx => ⟨hx.1, hK x hx.2⟩)
+
+/-- Locally bounded frequency levels turn block finiteness into local finiteness. -/
+theorem locally_finite [TopologicalSpace X]
+    (bounded : ∀ x : X, ∃ U ∈ nhds x, ∃ R : ℕ, ∀ y ∈ U, level y ≤ R) :
+    ∀ x : X, ∃ U ∈ nhds x, (S.selected ∩ U).Finite := by
+  intro x
+  obtain ⟨U, hU, R, hR⟩ := bounded x
+  exact ⟨U, hU, S.finite_intersection_of_level_bounded R hR⟩
+
+/-- Every enumeration without repetitions escapes all bounded frequency levels. -/
+theorem escape_levels (a : ℕ → X) (ha : Function.Injective a)
+    (hselected : ∀ n, a n ∈ S.selected) :
+    Filter.Tendsto (fun n => level (a n)) Filter.atTop Filter.atTop := by
+  apply Filter.tendsto_atTop.mpr
+  intro R
+  have hfin : (a ⁻¹' (S.selected ∩ {x | level x ≤ R})).Finite :=
+    (S.finite_bounded_levels R).preimage ha.injOn
+  have he : ∀ᶠ n in Filter.atTop, a n ∉ S.selected ∩ {x | level x ≤ R} := by
+    rw [← Nat.cofinite_eq_atTop]
+    exact hfin.compl_mem_cofinite
+  filter_upwards [he] with n hn
+  have hnlevel : ¬ level (a n) ≤ R := fun h => hn ⟨hselected n, h⟩
+  omega
+
+/-- If high frequency levels have large radius, every enumeration without
+repetitions also escapes to infinity in radius. -/
+theorem escape_radius (radius : X → ℝ)
+    (high_level : ∀ R : ℝ, ∃ N : ℕ, ∀ x, N ≤ level x → R ≤ radius x)
+    (a : ℕ → X) (ha : Function.Injective a) (hselected : ∀ n, a n ∈ S.selected) :
+    Filter.Tendsto (fun n => radius (a n)) Filter.atTop Filter.atTop := by
+  apply Filter.tendsto_atTop.mpr
+  intro R
+  obtain ⟨N, hN⟩ := high_level R
+  filter_upwards [(Filter.tendsto_atTop.mp (S.escape_levels a ha hselected)) N] with n hn
+  exact hN (a n) hn
+
+/-- Every member of a dense target sequence lies in the closed selected span. -/
+theorem target_mem_closure (j : ℕ) :
+    f j ∈ (Submodule.span ℂ (e '' S.selected)).topologicalClosure := by
+  classical
+  apply Metric.mem_closure_iff.mpr
+  intro ε hε
+  obtain ⟨k, hk⟩ := exists_nat_one_div_lt hε
+  let n := max j k
+  obtain ⟨v, hv, hd⟩ := S.approximate n j (le_max_left _ _)
+  have hspan : Submodule.span ℂ (e '' ((S.stage (n + 1)).points : Set X)) ≤
+      Submodule.span ℂ (e '' S.selected) := by
+    apply Submodule.span_mono
+    exact Set.image_mono (fun x hx => ⟨n + 1, hx⟩)
+  refine ⟨v, hspan hv, hd.trans_le ?_⟩
+  have hden : (k + 1 : ℝ) ≤ n + 1 := by exact_mod_cast Nat.add_le_add_right (le_max_right j k) 1
+  exact (one_div_le_one_div_of_le (by positivity) hden).trans (le_of_lt hk)
+
+/-- The approximation conditions imply totality; completeness is not a stage hypothesis. -/
+theorem complete (hf : DenseRange f) :
+    (Submodule.span ℂ (e '' S.selected)).topologicalClosure = ⊤ := by
+  apply top_unique
+  intro x _
+  have hsub : Set.range f ⊆
+      ((Submodule.span ℂ (e '' S.selected)).topologicalClosure : Set H) := by
+    rintro _ ⟨j, rfl⟩
+    exact S.target_mem_closure j
+  exact closure_minimal hsub (Submodule.isClosed_topologicalClosure _) (hf x)
+
+/-- An interpolant at a selected point remains biorthogonal to every future point. -/
+theorem exists_global_interpolant
+    (vanish : ∀ N g, g ∈ V N → ∀ x, N < level x → @inner ℂ H _ g (e x) = 0)
+    {x : X} (hx : x ∈ S.selected) :
+    ∃ N g, g ∈ V N ∧ ∀ y ∈ S.selected,
+      @inner ℂ H _ g (e y) = if x = y then 1 else 0 := by
+  classical
+  obtain ⟨n, hn⟩ := hx
+  obtain ⟨g, hg, hint⟩ := (S.stage n).interpolate x hn
+  refine ⟨(S.stage n).cutoff, g, hg, ?_⟩
+  intro y hy
+  by_cases hymem : y ∈ (S.stage n).points
+  · exact hint y hymem
+  · have hxy : x ≠ y := by rintro rfl; exact hymem hn
+    have hlevel : (S.stage n).cutoff < level y := by
+      by_contra hh
+      exact hymem (S.low_level_mem n hy (by omega))
+    simp only [if_neg hxy]
+    exact vanish _ g hg y hlevel
+
+/-- Choosing the individual witnesses produces an actual global dual family. -/
+theorem exists_biorthogonal
+    (vanish : ∀ N g, g ∈ V N → ∀ x, N < level x → @inner ℂ H _ g (e x) = 0) :
+    ∃ g : S.selected → H,
+      (∀ x, ∃ N, g x ∈ V N) ∧
+      ∀ x y : S.selected, @inner ℂ H _ (g x) (e y) = if x = y then 1 else 0 := by
+  classical
+  have h := fun x : S.selected => S.exists_global_interpolant vanish x.property
+  choose N g hg hint using h
+  refine ⟨g, fun x => ⟨N x, hg x⟩, ?_⟩
+  intro x y
+  simpa only [Subtype.ext_iff] using hint x y y.property
+
+end SelectionStages
+
+/-- Abstract finite-stage selection for a separable complex Hilbert space.
+The conclusion includes totality, a global biorthogonal family with interpolant
+membership, and finiteness in bounded frequency levels. -/
+theorem select_complete_biorthogonal [TopologicalSpace.SeparableSpace H]
+    (e : X → H) (level : X → ℕ) (V : ℕ → Submodule ℂ H)
+    (initial : FiniteStage e level V) (extend : HasFiniteExtensions e level V)
+    (vanish : ∀ N g, g ∈ V N → ∀ x, N < level x → @inner ℂ H _ g (e x) = 0) :
+    ∃ Λ : Set X, (Submodule.span ℂ (e '' Λ)).topologicalClosure = ⊤ ∧
+      (∀ R : ℕ, (Λ ∩ {x | level x ≤ R}).Finite) ∧
+      ∃ g : Λ → H, (∀ x, ∃ N, g x ∈ V N) ∧
+        ∀ x y : Λ, @inner ℂ H _ (g x) (e y) = if x = y then 1 else 0 := by
+  obtain ⟨f, hf⟩ := TopologicalSpace.exists_dense_seq H
+  obtain ⟨S, _⟩ := exists_selectionStages e level V initial extend f
+  exact ⟨S.selected, S.complete hf, S.finite_bounded_levels, S.exists_biorthogonal vanish⟩
+
+end RieszEuclidean.CompleteMinimal
+end
+
+/- Source: RieszEuclidean/CompleteMinimalAssembly.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+open MeasureTheory
+open Classical
+open Filter Topology
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The origin sphere and the positive-radius frequency spheres. -/
+def sphereFrequencies {d : ℕ} (radius : ℕ → ℝ) : Set (Euclidean d) :=
+  {x | ∃ j, ‖x‖ = radius j}
+
+/-- Frequency spheres whose indices lie strictly beyond a given cutoff. -/
+def laterSpheres {d : ℕ} (radius : ℕ → ℝ) (n : ℕ) : Set (Euclidean d) :=
+  {x | ∃ j, n < j ∧ ‖x‖ = radius j}
+
+/-- The frequency spheres with indices between two cutoffs. -/
+def sphereInterval {d : ℕ} (radius : ℕ → ℝ) (n N : ℕ) : Set (Euclidean d) :=
+  {x | ∃ j, n < j ∧ j ≤ N ∧ ‖x‖ = radius j}
+
+/-- The unique radius index of a frequency on one of the prescribed spheres. -/
+def sphereLevel {d : ℕ} (radius : ℕ → ℝ) (x : Euclidean d) : ℕ :=
+  if h : ∃ j, ‖x‖ = radius j then Classical.choose h else 0
+
+/-- A point on a strictly indexed sphere has that sphere's level. -/
+theorem sphereLevel_of_norm {d : ℕ} {radius : ℕ → ℝ} (hstrict : StrictMono radius)
+    {x : Euclidean d} {j : ℕ} (hx : ‖x‖ = radius j) : sphereLevel radius x = j := by
+  unfold sphereLevel
+  rw [dif_pos ⟨j, hx⟩]
+  exact hstrict.injective ((Classical.choose_spec (show ∃ k, ‖x‖ = radius k from ⟨j, hx⟩)).symm.trans hx)
+
+/-- Recover the norm from the sphere level of a frequency. -/
+theorem sphereLevel_norm {d : ℕ} {radius : ℕ → ℝ} {x : Euclidean d}
+    (hx : x ∈ sphereFrequencies radius) : ‖x‖ = radius (sphereLevel radius x) := by
+  change ∃ j, ‖x‖ = radius j at hx
+  unfold sphereLevel
+  rw [dif_pos hx]
+  exact Classical.choose_spec hx
+
+/-- Successive sphere divisions reduce a joint annihilator to the old interpolation space. -/
+theorem polynomial_eq_zero_of_interpolation_and_sphereInterval {d n k : ℕ}
+    (hd : 1 ≤ d) (radius : ℕ → ℝ) (hpositive : ∀ j, 0 < j → 0 < radius j)
+    (hstrict : StrictMono radius) (A : Finset (Euclidean d))
+    (hA : ∀ x ∈ A, ‖x‖ ≤ radius n)
+    (hsampling : Function.Injective (boundedSampling (2 * n) (fun x : ↥A => x.val)))
+    (p : MvPolynomial.restrictTotalDegree (Fin d) ℂ (2 * (n + k)))
+    (hzero : ∀ x ∈ (A : Set (Euclidean d)) ∪ sphereInterval radius n (n + k),
+      polynomialEvaluation x p.val = 0) : p = 0 := by
+  induction k with
+  | zero =>
+    apply hsampling
+    ext x
+    simpa using hzero x.val (Or.inl x.property)
+  | succ k ih =>
+    obtain ⟨q, hpq, hqdegree⟩ := exists_spherePolynomial_quotient_of_norm hd
+      (radius (n + (k + 1))) (hpositive _ (by omega)) p.val
+      (fun x hx => hzero x (Or.inr ⟨n + (k + 1), by omega, le_rfl, hx⟩))
+    have hqbound : q.totalDegree ≤ 2 * (n + k) := by
+      have hpdegree := (MvPolynomial.mem_restrictTotalDegree _ _ _).mp p.property
+      omega
+    let q' : MvPolynomial.restrictTotalDegree (Fin d) ℂ (2 * (n + k)) :=
+      ⟨q, (MvPolynomial.mem_restrictTotalDegree _ _ _).mpr hqbound⟩
+    have hqzero : q' = 0 := by
+      apply ih q'
+      intro x hx
+      have hnorm : ‖x‖ < radius (n + (k + 1)) := by
+        rcases hx with hx | ⟨j, _hj, hj, hx⟩
+        · exact (hA x hx).trans_lt (hstrict (by omega))
+        · rw [hx]
+          exact hstrict (by omega)
+      have hpzero : polynomialEvaluation x p.val = 0 := by
+        apply hzero x
+        rcases hx with hx | ⟨j, hjn, hjN, hx⟩
+        · exact Or.inl hx
+        · exact Or.inr ⟨j, hjn, by omega, hx⟩
+      rw [hpq, polynomialEvaluation_apply, map_mul] at hpzero
+      have hfactor : polynomialEvaluation x (spherePolynomial d (radius (n + (k + 1)))) ≠ 0 := by
+        intro he
+        exact hnorm.ne ((polynomialEvaluation_spherePolynomial_eq_zero_iff x _
+          (hpositive _ (by omega)).le).mp he)
+      exact (mul_eq_zero.mp hpzero).resolve_left hfactor
+    apply Subtype.ext
+    have hq : q = 0 := congrArg Subtype.val hqzero
+    simpa [hq] using hpq
+
+/-- Finite polynomial interpolation data; the sampling invariant is retained
+through every selection stage. -/
+structure PolynomialSphereStage (d : ℕ) (radius : ℕ → ℝ) where
+  /-- The finite interpolation set retained at this stage. -/
+  points : Finset (Euclidean d)
+  /-- The greatest sphere index included at this stage. -/
+  cutoff : ℕ
+  spheres : ∀ x ∈ points, x ∈ sphereFrequencies radius
+  bounded : ∀ x ∈ points, sphereLevel radius x ≤ cutoff
+  sampling : Function.Bijective (boundedSampling (2 * cutoff) (fun x : ↥points => x.val))
+
+/-- Enlarge a polynomial stage while retaining any finite set of prescribed later
+points. The additional basis points lie only on later spheres. -/
+theorem extend_polynomialSphereStage {d : ℕ} (hd : 1 ≤ d)
+    (radius : ℕ → ℝ) (hpositive : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius)
+    (A : PolynomialSphereStage d radius) (B : Finset (Euclidean d))
+    (hB : (B : Set (Euclidean d)) ⊆ (A.points : Set (Euclidean d)) ∪ laterSpheres radius A.cutoff) :
+    ∃ C : PolynomialSphereStage d radius, A.points ∪ B ⊆ C.points ∧
+      A.cutoff < C.cutoff ∧
+      ∀ x ∈ C.points, x ∉ A.points → A.cutoff < sphereLevel radius x := by
+  classical
+  let prescribed := A.points ∪ B
+  let N := max (max A.cutoff (B.sup (sphereLevel radius))) prescribed.card + 1
+  have hnN : A.cutoff < N := by
+    dsimp [N]
+    omega
+  have hBN : ∀ x ∈ B, sphereLevel radius x ≤ N := by
+    intro x hx
+    have hle := Finset.le_sup (f := sphereLevel radius) hx
+    dsimp [N]
+    omega
+  have hprescribed : (prescribed : Set (Euclidean d)) ⊆
+      (A.points : Set (Euclidean d)) ∪ sphereInterval radius A.cutoff N := by
+    intro x hx
+    rcases Finset.mem_union.mp hx with hx | hx
+    · exact Or.inl hx
+    · have hxB := hx
+      rcases hB hx with hx | ⟨j, hj, hx⟩
+      · exact Or.inl hx
+      · exact Or.inr ⟨j, hj, by simpa [sphereLevel_of_norm hstrict hx] using hBN x hxB, hx⟩
+  have hind : LinearIndependent ℂ
+      (fun x : ↥prescribed => boundedPolynomialEvaluation (2 * N) x.val) := by
+    apply boundedPolynomialEvaluation_finset_linearIndependent
+    dsimp [N]
+    omega
+  have hspan : Submodule.span ℂ (boundedPolynomialEvaluation (2 * N) ''
+      ((prescribed : Set (Euclidean d)) ∪ sphereInterval radius A.cutoff N)) = ⊤ := by
+    apply boundedPolynomialEvaluation_span_eq_top
+    intro p hp
+    have hnorm : ∀ x ∈ A.points, ‖x‖ ≤ radius A.cutoff := by
+      intro x hx
+      rw [sphereLevel_norm (A.spheres x hx)]
+      exact hstrict.monotone (A.bounded x hx)
+    have hN : N = A.cutoff + (N - A.cutoff) := by omega
+    let p' : MvPolynomial.restrictTotalDegree (Fin d) ℂ
+        (2 * (A.cutoff + (N - A.cutoff))) :=
+      ⟨p.val, by rw [← hN]; exact p.property⟩
+    have hz : p' = 0 := by
+      apply polynomial_eq_zero_of_interpolation_and_sphereInterval hd radius hpositive hstrict
+        A.points hnorm A.sampling.1 (k := N - A.cutoff) p'
+      intro x hx
+      apply hp x
+      rcases hx with hx | hx
+      · exact Or.inl (Finset.mem_union_left B hx)
+      · exact Or.inr (by simpa [← hN] using hx)
+    apply Subtype.ext
+    have hzval : p'.val = 0 := congrArg Subtype.val hz
+    exact hzval
+  obtain ⟨t, hpt, ht, _hcard, hsampling⟩ := exists_bounded_interpolation_extension_with_card
+    prescribed (sphereInterval radius A.cutoff N) hind hspan
+  have ht' : (t : Set (Euclidean d)) ⊆
+      (A.points : Set (Euclidean d)) ∪ sphereInterval radius A.cutoff N :=
+    ht.trans (Set.union_subset hprescribed Set.subset_union_right)
+  have htsphere : ∀ x ∈ t, x ∈ sphereFrequencies radius := by
+    intro x hx
+    rcases ht' hx with hx | ⟨j, _hj, _hjN, hx⟩
+    · exact A.spheres x hx
+    · exact ⟨j, hx⟩
+  have htlevel : ∀ x ∈ t, sphereLevel radius x ≤ N := by
+    intro x hx
+    rcases ht' hx with hx | ⟨j, _hj, hjN, hx⟩
+    · exact (A.bounded x hx).trans hnN.le
+    · simpa [sphereLevel_of_norm hstrict hx] using hjN
+  refine ⟨⟨t, N, htsphere, htlevel, hsampling⟩, hpt, hnN, ?_⟩
+  intro x hx hnot
+  obtain ⟨j, hj, _hjN, hxnorm⟩ := (ht' hx).resolve_left hnot
+  simpa [sphereLevel_of_norm hstrict hxnorm] using hj
+
+/-- Multiplication by a fixed Fourier factor, on actual bounded-degree polynomials. -/
+def polynomialFourierMap {d : ℕ} (degree : ℕ) (multiplier : ComplexEuclidean d → ℂ) :
+    MvPolynomial.restrictTotalDegree (Fin d) ℂ degree →ₗ[ℂ] (ComplexEuclidean d → ℂ) where
+  toFun p := fun z => multiplier z * MvPolynomial.eval (fun i => z i) p.val
+  map_add' p q := by ext z; simp [mul_add]
+  map_smul' c p := by ext z; simp [mul_left_comm, mul_comm]
+
+/-- The actual domain L² subspace whose Fourier transforms have the prescribed
+multiplier-polynomial form. -/
+def polynomialFourierSpace {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (degree : ℕ) (multiplier : ComplexEuclidean d → ℂ) :
+    Submodule ℂ (DomainL2 Ω) :=
+  (LinearMap.range (polynomialFourierMap degree multiplier)).comap
+    (domainEntireFourierLinear Ω hΩ hbounded)
+
+/-- The remaining analytic inputs are stated on actual Fourier transforms and
+physical L² support. The geometric finite-extension and selection conclusions
+are not assumed. -/
+structure SphereAnalyticInputs {d : ℕ} (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (hfinite : volume Ω ≠ ⊤) (radius : ℕ → ℝ) (core : Set (Euclidean d)) where
+  /-- The analytic multiplier defining the polynomial Fourier space at each level. -/
+  multiplier : ℕ → ComplexEuclidean d → ℂ
+  synthesize : ∀ N (p : MvPolynomial.restrictTotalDegree (Fin d) ℂ (2 * N)),
+    ∃ f : DomainL2 Ω, SupportedOn Ω f core ∧
+      domainEntireFourier Ω hΩ f = polynomialFourierMap (2 * N) (multiplier N) p
+  tail : ∀ N, TailPolynomialRepresentation Ω hΩ hfinite (laterSpheres radius N)
+    (2 * N) (multiplier N)
+  nonzero : ∀ N x, ‖x‖ ≤ radius N → multiplier N (realToComplex x) ≠ 0
+  zero : ∀ N j, N < j → ∀ x : Euclidean d, ‖x‖ = radius j →
+    multiplier N (realToComplex x) = 0
+
+namespace SphereAnalyticInputs
+
+variable {d : ℕ} {Ω : Set (Euclidean d)} {hΩ : MeasurableSet Ω}
+    {hfinite : volume Ω ≠ ⊤} {radius : ℕ → ℝ} {core : Set (Euclidean d)}
+
+/-- The stage's actual domain L² Fourier-polynomial subspace. -/
+def spaces (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) (N : ℕ) : Submodule ℂ (DomainL2 Ω) :=
+  polynomialFourierSpace Ω hΩ hbounded (2 * N) (I.multiplier N)
+
+/-- Fourier injectivity transfers synthesis support to every vector in the stage space. -/
+theorem supported (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) {N : ℕ} {f : DomainL2 Ω}
+    (hf : f ∈ I.spaces hbounded N) : SupportedOn Ω f core := by
+  obtain ⟨p, hp⟩ := hf
+  obtain ⟨g, hg, hgp⟩ := I.synthesize N p
+  have hfg : f = g := domainEntireFourier_injective hΩ hbounded (hp.symm.trans hgp.symm)
+  exact hfg ▸ hg
+
+/-- Every vector in a stage space is orthogonal to every later frequency sphere. -/
+theorem vanish (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) {N : ℕ} {f : DomainL2 Ω}
+    (hf : f ∈ I.spaces hbounded N) {x : Euclidean d} (hx : N < sphereLevel radius x) :
+    inner (𝕜 := ℂ) f (exponentialL2 Ω hfinite x) = 0 := by
+  obtain ⟨p, hp⟩ := hf
+  have hxsphere : x ∈ sphereFrequencies radius := by
+    by_contra hn
+    change ¬ ∃ j, ‖x‖ = radius j at hn
+    have hlevel : sphereLevel radius x = 0 := by
+      unfold sphereLevel
+      rw [dif_neg hn]
+    omega
+  have hft : domainEntireFourier Ω hΩ f (realToComplex x) = 0 := by
+    change polynomialFourierMap (2 * N) (I.multiplier N) p =
+      domainEntireFourier Ω hΩ f at hp
+    rw [← congrFun hp (realToComplex x)]
+    change I.multiplier N (realToComplex x) * _ = 0
+    rw [I.zero N (sphereLevel radius x) hx x (sphereLevel_norm hxsphere), zero_mul]
+  apply (inner_eq_zero_symm (𝕜 := ℂ)).mpr
+  exact (domainEntireFourier_real_inner hΩ hfinite f x) ▸ hft
+
+/-- A polynomial interpolation stage supplies genuine supported exponential
+interpolants, through the analytic synthesis input. -/
+def toFiniteStage (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) (hstrict : StrictMono radius)
+    (A : PolynomialSphereStage d radius) :
+    FiniteStage (exponentialL2 Ω hfinite) (sphereLevel radius) (I.spaces hbounded) where
+  points := A.points
+  cutoff := A.cutoff
+  bounded := A.bounded
+  interpolate := by
+    intro x hx
+    let values : ↥A.points → ℂ := fun y =>
+      (if x = y.val then 1 else 0) / I.multiplier A.cutoff (realToComplex y.val)
+    obtain ⟨p, hp⟩ := A.sampling.2 values
+    obtain ⟨f, _hsupport, hfp⟩ := I.synthesize A.cutoff p
+    refine ⟨f, ⟨p, hfp.symm⟩, ?_⟩
+    intro y hy
+    have hnorm : ‖y‖ ≤ radius A.cutoff := by
+      rw [sphereLevel_norm (A.spheres y hy)]
+      exact hstrict.monotone (A.bounded y hy)
+    have hv : polynomialEvaluation y p.val = values ⟨y, hy⟩ := congrFun hp ⟨y, hy⟩
+    have hft : domainEntireFourier Ω hΩ f (realToComplex y) = if x = y then 1 else 0 := by
+      rw [hfp]
+      change I.multiplier A.cutoff (realToComplex y) * polynomialEvaluation y p.val = _
+      rw [hv]
+      dsimp [values]
+      field_simp [I.nonzero A.cutoff y hnorm]
+    rw [← inner_conj_symm, ← domainEntireFourier_real_inner hΩ hfinite, hft]
+    split_ifs <;> simp
+
+/-- The concrete finite-step construction: available-frequency density supplies
+the approximation points, and sphere basis extension retains them. -/
+theorem extend_stage (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) (hd : 1 ≤ d)
+    (hpositive : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius)
+    (A : PolynomialSphereStage d radius) (targets : Finset (DomainL2 Ω))
+    (ε : ℝ) (hε : 0 < ε) :
+    ∃ B : PolynomialSphereStage d radius, A.points ⊆ B.points ∧
+      A.cutoff < B.cutoff ∧
+      (∀ x ∈ B.points, x ∉ A.points → A.cutoff < sphereLevel radius x) ∧
+      ∀ f ∈ targets, ∃ v ∈ Submodule.span ℂ
+        (exponentialL2 Ω hfinite '' (B.points : Set (Euclidean d))), dist f v < ε := by
+  have hnonzero : ∀ x ∈ A.points, I.multiplier A.cutoff (realToComplex x) ≠ 0 := by
+    intro x hx
+    apply I.nonzero
+    rw [sphereLevel_norm (A.spheres x hx)]
+    exact hstrict.monotone (A.bounded x hx)
+  obtain ⟨prescribed, hp, happ⟩ := available_exponentials_approximate_finite_targets
+    Ω hΩ hbounded hfinite A.points (laterSpheres radius A.cutoff) (I.multiplier A.cutoff)
+    (I.tail A.cutoff) A.sampling hnonzero targets ε hε
+  obtain ⟨B, hAB, hcutoff, hfresh⟩ :=
+    extend_polynomialSphereStage hd radius hpositive hstrict A prescribed hp
+  refine ⟨B, Finset.subset_union_left.trans hAB, hcutoff, hfresh, ?_⟩
+  intro f hf
+  obtain ⟨v, hv, hdist⟩ := happ f hf
+  refine ⟨v, Submodule.span_mono (Set.image_mono ?_) hv, hdist⟩
+  exact Finset.coe_subset.mpr (Finset.subset_union_right.trans hAB)
+
+/-- The degree-zero initial stage lies on the radius-zero sphere at the origin. -/
+theorem exists_initial_polynomialSphereStage (d : ℕ)
+    (radius : ℕ → ℝ) (hzero : radius 0 = 0) (hstrict : StrictMono radius) :
+    ∃ A : PolynomialSphereStage d radius, A.cutoff = 0 := by
+  let x : Euclidean d := 0
+  have hx : ‖x‖ = radius 0 := by rw [hzero]; exact norm_zero
+  have hspan : Submodule.span ℂ (boundedPolynomialEvaluation 0 '' {y : Euclidean d | ‖y‖ = radius 0}) = ⊤ := by
+    apply boundedPolynomialEvaluation_span_eq_top
+    intro p hp
+    have hdegree : p.val.totalDegree = 0 := Nat.eq_zero_of_le_zero
+      ((MvPolynomial.mem_restrictTotalDegree _ _ _).mp p.property)
+    have hconstant := MvPolynomial.totalDegree_eq_zero_iff_eq_C.mp hdegree
+    have heval := hp x hx
+    rw [boundedPolynomialEvaluation_apply, polynomialEvaluation_apply, hconstant,
+      MvPolynomial.eval_C] at heval
+    apply Subtype.ext
+    rw [hconstant, heval, map_zero]
+    rfl
+  have hind : LinearIndependent ℂ
+      (fun x : ↥(∅ : Finset (Euclidean d)) => boundedPolynomialEvaluation 0 x.val) := by
+    apply boundedPolynomialEvaluation_finset_linearIndependent
+    simp
+  obtain ⟨t, _hst, ht, _hcard, hsampling⟩ := exists_bounded_interpolation_extension_with_card
+    (∅ : Finset (Euclidean d)) {y | ‖y‖ = radius 0} hind (by simpa using hspan)
+  have htsphere : ∀ y ∈ t, y ∈ sphereFrequencies radius := by
+    intro y hy
+    exact ⟨0, (ht hy).resolve_left (by simp)⟩
+  have htlevel : ∀ y ∈ t, sphereLevel radius y ≤ 0 := by
+    intro y hy
+    have hynorm := (ht hy).resolve_left (by simp)
+    exact (sphereLevel_of_norm hstrict hynorm).le
+  exact ⟨⟨t, 0, htsphere, htlevel, hsampling⟩, rfl⟩
+
+/-- Run the finite extension recursion while preserving its polynomial sampling
+invariant, then expose the resulting genuine Hilbert-space selection stages. -/
+theorem exists_polynomial_selectionStages
+    (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) (hd : 1 ≤ d)
+    (hpositive : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius)
+    (initial : PolynomialSphereStage d radius) (targets : ℕ → DomainL2 Ω) :
+    ∃ S : SelectionStages (exponentialL2 Ω hfinite) (sphereLevel radius)
+        (I.spaces hbounded) targets,
+      ∀ n x, x ∈ (S.stage n).points → x ∈ sphereFrequencies radius := by
+  let next : ℕ → PolynomialSphereStage d radius → PolynomialSphereStage d radius := fun n A =>
+    Classical.choose (I.extend_stage hbounded hd hpositive hstrict A
+      ((Finset.range (n + 1)).image targets) (1 / (n + 1 : ℝ)) (by positivity))
+  have next_spec (n : ℕ) (A : PolynomialSphereStage d radius) :
+      A.points ⊆ (next n A).points ∧ A.cutoff < (next n A).cutoff ∧
+      (∀ x ∈ (next n A).points, x ∉ A.points → A.cutoff < sphereLevel radius x) ∧
+      ∀ j ≤ n, ∃ v ∈ Submodule.span ℂ
+        (exponentialL2 Ω hfinite '' ((next n A).points : Set (Euclidean d))),
+        dist (targets j) v < 1 / (n + 1 : ℝ) := by
+    obtain ⟨hsub, hcut, hfresh, happ⟩ := Classical.choose_spec
+      (I.extend_stage hbounded hd hpositive hstrict A
+        ((Finset.range (n + 1)).image targets) (1 / (n + 1 : ℝ)) (by positivity))
+    refine ⟨hsub, hcut, hfresh, ?_⟩
+    intro j hj
+    exact happ (targets j) (Finset.mem_image.mpr
+      ⟨j, Finset.mem_range.mpr (by omega), rfl⟩)
+  let stages : ℕ → PolynomialSphereStage d radius := fun n => Nat.rec initial next n
+  refine ⟨{ stage := fun n => I.toFiniteStage hbounded hstrict (stages n)
+            nested := fun n => (next_spec n (stages n)).1
+            increasing := fun n => (next_spec n (stages n)).2.1
+            fresh := fun n => (next_spec n (stages n)).2.2.1
+            approximate := fun n => (next_spec n (stages n)).2.2.2 }, ?_⟩
+  intro n x hx
+  exact (stages n).spheres x hx
+
+end SphereAnalyticInputs
+
+/-- Diverging radii bound the sphere index in each neighborhood. -/
+theorem sphereLevel_locally_bounded {d : ℕ} (radius : ℕ → ℝ)
+    (hstrict : StrictMono radius) (hescape : Tendsto radius atTop atTop) :
+    ∀ x : Euclidean d, ∃ U ∈ nhds x, ∃ N : ℕ, ∀ y ∈ U, sphereLevel radius y ≤ N := by
+  intro x
+  obtain ⟨N, hN⟩ := ((tendsto_atTop.1 hescape) (‖x‖ + 1)).exists
+  refine ⟨Metric.ball x 1, Metric.ball_mem_nhds x zero_lt_one, N, ?_⟩
+  intro y hy
+  by_cases hsphere : y ∈ sphereFrequencies radius
+  · have hnorm := (norm_lt_of_mem_ball hy).trans_le hN
+    rw [sphereLevel_norm hsphere] at hnorm
+    exact le_of_not_gt (fun h => (not_lt_of_ge (hstrict h).le) hnorm)
+  · change ¬ ∃ j, ‖y‖ = radius j at hsphere
+    unfold sphereLevel
+    rw [dif_neg hsphere]
+    exact Nat.zero_le N
+
+/-- Conditional assembly of the actual complete and minimal exponential system.
+Only the explicit sphere-multiplier analytic inputs remain to be discharged. -/
+theorem complete_minimal_exponentials_of_sphere_analytic_inputs {d : ℕ}
+    (hd : 1 ≤ d) (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (hfinite : volume Ω ≠ ⊤)
+    (radius : ℕ → ℝ) (hzero : radius 0 = 0)
+    (hpositive : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius)
+    (hescape : Tendsto radius atTop atTop) (core : Set (Euclidean d))
+    (I : SphereAnalyticInputs Ω hΩ hfinite radius core) :
+    ∃ Λ : Set (Euclidean d), Λ ⊆ sphereFrequencies radius ∧
+      IsCompleteExponential Ω hfinite Λ ∧ IsMinimalExponential Ω hfinite Λ ∧
+      (∀ x, ∃ U ∈ nhds x, (Λ ∩ U).Finite) ∧
+      ∃ g : Λ → DomainL2 Ω,
+        IsBiorthogonal (exponentialFamily Ω hfinite Λ) g ∧
+        ∀ ξ, SupportedOn Ω (g ξ) core := by
+  letI : IsFiniteMeasure (volume.restrict Ω) := ⟨by simpa using hfinite.lt_top⟩
+  letI : Fact ((2 : ENNReal) ≠ ⊤) := ⟨by norm_num⟩
+  obtain ⟨targets, htargets⟩ := TopologicalSpace.exists_dense_seq (DomainL2 Ω)
+  obtain ⟨initial, _hcutoff⟩ := SphereAnalyticInputs.exists_initial_polynomialSphereStage
+    d radius hzero hstrict
+  obtain ⟨S, hspheres⟩ := I.exists_polynomial_selectionStages hbounded hd hpositive hstrict
+    initial targets
+  have hvanish : ∀ N f, f ∈ I.spaces hbounded N → ∀ x, N < sphereLevel radius x →
+      inner (𝕜 := ℂ) f (exponentialL2 Ω hfinite x) = 0 :=
+    fun _ _ hf _ hx => I.vanish hbounded hf hx
+  obtain ⟨g, hg, hbiorthogonal⟩ := S.exists_biorthogonal hvanish
+  have hbi : IsBiorthogonal (exponentialFamily Ω hfinite S.selected) g := by
+    intro x y
+    by_cases hxy : x = y
+    · simpa only [exponentialFamily, if_pos hxy] using hbiorthogonal x y
+    · simpa only [exponentialFamily, if_neg hxy] using hbiorthogonal x y
+  refine ⟨S.selected, ?_, ?_, hbi.isMinimal,
+    S.locally_finite (sphereLevel_locally_bounded radius hstrict hescape), g, hbi, ?_⟩
+  · intro x hx
+    obtain ⟨n, hn⟩ := hx
+    exact hspheres n x hn
+  · have hrange : Set.range (exponentialFamily Ω hfinite S.selected) =
+        exponentialL2 Ω hfinite '' S.selected := by
+      ext f
+      simp [exponentialFamily]
+    change (Submodule.span ℂ (Set.range (exponentialFamily Ω hfinite S.selected))).topologicalClosure = ⊤
+    rw [hrange]
+    exact S.complete htargets
+  · intro ξ
+    obtain ⟨N, hN⟩ := hg ξ
+    exact I.supported hbounded hN
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalQuadric.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Real spheres and their complex quadrics
+
+The coordinate algebra uses `Fin n → ℂ`, canonically continuously linearly equivalent
+to complex Euclidean space. Squares in this file are complex squares, without conjugation.
+-/
+
+noncomputable section
+open scoped Topology
+open Filter Set
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The complex quadratic form without conjugation. -/
+def squareSum {n : ℕ} (z : Fin n → ℂ) : ℂ := ∑ i, z i ^ 2
+
+/-- The squared Euclidean norm written in real coordinates. -/
+def realSquareSum {n : ℕ} (x : Fin n → ℝ) : ℝ := ∑ i, x i ^ 2
+
+/-- The real coordinate dot product. -/
+def realDot {n : ℕ} (x y : Fin n → ℝ) : ℝ := ∑ i, x i * y i
+
+/-- Coordinatewise embedding of real vectors into complex vectors. -/
+def realCoords {n : ℕ} (x : Fin n → ℝ) : Fin n → ℂ := fun i => (x i : ℂ)
+
+theorem squareSum_re {n : ℕ} (z : Fin n → ℂ) :
+    (squareSum z).re = realSquareSum (fun i => (z i).re) -
+      realSquareSum (fun i => (z i).im) := by
+  simp only [squareSum, realSquareSum, Complex.re_sum, pow_two, Complex.mul_re,
+    ← Finset.sum_sub_distrib]
+
+theorem squareSum_im {n : ℕ} (z : Fin n → ℂ) :
+    (squareSum z).im = 2 * realDot (fun i => (z i).re) (fun i => (z i).im) := by
+  simp only [squareSum, realDot, Complex.im_sum, pow_two, Complex.mul_im,
+    Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro i _
+  ring
+
+theorem quadric_real_imag {n : ℕ} (z : Fin n → ℂ) (r : ℝ)
+    (hz : squareSum z = (r : ℂ) ^ 2) :
+    realSquareSum (fun i => (z i).re) - realSquareSum (fun i => (z i).im) = r ^ 2 ∧
+      realDot (fun i => (z i).re) (fun i => (z i).im) = 0 := by
+  have hre := congrArg Complex.re hz
+  have him := congrArg Complex.im hz
+  rw [squareSum_re] at hre
+  rw [squareSum_im] at him
+  simp only [pow_two, Complex.mul_re, Complex.mul_im, Complex.ofReal_re,
+    Complex.ofReal_im, mul_zero, zero_mul, sub_zero, add_zero] at hre him
+  exact ⟨by simpa only [pow_two] using hre, by linarith⟩
+
+/-- First coordinate of the complex parametrization of a circle. -/
+def circleFirst (r : ℂ) (w : ℂ) : ℂ := r / 2 * (w + w⁻¹)
+
+/-- Second coordinate of the complex parametrization of a circle. -/
+def circleSecond (r : ℂ) (w : ℂ) : ℂ := r / (2 * Complex.I) * (w - w⁻¹)
+
+theorem circle_coordinates_square (r w : ℂ) (hw : w ≠ 0) :
+    circleFirst r w ^ 2 + circleSecond r w ^ 2 = r ^ 2 := by
+  unfold circleFirst circleSecond
+  field_simp [hw]
+  ring_nf
+  simp only [Complex.I_sq]
+  ring
+
+theorem circle_parameter_nonzero (r z₁ z₂ : ℂ) (hr : r ≠ 0)
+    (hz : z₁ ^ 2 + z₂ ^ 2 = r ^ 2) : (z₁ + Complex.I * z₂) / r ≠ 0 := by
+  apply div_ne_zero _ hr
+  intro h
+  have hprod : (z₁ + Complex.I * z₂) * (z₁ - Complex.I * z₂) = r ^ 2 := by
+    linear_combination hz - z₂ ^ 2 * Complex.I_sq
+  rw [h, zero_mul] at hprod
+  exact pow_ne_zero 2 hr hprod.symm
+
+theorem circle_parameter_inverse (r z₁ z₂ : ℂ) (hr : r ≠ 0)
+    (hz : z₁ ^ 2 + z₂ ^ 2 = r ^ 2) :
+    circleFirst r ((z₁ + Complex.I * z₂) / r) = z₁ ∧
+      circleSecond r ((z₁ + Complex.I * z₂) / r) = z₂ := by
+  have hprod : (z₁ + Complex.I * z₂) * (z₁ - Complex.I * z₂) = r ^ 2 := by
+    linear_combination hz - z₂ ^ 2 * Complex.I_sq
+  have hinv : ((z₁ + Complex.I * z₂) / r)⁻¹ = (z₁ - Complex.I * z₂) / r := by
+    apply inv_eq_of_mul_eq_one_right
+    rw [div_mul_div_comm, hprod, pow_two, div_self (mul_ne_zero hr hr)]
+  constructor
+  · unfold circleFirst
+    rw [hinv]
+    field_simp
+    ring
+  · unfold circleSecond
+    rw [hinv]
+    field_simp
+    ring
+
+theorem circle_coordinates_real (r : ℝ) (w : ℂ) (hw : ‖w‖ = 1) :
+    circleFirst r w = (r * w.re : ℝ) ∧
+      circleSecond r w = (r * w.im : ℝ) := by
+  rw [circleFirst, circleSecond, Complex.inv_eq_conj hw]
+  constructor
+  · apply Complex.ext
+    · simp
+      ring
+    · simp
+  · rw [div_mul_eq_mul_div]
+    apply (div_eq_iff (mul_ne_zero (by norm_num) Complex.I_ne_zero)).mpr
+    apply Complex.ext
+    · simp
+    · simp
+      ring
+
+theorem realSquareSum_nonneg {n : ℕ} (x : Fin n → ℝ) : 0 ≤ realSquareSum x := by
+  exact Finset.sum_nonneg fun _ _ => sq_nonneg _
+
+theorem realSquareSum_eq_zero {n : ℕ} (x : Fin n → ℝ)
+    (hx : realSquareSum x = 0) : x = 0 := by
+  funext i
+  have hi : x i ^ 2 ≤ realSquareSum x :=
+    Finset.single_le_sum (fun j _ => sq_nonneg (x j)) (Finset.mem_univ i)
+  have : x i ^ 2 = 0 := le_antisymm (hx ▸ hi) (sq_nonneg _)
+  exact (sq_eq_zero_iff.mp this)
+
+theorem realSquareSum_linear {n : ℕ} (x y : Fin n → ℝ) (u v : ℝ) :
+    realSquareSum (fun i => u * x i + v * y i) =
+      u ^ 2 * realSquareSum x + 2 * u * v * realDot x y + v ^ 2 * realSquareSum y := by
+  simp only [realSquareSum, realDot, Finset.mul_sum, ← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intro i _
+  ring
+
+theorem realSquareSum_div {n : ℕ} (x : Fin n → ℝ) (a : ℝ) :
+    realSquareSum (fun i => x i / a) = realSquareSum x / a ^ 2 := by
+  simp only [realSquareSum, div_pow, Finset.sum_div]
+
+theorem realDot_div {n : ℕ} (x y : Fin n → ℝ) (a b : ℝ) :
+    realDot (fun i => x i / a) (fun i => y i / b) = realDot x y / (a * b) := by
+  simp only [realDot, div_mul_div_comm, Finset.sum_div]
+
+/-- The one-variable identity principle applied to the embedded real line. -/
+theorem entire_zero_of_real_zero (f : ℂ → ℂ) (hf : Differentiable ℂ f)
+    (hreal : ∀ t : ℝ, f t = 0) : ∀ z, f z = 0 := by
+  have ht : Tendsto (fun t : ℝ => (t : ℂ)) (𝓝[≠] 0) (𝓝[≠] 0) := by
+    apply Complex.continuous_ofReal.continuousWithinAt.tendsto_nhdsWithin
+    intro t ht
+    simpa using ht
+  have hfreq : ∃ᶠ z in 𝓝[≠] (0 : ℂ), f z = 0 :=
+    ht.frequently (Filter.Eventually.frequently (Filter.Eventually.of_forall hreal))
+  have ha : AnalyticOnNhd ℂ f univ := fun z _ => hf.analyticAt z
+  exact fun z => ha.eqOn_zero_of_preconnected_of_frequently_eq_zero
+    isPreconnected_univ (mem_univ 0) hfreq (mem_univ z)
+
+/-- The circle parametrization in a real plane spanned by two vectors. -/
+def circlePlane {n : ℕ} (r : ℝ) (a b : Fin n → ℝ) (w : ℂ) : Fin n → ℂ :=
+  fun i => circleFirst r w * (a i : ℂ) + circleSecond r w * (b i : ℂ)
+
+theorem circlePlane_real {n : ℕ} (r : ℝ) (a b : Fin n → ℝ) (w : ℂ)
+    (hw : ‖w‖ = 1) : circlePlane r a b w =
+      realCoords (fun i => r * w.re * a i + r * w.im * b i) := by
+  obtain ⟨h₁, h₂⟩ := circle_coordinates_real r w hw
+  funext i
+  simp only [circlePlane, realCoords, h₁, h₂, Complex.ofReal_add, Complex.ofReal_mul]
+
+theorem circlePlane_real_sphere {n : ℕ} (r : ℝ) (a b : Fin n → ℝ)
+    (ha : realSquareSum a = 1) (hb : realSquareSum b = 1) (hab : realDot a b = 0)
+    (w : ℂ) (hw : ‖w‖ = 1) :
+    realSquareSum (fun i => r * w.re * a i + r * w.im * b i) = r ^ 2 := by
+  rw [realSquareSum_linear, ha, hb, hab]
+  have hnorm : w.re ^ 2 + w.im ^ 2 = 1 := by
+    have := Complex.normSq_eq_norm_sq w
+    simp only [Complex.normSq_apply, hw, one_pow] at this
+    nlinarith
+  nlinarith [sq_nonneg r]
+
+/-- Analytic continuation of the real circle through the entire exponential parameter. -/
+theorem entire_zero_on_circlePlane {n : ℕ} (F : (Fin n → ℂ) → ℂ)
+    (hF : Differentiable ℂ F) (r : ℝ)
+    (hreal : ∀ x : Fin n → ℝ, realSquareSum x = r ^ 2 → F (realCoords x) = 0)
+    (a b : Fin n → ℝ) (ha : realSquareSum a = 1) (hb : realSquareSum b = 1)
+    (hab : realDot a b = 0) (w : ℂ) (hw : w ≠ 0) : F (circlePlane r a b w) = 0 := by
+  let c : ℂ → Fin n → ℂ := fun t => circlePlane r a b (Complex.exp (Complex.I * t))
+  have hexp : Differentiable ℂ (fun t : ℂ => Complex.exp (Complex.I * t)) :=
+    Complex.differentiable_exp.comp ((differentiable_const _).mul differentiable_id)
+  have hc : Differentiable ℂ c := by
+    apply differentiable_pi.mpr
+    intro i
+    exact (((differentiable_const _).mul (hexp.add (hexp.inv (fun _ => Complex.exp_ne_zero _)))).mul
+      (differentiable_const _)).add
+      (((differentiable_const _).mul (hexp.sub (hexp.inv (fun _ => Complex.exp_ne_zero _)))).mul
+        (differentiable_const _))
+  have hzero : ∀ t : ℝ, F (c t) = 0 := by
+    intro t
+    have hn : ‖Complex.exp (Complex.I * (t : ℂ))‖ = 1 := by
+      simp [Complex.norm_exp]
+    rw [show c t = realCoords (fun i => r * (Complex.exp (Complex.I * (t : ℂ))).re * a i +
+        r * (Complex.exp (Complex.I * (t : ℂ))).im * b i) from
+      circlePlane_real r a b _ hn]
+    exact hreal _ (circlePlane_real_sphere r a b ha hb hab _ hn)
+  have h := entire_zero_of_real_zero (fun t => F (c t)) (hF.comp hc) hzero
+    (-Complex.I * Complex.log w)
+  have hparam : Complex.exp (Complex.I * (-Complex.I * Complex.log w)) = w := by
+    have ht : Complex.I * (-Complex.I * Complex.log w) = Complex.log w := by
+      linear_combination -Complex.log w * Complex.I_sq
+    rw [ht, Complex.exp_log hw]
+  simpa only [c, hparam] using h
+
+theorem entire_zero_on_complex_circle {n : ℕ} (F : (Fin n → ℂ) → ℂ)
+    (hF : Differentiable ℂ F) (r : ℝ) (hr : r ≠ 0)
+    (hreal : ∀ x : Fin n → ℝ, realSquareSum x = r ^ 2 → F (realCoords x) = 0)
+    (a b : Fin n → ℝ) (ha : realSquareSum a = 1) (hb : realSquareSum b = 1)
+    (hab : realDot a b = 0) (z₁ z₂ : ℂ) (hz : z₁ ^ 2 + z₂ ^ 2 = (r : ℂ) ^ 2) :
+    F (fun i => z₁ * (a i : ℂ) + z₂ * (b i : ℂ)) = 0 := by
+  have hrC : (r : ℂ) ≠ 0 := by exact_mod_cast hr
+  obtain ⟨h₁, h₂⟩ := circle_parameter_inverse r z₁ z₂ hrC hz
+  have h := entire_zero_on_circlePlane F hF r hreal a b ha hb hab
+    ((z₁ + Complex.I * z₂) / r) (circle_parameter_nonzero r z₁ z₂ hrC hz)
+  change F (fun i => circleFirst r ((z₁ + Complex.I * z₂) / r) * (a i : ℂ) +
+    circleSecond r ((z₁ + Complex.I * z₂) / r) * (b i : ℂ)) = 0 at h
+  rwa [h₁, h₂] at h
+
+/-- An entire function vanishing on a real sphere vanishes on its complex quadric.
+
+The argument works in every finite dimension: if the imaginary part is nonzero,
+the real and imaginary parts themselves supply a real orthonormal two-plane.
+-/
+theorem entire_zero_on_quadric_coords {n : ℕ} (F : (Fin n → ℂ) → ℂ)
+    (hF : Differentiable ℂ F) (r : ℝ) (hr : 0 < r)
+    (hreal : ∀ x : Fin n → ℝ, realSquareSum x = r ^ 2 → F (realCoords x) = 0)
+    (z : Fin n → ℂ) (hz : squareSum z = (r : ℂ) ^ 2) : F z = 0 := by
+  let x : Fin n → ℝ := fun i => (z i).re
+  let y : Fin n → ℝ := fun i => (z i).im
+  obtain ⟨hxy, hdot⟩ := quadric_real_imag z r hz
+  change realSquareSum x - realSquareSum y = r ^ 2 at hxy
+  change realDot x y = 0 at hdot
+  by_cases hy : realSquareSum y = 0
+  · have hyzero := realSquareSum_eq_zero y hy
+    have hcoords : realCoords x = z := by
+      funext i
+      apply Complex.ext
+      · rfl
+      · have hi := congrFun hyzero i
+        simpa only [realCoords, Complex.ofReal_im, Pi.zero_apply] using hi.symm
+    rw [← hcoords]
+    exact hreal x (by linarith)
+  · let α := Real.sqrt (realSquareSum x)
+    let β := Real.sqrt (realSquareSum y)
+    have hxsq : α ^ 2 = realSquareSum x := Real.sq_sqrt (realSquareSum_nonneg x)
+    have hysq : β ^ 2 = realSquareSum y := Real.sq_sqrt (realSquareSum_nonneg y)
+    have hβ : 0 < β := Real.sqrt_pos.mpr
+      (lt_of_le_of_ne (realSquareSum_nonneg y) (Ne.symm hy))
+    have hα : 0 < α := Real.sqrt_pos.mpr (by
+      nlinarith [sq_pos_of_pos hr])
+    let a : Fin n → ℝ := fun i => x i / α
+    let b : Fin n → ℝ := fun i => y i / β
+    have ha : realSquareSum a = 1 := by
+      rw [realSquareSum_div, ← hxsq, div_self (pow_ne_zero 2 hα.ne')]
+    have hb : realSquareSum b = 1 := by
+      rw [realSquareSum_div, ← hysq, div_self (pow_ne_zero 2 hβ.ne')]
+    have hab : realDot a b = 0 := by rw [realDot_div, hdot, zero_div]
+    have heq : α ^ 2 - β ^ 2 = r ^ 2 := by rw [hxsq, hysq]; exact hxy
+    have hcircle : (α : ℂ) ^ 2 + (Complex.I * (β : ℂ)) ^ 2 = (r : ℂ) ^ 2 := by
+      calc
+        (α : ℂ) ^ 2 + (Complex.I * (β : ℂ)) ^ 2 = ((α ^ 2 - β ^ 2 : ℝ) : ℂ) := by
+          push_cast
+          linear_combination (β : ℂ) ^ 2 * Complex.I_sq
+        _ = (r : ℂ) ^ 2 := by rw [heq, Complex.ofReal_pow]
+    have h := entire_zero_on_complex_circle F hF r hr.ne' hreal a b ha hb hab
+      α (Complex.I * β) hcircle
+    have hcoords : (fun i => (α : ℂ) * (a i : ℂ) +
+        (Complex.I * (β : ℂ)) * (b i : ℂ)) = z := by
+      funext i
+      simp only [a, b, Complex.ofReal_div]
+      have hαC : (α : ℂ) ≠ 0 := by exact_mod_cast hα.ne'
+      have hβC : (β : ℂ) ≠ 0 := by exact_mod_cast hβ.ne'
+      calc
+        (α : ℂ) * ((x i : ℂ) / α) + (Complex.I * β) * ((y i : ℂ) / β) =
+            (x i : ℂ) + (y i : ℂ) * Complex.I := by field_simp; ring
+        _ = z i := Complex.re_add_im (z i)
+    rwa [hcoords] at h
+
+/-- The coordinate result transported through the canonical continuous linear equivalence.
+Its real-sphere hypothesis uses the actual Euclidean norm and the Fourier module's embedding. -/
+theorem entire_zero_on_quadric {n : ℕ} (F : ComplexEuclidean n → ℂ)
+    (hF : Differentiable ℂ F) (r : ℝ) (hr : 0 < r)
+    (hreal : ∀ x : Euclidean n, ‖x‖ = r → F (realToComplex x) = 0)
+    (z : ComplexEuclidean n) (hz : squareSum (fun i => z i) = (r : ℂ) ^ 2) :
+    F z = 0 := by
+  let e := EuclideanSpace.equiv (Fin n) ℂ
+  apply entire_zero_on_quadric_coords (F ∘ e.symm) (hF.comp e.symm.differentiable) r hr
+    (fun x hx => ?_) (fun i => z i) hz
+  let u : Euclidean n := (WithLp.equiv 2 (Fin n → ℝ)).symm x
+  have hnorm : ‖u‖ ^ 2 = r ^ 2 := by
+    rw [PiLp.norm_sq_eq_of_L2]
+    simpa only [u, WithLp.equiv_symm_pi_apply, Real.norm_eq_abs, sq_abs] using hx
+  have hu : ‖u‖ = r := (sq_eq_sq₀ (norm_nonneg u) hr.le).mp hnorm
+  exact hreal u hu
+
+/-- Every positive-radius quadric point has a nonzero coordinate. -/
+theorem quadric_exists_nonzero_coordinate {n : ℕ} (z : Fin n → ℂ) (r : ℝ)
+    (hr : 0 < r) (hz : squareSum z = (r : ℂ) ^ 2) : ∃ i, z i ≠ 0 := by
+  by_contra h
+  push_neg at h
+  have hzero : squareSum z = 0 := by simp [squareSum, h]
+  have hrC : (r : ℂ) ≠ 0 := by exact_mod_cast hr.ne'
+  exact pow_ne_zero 2 hrC (hz.symm.trans hzero)
+
+theorem squareSum_coordinate_shift {n : ℕ} (z : Fin n → ℂ) (j : Fin n) (t : ℂ) :
+    squareSum (fun i => z i + if i = j then t else 0) =
+      squareSum z + 2 * z j * t + t ^ 2 := by
+  classical
+  have hterm : ∀ i : Fin n, (z i + if i = j then t else 0) ^ 2 =
+      z i ^ 2 + if i = j then 2 * z j * t + t ^ 2 else 0 := by
+    intro i
+    by_cases hi : i = j
+    · simp only [hi, ↓reduceIte]
+      ring
+    · simp only [hi, if_false, add_zero]
+  simp only [squareSum, hterm, Finset.sum_add_distrib]
+  simp
+  ring
+
+/-- The defining quadratic has a nonzero derivative in some coordinate direction.
+This is the nonsingularity input for a subsequent local analytic division theorem. -/
+theorem quadric_exists_nonzero_normal_derivative {n : ℕ} (z : Fin n → ℂ) (r : ℝ)
+    (hr : 0 < r) (hz : squareSum z = (r : ℂ) ^ 2) :
+    ∃ j, 2 * z j ≠ 0 ∧ HasDerivAt
+      (fun t : ℂ => squareSum (fun i => z i + if i = j then t else 0) - (r : ℂ) ^ 2)
+      (2 * z j) 0 := by
+  obtain ⟨j, hj⟩ := quadric_exists_nonzero_coordinate z r hr hz
+  refine ⟨j, mul_ne_zero (by norm_num) hj, ?_⟩
+  simp only [squareSum_coordinate_shift]
+  convert (((hasDerivAt_const (0 : ℂ) (squareSum z)).add
+    ((hasDerivAt_id (0 : ℂ)).const_mul (2 * z j))).add
+    ((hasDerivAt_id (0 : ℂ)).pow 2)).sub_const ((r : ℂ) ^ 2) using 1
+  simp
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalLocalDivision.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Local analytic coordinate graphs for the positive-radius complex quadrics. -/
+
+noncomputable section
+open scoped Topology ENNReal NNReal
+open Set Filter
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The square of the selected coordinate on the radius-`r` complex quadric. -/
+def quadricRadicand {n : ℕ} (r : ℝ) (j : Fin n) (z : Fin n → ℂ) : ℂ :=
+  (r : ℂ) ^ 2 - ∑ i ∈ Finset.univ.erase j, z i ^ 2
+
+theorem quadricRadicand_analyticAt {n : ℕ} (r : ℝ) (j : Fin n) (z : Fin n → ℂ) :
+    AnalyticAt ℂ (quadricRadicand r j) z := by
+  unfold quadricRadicand
+  exact analyticAt_const.sub (Finset.analyticAt_sum _ (fun i _ =>
+    ((ContinuousLinearMap.proj (R := ℂ) i).analyticAt z).pow 2))
+
+theorem squareSum_sub_eq_coordinate {n : ℕ} (r : ℝ) (j : Fin n) (z : Fin n → ℂ) :
+    squareSum z - (r : ℂ) ^ 2 = z j ^ 2 - quadricRadicand r j z := by
+  unfold squareSum quadricRadicand
+  rw [← Finset.add_sum_erase _ _ (Finset.mem_univ j)]
+  ring
+
+theorem quadricRadicand_at_quadric {n : ℕ} (r : ℝ) (j : Fin n) (z : Fin n → ℂ)
+    (hz : squareSum z = (r : ℂ) ^ 2) : quadricRadicand r j z = z j ^ 2 := by
+  have h := squareSum_sub_eq_coordinate r j z
+  rw [hz, sub_self] at h
+  exact (sub_eq_zero.mp h.symm).symm
+
+/-- The local square-root branch taking value `a` when the radicand is `a²`. -/
+def quadricRoot {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (z : Fin n → ℂ) : ℂ :=
+  a * Complex.exp (Complex.log (quadricRadicand r j z / a ^ 2) / 2)
+
+/-- The open slit-plane domain of the selected square-root branch. -/
+def quadricRootDomain {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) : Set (Fin n → ℂ) :=
+  (fun z => quadricRadicand r j z / a ^ 2) ⁻¹' Complex.slitPlane
+
+theorem quadricRootDomain_isOpen {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) :
+    IsOpen (quadricRootDomain r j a) := by
+  apply Complex.isOpen_slitPlane.preimage
+  have hg : Continuous (quadricRadicand r j) := continuous_iff_continuousAt.mpr
+    (fun z => (quadricRadicand_analyticAt r j z).continuousAt)
+  exact hg.div_const _
+
+theorem quadricRoot_analyticOnNhd {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (ha : a ≠ 0) :
+    AnalyticOnNhd ℂ (quadricRoot r j a) (quadricRootDomain r j a) := by
+  intro z hz
+  unfold quadricRoot
+  apply analyticAt_const.mul
+  exact (((quadricRadicand_analyticAt r j z).fun_div analyticAt_const
+    (pow_ne_zero 2 ha)).clog hz).fun_div analyticAt_const (by norm_num) |>.cexp
+
+theorem quadricRoot_sq {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (ha : a ≠ 0)
+    (z : Fin n → ℂ) (hz : z ∈ quadricRootDomain r j a) :
+    quadricRoot r j a z ^ 2 = quadricRadicand r j z := by
+  unfold quadricRoot
+  rw [mul_pow, ← Complex.exp_nat_mul]
+  norm_num only [Nat.cast_ofNat]
+  have htwo : (2 : ℂ) * (Complex.log (quadricRadicand r j z / a ^ 2) / 2) =
+      Complex.log (quadricRadicand r j z / a ^ 2) := by ring
+  rw [htwo, Complex.exp_log (Complex.slitPlane_ne_zero hz)]
+  field_simp
+
+theorem quadricRoot_at_quadric {n : ℕ} (r : ℝ) (j : Fin n) (z : Fin n → ℂ)
+    (hz : squareSum z = (r : ℂ) ^ 2) (hj : z j ≠ 0) :
+    z ∈ quadricRootDomain r j (z j) ∧ quadricRoot r j (z j) z = z j := by
+  have hg := quadricRadicand_at_quadric r j z hz
+  constructor
+  · change quadricRadicand r j z / z j ^ 2 ∈ Complex.slitPlane
+    rw [hg, div_self (pow_ne_zero 2 hj)]
+    exact Complex.one_mem_slitPlane
+  · simp [quadricRoot, hg, div_self (pow_ne_zero 2 hj)]
+
+theorem quadric_local_factorization {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (ha : a ≠ 0)
+    (z : Fin n → ℂ) (hz : z ∈ quadricRootDomain r j a) :
+    squareSum z - (r : ℂ) ^ 2 =
+      (z j - quadricRoot r j a z) * (z j + quadricRoot r j a z) := by
+  rw [squareSum_sub_eq_coordinate, ← quadricRoot_sq r j a ha z hz]
+  ring
+
+theorem quadricRadicand_update {n : ℕ} (r : ℝ) (j : Fin n) (z : Fin n → ℂ) (v : ℂ) :
+    quadricRadicand r j (Function.update z j v) = quadricRadicand r j z := by
+  unfold quadricRadicand
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i hi
+  rw [Function.update_of_ne (Finset.ne_of_mem_erase hi)]
+
+theorem quadricRoot_update {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (z : Fin n → ℂ) (v : ℂ) :
+    quadricRoot r j a (Function.update z j v) = quadricRoot r j a z := by
+  simp only [quadricRoot, quadricRadicand_update]
+
+/-- Subtract the analytic graph from the selected coordinate. -/
+def quadricFlatten {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (z : Fin n → ℂ) : Fin n → ℂ :=
+  Function.update z j (z j - quadricRoot r j a z)
+
+/-- Add the analytic graph back to the selected coordinate. -/
+def quadricUnflatten {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (z : Fin n → ℂ) : Fin n → ℂ :=
+  Function.update z j (z j + quadricRoot r j a z)
+
+@[simp] theorem quadricFlatten_unflatten {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ)
+    (z : Fin n → ℂ) : quadricFlatten r j a (quadricUnflatten r j a z) = z := by
+  simp [quadricFlatten, quadricUnflatten, quadricRoot_update]
+
+@[simp] theorem quadricUnflatten_flatten {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ)
+    (z : Fin n → ℂ) : quadricUnflatten r j a (quadricFlatten r j a z) = z := by
+  simp [quadricFlatten, quadricUnflatten, quadricRoot_update]
+
+theorem quadricFlatten_analyticOnNhd {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (ha : a ≠ 0) :
+    AnalyticOnNhd ℂ (quadricFlatten r j a) (quadricRootDomain r j a) := by
+  intro z hz
+  apply AnalyticAt.pi
+  intro i
+  by_cases hi : i = j
+  · subst i
+    simp only [quadricFlatten, Function.update_self]
+    exact ((ContinuousLinearMap.proj (R := ℂ) j).analyticAt z).sub
+      (quadricRoot_analyticOnNhd r j a ha z hz)
+  · simp only [quadricFlatten, Function.update_of_ne hi]
+    exact (ContinuousLinearMap.proj (R := ℂ) i).analyticAt z
+
+theorem quadricUnflatten_analyticOnNhd {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (ha : a ≠ 0) :
+    AnalyticOnNhd ℂ (quadricUnflatten r j a) (quadricRootDomain r j a) := by
+  intro z hz
+  apply AnalyticAt.pi
+  intro i
+  by_cases hi : i = j
+  · subst i
+    simp only [quadricUnflatten, Function.update_self]
+    exact ((ContinuousLinearMap.proj (R := ℂ) j).analyticAt z).add
+      (quadricRoot_analyticOnNhd r j a ha z hz)
+  · simp only [quadricUnflatten, Function.update_of_ne hi]
+    exact (ContinuousLinearMap.proj (R := ℂ) i).analyticAt z
+
+theorem quadricUnflatten_mem_rootDomain {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ)
+    (z : Fin n → ℂ) : quadricUnflatten r j a z ∈ quadricRootDomain r j a ↔
+      z ∈ quadricRootDomain r j a := by
+  simp only [quadricUnflatten, quadricRootDomain, mem_preimage, quadricRadicand_update]
+
+theorem quadricUnflatten_factorization {n : ℕ} (r : ℝ) (j : Fin n) (a : ℂ) (ha : a ≠ 0)
+    (z : Fin n → ℂ) (hz : z ∈ quadricRootDomain r j a) :
+    squareSum (quadricUnflatten r j a z) - (r : ℂ) ^ 2 =
+      z j * (z j + 2 * quadricRoot r j a z) := by
+  rw [quadric_local_factorization r j a ha _ ((quadricUnflatten_mem_rootDomain r j a z).mpr hz)]
+  simp only [quadricUnflatten, Function.update_self, quadricRoot_update]
+  ring
+
+/-- At a nonsingular quadric point, the second factor in the graph factorization is a unit
+on a whole open neighborhood. -/
+theorem quadric_root_unit_neighborhood {n : ℕ} (r : ℝ) (j : Fin n) (z₀ : Fin n → ℂ)
+    (hz₀ : squareSum z₀ = (r : ℂ) ^ 2) (hj : z₀ j ≠ 0) :
+    ∃ U : Set (Fin n → ℂ), IsOpen U ∧ z₀ ∈ U ∧
+      AnalyticOnNhd ℂ (quadricRoot r j (z₀ j)) U ∧
+      ∀ z ∈ U, quadricRoot r j (z₀ j) z ^ 2 = quadricRadicand r j z ∧
+        z j + quadricRoot r j (z₀ j) z ≠ 0 := by
+  let D := quadricRootDomain r j (z₀ j)
+  let b := quadricRoot r j (z₀ j)
+  let U := D ∩ (fun z => z j + b z) ⁻¹' ({0}ᶜ : Set ℂ)
+  have hD : IsOpen D := quadricRootDomain_isOpen r j (z₀ j)
+  have hb : AnalyticOnNhd ℂ b D := quadricRoot_analyticOnNhd r j (z₀ j) hj
+  have hc : ContinuousOn (fun z => z j + b z) D :=
+    (continuous_apply j).continuousOn.add hb.continuousOn
+  obtain ⟨hzD, hb₀⟩ := quadricRoot_at_quadric r j z₀ hz₀ hj
+  have hunit : z₀ j + b z₀ ≠ 0 := by
+    change z₀ j + quadricRoot r j (z₀ j) z₀ ≠ 0
+    rw [hb₀, ← two_mul]
+    exact mul_ne_zero (by norm_num) hj
+  refine ⟨U, hc.isOpen_inter_preimage hD isClosed_singleton.isOpen_compl,
+    ⟨hzD, hunit⟩, hb.mono inter_subset_left, ?_⟩
+  intro z hz
+  exact ⟨quadricRoot_sq r j (z₀ j) hj z hz.1, hz.2⟩
+
+section TaylorDivision
+
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+
+/-- A bounded Taylor-coefficient division operator. It telescopes the difference between
+a homogeneous polynomial at `z` and at `P z`, with `e` the removed coordinate direction. -/
+def telescopicDivisionOperator (P : E →L[ℂ] E) (e : E) (hP : ‖P‖ ≤ 1) (he : ‖e‖ ≤ 1) :
+    (m : ℕ) → {D : (E [×(m + 1)]→L[ℂ] ℂ) →L[ℂ] (E [×m]→L[ℂ] ℂ) // ‖D‖ ≤ m + 1}
+  | 0 => by
+    let L : (E [×1]→L[ℂ] ℂ) →ₗ[ℂ] (E [×0]→L[ℂ] ℂ) :=
+      { toFun := fun p => p.curryLeft e
+        map_add' := by
+          intro p q
+          ext v
+          simp only [ContinuousMultilinearMap.curryLeft_apply,
+            ContinuousMultilinearMap.add_apply]
+        map_smul' := by
+          intro c p
+          ext v
+          simp only [ContinuousMultilinearMap.curryLeft_apply,
+            ContinuousMultilinearMap.smul_apply, RingHom.id_apply] }
+    have hL : ∀ p, ‖L p‖ ≤ 1 * ‖p‖ := by
+      intro p
+      change ‖p.curryLeft e‖ ≤ _
+      calc
+        ‖p.curryLeft e‖ ≤ ‖p.curryLeft‖ * ‖e‖ := p.curryLeft.le_opNorm e
+        _ ≤ ‖p‖ * 1 := by rw [ContinuousMultilinearMap.curryLeft_norm]; gcongr
+        _ = 1 * ‖p‖ := by ring
+    refine ⟨L.mkContinuous 1 hL, ?_⟩
+    simpa using LinearMap.mkContinuous_norm_le L (C := 1) (by norm_num) hL
+  | m + 1 => by
+    let D := (telescopicDivisionOperator P e hP he m).val
+    have hD : ‖D‖ ≤ m + 1 := (telescopicDivisionOperator P e hP he m).property
+    let L : (E [×(m + 1 + 1)]→L[ℂ] ℂ) →ₗ[ℂ] (E [×(m + 1)]→L[ℂ] ℂ) :=
+      { toFun := fun p => p.curryLeft e + (D.comp (p.curryLeft.comp P)).uncurryLeft
+        map_add' := by
+          intro p q
+          have hcur : (p + q).curryLeft = p.curryLeft + q.curryLeft := by
+            ext x v
+            simp only [ContinuousMultilinearMap.curryLeft_apply,
+              ContinuousLinearMap.add_apply, ContinuousMultilinearMap.add_apply]
+          ext v
+          simp only [ContinuousMultilinearMap.add_apply,
+            ContinuousMultilinearMap.curryLeft_apply,
+            ContinuousLinearMap.uncurryLeft_apply, ContinuousLinearMap.comp_apply,
+            hcur, ContinuousLinearMap.add_apply, map_add]
+          ring
+        map_smul' := by
+          intro c p
+          have hcur : (c • p).curryLeft = c • p.curryLeft := by
+            ext x v
+            simp only [ContinuousMultilinearMap.curryLeft_apply,
+              ContinuousLinearMap.smul_apply, ContinuousMultilinearMap.smul_apply]
+          ext v
+          simp only [ContinuousMultilinearMap.smul_apply,
+            ContinuousMultilinearMap.add_apply, ContinuousMultilinearMap.curryLeft_apply,
+            ContinuousLinearMap.uncurryLeft_apply, ContinuousLinearMap.comp_apply,
+            hcur, ContinuousLinearMap.smul_apply,
+            map_smul, RingHom.id_apply, smul_add] }
+    have hL : ∀ p, ‖L p‖ ≤ ((m + 1 + 1 : ℕ) : ℝ) * ‖p‖ := by
+      intro p
+      change ‖p.curryLeft e + (D.comp (p.curryLeft.comp P)).uncurryLeft‖ ≤ _
+      calc
+        _ ≤ ‖p.curryLeft e‖ + ‖(D.comp (p.curryLeft.comp P)).uncurryLeft‖ := norm_add_le _ _
+        _ ≤ ‖p‖ + ((m : ℝ) + 1) * ‖p‖ := by
+          apply add_le_add
+          · calc
+              ‖p.curryLeft e‖ ≤ ‖p.curryLeft‖ * ‖e‖ := p.curryLeft.le_opNorm e
+              _ ≤ ‖p‖ * 1 := by rw [ContinuousMultilinearMap.curryLeft_norm]; gcongr
+              _ = ‖p‖ := mul_one _
+          · rw [ContinuousLinearMap.uncurryLeft_norm]
+            calc
+              ‖D.comp (p.curryLeft.comp P)‖ ≤ ‖D‖ * ‖p.curryLeft.comp P‖ :=
+                ContinuousLinearMap.opNorm_comp_le _ _
+              _ ≤ ((m : ℝ) + 1) * (‖p‖ * 1) := by
+                apply mul_le_mul
+                · exact hD
+                · calc
+                    ‖p.curryLeft.comp P‖ ≤ ‖p.curryLeft‖ * ‖P‖ :=
+                      ContinuousLinearMap.opNorm_comp_le _ _
+                    _ ≤ ‖p‖ * 1 := by rw [ContinuousMultilinearMap.curryLeft_norm]; gcongr
+                · exact norm_nonneg (p.curryLeft.comp P)
+                · positivity
+              _ = ((m : ℝ) + 1) * ‖p‖ := by rw [mul_one]
+        _ = _ := by push_cast; ring
+    refine ⟨L.mkContinuous ((m + 1 + 1 : ℕ) : ℝ) hL, ?_⟩
+    simpa using LinearMap.mkContinuous_norm_le L (C := ((m + 1 + 1 : ℕ) : ℝ))
+      (by positivity) hL
+
+theorem telescopicDivisionOperator_eval (P : E →L[ℂ] E) (e : E)
+    (hP : ‖P‖ ≤ 1) (he : ‖e‖ ≤ 1) (ℓ : E →L[ℂ] ℂ)
+    (hdecomp : ∀ z, z = P z + ℓ z • e) (m : ℕ)
+    (p : E [×(m + 1)]→L[ℂ] ℂ) (z : E) :
+    ℓ z * (telescopicDivisionOperator P e hP he m).val p (fun _ => z) =
+      p (fun _ => z) - p (fun _ => P z) := by
+  induction m with
+  | zero =>
+    change ℓ z * p (Fin.cons e (fun _ : Fin 0 => z)) = _
+    have hcons : ∀ v : E, Fin.cons v (fun _ : Fin 0 => z) = (fun _ : Fin 1 => v) := by
+      intro v
+      funext i
+      exact Fin.cases rfl (fun i => Fin.elim0 i) i
+    rw [← smul_eq_mul, ← p.cons_smul, hcons]
+    have h := p.cons_add (fun _ : Fin 0 => z) (P z) (ℓ z • e)
+    simp only [hcons, ← hdecomp z] at h
+    exact eq_sub_of_add_eq' h.symm
+  | succ m ih =>
+    change ℓ z * (p.curryLeft e (fun _ => z) +
+      (telescopicDivisionOperator P e hP he m).val (p.curryLeft (P z)) (fun _ => z)) = _
+    rw [mul_add, ih]
+    simp only [ContinuousMultilinearMap.curryLeft_apply]
+    rw [← smul_eq_mul, ← p.cons_smul]
+    have hzcons : Fin.cons z (fun _ : Fin (m + 1) => z) = (fun _ => z) := by
+      funext i
+      exact Fin.cases rfl (fun _ => rfl) i
+    have hPcons : Fin.cons (P z) (fun _ : Fin (m + 1) => P z) = (fun _ => P z) := by
+      funext i
+      exact Fin.cases rfl (fun _ => rfl) i
+    have h := p.cons_add (fun _ : Fin (m + 1) => z) (P z) (ℓ z • e)
+    rw [← hdecomp z, hzcons] at h
+    rw [hPcons]
+    linear_combination -h
+
+/-- The convergent quotient series obtained by applying the coefficient division operators. -/
+def telescopicDivisionSeries (P : E →L[ℂ] E) (e : E) (hP : ‖P‖ ≤ 1) (he : ‖e‖ ≤ 1)
+    (p : FormalMultilinearSeries ℂ E ℂ) : FormalMultilinearSeries ℂ E ℂ :=
+  fun m => (telescopicDivisionOperator P e hP he m).val (p (m + 1))
+
+theorem telescopicDivisionSeries_radius_pos (P : E →L[ℂ] E) (e : E)
+    (hP : ‖P‖ ≤ 1) (he : ‖e‖ ≤ 1) (p : FormalMultilinearSeries ℂ E ℂ)
+    (hp : 0 < p.radius) : 0 < (telescopicDivisionSeries P e hP he p).radius := by
+  obtain ⟨C, A, hC, hA, hpbound⟩ := p.le_mul_pow_of_radius_pos hp
+  let q := telescopicDivisionSeries P e hP he p
+  have hqbound : ∀ m : ℕ, ‖q m‖ ≤ C * A * (2 * A) ^ m := by
+    intro m
+    have hm : (m : ℝ) + 1 ≤ (2 : ℝ) ^ m := by
+      exact_mod_cast (Nat.succ_le_of_lt (Nat.lt_two_pow_self (n := m)))
+    calc
+      ‖q m‖ ≤ ‖(telescopicDivisionOperator P e hP he m).val‖ * ‖p (m + 1)‖ :=
+        (telescopicDivisionOperator P e hP he m).val.le_opNorm _
+      _ ≤ ((m : ℝ) + 1) * (C * A ^ (m + 1)) := by
+        apply mul_le_mul (telescopicDivisionOperator P e hP he m).property (hpbound _)
+          (norm_nonneg _) (by positivity)
+      _ ≤ (2 : ℝ) ^ m * (C * A ^ (m + 1)) := by gcongr
+      _ = C * A * (2 * A) ^ m := by rw [mul_pow, pow_succ]; ring
+  let ρ : ℝ≥0 := ⟨(2 * A)⁻¹, le_of_lt (inv_pos.mpr (by positivity))⟩
+  have hρ : (0 : ℝ≥0∞) < ρ := by
+    simp only [ENNReal.coe_pos]
+    change (0 : ℝ) < (2 * A)⁻¹
+    exact inv_pos.mpr (mul_pos (by norm_num) hA)
+  apply lt_of_lt_of_le hρ
+  apply q.le_radius_of_bound (C * A)
+  intro m
+  calc
+    ‖q m‖ * (ρ : ℝ) ^ m ≤ (C * A * (2 * A) ^ m) * (ρ : ℝ) ^ m := by gcongr; exact hqbound m
+    _ = C * A := by
+      change (C * A * (2 * A) ^ m) * ((2 * A)⁻¹) ^ m = _
+      rw [mul_assoc, ← mul_pow, mul_inv_cancel₀ (by positivity), one_pow, mul_one]
+
+/-- Analytic Hadamard division by a contractive scalar coordinate, proved directly on
+convergent multilinear Taylor series. -/
+theorem analytic_hyperplane_division_zero (P : E →L[ℂ] E) (e : E)
+    (hP : ‖P‖ ≤ 1) (he : ‖e‖ ≤ 1) (ℓ : E →L[ℂ] ℂ)
+    (hdecomp : ∀ z, z = P z + ℓ z • e) (hℓP : ∀ z, ℓ (P z) = 0)
+    (f : E → ℂ) (hf : AnalyticAt ℂ f 0)
+    (hzero : ∀ᶠ z in 𝓝 (0 : E), ℓ z = 0 → f z = 0) :
+    ∃ H : E → ℂ, AnalyticAt ℂ H 0 ∧ ∀ᶠ z in 𝓝 0, f z = ℓ z * H z := by
+  obtain ⟨p, hp⟩ := hf
+  let q := telescopicDivisionSeries P e hP he p
+  have hqpos : 0 < q.radius := telescopicDivisionSeries_radius_pos P e hP he p hp.radius_pos
+  have hq := q.hasFPowerSeriesOnBall hqpos
+  refine ⟨q.sum, hq.analyticAt, ?_⟩
+  have hpsum : ∀ᶠ z in 𝓝 (0 : E), HasSum (fun m => p m (fun _ => z)) (f z) := by
+    simpa only [zero_add] using hp.eventually_hasSum
+  have hqsum : ∀ᶠ z in 𝓝 (0 : E), HasSum (fun m => q m (fun _ => z)) (q.sum z) := by
+    simpa only [zero_add] using hq.eventually_hasSum
+  have ht : Tendsto P (𝓝 (0 : E)) (𝓝 0) := by simpa only [map_zero] using P.continuous.tendsto 0
+  have hPsum := ht.eventually hpsum
+  have hPzero := ht.eventually hzero
+  filter_upwards [hpsum, hqsum, hPsum, hPzero] with z hsum hqsum hPsum hPzero
+  have hdiff := hsum.sub hPsum
+  have hfirst : p 0 (fun _ => z) - p 0 (fun _ => P z) = 0 := by
+    apply sub_eq_zero.mpr
+    congr 1
+    exact funext fun i => Fin.elim0 i
+  have htail : HasSum (fun m => p (m + 1) (fun _ => z) - p (m + 1) (fun _ => P z))
+      (f z - f (P z)) := by
+    apply (hasSum_nat_add_iff (f := fun m : ℕ => p m (fun _ => z) - p m (fun _ => P z)) 1).mpr
+    simpa only [Finset.sum_range_one, hfirst, add_zero] using hdiff
+  have hqmul := hqsum.mul_left (ℓ z)
+  have hterms : (fun m => ℓ z * q m (fun _ => z)) =
+      (fun m => p (m + 1) (fun _ => z) - p (m + 1) (fun _ => P z)) := by
+    funext m
+    exact telescopicDivisionOperator_eval P e hP he ℓ hdecomp m (p (m + 1)) z
+  rw [hterms] at hqmul
+  have h := htail.unique hqmul
+  rw [hPzero (hℓP z), sub_zero] at h
+  exact h
+
+end TaylorDivision
+
+/-- The contractive projection that zeros the chosen coordinate. -/
+def eraseCoordinateCLM {n : ℕ} (j : Fin n) : (Fin n → ℂ) →L[ℂ] (Fin n → ℂ) :=
+  ContinuousLinearMap.pi (fun i => if i = j then 0 else ContinuousLinearMap.proj i)
+
+@[simp] theorem eraseCoordinateCLM_apply {n : ℕ} (j : Fin n) (z : Fin n → ℂ) (i : Fin n) :
+    eraseCoordinateCLM j z i = if i = j then 0 else z i := by
+  by_cases hi : i = j <;> simp [eraseCoordinateCLM, hi]
+
+theorem eraseCoordinateCLM_norm_le {n : ℕ} (j : Fin n) : ‖eraseCoordinateCLM j‖ ≤ 1 := by
+  apply ContinuousLinearMap.opNorm_le_bound _ (by norm_num)
+  intro z
+  rw [one_mul]
+  apply (pi_norm_le_iff_of_nonneg (norm_nonneg z)).mpr
+  intro i
+  rw [eraseCoordinateCLM_apply]
+  split_ifs
+  · exact (norm_zero : ‖(0 : ℂ)‖ = 0) ▸ norm_nonneg z
+  · exact norm_le_pi_norm z i
+
+/-- Analytic coordinate division at a point of a coordinate hyperplane. -/
+theorem analytic_coordinate_division {n : ℕ} (j : Fin n) (w₀ : Fin n → ℂ) (hw₀ : w₀ j = 0)
+    (f : (Fin n → ℂ) → ℂ) (hf : AnalyticAt ℂ f w₀)
+    (hzero : ∀ᶠ w in 𝓝 w₀, w j = 0 → f w = 0) :
+    ∃ H : (Fin n → ℂ) → ℂ, AnalyticAt ℂ H w₀ ∧
+      ∀ᶠ w in 𝓝 w₀, f w = w j * H w := by
+  let P := eraseCoordinateCLM j
+  let e : Fin n → ℂ := Pi.single j 1
+  let ℓ : (Fin n → ℂ) →L[ℂ] ℂ := ContinuousLinearMap.proj j
+  have he : ‖e‖ ≤ 1 := by simp only [e, Pi.norm_single, norm_one, le_refl]
+  have hdecomp : ∀ z, z = P z + ℓ z • e := by
+    intro z
+    funext i
+    by_cases hi : i = j <;> simp [P, ℓ, e, hi]
+  have hℓP : ∀ z, ℓ (P z) = 0 := by intro z; simp [P, ℓ]
+  let g : (Fin n → ℂ) → ℂ := fun v => f (w₀ + v)
+  have hg : AnalyticAt ℂ g 0 := by
+    have ha : AnalyticAt ℂ (fun v : Fin n → ℂ => w₀ + v) 0 := analyticAt_const.fun_add analyticAt_id
+    have hf' : AnalyticAt ℂ f (w₀ + 0) := by simpa only [add_zero] using hf
+    exact hf'.comp ha
+  have ht : Tendsto (fun v : Fin n → ℂ => w₀ + v) (𝓝 0) (𝓝 w₀) := by
+    have hc : Continuous (fun v : Fin n → ℂ => w₀ + v) := continuous_const.add continuous_id
+    simpa only [add_zero] using hc.tendsto (0 : Fin n → ℂ)
+  have hgzero : ∀ᶠ v in 𝓝 (0 : Fin n → ℂ), ℓ v = 0 → g v = 0 := by
+    filter_upwards [ht.eventually hzero] with v hv hvj
+    apply hv
+    change w₀ j + v j = 0
+    simpa only [hw₀, zero_add] using hvj
+  obtain ⟨K, hK, hKeq⟩ := analytic_hyperplane_division_zero P e
+    (eraseCoordinateCLM_norm_le j) he ℓ hdecomp hℓP g hg hgzero
+  let H : (Fin n → ℂ) → ℂ := fun w => K (w - w₀)
+  have hH : AnalyticAt ℂ H w₀ := by
+    have ha : AnalyticAt ℂ (fun w : Fin n → ℂ => w - w₀) w₀ := analyticAt_id.fun_sub analyticAt_const
+    have hK' : AnalyticAt ℂ K (w₀ - w₀) := by simpa only [sub_self] using hK
+    exact hK'.comp (f := fun w : Fin n → ℂ => w - w₀) ha
+  refine ⟨H, hH, ?_⟩
+  have ht' : Tendsto (fun w : Fin n → ℂ => w - w₀) (𝓝 w₀) (𝓝 0) := by
+    have hc : Continuous (fun w : Fin n → ℂ => w - w₀) := continuous_id.sub continuous_const
+    simpa only [sub_self] using hc.tendsto w₀
+  filter_upwards [ht'.eventually hKeq] with w hw
+  simpa only [g, H, ℓ, add_sub_cancel, ContinuousLinearMap.proj_apply, Pi.sub_apply,
+    hw₀, sub_zero] using hw
+
+/-- Genuine local analytic division by the positive-radius quadratic. No quotient or
+division theorem is assumed: the proof uses the square-root graph and Taylor division. -/
+theorem quadric_local_analytic_division_coords {n : ℕ} (F : (Fin n → ℂ) → ℂ)
+    (r : ℝ) (hr : 0 < r) (z₀ : Fin n → ℂ)
+    (hz₀ : squareSum z₀ = (r : ℂ) ^ 2) (hF : AnalyticAt ℂ F z₀)
+    (hzero : ∀ z, squareSum z = (r : ℂ) ^ 2 → F z = 0) :
+    ∃ (U : Set (Fin n → ℂ)) (H : (Fin n → ℂ) → ℂ), IsOpen U ∧ z₀ ∈ U ∧
+      AnalyticOnNhd ℂ H U ∧ ∀ z ∈ U, F z = (squareSum z - (r : ℂ) ^ 2) * H z := by
+  obtain ⟨j, hj⟩ := quadric_exists_nonzero_coordinate z₀ r hr hz₀
+  let a := z₀ j
+  let b := quadricRoot r j a
+  let D := quadricRootDomain r j a
+  let φ := quadricFlatten r j a
+  let ψ := quadricUnflatten r j a
+  let w₀ := φ z₀
+  obtain ⟨hzD, hb₀⟩ := quadricRoot_at_quadric r j z₀ hz₀ hj
+  have hwD : w₀ ∈ D := by
+    simpa only [w₀, φ, quadricFlatten, D, a, quadricRootDomain, mem_preimage,
+      quadricRadicand_update] using hzD
+  have hwj : w₀ j = 0 := by
+    simp only [w₀, φ, quadricFlatten, Function.update_self, a, hb₀, sub_self]
+  let f : (Fin n → ℂ) → ℂ := fun w => F (ψ w)
+  have hf : AnalyticAt ℂ f w₀ := by
+    have hF' : AnalyticAt ℂ F (ψ w₀) := by
+      simpa only [ψ, w₀, φ, quadricUnflatten_flatten] using hF
+    exact hF'.comp (quadricUnflatten_analyticOnNhd r j a hj w₀ hwD)
+  have hzero' : ∀ᶠ w in 𝓝 w₀, w j = 0 → f w = 0 := by
+    filter_upwards [(quadricRootDomain_isOpen r j a).mem_nhds hwD] with w hw hwj
+    apply hzero
+    apply sub_eq_zero.mp
+    rw [quadricUnflatten_factorization r j a hj w hw, hwj, zero_mul]
+  obtain ⟨K, hK, hKeq⟩ := analytic_coordinate_division j w₀ hwj f hf hzero'
+  have hφ : AnalyticAt ℂ φ z₀ := quadricFlatten_analyticOnNhd r j a hj z₀ hzD
+  have hb : AnalyticAt ℂ b z₀ := quadricRoot_analyticOnNhd r j a hj z₀ hzD
+  have hden : AnalyticAt ℂ (fun z : Fin n → ℂ => z j + b z) z₀ :=
+    ((ContinuousLinearMap.proj (R := ℂ) j).analyticAt z₀).fun_add hb
+  have hunit : z₀ j + b z₀ ≠ 0 := by
+    change z₀ j + quadricRoot r j (z₀ j) z₀ ≠ 0
+    rw [hb₀, ← two_mul]
+    exact mul_ne_zero (by norm_num) hj
+  let H : (Fin n → ℂ) → ℂ := fun z => K (φ z) / (z j + b z)
+  have hH : AnalyticAt ℂ H z₀ :=
+    (hK.comp hφ).fun_div hden hunit
+  have heq : ∀ᶠ z in 𝓝 z₀, F z = (squareSum z - (r : ℂ) ^ 2) * H z := by
+    have hφt : Tendsto φ (𝓝 z₀) (𝓝 w₀) := hφ.continuousAt.tendsto
+    filter_upwards [(quadricRootDomain_isOpen r j a).mem_nhds hzD,
+      hφt.eventually hKeq, hden.continuousAt.eventually_ne hunit] with z hz hk hu
+    have hk' : F z = (z j - b z) * K (φ z) := by
+      change F (quadricUnflatten r j a (quadricFlatten r j a z)) =
+        quadricFlatten r j a z j * K (φ z) at hk
+      rw [quadricUnflatten_flatten] at hk
+      simpa only [quadricFlatten, Function.update_self, b] using hk
+    rw [hk', quadric_local_factorization r j a hj z hz]
+    change (z j - b z) * K (φ z) = (z j - b z) * (z j + b z) *
+      (K (φ z) / (z j + b z))
+    field_simp
+    ring
+  obtain ⟨U, hU, hUopen, hzU⟩ := eventually_nhds_iff.mp (hH.eventually_analyticAt.and heq)
+  exact ⟨U, H, hUopen, hzU, fun z hz => (hU z hz).1, fun z hz => (hU z hz).2⟩
+
+/-- Local analytic quadratic division in the shared complex Euclidean space. -/
+theorem quadric_local_analytic_division {n : ℕ} (F : ComplexEuclidean n → ℂ)
+    (r : ℝ) (hr : 0 < r) (z₀ : ComplexEuclidean n)
+    (hz₀ : squareSum (fun i => z₀ i) = (r : ℂ) ^ 2) (hF : AnalyticAt ℂ F z₀)
+    (hzero : ∀ z : ComplexEuclidean n, squareSum (fun i => z i) = (r : ℂ) ^ 2 → F z = 0) :
+    ∃ (U : Set (ComplexEuclidean n)) (H : ComplexEuclidean n → ℂ), IsOpen U ∧ z₀ ∈ U ∧
+      AnalyticOnNhd ℂ H U ∧
+      ∀ z ∈ U, F z = (squareSum (fun i => z i) - (r : ℂ) ^ 2) * H z := by
+  let e := EuclideanSpace.equiv (Fin n) ℂ
+  have hf : AnalyticAt ℂ (F ∘ e.symm) (e z₀) := by
+    apply hF.comp_of_eq (e.symm.analyticAt (e z₀))
+    exact e.symm_apply_apply z₀
+  have hzero' : ∀ z : Fin n → ℂ, squareSum z = (r : ℂ) ^ 2 → (F ∘ e.symm) z = 0 := by
+    intro z hz
+    exact hzero (e.symm z) hz
+  obtain ⟨V, K, hV, hzV, hK, hKeq⟩ := quadric_local_analytic_division_coords
+    (F ∘ e.symm) r hr (e z₀) hz₀ hf hzero'
+  refine ⟨e ⁻¹' V, K ∘ e, hV.preimage e.continuous, hzV, ?_, ?_⟩
+  · intro z hz
+    exact (hK (e z) hz).comp (e.analyticAt z)
+  · intro z hz
+    simpa only [Function.comp_apply, ContinuousLinearEquiv.symm_apply_apply] using hKeq (e z) hz
+
+/-- Real-sphere vanishing gives an analytic local quadratic quotient at every
+point of the complex quadric. -/
+theorem real_sphere_local_analytic_division {n : ℕ} (F : ComplexEuclidean n → ℂ)
+    (hF : AnalyticOnNhd ℂ F univ) (r : ℝ) (hr : 0 < r)
+    (hreal : ∀ x : Euclidean n, ‖x‖ = r → F (realToComplex x) = 0)
+    (z₀ : ComplexEuclidean n) (hz₀ : squareSum (fun i => z₀ i) = (r : ℂ) ^ 2) :
+    ∃ (U : Set (ComplexEuclidean n)) (H : ComplexEuclidean n → ℂ), IsOpen U ∧ z₀ ∈ U ∧
+      AnalyticOnNhd ℂ H U ∧
+      ∀ z ∈ U, F z = (squareSum (fun i => z i) - (r : ℂ) ^ 2) * H z := by
+  have hd : Differentiable ℂ F := differentiableOn_univ.mp hF.differentiableOn
+  exact quadric_local_analytic_division F r hr z₀ hz₀ (hF z₀ (mem_univ z₀))
+    (fun z hz => entire_zero_on_quadric F hd r hr hreal z hz)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalDivision.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Removal of the quadric zeros of an entire denominator
+
+Local simple-zero factorizations of the denominator and quadric vanishing of the
+numerator give actual analytic local quotients. Their uniqueness then glues them
+to a single entire quotient.
+-/
+
+noncomputable section
+open scoped Topology
+open Set Filter
+
+namespace RieszEuclidean.CompleteMinimal
+
+section Gluing
+
+variable {E : Type*} [NormedAddCommGroup E]
+
+/-- A nonzero entire function cannot vanish on any neighborhood. -/
+theorem entire_not_eventually_zero [NormedSpace ℂ E] [ConnectedSpace E]
+    (κ : E → ℂ) (hκ : AnalyticOnNhd ℂ κ univ)
+    (hbase : ∃ z, κ z ≠ 0) (z₀ : E) : ¬∀ᶠ z in 𝓝 z₀, κ z = 0 := by
+  intro hz
+  obtain ⟨z, hzκ⟩ := hbase
+  have hκzero : EqOn κ 0 univ :=
+    hκ.eqOn_zero_of_preconnected_of_eventuallyEq_zero isPreconnected_univ (mem_univ z₀) hz
+  exact hzκ (hκzero (mem_univ z))
+
+/-- Continuous local quotients have a unique value wherever the denominator is not
+locally identically zero, including at its zeros. -/
+theorem local_quotient_value_unique (A κ H K : E → ℂ) (z₀ : E)
+    (hκ : ¬∀ᶠ z in 𝓝 z₀, κ z = 0) (hH : ContinuousAt H z₀) (hK : ContinuousAt K z₀)
+    (hAH : ∀ᶠ z in 𝓝 z₀, A z = κ z * H z)
+    (hAK : ∀ᶠ z in 𝓝 z₀, A z = κ z * K z) : H z₀ = K z₀ := by
+  by_contra hne
+  have hdiff : H z₀ - K z₀ ≠ 0 := sub_ne_zero.mpr hne
+  apply hκ
+  filter_upwards [hAH, hAK, (hH.sub hK).eventually_ne hdiff] with z hAH hAK hne
+  by_contra hz
+  apply hne
+  apply sub_eq_zero.mpr
+  exact mul_left_cancel₀ hz (hAH.symm.trans hAK)
+
+/-- Genuine gluing of analytic local quotients. The output is an entire function
+with the product identity everywhere and the ordinary quotient off the zero set. -/
+theorem global_analytic_division_of_local [NormedSpace ℂ E] [ConnectedSpace E] (A κ : E → ℂ)
+    (hκ : AnalyticOnNhd ℂ κ univ) (hbase : ∃ z, κ z ≠ 0)
+    (hlocal : ∀ z₀, ∃ H : E → ℂ, AnalyticAt ℂ H z₀ ∧
+      ∀ᶠ z in 𝓝 z₀, A z = κ z * H z) :
+    ∃ G : E → ℂ, AnalyticOnNhd ℂ G univ ∧ (∀ z, A z = κ z * G z) ∧
+      ∀ z, κ z ≠ 0 → G z = A z / κ z := by
+  choose H hH hAH using hlocal
+  let G : E → ℂ := fun z => H z z
+  have hG : AnalyticOnNhd ℂ G univ := by
+    intro z₀ _
+    apply (hH z₀).congr
+    filter_upwards [(hH z₀).eventually_analyticAt, (hAH z₀).eventually_nhds] with z hz hAz
+    exact local_quotient_value_unique A κ (H z₀) (H z) z
+      (entire_not_eventually_zero κ hκ hbase z) hz.continuousAt (hH z).continuousAt
+      hAz (hAH z)
+  have hprod : ∀ z, A z = κ z * G z := fun z => (hAH z).self_of_nhds
+  refine ⟨G, hG, hprod, ?_⟩
+  intro z hz
+  apply (eq_div_iff hz).mpr
+  simpa only [mul_comm] using (hprod z).symm
+
+end Gluing
+
+/-- The precise local geometry needed from the Bessel product: every zero belongs
+to a positive-radius quadric, and the denominator is its equation times an analytic unit. -/
+def HasSimpleQuadricZeros {n : ℕ} {ι : Type*} (κ : ComplexEuclidean n → ℂ) (radius : ι → ℝ) : Prop :=
+  ∀ z₀, κ z₀ = 0 → ∃ i, squareSum (fun j => z₀ j) = (radius i : ℂ) ^ 2 ∧
+    ∃ u : ComplexEuclidean n → ℂ, AnalyticAt ℂ u z₀ ∧ u z₀ ≠ 0 ∧
+      ∀ᶠ z in 𝓝 z₀, κ z = (squareSum (fun j => z j) - (radius i : ℂ) ^ 2) * u z
+
+/-- The local analytic quotient at every point, derived from actual simple quadric
+factorizations rather than postulated as an analytic input. -/
+theorem local_analytic_division_of_simple_quadric_zeros {n : ℕ} {ι : Type*}
+    (A κ : ComplexEuclidean n → ℂ) (radius : ι → ℝ)
+    (hA : AnalyticOnNhd ℂ A univ) (hκ : AnalyticOnNhd ℂ κ univ)
+    (hradius : ∀ i, 0 < radius i) (hgeometry : HasSimpleQuadricZeros κ radius)
+    (hzero : ∀ i z, squareSum (fun j => z j) = (radius i : ℂ) ^ 2 → A z = 0)
+    (z₀ : ComplexEuclidean n) :
+    ∃ H : ComplexEuclidean n → ℂ, AnalyticAt ℂ H z₀ ∧
+      ∀ᶠ z in 𝓝 z₀, A z = κ z * H z := by
+  by_cases hz₀ : κ z₀ = 0
+  · obtain ⟨i, hquadric, u, hu, hunit, hfactor⟩ := hgeometry z₀ hz₀
+    obtain ⟨U, K, hU, hzU, hK, hAK⟩ := quadric_local_analytic_division A (radius i)
+      (hradius i) z₀ hquadric (hA z₀ (mem_univ z₀)) (hzero i)
+    let H : ComplexEuclidean n → ℂ := fun z => K z / u z
+    refine ⟨H, (hK z₀ hzU).fun_div hu hunit, ?_⟩
+    filter_upwards [hU.mem_nhds hzU, hfactor, hu.continuousAt.eventually_ne hunit]
+      with z hz hfactor hunit
+    rw [hAK z hz, hfactor]
+    change (squareSum (fun j => z j) - (radius i : ℂ) ^ 2) * K z =
+      ((squareSum (fun j => z j) - (radius i : ℂ) ^ 2) * u z) * (K z / u z)
+    field_simp
+    ring
+  · let H : ComplexEuclidean n → ℂ := fun z => A z / κ z
+    refine ⟨H, (hA z₀ (mem_univ z₀)).fun_div (hκ z₀ (mem_univ z₀)) hz₀, ?_⟩
+    filter_upwards [(hκ z₀ (mem_univ z₀)).continuousAt.eventually_ne hz₀] with z hz
+    change A z = κ z * (A z / κ z)
+    field_simp
+
+/-- Global analytic removal of all the simple quadric zeros of an entire denominator.
+Disjointness and local finiteness of the Bessel quadrics are used to establish
+`HasSimpleQuadricZeros`; no global quotient is assumed here. -/
+theorem global_analytic_division_of_simple_quadric_zeros {n : ℕ} {ι : Type*}
+    (A κ : ComplexEuclidean n → ℂ) (radius : ι → ℝ)
+    (hA : AnalyticOnNhd ℂ A univ) (hκ : AnalyticOnNhd ℂ κ univ) (hκ₀ : κ 0 ≠ 0)
+    (hradius : ∀ i, 0 < radius i) (hgeometry : HasSimpleQuadricZeros κ radius)
+    (hzero : ∀ i z, squareSum (fun j => z j) = (radius i : ℂ) ^ 2 → A z = 0) :
+    ∃ G : ComplexEuclidean n → ℂ, AnalyticOnNhd ℂ G univ ∧
+      (∀ z, A z = κ z * G z) ∧ ∀ z, κ z ≠ 0 → G z = A z / κ z := by
+  exact global_analytic_division_of_local A κ hκ ⟨0, hκ₀⟩
+    (local_analytic_division_of_simple_quadric_zeros A κ radius hA hκ hradius hgeometry hzero)
+
+/-- Bounded derivatives and vanishing at the radial zeros supply exactly the distance
+factor needed to cancel the denominator's small values near those zeros. -/
+theorem radial_numerator_cancellation (H H' : ℝ → ℂ) (Z : Set ℝ)
+    (hZ : IsClosed Z) (hZne : Z.Nonempty) (C : ℝ) (hC : 0 ≤ C) (m : ℕ)
+    (hH : ∀ s, ‖H s‖ ≤ C * (1 + ‖s‖) ^ m)
+    (hderiv : ∀ s, HasDerivAt H (H' s) s)
+    (hH' : ∀ s, ‖H' s‖ ≤ C * (1 + ‖s‖) ^ m) (hzero : ∀ a ∈ Z, H a = 0) (s : ℝ) :
+    ‖H s‖ ≤ C * 2 ^ m * (1 + ‖s‖) ^ m * min 1 (Metric.infDist s Z) := by
+  by_cases hd : 1 ≤ Metric.infDist s Z
+  · rw [min_eq_left hd, mul_one]
+    calc
+      ‖H s‖ ≤ C * (1 + ‖s‖) ^ m := hH s
+      _ ≤ C * 2 ^ m * (1 + ‖s‖) ^ m := by
+        have hp : (1 : ℝ) ≤ 2 ^ m := one_le_pow₀ (by norm_num)
+        nlinarith [mul_nonneg hC (pow_nonneg (by positivity : 0 ≤ 1 + ‖s‖) m)]
+  · have hd : Metric.infDist s Z < 1 := lt_of_not_ge hd
+    obtain ⟨a, ha, hdist⟩ := hZ.exists_infDist_eq_dist hZne s
+    have haB : a ∈ Metric.closedBall s 1 := by
+      rw [Metric.mem_closedBall, dist_comm, ← hdist]
+      exact hd.le
+    have hsB : s ∈ Metric.closedBall s 1 := Metric.mem_closedBall_self (by norm_num)
+    have hbound : ∀ t ∈ Metric.closedBall s 1, ‖H' t‖ ≤ C * 2 ^ m * (1 + ‖s‖) ^ m := by
+      intro t ht
+      have hts : ‖t - s‖ ≤ 1 := by simpa only [dist_eq_norm] using Metric.mem_closedBall.mp ht
+      have htbound : 1 + ‖t‖ ≤ 2 * (1 + ‖s‖) := by
+        have htri : ‖t‖ ≤ ‖t - s‖ + ‖s‖ := by
+          simpa only [sub_add_cancel] using norm_add_le (t - s) s
+        have hsnonneg := norm_nonneg s
+        linarith
+      calc
+        ‖H' t‖ ≤ C * (1 + ‖t‖) ^ m := hH' t
+        _ ≤ C * (2 * (1 + ‖s‖)) ^ m := by gcongr
+        _ = C * 2 ^ m * (1 + ‖s‖) ^ m := by rw [mul_pow, mul_assoc]
+    have hmean := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+      (fun t (_ : t ∈ Metric.closedBall s 1) => (hderiv t).hasDerivWithinAt)
+      hbound (convex_closedBall s 1) haB hsB
+    rw [hzero a ha, sub_zero, ← dist_eq_norm, ← hdist] at hmean
+    rwa [min_eq_right hd.le]
+
+/-- A quantitative radial denominator lower bound and actual numerator derivatives give
+a polynomial bound for its quotient away from the radial zeros. -/
+theorem radial_quotient_bound_off_zeros (H H' k G : ℝ → ℂ) (Z : Set ℝ)
+    (hZ : IsClosed Z) (hZne : Z.Nonempty) (C c : ℝ) (hC : 0 ≤ C) (hc : 0 < c) (m b : ℕ)
+    (hH : ∀ s, ‖H s‖ ≤ C * (1 + ‖s‖) ^ m)
+    (hderiv : ∀ s, HasDerivAt H (H' s) s)
+    (hH' : ∀ s, ‖H' s‖ ≤ C * (1 + ‖s‖) ^ m) (hzero : ∀ a ∈ Z, H a = 0)
+    (hprod : ∀ s, H s = k s * G s) (s : ℝ) (hs : s ∉ Z)
+    (hlower : c / (1 + ‖s‖) ^ b * min 1 (Metric.infDist s Z) ≤ ‖k s‖) :
+    ‖G s‖ ≤ (C * 2 ^ m / c) * (1 + ‖s‖) ^ (m + b) := by
+  have hd : 0 < Metric.infDist s Z := (hZ.not_mem_iff_infDist_pos hZne).mp hs
+  have hδ : 0 < min 1 (Metric.infDist s Z) := lt_min (by norm_num) hd
+  have hw : 0 < (1 + ‖s‖) ^ b := pow_pos (by positivity) _
+  have hcancel := radial_numerator_cancellation H H' Z hZ hZne C hC m hH hderiv hH' hzero s
+  have hle : (c / (1 + ‖s‖) ^ b * ‖G s‖) * min 1 (Metric.infDist s Z) ≤
+      (C * 2 ^ m * (1 + ‖s‖) ^ m) * min 1 (Metric.infDist s Z) := by
+    calc
+      _ = (c / (1 + ‖s‖) ^ b * min 1 (Metric.infDist s Z)) * ‖G s‖ := by ring
+      _ ≤ ‖k s‖ * ‖G s‖ := mul_le_mul_of_nonneg_right hlower (norm_nonneg _)
+      _ = ‖H s‖ := by rw [hprod s, norm_mul]
+      _ ≤ _ := hcancel
+  have hle' := (mul_le_mul_right hδ).mp hle
+  have hmul : c * ‖G s‖ ≤ (C * 2 ^ m) * (1 + ‖s‖) ^ (m + b) := by
+    have h := mul_le_mul_of_nonneg_right hle' hw.le
+    calc
+      c * ‖G s‖ = (c / (1 + ‖s‖) ^ b * ‖G s‖) * (1 + ‖s‖) ^ b := by field_simp
+      _ ≤ (C * 2 ^ m * (1 + ‖s‖) ^ m) * (1 + ‖s‖) ^ b := h
+      _ = _ := by rw [pow_add]; ring
+  rw [div_mul_eq_mul_div]
+  apply (le_div_iff₀ hc).mpr
+  simpa only [mul_comm] using hmul
+
+/-- Continuity removes the excluded radial zeros from the polynomial quotient estimate.
+The denominator lower bound is needed only beyond the indicated radial threshold. -/
+theorem radial_quotient_polynomial_bound (H H' k G : ℝ → ℂ) (Z : Set ℝ)
+    (hZ : IsClosed Z) (hZne : Z.Nonempty) (hdense : Dense Zᶜ)
+    (C c R : ℝ) (hC : 0 ≤ C) (hc : 0 < c) (m b : ℕ)
+    (hH : ∀ s, ‖H s‖ ≤ C * (1 + ‖s‖) ^ m)
+    (hderiv : ∀ s, HasDerivAt H (H' s) s)
+    (hH' : ∀ s, ‖H' s‖ ≤ C * (1 + ‖s‖) ^ m) (hzero : ∀ a ∈ Z, H a = 0)
+    (hprod : ∀ s, H s = k s * G s) (hG : Continuous G)
+    (hlower : ∀ s, R < s → c / (1 + ‖s‖) ^ b * min 1 (Metric.infDist s Z) ≤ ‖k s‖) :
+    ∀ s, R < s → ‖G s‖ ≤ (C * 2 ^ m / c) * (1 + ‖s‖) ^ (m + b) := by
+  intro s hs
+  by_contra hbound
+  have hstrict : (C * 2 ^ m / c) * (1 + ‖s‖) ^ (m + b) < ‖G s‖ := lt_of_not_ge hbound
+  have hweight : Continuous (fun t : ℝ => (C * 2 ^ m / c) * (1 + ‖t‖) ^ (m + b)) := by
+    fun_prop
+  have hevent := hweight.continuousAt.eventually_lt hG.norm.continuousAt hstrict
+  have htail : ∀ᶠ t in 𝓝 s, R < t := isOpen_Ioi.mem_nhds hs
+  have hfreq : ∃ᶠ t in 𝓝 s, t ∈ Zᶜ := mem_closure_iff_frequently.mp (hdense s)
+  obtain ⟨t, ⟨htZ, htR⟩, hlt⟩ := ((hfreq.and_eventually htail).and_eventually hevent).exists
+  exact (not_lt_of_ge (radial_quotient_bound_off_zeros H H' k G Z hZ hZne C c hC hc m b
+    hH hderiv hH' hzero hprod t htZ (hlower t htR))) hlt
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalJensen.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Disk primitives for the logarithmic circle inequalities
+
+The radial primitive construction below uses the pinned Mathlib differentiation
+under the integral sign and fundamental theorem of calculus. No harmonic or
+Jensen inequality is assumed in its construction.
+-/
+
+noncomputable section
+
+open MeasureTheory Metric Set Filter Topology
+open scoped Interval
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Radial integration from the origin in a complex disk. -/
+def diskPrimitive (q : ℂ → ℂ) (z : ℂ) : ℂ :=
+  ∫ t in (0 : ℝ)..1, z * q ((t : ℂ) * z)
+
+private theorem disk_segment_mem {R : ℝ} {z : ℂ} (hz : ‖z‖ < R)
+    {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) : (t : ℂ) * z ∈ ball (0 : ℂ) R := by
+  rw [mem_ball, dist_zero_right, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_nonneg ht.1]
+  exact (mul_le_mul_of_nonneg_right ht.2 (norm_nonneg z)).trans_lt (by simpa using hz)
+
+private theorem continuousOn_disk_integrand {q : ℂ → ℂ} {R : ℝ}
+    (hq : DifferentiableOn ℂ q (ball (0 : ℂ) R)) {z : ℂ} (hz : ‖z‖ < R) :
+    ContinuousOn (fun t : ℝ => z * q ((t : ℂ) * z)) (Icc (0 : ℝ) 1) := by
+  apply continuousOn_const.mul
+  apply hq.continuousOn.comp
+    ((Complex.continuous_ofReal.mul continuous_const).continuousOn)
+  exact fun t ht => disk_segment_mem hz ht
+
+/-- Radial integration gives a complex primitive on the disk. -/
+theorem hasDerivAt_diskPrimitive {q : ℂ → ℂ} {R : ℝ}
+    (hq : DifferentiableOn ℂ q (ball (0 : ℂ) R)) {z : ℂ} (hz : z ∈ ball (0 : ℂ) R) :
+    HasDerivAt (diskPrimitive q) (q z) z := by
+  have hzR : ‖z‖ < R := by simpa only [mem_ball, dist_zero_right] using hz
+  let ρ : ℝ := (R + ‖z‖) / 2
+  let ε : ℝ := (R - ‖z‖) / 2
+  have hε : 0 < ε := by dsimp [ε]; linarith
+  have hρ : ρ < R := by dsimp [ρ]; linarith
+  have hρpos : 0 < ρ := by dsimp [ρ]; linarith [norm_nonneg z]
+  have hxρ : ∀ x ∈ ball z ε, ‖x‖ ≤ ρ := by
+    intro x hx
+    have hnorm := norm_sub_norm_le x z
+    rw [← dist_eq_norm] at hnorm
+    have hdist : dist x z < ε := hx
+    dsimp [ρ, ε] at *
+    linarith
+  have hq' : DifferentiableOn ℂ (deriv q) (ball (0 : ℂ) R) := hq.deriv isOpen_ball
+  have hρsub : closedBall (0 : ℂ) ρ ⊆ ball (0 : ℂ) R := closedBall_subset_ball hρ
+  obtain ⟨M, hM⟩ := (isCompact_closedBall (0 : ℂ) ρ).bddAbove_image
+    (hq.continuousOn.mono hρsub).norm
+  obtain ⟨N, hN⟩ := (isCompact_closedBall (0 : ℂ) ρ).bddAbove_image
+    (hq'.continuousOn.mono hρsub).norm
+  let F : ℂ → ℝ → ℂ := fun x t => x * q ((t : ℂ) * x)
+  let F' : ℂ → ℝ → ℂ := fun x t => q ((t : ℂ) * x) + x * (deriv q ((t : ℂ) * x) * t)
+  have hsegρ : ∀ x ∈ ball z ε, ∀ t ∈ Icc (0 : ℝ) 1,
+      (t : ℂ) * x ∈ closedBall (0 : ℂ) ρ := by
+    intro x hx t ht
+    rw [mem_closedBall, dist_zero_right, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_nonneg ht.1]
+    exact (mul_le_mul_of_nonneg_right ht.2 (norm_nonneg x)).trans (by simpa using hxρ x hx)
+  have hFint : ∀ x ∈ ball z ε, IntervalIntegrable (F x) volume 0 1 := by
+    intro x hx
+    apply ContinuousOn.intervalIntegrable
+    simpa only [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] using
+      continuousOn_disk_integrand hq ((hxρ x hx).trans_lt hρ)
+  have hF'cont : ContinuousOn (F' z) (Icc (0 : ℝ) 1) := by
+    have hmap : MapsTo (fun t : ℝ => (t : ℂ) * z) (Icc (0 : ℝ) 1) (ball (0 : ℂ) R) :=
+      fun t ht => disk_segment_mem hzR ht
+    have harg : ContinuousOn (fun t : ℝ => (t : ℂ) * z) (Icc (0 : ℝ) 1) :=
+      (Complex.continuous_ofReal.mul continuous_const).continuousOn
+    exact (hq.continuousOn.comp harg hmap).add
+      (continuousOn_const.mul ((hq'.continuousOn.comp harg hmap).mul
+        Complex.continuous_ofReal.continuousOn))
+  have hdiff : ∀ x ∈ ball z ε, ∀ t ∈ Icc (0 : ℝ) 1,
+      HasDerivAt (fun x => F x t) (F' x t) x := by
+    intro x hx t ht
+    have htx := hρsub (hsegρ x hx t ht)
+    have hdq := hq.hasDerivAt (isOpen_ball.mem_nhds htx)
+    simpa only [F, F', Function.comp_def, id_eq, one_mul, mul_one] using
+      (hasDerivAt_id x).mul (hdq.comp x ((hasDerivAt_id x).const_mul (t : ℂ)))
+  have hFbound : ∀ x ∈ ball z ε, ∀ t ∈ Icc (0 : ℝ) 1, ‖F' x t‖ ≤ M + ρ * N := by
+    intro x hx t ht
+    have htx := hsegρ x hx t ht
+    have hMq : ‖q ((t : ℂ) * x)‖ ≤ M := hM ⟨_, htx, rfl⟩
+    have hNq : ‖deriv q ((t : ℂ) * x)‖ ≤ N := hN ⟨_, htx, rfl⟩
+    have hNp : 0 ≤ N := (norm_nonneg _).trans hNq
+    have htNorm : ‖(t : ℂ)‖ ≤ 1 := by simpa [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg ht.1] using ht.2
+    have hprod : ‖deriv q ((t : ℂ) * x)‖ * ‖(t : ℂ)‖ ≤ N := by
+      simpa only [mul_one] using mul_le_mul hNq htNorm (norm_nonneg _) hNp
+    calc
+      ‖F' x t‖ ≤ ‖q ((t : ℂ) * x)‖ + ‖x * (deriv q ((t : ℂ) * x) * t)‖ := norm_add_le _ _
+      _ ≤ M + ρ * N := by
+        rw [norm_mul, norm_mul]
+        exact add_le_add hMq (mul_le_mul (hxρ x hx) hprod (by positivity) hρpos.le)
+  have hzε : z ∈ ball z ε := mem_ball_self hε
+  have hF'int : IntervalIntegrable (F' z) volume 0 1 := by
+    apply ContinuousOn.intervalIntegrable
+    simpa only [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] using hF'cont
+  obtain ⟨hint, hderiv⟩ := intervalIntegral.hasDerivAt_integral_of_dominated_loc_of_deriv_le
+    (F := F) (F' := F') (bound := fun _ => M + ρ * N) hε
+    (by
+      filter_upwards [ball_mem_nhds z hε] with x hx
+      exact (intervalIntegrable_iff.mp (hFint x hx)).aestronglyMeasurable)
+    (hFint z hzε) (intervalIntegrable_iff.mp hF'int).aestronglyMeasurable
+    (by
+      filter_upwards with t ht x hx
+      exact hFbound x hx t (Ioc_subset_Icc_self (by simpa only [uIoc_of_le (by norm_num : (0 : ℝ) ≤ 1)] using ht)))
+    intervalIntegrable_const
+    (by
+      filter_upwards with t ht x hx
+      exact hdiff x hx t (Ioc_subset_Icc_self (by simpa only [uIoc_of_le (by norm_num : (0 : ℝ) ≤ 1)] using ht)))
+  have hFTC : (∫ t in (0 : ℝ)..1, F' z t) = q z := by
+    have hd : ∀ t ∈ uIcc (0 : ℝ) 1,
+        HasDerivAt (fun t : ℝ => (t : ℂ) * q ((t : ℂ) * z)) (F' z t) t := by
+      intro t ht
+      have ht' : t ∈ Icc (0 : ℝ) 1 := by simpa only [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)] using ht
+      have hqderiv := hq.hasDerivAt (isOpen_ball.mem_nhds (disk_segment_mem hzR ht'))
+      have h := (hasDerivAt_id (t : ℂ)).mul
+        (hqderiv.comp (t : ℂ) ((hasDerivAt_id (t : ℂ)).mul_const z))
+      convert h.comp_ofReal using 1
+      dsimp [F']
+      ring
+    simpa [F'] using intervalIntegral.integral_eq_sub_of_hasDerivAt hd hint
+  rw [hFTC] at hderiv
+  exact hderiv
+
+@[simp] theorem diskPrimitive_zero (q : ℂ → ℂ) : diskPrimitive q 0 = 0 := by
+  simp [diskPrimitive]
+
+theorem differentiableOn_diskPrimitive {q : ℂ → ℂ} {R : ℝ}
+    (hq : DifferentiableOn ℂ q (ball (0 : ℂ) R)) :
+    DifferentiableOn ℂ (diskPrimitive q) (ball (0 : ℂ) R) :=
+  fun _ hz => (hasDerivAt_diskPrimitive hq hz).differentiableAt.differentiableWithinAt
+
+/-- A zero-free holomorphic function on a disk has a holomorphic logarithm.
+The logarithm is constructed from the radial primitive of `f'/f`. -/
+theorem exists_disk_logarithm {f : ℂ → ℂ} {R : ℝ} (hR : 0 < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R))
+    (hfn : ∀ z ∈ ball (0 : ℂ) R, f z ≠ 0) :
+    ∃ L : ℂ → ℂ, DifferentiableOn ℂ L (ball (0 : ℂ) R) ∧
+      ∀ z ∈ ball (0 : ℂ) R, Complex.exp (L z) = f z := by
+  let q : ℂ → ℂ := fun z => deriv f z / f z
+  have hq : DifferentiableOn ℂ q (ball (0 : ℂ) R) :=
+    (hf.deriv isOpen_ball).div hf hfn
+  let g : ℂ → ℂ := fun z => f z * Complex.exp (-diskPrimitive q z)
+  have hgd : ∀ z ∈ ball (0 : ℂ) R, HasDerivAt g 0 z := by
+    intro z hz
+    have hfd := hf.hasDerivAt (isOpen_ball.mem_nhds hz)
+    have hpd := hasDerivAt_diskPrimitive hq hz
+    have hderiv := hfd.mul hpd.neg.cexp
+    convert hderiv using 1
+    dsimp [q]
+    field_simp [hfn z hz]
+    ring
+  have hgz : ∀ z ∈ ball (0 : ℂ) R, g z = f 0 := by
+    intro z hz
+    have h := isOpen_ball.is_const_of_deriv_eq_zero (convex_ball (0 : ℂ) R).isPreconnected
+      (fun z hz => (hgd z hz).differentiableAt.differentiableWithinAt)
+      (fun z hz => (hgd z hz).deriv) hz (mem_ball_self hR)
+    simpa only [g, diskPrimitive_zero, neg_zero, Complex.exp_zero, mul_one] using h
+  have hf0 : f 0 ≠ 0 := hfn 0 (mem_ball_self hR)
+  refine ⟨fun z => diskPrimitive q z + Complex.log (f 0),
+    (differentiableOn_diskPrimitive hq).add_const _, ?_⟩
+  intro z hz
+  rw [Complex.exp_add, Complex.exp_log hf0]
+  have h := hgz z hz
+  dsimp only [g] at h
+  rw [Complex.exp_neg, ← div_eq_mul_inv] at h
+  exact (mul_comm _ _).trans ((div_eq_iff (Complex.exp_ne_zero _)).mp h).symm
+
+/-- The logarithm of the norm is the real part of that holomorphic logarithm. -/
+theorem exists_disk_log_norm {f : ℂ → ℂ} {R : ℝ} (hR : 0 < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R))
+    (hfn : ∀ z ∈ ball (0 : ℂ) R, f z ≠ 0) :
+    ∃ L : ℂ → ℂ, DifferentiableOn ℂ L (ball (0 : ℂ) R) ∧
+      ∀ z ∈ ball (0 : ℂ) R, Real.log ‖f z‖ = (L z).re := by
+  obtain ⟨L, hL, hexp⟩ := exists_disk_logarithm hR hf hfn
+  refine ⟨L, hL, ?_⟩
+  intro z hz
+  rw [← hexp z hz, Complex.norm_exp, Real.log_exp]
+
+/-- Removing the full finite order of a zero leaves a holomorphic function
+nonzero at that zero. This is a local analytic factorization extended by division
+at every other point of the disk. -/
+theorem remove_disk_zero {f : ℂ → ℂ} {R : ℝ}
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R)) {a w : ℂ}
+    (ha : a ∈ ball (0 : ℂ) R) (hfa : f a = 0)
+    (hw : w ∈ ball (0 : ℂ) R) (hfw : f w ≠ 0) :
+    ∃ n : ℕ, 0 < n ∧ ∃ g : ℂ → ℂ,
+      DifferentiableOn ℂ g (ball (0 : ℂ) R) ∧ g a ≠ 0 ∧
+        ∀ z ∈ ball (0 : ℂ) R, f z = (z - a)^n * g z := by
+  have han : AnalyticOnNhd ℂ f (ball (0 : ℂ) R) := hf.analyticOnNhd isOpen_ball
+  have hnot : ¬∀ᶠ z in 𝓝 a, f z = 0 := by
+    intro h
+    have heq := han.eqOn_of_preconnected_of_eventuallyEq analyticOnNhd_const
+      (convex_ball (0 : ℂ) R).isPreconnected ha h
+    exact hfw (heq hw)
+  obtain ⟨n, j, hj, hja, heq⟩ :=
+    (han a ha).exists_eventuallyEq_pow_smul_nonzero_iff.mpr hnot
+  have hapos : 0 < n := by
+    by_contra hn
+    have hn0 : n = 0 := by omega
+    have hat := (show f =ᶠ[𝓝 a] (fun z => (z - a)^n • j z) from heq).eq_of_nhds
+    exact hja (by simpa [hn0, hfa] using hat.symm)
+  let g : ℂ → ℂ := fun z => if z = a then j a else f z / (z - a)^n
+  have hgj : g =ᶠ[𝓝 a] j := by
+    filter_upwards [heq] with z hz
+    dsimp only [g]
+    by_cases hza : z = a
+    · simp [hza]
+    · rw [if_neg hza]
+      simp only [smul_eq_mul] at hz
+      rw [hz]
+      exact mul_div_cancel_left₀ _ (pow_ne_zero n (sub_ne_zero.mpr hza))
+  have hgd : DifferentiableOn ℂ g (ball (0 : ℂ) R) := by
+    intro z hz
+    by_cases hza : z = a
+    · subst z
+      exact (hj.congr hgj.symm).differentiableAt.differentiableWithinAt
+    · have hquot := (hf.differentiableAt (isOpen_ball.mem_nhds hz)).div
+        ((differentiableAt_id.sub_const a).pow n) (pow_ne_zero n (sub_ne_zero.mpr hza))
+      apply (hquot.congr_of_eventuallyEq ?_).differentiableWithinAt
+      filter_upwards [eventually_ne_nhds hza] with z hz
+      simp only [g, if_neg hz, id_eq]
+  refine ⟨n, hapos, g, hgd, by simpa only [g, if_pos rfl] using hja, ?_⟩
+  intro z _
+  by_cases hza : z = a
+  · simp [hza, hfa, hapos.ne']
+  · dsimp only [g]
+    rw [if_neg hza]
+    field_simp [pow_ne_zero n (sub_ne_zero.mpr hza)]
+
+/-- A nonzero holomorphic function has finitely many zeros in each smaller
+closed disk, using the pinned isolated-zero theorem. -/
+theorem disk_finite_zeros {f : ℂ → ℂ} {R ρ : ℝ} (hρR : ρ < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R)) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) R) (hfw : f w ≠ 0) :
+    (closedBall (0 : ℂ) ρ ∩ {z : ℂ | f z = 0}).Finite := by
+  have ha : AnalyticOnNhd ℂ f (ball (0 : ℂ) R) := hf.analyticOnNhd isOpen_ball
+  have hcod : {z : ℂ | f z ≠ 0} ∈ Filter.codiscreteWithin (ball (0 : ℂ) R) := by
+    rcases ha.eqOn_zero_or_eventually_ne_zero_of_preconnected
+        (convex_ball (0 : ℂ) R).isPreconnected with h | h
+    · exact False.elim (hfw (h hw))
+    · exact h
+  have hsub : closedBall (0 : ℂ) ρ ⊆ ball (0 : ℂ) R := closedBall_subset_ball hρR
+  have hclosed : IsClosed (closedBall (0 : ℂ) ρ ∩ {z : ℂ | f z = 0}) := by
+    simpa only [Set.preimage, Set.mem_singleton_iff] using
+      (hf.continuousOn.mono hsub).preimage_isClosed_of_isClosed isClosed_closedBall
+        (isClosed_singleton (x := (0 : ℂ)))
+  have hcompact : IsCompact (closedBall (0 : ℂ) ρ ∩ {z : ℂ | f z = 0}) :=
+    (isCompact_closedBall (0 : ℂ) ρ).of_isClosed_subset hclosed Set.inter_subset_left
+  apply hcompact.finite
+  apply DiscreteTopology.of_subset (discreteTopology_of_codiscreteWithin hcod)
+  intro z hz
+  exact ⟨by simpa using hz.2, closedBall_subset_ball hρR hz.1⟩
+
+private theorem factor_disk_zeros_on_finite_set {R ρ : ℝ} (hρR : ρ < R) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) R) (S : Set ℂ) (hS : S.Finite) :
+    ∀ (f : ℂ → ℂ), DifferentiableOn ℂ f (ball (0 : ℂ) R) → f w ≠ 0 →
+      S ⊆ ball (0 : ℂ) ρ → (∀ z ∈ ball (0 : ℂ) ρ, f z = 0 → z ∈ S) →
+      ∃ l : List (ℂ × ℕ), (∀ p ∈ l, p.1 ∈ ball (0 : ℂ) ρ ∧ 0 < p.2) ∧
+        ∃ g : ℂ → ℂ, DifferentiableOn ℂ g (ball (0 : ℂ) R) ∧
+          (∀ z ∈ ball (0 : ℂ) ρ, g z ≠ 0) ∧
+          ∀ z ∈ ball (0 : ℂ) R, f z = (l.map (fun p => (z - p.1)^p.2)).prod * g z := by
+  induction S, hS using Set.Finite.induction_on with
+  | empty =>
+      intro f hf _ _ hzero
+      refine ⟨[], by simp, f, hf, ?_, ?_⟩
+      · intro z hz hfz
+        exact Set.not_mem_empty z (hzero z hz hfz)
+      · simp
+  | @insert a S ha hS ih =>
+      intro f hf hfw hSb hzero
+      have hSb' : S ⊆ ball (0 : ℂ) ρ := fun z hz => hSb (Set.mem_insert_of_mem a hz)
+      by_cases hfa : f a = 0
+      · have haρ : a ∈ ball (0 : ℂ) ρ := hSb (Set.mem_insert a S)
+        obtain ⟨n, hn, j, hj, hja, hfj⟩ := remove_disk_zero hf
+          (ball_subset_ball hρR.le haρ) hfa hw hfw
+        have hjw : j w ≠ 0 := by
+          intro heq
+          exact hfw (by rw [hfj w hw, heq, mul_zero])
+        have hjzeros : ∀ z ∈ ball (0 : ℂ) ρ, j z = 0 → z ∈ S := by
+          intro z hz hjz
+          have hfz : f z = 0 := by rw [hfj z (ball_subset_ball hρR.le hz), hjz, mul_zero]
+          rcases Set.mem_insert_iff.mp (hzero z hz hfz) with hza | hzS
+          · exact False.elim (hja (hza ▸ hjz))
+          · exact hzS
+        obtain ⟨l, hl, g, hg, hgn, hjg⟩ := ih j hj hjw hSb' hjzeros
+        refine ⟨(a, n) :: l, ?_, g, hg, hgn, ?_⟩
+        · intro p hp
+          rcases List.mem_cons.mp hp with rfl | hp
+          · exact ⟨haρ, hn⟩
+          · exact hl p hp
+        · intro z hz
+          rw [hfj z hz, hjg z hz]
+          simp only [List.map_cons, List.prod_cons]
+          ring
+      · apply ih f hf hfw hSb'
+        intro z hz hfz
+        rcases Set.mem_insert_iff.mp (hzero z hz hfz) with hza | hzS
+        · exact False.elim (hfa (hza ▸ hfz))
+        · exact hzS
+
+/-- Factoring all zeros in a smaller disk leaves a zero-free holomorphic
+remainder there, with finitely many linear factors and their actual orders. -/
+theorem factor_disk_zeros {f : ℂ → ℂ} {R ρ : ℝ} (hρR : ρ < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R)) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) R) (hfw : f w ≠ 0) :
+    ∃ l : List (ℂ × ℕ), (∀ p ∈ l, p.1 ∈ ball (0 : ℂ) ρ ∧ 0 < p.2) ∧
+      ∃ g : ℂ → ℂ, DifferentiableOn ℂ g (ball (0 : ℂ) R) ∧
+        (∀ z ∈ ball (0 : ℂ) ρ, g z ≠ 0) ∧
+        ∀ z ∈ ball (0 : ℂ) R, f z = (l.map (fun p => (z - p.1)^p.2)).prod * g z := by
+  let S : Set ℂ := ball (0 : ℂ) ρ ∩ {z : ℂ | f z = 0}
+  have hS : S.Finite := (disk_finite_zeros hρR hf hw hfw).subset
+    (Set.inter_subset_inter_left _ ball_subset_closedBall)
+  exact factor_disk_zeros_on_finite_set hρR hw S hS f hf hfw
+    Set.inter_subset_left (fun z hz hfz => ⟨hz, hfz⟩)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalPoisson.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-
+The Poisson-kernel argument is adapted from Mathlib's
+Analysis/Complex/Poisson.lean at 9658bdd6ca3a5c557ef9a46698d9e7aedc6bcffd.
+Copyright (c) 2026 Stefan Kebekus. All rights reserved.
+Released under Apache 2.0 license; see third_party/mathlib/LICENSE.
+Upstream authors: Mihai Iancu, Stefan Kebekus, Sebastian Schleissinger.
+The proofs below are written against the project's pinned Mathlib APIs.
+-/
+
+/-!
+# Circle identities from the Cauchy formula
+
+The circle identities use the Cauchy integral theorem of the pinned Mathlib.
+The real-kernel decomposition is an elementary algebraic version of the
+argument in Mathlib's `Analysis/Complex/Poisson.lean` at commit
+`9658bdd6ca3a5c557ef9a46698d9e7aedc6bcffd`.
+-/
+
+noncomputable section
+
+open MeasureTheory Metric Set Filter Topology
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Normalized angular mean with complex values. -/
+def diskComplexMean (f : ℂ → ℂ) (r : ℝ) : ℂ :=
+  ((2 * Real.pi : ℝ) : ℂ)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi, f (circleMap 0 r θ)
+
+/-- Normalized angular mean with real values. -/
+def diskRealMean (f : ℂ → ℝ) (r : ℝ) : ℝ :=
+  (2 * Real.pi)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi, f (circleMap 0 r θ)
+
+private theorem circle_mem_closedBall {r : ℝ} (hr : 0 ≤ r) (θ : ℝ) :
+    circleMap 0 r θ ∈ closedBall (0 : ℂ) r := by
+  simp only [mem_closedBall, dist_zero_right, norm_circleMap_zero, abs_of_nonneg hr, le_refl]
+
+/-- Cauchy's formula expressed as a weighted angular mean. -/
+theorem diskComplexMean_cauchy {f : ℂ → ℂ} {r : ℝ} (hr : 0 < r)
+    (hf : DifferentiableOn ℂ f (closedBall (0 : ℂ) r)) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) r) :
+    diskComplexMean (fun ζ => ζ / (ζ - w) * f ζ) r = f w := by
+  have hcl : closure (ball (0 : ℂ) r) = closedBall (0 : ℂ) r := closure_ball _ hr.ne'
+  have hdiff : DiffContOnCl ℂ f (ball (0 : ℂ) r) :=
+    (hcl ▸ hf).diffContOnCl
+  have hC := hdiff.circleIntegral_sub_inv_smul hw
+  rw [circleIntegral] at hC
+  simp only [deriv_circleMap, smul_eq_mul] at hC
+  have hi : (∫ θ in (0 : ℝ)..2 * Real.pi,
+      circleMap 0 r θ * Complex.I * ((circleMap 0 r θ - w)⁻¹ * f (circleMap 0 r θ))) =
+      Complex.I * ∫ θ in (0 : ℝ)..2 * Real.pi,
+        circleMap 0 r θ / (circleMap 0 r θ - w) * f (circleMap 0 r θ) := by
+    rw [← intervalIntegral.integral_const_mul]
+    apply intervalIntegral.integral_congr
+    intro θ _
+    simp only [div_eq_mul_inv]
+    ring
+  rw [hi] at hC
+  have hC' : (∫ θ in (0 : ℝ)..2 * Real.pi,
+      circleMap 0 r θ / (circleMap 0 r θ - w) * f (circleMap 0 r θ)) =
+      ((2 * Real.pi : ℝ) : ℂ) * f w := by
+    apply mul_left_cancel₀ Complex.I_ne_zero
+    rw [hC]
+    push_cast
+    ring
+  unfold diskComplexMean
+  rw [hC', ← mul_assoc, inv_mul_cancel₀, one_mul]
+  exact_mod_cast (by positivity : (2 * Real.pi : ℝ) ≠ 0)
+
+/-- The ordinary angular mean of a holomorphic function is its center value. -/
+theorem diskComplexMean_eq_center {f : ℂ → ℂ} {r : ℝ} (hr : 0 < r)
+    (hf : DifferentiableOn ℂ f (closedBall (0 : ℂ) r)) : diskComplexMean f r = f 0 := by
+  have h := diskComplexMean_cauchy hr hf (mem_ball_self hr)
+  have heq : (∫ θ in (0 : ℝ)..2 * Real.pi,
+      circleMap 0 r θ / (circleMap 0 r θ - 0) * f (circleMap 0 r θ)) =
+      ∫ θ in (0 : ℝ)..2 * Real.pi, f (circleMap 0 r θ) := by
+    apply intervalIntegral.integral_congr
+    intro θ _
+    have hn : circleMap 0 r θ ≠ 0 := by
+      apply norm_ne_zero_iff.mp
+      rw [norm_circleMap_zero, abs_of_pos hr]
+      exact hr.ne'
+    simp [hn]
+  simpa only [diskComplexMean, heq] using h
+
+/-- Taking real parts commutes with the angular mean. -/
+theorem diskRealMean_re {f : ℂ → ℂ} {r : ℝ}
+    (hf : IntervalIntegrable (fun θ => f (circleMap 0 r θ)) volume 0 (2 * Real.pi)) :
+    diskRealMean (fun ζ => (f ζ).re) r = (diskComplexMean f r).re := by
+  unfold diskRealMean diskComplexMean
+  rw [show (∫ θ in (0 : ℝ)..2 * Real.pi, (f (circleMap 0 r θ)).re) =
+      (∫ θ in (0 : ℝ)..2 * Real.pi, f (circleMap 0 r θ)).re from
+    Complex.reCLM.intervalIntegral_comp_comm hf]
+  simp
+
+/-- The logarithmic circle identity for a zero-free disk. -/
+theorem diskRealMean_log_norm_eq_center_of_zero_free {f : ℂ → ℂ} {r R : ℝ}
+    (hr : 0 < r) (hrR : r < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R))
+    (hfn : ∀ z ∈ ball (0 : ℂ) R, f z ≠ 0) :
+    diskRealMean (fun ζ => Real.log ‖f ζ‖) r = Real.log ‖f 0‖ := by
+  obtain ⟨L, hL, hlog⟩ := exists_disk_log_norm (hr.trans hrR) hf hfn
+  have hclosed : closedBall (0 : ℂ) r ⊆ ball (0 : ℂ) R := closedBall_subset_ball hrR
+  have hLi : IntervalIntegrable (fun θ => L (circleMap 0 r θ)) volume 0 (2 * Real.pi) :=
+    (hL.continuousOn.comp (continuous_circleMap 0 r).continuousOn
+      (fun θ _ => hclosed (circle_mem_closedBall hr.le θ))).intervalIntegrable
+  have heq : diskRealMean (fun ζ => Real.log ‖f ζ‖) r = diskRealMean (fun ζ => (L ζ).re) r := by
+    unfold diskRealMean
+    congr 1
+    apply intervalIntegral.integral_congr
+    intro θ _
+    exact hlog _ (hclosed (circle_mem_closedBall hr.le θ))
+  rw [heq, diskRealMean_re hLi, diskComplexMean_eq_center hr (hL.mono hclosed)]
+  exact (hlog 0 (mem_ball_self (hr.trans hrR))).symm
+
+private theorem disk_aux_den_ne_zero {r : ℝ} (hr : 0 < r) {w : ℂ}
+    (hw : ‖w‖ < r) {z : ℂ} (hz : ‖z‖ ≤ r) :
+    ((r : ℂ) ^ 2 - (starRingEnd ℂ) w * z) ≠ 0 := by
+  intro heq
+  have heq' : (r : ℂ) ^ 2 = (starRingEnd ℂ) w * z := sub_eq_zero.mp heq
+  have hn := congrArg norm heq'
+  simp only [norm_pow, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hr,
+    norm_mul, Complex.norm_conj] at hn
+  have hmul := mul_le_mul_of_nonneg_left hz (norm_nonneg w)
+  nlinarith
+
+private theorem disk_kernel_decomposition {r : ℝ} (hr : 0 < r) {w ζ : ℂ}
+    (hw : ‖w‖ < r) (hζ : ‖ζ‖ = r) :
+    ((((ζ + w) / (ζ - w)).re : ℝ) : ℂ) =
+      ζ / (ζ - w) + ((starRingEnd ℂ) w * ζ) / ((r : ℂ)^2 - (starRingEnd ℂ) w * ζ) := by
+  have hζn : ζ ≠ 0 := norm_ne_zero_iff.mp (by rw [hζ]; exact hr.ne')
+  have hζw : ζ - w ≠ 0 := sub_ne_zero.mpr (by intro heq; subst ζ; linarith)
+  have hcζw : (starRingEnd ℂ) ζ - (starRingEnd ℂ) w ≠ 0 := by
+    simpa only [← map_sub, map_ne_zero] using hζw
+  have haux := disk_aux_den_ne_zero hr hw hζ.le
+  have hζconj : ζ * (starRingEnd ℂ) ζ = (r : ℂ)^2 := by
+    rw [Complex.mul_conj, Complex.normSq_eq_norm_sq, hζ]
+    push_cast
+    rfl
+  have hconj : ((starRingEnd ℂ) ζ + (starRingEnd ℂ) w) /
+      ((starRingEnd ℂ) ζ - (starRingEnd ℂ) w) =
+      ((r : ℂ)^2 + (starRingEnd ℂ) w * ζ) / ((r : ℂ)^2 - (starRingEnd ℂ) w * ζ) := by
+    calc
+      _ = (((starRingEnd ℂ) ζ + (starRingEnd ℂ) w) * ζ) /
+          (((starRingEnd ℂ) ζ - (starRingEnd ℂ) w) * ζ) := by
+        rw [mul_div_mul_right _ _ hζn]
+      _ = _ := by
+        congr 1
+        · calc
+            _ = ζ * (starRingEnd ℂ) ζ + (starRingEnd ℂ) w * ζ := by ring
+            _ = _ := by rw [hζconj]
+        · calc
+            _ = ζ * (starRingEnd ℂ) ζ - (starRingEnd ℂ) w * ζ := by ring
+            _ = _ := by rw [hζconj]
+  rw [Complex.re_eq_add_conj, map_div₀, map_add, map_sub, hconj]
+  field_simp
+  ring
+
+private theorem circle_continuous_of_continuousOn_closedBall {f : ℂ → ℂ} {r : ℝ}
+    (hr : 0 ≤ r) (hf : ContinuousOn f (closedBall (0 : ℂ) r)) :
+    Continuous (fun θ : ℝ => f (circleMap 0 r θ)) := by
+  apply continuous_iff_continuousOn_univ.mpr
+  exact hf.comp (continuous_circleMap 0 r).continuousOn
+    (fun θ _ => circle_mem_closedBall hr θ)
+
+/-- The real Poisson kernel reproduces a holomorphic function, directly from
+Cauchy's formula and an analytic reflected kernel vanishing at the origin. -/
+theorem diskComplexMean_poisson {f : ℂ → ℂ} {r : ℝ} (hr : 0 < r)
+    (hf : DifferentiableOn ℂ f (closedBall (0 : ℂ) r)) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) r) :
+    diskComplexMean (fun ζ => (((ζ + w) / (ζ - w)).re : ℂ) * f ζ) r = f w := by
+  have hwr : ‖w‖ < r := by simpa only [mem_ball, dist_zero_right] using hw
+  let a : ℂ → ℂ := fun z => (starRingEnd ℂ) w * z / ((r : ℂ)^2 - (starRingEnd ℂ) w * z)
+  have ha : DifferentiableOn ℂ a (closedBall (0 : ℂ) r) := by
+    apply DifferentiableOn.div
+      ((differentiable_const _).mul differentiable_id).differentiableOn
+      ((differentiable_const _).sub ((differentiable_const _).mul differentiable_id)).differentiableOn
+    intro z hz
+    exact disk_aux_den_ne_zero hr hwr (by simpa only [mem_closedBall, dist_zero_right] using hz)
+  have hmeanA : diskComplexMean (fun ζ => a ζ * f ζ) r = 0 := by
+    rw [diskComplexMean_eq_center hr (ha.mul hf)]
+    simp [a]
+  have hmeanF := diskComplexMean_cauchy hr hf hw
+  have hfc := circle_continuous_of_continuousOn_closedBall hr.le hf.continuousOn
+  have hkc : Continuous (fun θ => circleMap 0 r θ / (circleMap 0 r θ - w)) := by
+    apply (continuous_circleMap 0 r).div ((continuous_circleMap 0 r).sub continuous_const)
+    intro θ heq
+    have hnorm : ‖circleMap 0 r θ‖ = r := by rw [norm_circleMap_zero, abs_of_pos hr]
+    rw [sub_eq_zero.mp heq] at hnorm
+    linarith
+  have hfirst := (hkc.mul hfc).intervalIntegrable (μ := volume) (0 : ℝ) (2 * Real.pi)
+  have hsecond := (circle_continuous_of_continuousOn_closedBall hr.le (ha.mul hf).continuousOn).intervalIntegrable (μ := volume) (0 : ℝ) (2 * Real.pi)
+  have heq : diskComplexMean (fun ζ => (((ζ + w) / (ζ - w)).re : ℂ) * f ζ) r =
+      diskComplexMean (fun ζ => ζ / (ζ - w) * f ζ) r +
+        diskComplexMean (fun ζ => a ζ * f ζ) r := by
+    unfold diskComplexMean
+    rw [← mul_add, ← intervalIntegral.integral_add hfirst hsecond]
+    congr 1
+    apply intervalIntegral.integral_congr
+    intro θ _
+    dsimp only
+    rw [disk_kernel_decomposition (ζ := circleMap 0 r θ) hr hwr
+      (by rw [norm_circleMap_zero, abs_of_pos hr]), add_mul]
+  rw [heq, hmeanF, hmeanA, add_zero]
+
+/-- The weighted Poisson circle identity for the real part of a holomorphic function. -/
+theorem diskRealMean_poisson_re {f : ℂ → ℂ} {r : ℝ} (hr : 0 < r)
+    (hf : DifferentiableOn ℂ f (closedBall (0 : ℂ) r)) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) r) :
+    diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * (f ζ).re) r = (f w).re := by
+  have hfc := circle_continuous_of_continuousOn_closedBall hr.le hf.continuousOn
+  have hkc : Continuous (fun θ => ((circleMap 0 r θ + w) / (circleMap 0 r θ - w)).re) := by
+    apply (Complex.continuous_re.comp (f := fun θ => (circleMap 0 r θ + w) / (circleMap 0 r θ - w)))
+    apply ((continuous_circleMap 0 r).add continuous_const).div
+      ((continuous_circleMap 0 r).sub continuous_const)
+    intro θ heq
+    have hnorm : ‖circleMap 0 r θ‖ = r := by rw [norm_circleMap_zero, abs_of_pos hr]
+    have hwr : ‖w‖ < r := by simpa only [mem_ball, dist_zero_right] using hw
+    rw [sub_eq_zero.mp heq] at hnorm
+    linarith
+  have hint := ((Complex.continuous_ofReal.comp hkc).mul hfc).intervalIntegrable (μ := volume) (0 : ℝ) (2 * Real.pi)
+  have h := diskRealMean_re (f := fun ζ => (((ζ + w) / (ζ - w)).re : ℂ) * f ζ) (r := r) hint
+  simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul, sub_zero] at h
+  rw [h, diskComplexMean_poisson hr hf hw]
+
+/-- On a zero-free disk, the logarithm of the norm satisfies the Poisson identity. -/
+theorem diskRealMean_poisson_log_norm_of_zero_free {f : ℂ → ℂ} {r R : ℝ}
+    (hr : 0 < r) (hrR : r < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R))
+    (hfn : ∀ z ∈ ball (0 : ℂ) R, f z ≠ 0) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) r) :
+    diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖f ζ‖) r = Real.log ‖f w‖ := by
+  obtain ⟨L, hL, hlog⟩ := exists_disk_log_norm (hr.trans hrR) hf hfn
+  have hclosed : closedBall (0 : ℂ) r ⊆ ball (0 : ℂ) R := closedBall_subset_ball hrR
+  have heq : diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖f ζ‖) r =
+      diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * (L ζ).re) r := by
+    unfold diskRealMean
+    congr 1
+    apply intervalIntegral.integral_congr
+    intro θ _
+    dsimp only
+    rw [hlog _ (hclosed (circle_mem_closedBall hr.le θ))]
+  rw [heq, diskRealMean_poisson_re hr (hL.mono hclosed) hw]
+  exact (hlog _ (ball_subset_ball hrR.le hw)).symm
+
+private theorem reflection_normSq (c : ℝ) (a z : ℂ) :
+    Complex.normSq (1 - (c : ℂ) * (starRingEnd ℂ) a * z) =
+      1 + c^2 * Complex.normSq a * Complex.normSq z - 2 * c * (z * (starRingEnd ℂ) a).re := by
+  simp only [Complex.normSq_apply, Complex.sub_re, Complex.sub_im, Complex.mul_re,
+    Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im, Complex.conj_re,
+    Complex.conj_im, Complex.one_re, Complex.one_im]
+  ring
+
+private theorem reflection_circle_norm {r : ℝ} (hr : 0 < r) (a ζ : ℂ)
+    (hζ : ‖ζ‖ = r) :
+    ‖ζ - a‖ = r * ‖1 - (((r^2)⁻¹ : ℝ) : ℂ) * (starRingEnd ℂ) a * ζ‖ := by
+  apply (sq_eq_sq₀ (norm_nonneg _) (mul_nonneg hr.le (norm_nonneg _))).mp
+  rw [mul_pow, ← Complex.normSq_eq_norm_sq, ← Complex.normSq_eq_norm_sq,
+    reflection_normSq, Complex.normSq_sub, Complex.normSq_eq_norm_sq ζ, hζ]
+  field_simp
+  ring
+
+private theorem reflection_norm_bound {r : ℝ} (hr : 0 < r) {a w : ℂ}
+    (ha : ‖a‖ ≤ r) (hw : ‖w‖ ≤ r) :
+    ‖w - a‖ ≤ r * ‖1 - (((r^2)⁻¹ : ℝ) : ℂ) * (starRingEnd ℂ) a * w‖ := by
+  apply (sq_le_sq₀ (norm_nonneg _) (mul_nonneg hr.le (norm_nonneg _))).mp
+  rw [mul_pow, ← Complex.normSq_eq_norm_sq, ← Complex.normSq_eq_norm_sq,
+    reflection_normSq, Complex.normSq_sub]
+  have haSq : Complex.normSq a ≤ r^2 := by rw [Complex.normSq_eq_norm_sq]; nlinarith [norm_nonneg a]
+  have hwSq : Complex.normSq w ≤ r^2 := by rw [Complex.normSq_eq_norm_sq]; nlinarith [norm_nonneg w]
+  have hprod : 0 ≤ (r^2 - Complex.normSq a) * (r^2 - Complex.normSq w) :=
+    mul_nonneg (sub_nonneg.mpr haSq) (sub_nonneg.mpr hwSq)
+  have hpowpos : 0 < r^2 := pow_pos hr _
+  have hid : r^2 * (1 + ((r^2)⁻¹)^2 * Complex.normSq a * Complex.normSq w -
+      2 * (r^2)⁻¹ * (w * (starRingEnd ℂ) a).re) -
+      (Complex.normSq w + Complex.normSq a - 2 * (w * (starRingEnd ℂ) a).re) =
+      ((r^2 - Complex.normSq a) * (r^2 - Complex.normSq w)) / r^2 := by
+    field_simp [hr.ne']
+    ring
+  apply sub_nonneg.mp
+  rw [hid]
+  exact div_nonneg hprod hpowpos.le
+
+private theorem exists_zero_free_larger_disk {f : ℂ → ℂ} {r : ℝ} (hr : 0 < r)
+    (hf : Continuous f) (hfn : ∀ z ∈ closedBall (0 : ℂ) r, f z ≠ 0) :
+    ∃ R : ℝ, r < R ∧ ∀ z ∈ ball (0 : ℂ) R, f z ≠ 0 := by
+  have hopen : IsOpen {z : ℂ | f z ≠ 0} := (isClosed_eq hf continuous_const).isOpen_compl
+  obtain ⟨ε, hε, hsub⟩ := (isCompact_closedBall (0 : ℂ) r).exists_thickening_subset_open hopen hfn
+  rw [thickening_closedBall hε hr.le] at hsub
+  exact ⟨ε + r, by linarith, hsub⟩
+
+/-- The logarithmic mean identity also holds under the concrete assumption that
+an entire function has no zeros on the whole closed integration disk. -/
+theorem diskRealMean_log_norm_eq_center_of_entire_zero_free {f : ℂ → ℂ} {r : ℝ}
+    (hr : 0 < r) (hf : Differentiable ℂ f)
+    (hfn : ∀ z ∈ closedBall (0 : ℂ) r, f z ≠ 0) :
+    diskRealMean (fun ζ => Real.log ‖f ζ‖) r = Real.log ‖f 0‖ := by
+  obtain ⟨R, hrR, hRfn⟩ := exists_zero_free_larger_disk hr hf.continuous hfn
+  exact diskRealMean_log_norm_eq_center_of_zero_free hr hrR hf.differentiableOn hRfn
+
+/-- The logarithmic Poisson identity for an entire function zero-free on the
+closed integration disk. -/
+theorem diskRealMean_poisson_log_norm_of_entire_zero_free {f : ℂ → ℂ} {r : ℝ}
+    (hr : 0 < r) (hf : Differentiable ℂ f)
+    (hfn : ∀ z ∈ closedBall (0 : ℂ) r, f z ≠ 0) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) r) :
+    diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖f ζ‖) r = Real.log ‖f w‖ := by
+  obtain ⟨R, hrR, hRfn⟩ := exists_zero_free_larger_disk hr hf.continuous hfn
+  exact diskRealMean_poisson_log_norm_of_zero_free hr hrR hf.differentiableOn hRfn hw
+
+private theorem circle_poissonKernel_continuous {r : ℝ} (hr : 0 < r) {w : ℂ}
+    (hw : ‖w‖ < r) :
+    Continuous (fun θ => ((circleMap 0 r θ + w) / (circleMap 0 r θ - w)).re) := by
+  apply (Complex.continuous_re.comp (f := fun θ => (circleMap 0 r θ + w) / (circleMap 0 r θ - w)))
+  apply ((continuous_circleMap 0 r).add continuous_const).div
+    ((continuous_circleMap 0 r).sub continuous_const)
+  intro θ heq
+  have hnorm : ‖circleMap 0 r θ‖ = r := by rw [norm_circleMap_zero, abs_of_pos hr]
+  rw [sub_eq_zero.mp heq] at hnorm
+  linarith
+
+private theorem diskRealMean_add {f g : ℂ → ℝ} {r : ℝ}
+    (hf : IntervalIntegrable (fun θ => f (circleMap 0 r θ)) volume 0 (2 * Real.pi))
+    (hg : IntervalIntegrable (fun θ => g (circleMap 0 r θ)) volume 0 (2 * Real.pi)) :
+    diskRealMean (fun ζ => f ζ + g ζ) r = diskRealMean f r + diskRealMean g r := by
+  unfold diskRealMean
+  rw [intervalIntegral.integral_add hf hg, mul_add]
+
+private theorem diskRealMean_const_mul (c : ℝ) (f : ℂ → ℝ) (r : ℝ) :
+    diskRealMean (fun ζ => c * f ζ) r = c * diskRealMean f r := by
+  unfold diskRealMean
+  rw [intervalIntegral.integral_const_mul]
+  ring
+
+private theorem diskRealMean_poisson_const {r : ℝ} (hr : 0 < r) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) r) (c : ℝ) :
+    diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * c) r = c := by
+  simpa only [Complex.ofReal_re] using diskRealMean_poisson_re hr
+    (f := fun _ => (c : ℂ)) (differentiable_const _).differentiableOn hw
+
+private theorem reflection_zero_free {r : ℝ} (hr : 0 < r) {a : ℂ} (ha : ‖a‖ < r) :
+    ∀ z ∈ closedBall (0 : ℂ) r,
+      1 - (((r^2)⁻¹ : ℝ) : ℂ) * (starRingEnd ℂ) a * z ≠ 0 := by
+  intro z hz heq
+  have hn := congrArg norm (sub_eq_zero.mp heq)
+  simp only [norm_one, norm_mul, Complex.norm_real, Real.norm_eq_abs,
+    abs_inv, abs_pow, abs_of_pos hr, Complex.norm_conj] at hn
+  field_simp [hr.ne'] at hn
+  have hzNorm : ‖z‖ ≤ r := by simpa only [mem_closedBall, dist_zero_right] using hz
+  have hmul := mul_le_mul_of_nonneg_left hzNorm (norm_nonneg a)
+  nlinarith
+
+private theorem log_linearFactor_integrable {r : ℝ} (hr : 0 < r) {a : ℂ}
+    (ha : ‖a‖ ≠ r) :
+    IntervalIntegrable (fun θ => Real.log ‖circleMap 0 r θ - a‖) volume 0 (2 * Real.pi) := by
+  apply Continuous.intervalIntegrable
+  apply ((continuous_circleMap 0 r).sub continuous_const).norm.log
+  intro θ heq
+  have hza : circleMap 0 r θ = a := sub_eq_zero.mp (norm_eq_zero.mp heq)
+  have h := norm_circleMap_zero r θ
+  rw [hza, abs_of_pos hr] at h
+  exact ha h
+
+/-- A single linear zero contributes a nonnegative correction to the logarithmic
+Poisson formula. The reflected factor proves this even when the zero lies inside
+rather than outside the integration disk. -/
+theorem log_linearFactor_le_diskRealMean_poisson {r : ℝ} (hr : 0 < r) {a w : ℂ}
+    (ha : ‖a‖ ≠ r) (hw : w ∈ ball (0 : ℂ) r) (hwa : w ≠ a) :
+    Real.log ‖w - a‖ ≤
+      diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖ζ - a‖) r := by
+  rcases lt_or_gt_of_ne ha with ha | ha
+  · let b : ℂ → ℂ := fun z => 1 - (((r^2)⁻¹ : ℝ) : ℂ) * (starRingEnd ℂ) a * z
+    have hb : Differentiable ℂ b := by fun_prop
+    have hbn : ∀ z ∈ closedBall (0 : ℂ) r, b z ≠ 0 := reflection_zero_free hr ha
+    have hwr : ‖w‖ < r := by simpa only [mem_ball, dist_zero_right] using hw
+    have hker := circle_poissonKernel_continuous hr hwr
+    have hbθ := circle_continuous_of_continuousOn_closedBall hr.le hb.continuous.continuousOn
+    have hlogbθ := hbθ.norm.log (fun θ => norm_ne_zero_iff.mpr (hbn _ (circle_mem_closedBall hr.le θ)))
+    have hconsti : IntervalIntegrable (fun θ =>
+        ((circleMap 0 r θ + w) / (circleMap 0 r θ - w)).re * Real.log r) volume 0 (2 * Real.pi) :=
+      (hker.mul continuous_const).intervalIntegrable (μ := volume) (0 : ℝ) (2 * Real.pi)
+    have hlogbi := (hker.mul hlogbθ).intervalIntegrable (μ := volume) (0 : ℝ) (2 * Real.pi)
+    have hmean : diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖ζ - a‖) r =
+        Real.log r + Real.log ‖b w‖ := by
+      have heq : diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖ζ - a‖) r =
+          diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log r +
+            ((ζ + w) / (ζ - w)).re * Real.log ‖b ζ‖) r := by
+        unfold diskRealMean
+        congr 1
+        apply intervalIntegral.integral_congr
+        intro θ _
+        dsimp only
+        rw [reflection_circle_norm hr a (circleMap 0 r θ)
+          (by rw [norm_circleMap_zero, abs_of_pos hr]), Real.log_mul hr.ne'
+            (norm_ne_zero_iff.mpr (hbn _ (circle_mem_closedBall hr.le θ))), mul_add]
+      rw [heq, diskRealMean_add
+        (f := fun ζ => ((ζ + w) / (ζ - w)).re * Real.log r)
+        (g := fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖b ζ‖) hconsti hlogbi,
+        diskRealMean_poisson_const hr hw (Real.log r),
+        diskRealMean_poisson_log_norm_of_entire_zero_free hr hb hbn hw]
+    rw [hmean, ← Real.log_mul hr.ne' (norm_ne_zero_iff.mpr (hbn w (ball_subset_closedBall hw)))]
+    apply Real.log_le_log (norm_pos_iff.mpr (sub_ne_zero.mpr hwa))
+    exact reflection_norm_bound hr ha.le hwr.le
+  · have hf : Differentiable ℂ (fun z => z - a) := differentiable_id.sub_const a
+    have hfn : ∀ z ∈ closedBall (0 : ℂ) r, z - a ≠ 0 := by
+      intro z hz hzero
+      have hzNorm : ‖z‖ ≤ r := by simpa only [mem_closedBall, dist_zero_right] using hz
+      rw [sub_eq_zero.mp hzero] at hzNorm
+      linarith
+    exact (diskRealMean_poisson_log_norm_of_entire_zero_free hr hf hfn hw).symm.le
+
+private theorem prod_linearFactors_ne_zero (l : List (ℂ × ℕ)) (z : ℂ)
+    (hn : ∀ p ∈ l, z ≠ p.1) : (l.map (fun p => (z - p.1)^p.2)).prod ≠ 0 := by
+  induction l with
+  | nil => simp
+  | cons p l ih =>
+      simp only [List.map_cons, List.prod_cons]
+      exact mul_ne_zero (pow_ne_zero _ (sub_ne_zero.mpr (hn p (List.mem_cons_self))))
+        (ih (fun p hp => hn p (List.mem_cons_of_mem _ hp)))
+
+private theorem log_norm_linearFactors (l : List (ℂ × ℕ)) (z : ℂ)
+    (hn : ∀ p ∈ l, z ≠ p.1) :
+    Real.log ‖(l.map (fun p => (z - p.1)^p.2)).prod‖ =
+      (l.map (fun p => (p.2 : ℝ) * Real.log ‖z - p.1‖)).sum := by
+  induction l with
+  | nil => simp
+  | cons p l ih =>
+      have hp := hn p List.mem_cons_self
+      have hl : ∀ p ∈ l, z ≠ p.1 := fun p hp => hn p (List.mem_cons_of_mem _ hp)
+      simp only [List.map_cons, List.prod_cons, norm_mul, List.sum_cons]
+      rw [Real.log_mul (norm_ne_zero_iff.mpr (pow_ne_zero _ (sub_ne_zero.mpr hp)))
+        (norm_ne_zero_iff.mpr (prod_linearFactors_ne_zero l z hl)), norm_pow, Real.log_pow, ih hl]
+
+private theorem roots_ne_of_factorization (l : List (ℂ × ℕ)) (g : ℂ → ℂ) (z : ℂ)
+    (hn : ∀ p ∈ l, 0 < p.2) (hprod : (l.map (fun p => (z - p.1)^p.2)).prod * g z ≠ 0) :
+    (∀ p ∈ l, z ≠ p.1) ∧ g z ≠ 0 := by
+  obtain ⟨hpoly, hg⟩ := mul_ne_zero_iff.mp hprod
+  refine ⟨?_, hg⟩
+  intro p hp hzp
+  apply hpoly
+  apply List.prod_eq_zero_iff.mpr
+  apply List.mem_map.mpr
+  exact ⟨p, hp, by simp [hzp, (hn p hp).ne']⟩
+
+private theorem diskRealMean_list_sum {ι : Type*} (l : List ι) (f : ι → ℂ → ℝ) (r : ℝ)
+    (hint : ∀ p ∈ l, IntervalIntegrable (fun θ => f p (circleMap 0 r θ)) volume 0 (2 * Real.pi)) :
+    IntervalIntegrable (fun θ => (l.map (fun p => f p (circleMap 0 r θ))).sum) volume 0 (2 * Real.pi) ∧
+      diskRealMean (fun ζ => (l.map (fun p => f p ζ)).sum) r = (l.map (fun p => diskRealMean (f p) r)).sum := by
+  induction l with
+  | nil => simp [diskRealMean]
+  | cons p l ih =>
+      have hp := hint p List.mem_cons_self
+      obtain ⟨hli, hmean⟩ := ih (fun p hp => hint p (List.mem_cons_of_mem _ hp))
+      refine ⟨by simpa only [List.map_cons, List.sum_cons] using hp.add hli, ?_⟩
+      simp only [List.map_cons, List.sum_cons]
+      rw [diskRealMean_add (f := f p) (g := fun ζ => (l.map (fun p => f p ζ)).sum) hp hli, hmean]
+
+/-- The logarithmic Poisson inequality for an arbitrary holomorphic function,
+including functions with zeros inside the disk. Only boundary zeros and a zero
+at the evaluation point are excluded; zeros inside are factored with their actual orders. -/
+theorem log_norm_le_diskRealMean_poisson {f : ℂ → ℂ} {r R : ℝ}
+    (hr : 0 < r) (hrR : r < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R)) {w : ℂ}
+    (hw : w ∈ ball (0 : ℂ) r) (hfw : f w ≠ 0)
+    (hfn : ∀ θ : ℝ, f (circleMap 0 r θ) ≠ 0) :
+    Real.log ‖f w‖ ≤ diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖f ζ‖) r := by
+  let ρ : ℝ := (r + R) / 2
+  have hrρ : r < ρ := by dsimp [ρ]; linarith
+  have hρR : ρ < R := by dsimp [ρ]; linarith
+  have hρsub : ball (0 : ℂ) ρ ⊆ ball (0 : ℂ) R := ball_subset_ball hρR.le
+  have hcircleρ : ∀ θ, circleMap 0 r θ ∈ ball (0 : ℂ) ρ :=
+    fun θ => closedBall_subset_ball hrρ (circle_mem_closedBall hr.le θ)
+  obtain ⟨l, hl, g, hg, hgn, hfg⟩ := factor_disk_zeros hρR hf
+    (ball_subset_ball hrR.le hw) hfw
+  have horders : ∀ p ∈ l, 0 < p.2 := fun p hp => (hl p hp).2
+  have hwfacts := roots_ne_of_factorization l g w horders
+    (by rw [← hfg w (ball_subset_ball hrR.le hw)]; exact hfw)
+  have hcirclefacts : ∀ θ, (∀ p ∈ l, circleMap 0 r θ ≠ p.1) ∧ g (circleMap 0 r θ) ≠ 0 := by
+    intro θ
+    apply roots_ne_of_factorization l g _ horders
+    rw [← hfg _ (hρsub (hcircleρ θ))]
+    exact hfn θ
+  have hrootr : ∀ p ∈ l, ‖p.1‖ ≠ r := by
+    intro p hp hnorm
+    have hcircle : circleMap 0 r p.1.arg = p.1 := by
+      rw [circleMap_zero, ← hnorm]
+      exact Complex.norm_mul_exp_arg_mul_I _
+    exact (hcirclefacts p.1.arg).1 p hp hcircle
+  have hlogw : Real.log ‖f w‖ =
+      (l.map (fun p => (p.2 : ℝ) * Real.log ‖w - p.1‖)).sum + Real.log ‖g w‖ := by
+    rw [hfg w (ball_subset_ball hrR.le hw), norm_mul,
+      Real.log_mul (norm_ne_zero_iff.mpr (prod_linearFactors_ne_zero l w hwfacts.1))
+        (norm_ne_zero_iff.mpr hwfacts.2), log_norm_linearFactors l w hwfacts.1]
+  have hlogcircle : ∀ θ, Real.log ‖f (circleMap 0 r θ)‖ =
+      (l.map (fun p => (p.2 : ℝ) * Real.log ‖circleMap 0 r θ - p.1‖)).sum +
+        Real.log ‖g (circleMap 0 r θ)‖ := by
+    intro θ
+    rw [hfg _ (hρsub (hcircleρ θ)), norm_mul,
+      Real.log_mul (norm_ne_zero_iff.mpr (prod_linearFactors_ne_zero l _ (hcirclefacts θ).1))
+        (norm_ne_zero_iff.mpr (hcirclefacts θ).2), log_norm_linearFactors l _ (hcirclefacts θ).1]
+  have hwr : ‖w‖ < r := by simpa only [mem_ball, dist_zero_right] using hw
+  have hker := circle_poissonKernel_continuous hr hwr
+  let T : (ℂ × ℕ) → ℂ → ℝ := fun p ζ =>
+    (p.2 : ℝ) * (((ζ + w) / (ζ - w)).re * Real.log ‖ζ - p.1‖)
+  have hTi : ∀ p ∈ l, IntervalIntegrable (fun θ => T p (circleMap 0 r θ)) volume 0 (2 * Real.pi) := by
+    intro p hp
+    simpa only [T, mul_comm] using
+      ((log_linearFactor_integrable hr (hrootr p hp)).mul_continuousOn hker.continuousOn).const_mul (p.2 : ℝ)
+  obtain ⟨hsumi, hsummean⟩ := diskRealMean_list_sum l T r hTi
+  have hgθ : Continuous (fun θ => g (circleMap 0 r θ)) := by
+    apply continuous_iff_continuousOn_univ.mpr
+    exact hg.continuousOn.comp (continuous_circleMap 0 r).continuousOn
+      (fun θ _ => hρsub (hcircleρ θ))
+  have hgi := (hker.mul (hgθ.norm.log
+    (fun θ => norm_ne_zero_iff.mpr (hcirclefacts θ).2))).intervalIntegrable
+      (μ := volume) (0 : ℝ) (2 * Real.pi)
+  have heq : diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖f ζ‖) r =
+      (l.map (fun p => (p.2 : ℝ) * diskRealMean
+        (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖ζ - p.1‖) r)).sum + Real.log ‖g w‖ := by
+    have hcircleEq : diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖f ζ‖) r =
+        diskRealMean (fun ζ => (l.map (fun p => T p ζ)).sum +
+          ((ζ + w) / (ζ - w)).re * Real.log ‖g ζ‖) r := by
+      unfold diskRealMean
+      congr 1
+      apply intervalIntegral.integral_congr
+      intro θ _
+      dsimp only
+      rw [hlogcircle θ, mul_add, ← List.sum_map_mul_left]
+      congr 1
+      apply congrArg List.sum
+      apply List.map_congr_left
+      intro p _
+      dsimp only [T]
+      ring
+    rw [hcircleEq, diskRealMean_add
+      (f := fun ζ => (l.map (fun p => T p ζ)).sum)
+      (g := fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖g ζ‖) hsumi hgi, hsummean,
+      diskRealMean_poisson_log_norm_of_zero_free hr hrρ (hg.mono hρsub) hgn hw]
+    congr 1
+    apply congrArg List.sum
+    apply List.map_congr_left
+    intro p _
+    exact diskRealMean_const_mul _ _ _
+  rw [hlogw, heq]
+  apply add_le_add_right
+  apply List.sum_le_sum
+  intro p hp
+  exact mul_le_mul_of_nonneg_left
+    (log_linearFactor_le_diskRealMean_poisson hr (hrootr p hp) hw (hwfacts.1 p hp)) (by positivity)
+
+/-- Jensen's lower bound, obtained by evaluating the proved logarithmic Poisson
+inequality at the center. -/
+theorem jensen_diskRealMean_log_norm {f : ℂ → ℂ} {r R : ℝ}
+    (hr : 0 < r) (hrR : r < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R)) (hf0 : f 0 ≠ 0)
+    (hfn : ∀ θ : ℝ, f (circleMap 0 r θ) ≠ 0) :
+    Real.log ‖f 0‖ ≤ diskRealMean (fun ζ => Real.log ‖f ζ‖) r := by
+  have h := log_norm_le_diskRealMean_poisson hr hrR hf (mem_ball_self hr) hf0 hfn
+  have heq : diskRealMean (fun ζ => ((ζ + 0) / (ζ - 0)).re * Real.log ‖f ζ‖) r =
+      diskRealMean (fun ζ => Real.log ‖f ζ‖) r := by
+    unfold diskRealMean
+    congr 1
+    apply intervalIntegral.integral_congr
+    intro θ _
+    have hn : circleMap 0 r θ ≠ 0 := by
+      apply norm_ne_zero_iff.mp
+      rw [norm_circleMap_zero, abs_of_pos hr]
+      exact hr.ne'
+    simp [hn]
+  rw [heq] at h
+  exact h
+
+private theorem disk_continuous_posLog_norm {X : Type*} [TopologicalSpace X]
+    {f : X → ℂ} (hf : Continuous f) : Continuous (fun z => Real.posLog ‖f z‖) := by
+  have heq : ∀ z : ℂ, Real.posLog ‖z‖ = Real.log (max 1 ‖z‖) := by
+    intro z
+    by_cases hz : ‖z‖ ≤ 1
+    · rw [max_eq_left hz, Real.log_one]
+      exact (Real.posLog_eq_zero_iff _).mpr (by simpa only [abs_norm] using hz)
+    · rw [max_eq_right (le_of_not_ge hz)]
+      exact Real.posLog_eq_log (by simpa only [abs_norm] using le_of_not_ge hz)
+  simp_rw [heq]
+  exact (continuous_const.max hf.norm).log fun z =>
+    ne_of_gt (lt_of_lt_of_le zero_lt_one (le_max_left _ _))
+
+private theorem disk_poissonKernel_nonneg {r : ℝ} {ζ w : ℂ}
+    (hζ : ‖ζ‖ = r) (hw : ‖w‖ ≤ r) : 0 ≤ ((ζ + w) / (ζ - w)).re := by
+  have hnum : (ζ + w).re * (ζ - w).re + (ζ + w).im * (ζ - w).im =
+      Complex.normSq ζ - Complex.normSq w := by
+    simp only [Complex.add_re, Complex.sub_re, Complex.add_im, Complex.sub_im,
+      Complex.normSq_apply]
+    ring
+  rw [Complex.div_re, ← add_div, hnum]
+  apply div_nonneg _ (Complex.normSq_nonneg _)
+  rw [Complex.normSq_eq_norm_sq, Complex.normSq_eq_norm_sq, hζ]
+  nlinarith [norm_nonneg w]
+
+private theorem disk_poissonKernel_le_three {r : ℝ} (hr : 0 < r) {ζ w : ℂ}
+    (hζ : ‖ζ‖ = r) (hw : 2 * ‖w‖ ≤ r) : ((ζ + w) / (ζ - w)).re ≤ 3 := by
+  apply (Complex.re_le_norm _).trans
+  have hsub := norm_sub_norm_le ζ w
+  rw [hζ] at hsub
+  have hdenpos : 0 < ‖ζ - w‖ := by linarith [norm_nonneg w]
+  rw [norm_div]
+  apply (div_le_iff₀ hdenpos).mpr
+  have hnum := norm_add_le ζ w
+  rw [hζ] at hnum
+  linarith
+
+private theorem diskRealMean_mono {f g : ℂ → ℝ} {r : ℝ}
+    (hf : IntervalIntegrable (fun θ => f (circleMap 0 r θ)) volume 0 (2 * Real.pi))
+    (hg : IntervalIntegrable (fun θ => g (circleMap 0 r θ)) volume 0 (2 * Real.pi))
+    (hle : ∀ θ, f (circleMap 0 r θ) ≤ g (circleMap 0 r θ)) :
+    diskRealMean f r ≤ diskRealMean g r := by
+  unfold diskRealMean
+  apply mul_le_mul_of_nonneg_left _ (by positivity)
+  exact intervalIntegral.integral_mono (by positivity) hf hg hle
+
+private theorem diskRealMean_nonneg {f : ℂ → ℝ} {r : ℝ}
+    (hf : ∀ θ, 0 ≤ f (circleMap 0 r θ)) : 0 ≤ diskRealMean f r := by
+  unfold diskRealMean
+  apply mul_nonneg (by positivity)
+  exact intervalIntegral.integral_nonneg (by positivity) (fun θ _ => hf θ)
+
+/-- The actual positive-log Poisson inequality, uniform with constant three
+when the integration radius is at least twice the evaluation radius. Boundary
+zeros are avoided by choosing a zero-free radius; interior zeros are allowed. -/
+theorem posLog_norm_le_three_diskRealMean {f : ℂ → ℂ} {r R : ℝ}
+    (hr : 0 < r) (hrR : r < R)
+    (hf : DifferentiableOn ℂ f (ball (0 : ℂ) R)) {w : ℂ}
+    (hw : 2 * ‖w‖ ≤ r)
+    (hfn : ∀ θ : ℝ, f (circleMap 0 r θ) ≠ 0) :
+    Real.posLog ‖f w‖ ≤ 3 * diskRealMean (fun ζ => Real.posLog ‖f ζ‖) r := by
+  have hwr : ‖w‖ < r := by linarith [norm_nonneg w]
+  have hwmem : w ∈ ball (0 : ℂ) r := by simpa only [mem_ball, dist_zero_right] using hwr
+  have hmeanpos : 0 ≤ diskRealMean (fun ζ => Real.posLog ‖f ζ‖) r :=
+    diskRealMean_nonneg (fun _ => Real.posLog_nonneg)
+  by_cases hfw : f w = 0
+  · simp only [hfw, norm_zero, Real.posLog_def, Real.log_zero, max_self]
+    positivity
+  · have hlog := log_norm_le_diskRealMean_poisson hr hrR hf hwmem hfw hfn
+    have hker := circle_poissonKernel_continuous hr hwr
+    have hfθ : Continuous (fun θ => f (circleMap 0 r θ)) := by
+      apply continuous_iff_continuousOn_univ.mpr
+      exact hf.continuousOn.comp (continuous_circleMap 0 r).continuousOn
+        (fun θ _ => closedBall_subset_ball hrR (circle_mem_closedBall hr.le θ))
+    have hlogi := (hker.mul (hfθ.norm.log (fun θ => norm_ne_zero_iff.mpr (hfn θ)))).intervalIntegrable
+      (μ := volume) (0 : ℝ) (2 * Real.pi)
+    have hposi := (disk_continuous_posLog_norm hfθ).intervalIntegrable
+      (μ := volume) (0 : ℝ) (2 * Real.pi)
+    have hposkeri := (hker.mul (disk_continuous_posLog_norm hfθ)).intervalIntegrable
+      (μ := volume) (0 : ℝ) (2 * Real.pi)
+    have hlogpos : diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖f ζ‖) r ≤
+        diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.posLog ‖f ζ‖) r := by
+      apply diskRealMean_mono (f := fun ζ => ((ζ + w) / (ζ - w)).re * Real.log ‖f ζ‖)
+        (g := fun ζ => ((ζ + w) / (ζ - w)).re * Real.posLog ‖f ζ‖) hlogi hposkeri
+      intro θ
+      exact mul_le_mul_of_nonneg_left (le_max_right _ _)
+        (disk_poissonKernel_nonneg (by rw [norm_circleMap_zero, abs_of_pos hr]) hwr.le)
+    have hker3 : diskRealMean (fun ζ => ((ζ + w) / (ζ - w)).re * Real.posLog ‖f ζ‖) r ≤
+        3 * diskRealMean (fun ζ => Real.posLog ‖f ζ‖) r := by
+      rw [← diskRealMean_const_mul]
+      apply diskRealMean_mono (f := fun ζ => ((ζ + w) / (ζ - w)).re * Real.posLog ‖f ζ‖)
+        (g := fun ζ => 3 * Real.posLog ‖f ζ‖) hposkeri (hposi.const_mul 3)
+      intro θ
+      exact mul_le_mul_of_nonneg_right
+        (disk_poissonKernel_le_three hr (by rw [norm_circleMap_zero, abs_of_pos hr]) hw) Real.posLog_nonneg
+    exact max_le (by positivity) ((hlog.trans hlogpos).trans hker3)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalQuotientType.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Exponential growth and reduction of entire division to complex lines
+
+The entire-division theorem `cm:lem:type` follows from uniform estimates on
+complex lines. The Jensen and Poisson inequalities used in the proof are proved
+in `CompleteMinimalJensen` and `CompleteMinimalPoisson`.
+-/
+
+noncomputable section
+
+open MeasureTheory Metric
+open scoped Interval
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+
+/-- A genuine global exponential growth bound, including the compact remainder. -/
+def FiniteExponentialType (f : E → ℂ) : Prop :=
+  ∃ C R : ℝ, 0 < C ∧ 0 ≤ R ∧ ∀ z : E, ‖f z‖ ≤ C * Real.exp (R * ‖z‖)
+
+omit [NormedSpace ℂ E] in
+/-- Allowing a zero leading constant does not change the growth class. -/
+theorem finiteExponentialType_of_nonnegative_bound {f : E → ℂ} {C R : ℝ}
+    (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (hbound : ∀ z : E, ‖f z‖ ≤ C * Real.exp (R * ‖z‖)) :
+    FiniteExponentialType f := by
+  refine ⟨C + 1, R, by positivity, hR, ?_⟩
+  intro z
+  exact (hbound z).trans
+    (mul_le_mul_of_nonneg_right (by linarith) (Real.exp_pos _).le)
+
+omit [NormedSpace ℂ E] in
+/-- Products of functions of finite exponential type have finite exponential type. -/
+theorem FiniteExponentialType.mul {f g : E → ℂ}
+    (hf : FiniteExponentialType f) (hg : FiniteExponentialType g) :
+    FiniteExponentialType (fun z => f z * g z) := by
+  obtain ⟨C, R, hC, hR, hfb⟩ := hf
+  obtain ⟨D, S, hD, hS, hgb⟩ := hg
+  refine ⟨C * D, R + S, mul_pos hC hD, add_nonneg hR hS, ?_⟩
+  intro z
+  rw [norm_mul]
+  calc
+    ‖f z‖ * ‖g z‖ ≤ (C * Real.exp (R * ‖z‖)) * (D * Real.exp (S * ‖z‖)) :=
+      mul_le_mul (hfb z) (hgb z) (norm_nonneg _) (by positivity)
+    _ = (C * D) * Real.exp ((R + S) * ‖z‖) := by rw [add_mul, Real.exp_add]; ring
+
+/-- The bounded-domain Fourier estimates already proved in this development
+belong to the genuine global exponential-type class. -/
+theorem finiteExponentialType_domainEntireFourier {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) (f : DomainL2 Ω) :
+    FiniteExponentialType (domainEntireFourier Ω hΩ f) := by
+  obtain ⟨C, R, hC, hR, hbound⟩ := domainEntireFourier_finite_exponential_type hΩ hbounded f
+  exact finiteExponentialType_of_nonnegative_bound hC hR hbound
+
+/-- Restriction to a complex line through the origin. -/
+def complexLineRestriction (f : E → ℂ) (u : E) : ℂ → ℂ := fun w => f (w • u)
+
+theorem differentiable_complexLineRestriction {f : E → ℂ}
+    (hf : Differentiable ℂ f) (u : E) : Differentiable ℂ (complexLineRestriction f u) :=
+  hf.comp ((ContinuousLinearMap.id ℂ ℂ).smulRight u).differentiable
+
+/-- One global bound restricts uniformly to every line of unit direction. -/
+theorem finiteExponentialType_uniform_line_bound {f : E → ℂ}
+    (hf : FiniteExponentialType f) :
+    ∃ C R : ℝ, 0 < C ∧ 0 ≤ R ∧ ∀ u : E, ‖u‖ ≤ 1 →
+      ∀ w : ℂ, ‖complexLineRestriction f u w‖ ≤ C * Real.exp (R * ‖w‖) := by
+  obtain ⟨C, R, hC, hR, hbound⟩ := hf
+  refine ⟨C, R, hC, hR, ?_⟩
+  intro u hu w
+  apply (hbound (w • u)).trans
+  apply mul_le_mul_of_nonneg_left _ hC.le
+  apply Real.exp_le_exp.mpr
+  rw [norm_smul]
+  apply mul_le_mul_of_nonneg_left _ hR
+  simpa only [mul_one] using mul_le_mul_of_nonneg_left hu (norm_nonneg w)
+
+/-- Conversely, uniform bounds on all complex lines give a global bound. The
+zero direction includes the origin and avoids a positive-dimension assumption. -/
+theorem finiteExponentialType_of_uniform_line_bound {f : E → ℂ}
+    {C R : ℝ} (hC : 0 < C) (hR : 0 ≤ R)
+    (hbound : ∀ u : E, ‖u‖ ≤ 1 → ∀ w : ℂ,
+      ‖complexLineRestriction f u w‖ ≤ C * Real.exp (R * ‖w‖)) :
+    FiniteExponentialType f := by
+  refine ⟨C, R, hC, hR, ?_⟩
+  intro z
+  by_cases hz : z = 0
+  · simpa [complexLineRestriction, hz] using hbound 0 (by simp) 0
+  · let u : E := ((‖z‖ : ℂ)⁻¹) • z
+    have hu : ‖u‖ = 1 := norm_smul_inv_norm hz
+    have hw : (‖z‖ : ℂ) • u = z := by
+      dsimp only [u]
+      rw [smul_smul, mul_inv_cancel₀, one_smul]
+      exact_mod_cast (norm_ne_zero_iff.mpr hz)
+    have h := hbound u hu.le (‖z‖ : ℂ)
+    simpa only [complexLineRestriction, hw, Complex.norm_real, Real.norm_eq_abs, abs_norm] using h
+
+omit [NormedSpace ℂ E] in
+/-- Scaling by a nonzero constant preserves finite exponential type. -/
+theorem FiniteExponentialType.div_const {f : E → ℂ} (hf : FiniteExponentialType f)
+    {c : ℂ} (hc : c ≠ 0) : FiniteExponentialType (fun z => f z / c) := by
+  obtain ⟨C, R, hC, hR, hbound⟩ := hf
+  refine ⟨C / ‖c‖, R, div_pos hC (norm_pos_iff.mpr hc), hR, ?_⟩
+  intro z
+  rw [norm_div, div_mul_eq_mul_div]
+  exact div_le_div_of_nonneg_right (hbound z) (norm_nonneg c)
+
+omit [NormedSpace ℂ E] in
+/-- Dividing numerator and denominator by `D 0` leaves the factorization intact
+and makes the denominator exactly one at the origin. -/
+theorem normalize_entire_factorization {A D G : E → ℂ}
+    (hADG : ∀ z, A z = D z * G z) (hD0 : D 0 ≠ 0) :
+    (fun z => D z / D 0) 0 = 1 ∧
+      ∀ z, A z / D 0 = (D z / D 0) * G z := by
+  refine ⟨div_self hD0, ?_⟩
+  intro z
+  rw [hADG z]
+  ring
+
+omit [NormedSpace ℂ E] in
+/-- A global exponential bound survives the denominator normalization. -/
+theorem normalized_factorization_exponential_type {A D G : E → ℂ}
+    (hADG : ∀ z, A z = D z * G z) (hD0 : D 0 ≠ 0)
+    (hA : FiniteExponentialType A) (hD : FiniteExponentialType D) :
+    FiniteExponentialType (fun z => A z / D 0) ∧
+      FiniteExponentialType (fun z => D z / D 0) ∧
+      (fun z => D z / D 0) 0 = 1 ∧
+      ∀ z, A z / D 0 = (D z / D 0) * G z :=
+  ⟨hA.div_const hD0, hD.div_const hD0, normalize_entire_factorization hADG hD0⟩
+
+/-- Normalization by a constant also preserves entireness. -/
+theorem differentiable_div_const {f : E → ℂ} (hf : Differentiable ℂ f) (c : ℂ) :
+    Differentiable ℂ (fun z => f z / c) := by
+  simpa only [div_eq_mul_inv] using hf.mul_const c⁻¹
+
+/-- Entire factorization restricts to every complex line with the same
+nonzero denominator value at the origin. -/
+theorem entire_factorization_complexLineRestriction {A D G : E → ℂ}
+    (hA : Differentiable ℂ A) (hD : Differentiable ℂ D) (hG : Differentiable ℂ G)
+    (hADG : ∀ z, A z = D z * G z) (hD0 : D 0 ≠ 0) (u : E) :
+    Differentiable ℂ (complexLineRestriction A u) ∧
+      Differentiable ℂ (complexLineRestriction D u) ∧
+      Differentiable ℂ (complexLineRestriction G u) ∧
+      complexLineRestriction D u 0 ≠ 0 ∧
+      ∀ w, complexLineRestriction A u w =
+        complexLineRestriction D u w * complexLineRestriction G u w := by
+  refine ⟨differentiable_complexLineRestriction hA u,
+    differentiable_complexLineRestriction hD u, differentiable_complexLineRestriction hG u, ?_, ?_⟩
+  · simpa only [complexLineRestriction, zero_smul] using hD0
+  · exact fun w => hADG (w • u)
+
+/-- Log-positive is a continuous function of the norm, including at zeros. -/
+theorem posLog_norm_eq_log_max (z : ℂ) :
+    Real.posLog ‖z‖ = Real.log (max 1 ‖z‖) := by
+  by_cases hz : ‖z‖ ≤ 1
+  · rw [max_eq_left hz, Real.log_one]
+    exact (Real.posLog_eq_zero_iff _).mpr (by simpa only [abs_norm] using hz)
+  · rw [max_eq_right (le_of_not_ge hz)]
+    exact Real.posLog_eq_log (by simpa only [abs_norm] using le_of_not_ge hz)
+
+theorem continuous_posLog_norm {X : Type*} [TopologicalSpace X]
+    {f : X → ℂ} (hf : Continuous f) : Continuous (fun z => Real.posLog ‖f z‖) := by
+  simp_rw [posLog_norm_eq_log_max]
+  exact (continuous_const.max hf.norm).log fun z =>
+    ne_of_gt (lt_of_lt_of_le zero_lt_one (le_max_left _ _))
+
+/-- Positive logarithms convert exponential bounds to affine bounds. -/
+theorem posLog_norm_le_of_exponential_bound {z : ℂ} {C R s : ℝ}
+    (hC : 0 < C) (hR : 0 ≤ R) (hs : 0 ≤ s)
+    (hbound : ‖z‖ ≤ C * Real.exp (R * s)) :
+    Real.posLog ‖z‖ ≤ Real.posLog C + R * s := by
+  apply (Real.monotoneOn_posLog (norm_nonneg z) ((mul_pos hC (Real.exp_pos _)).le) hbound).trans
+  apply (Real.posLog_mul (a := C) (b := Real.exp (R * s))).trans
+  have hlog : Real.posLog (Real.exp (R * s)) = R * s := by
+    rw [Real.posLog_def, Real.log_exp, max_eq_right (mul_nonneg hR hs)]
+  rw [hlog]
+
+/-- The pointwise quotient estimate away from denominator zeros. -/
+theorem posLog_norm_quotient_le {a d g : ℂ} (hadg : a = d * g) (hd : d ≠ 0) :
+    Real.posLog ‖g‖ ≤ Real.posLog ‖a‖ + Real.posLog ‖d‖⁻¹ := by
+  have hg : g = a / d := by rw [hadg]; field_simp
+  rw [hg, norm_div, div_eq_mul_inv]
+  exact Real.posLog_mul
+
+/-- A logarithmic bound controls the ordinary norm also at zeros. -/
+theorem norm_le_exp_posLog (z : ℂ) : ‖z‖ ≤ Real.exp (Real.posLog ‖z‖) :=
+  (Real.le_exp_log _).trans (Real.exp_le_exp.mpr (le_max_right _ _))
+
+/-- Uniform affine bounds for positive logarithms along complex lines imply
+finite exponential type. -/
+theorem finiteExponentialType_of_uniform_posLog_line_bound {f : E → ℂ}
+    {a b : ℝ} (hb : 0 ≤ b)
+    (hbound : ∀ u : E, ‖u‖ ≤ 1 → ∀ w : ℂ,
+      Real.posLog ‖complexLineRestriction f u w‖ ≤ a + b * ‖w‖) :
+    FiniteExponentialType f := by
+  apply finiteExponentialType_of_uniform_line_bound (Real.exp_pos a) hb
+  intro u hu w
+  calc
+    ‖complexLineRestriction f u w‖ ≤
+        Real.exp (Real.posLog ‖complexLineRestriction f u w‖) := norm_le_exp_posLog _
+    _ ≤ Real.exp (a + b * ‖w‖) := Real.exp_le_exp.mpr (hbound u hu w)
+    _ = Real.exp a * Real.exp (b * ‖w‖) := Real.exp_add _ _
+
+omit [NormedSpace ℂ E] in
+/-- The compact remainder in the paper can be absorbed into the leading
+constant of an exponential bound. -/
+theorem finiteExponentialType_of_bound_outside_unitBall [ProperSpace E]
+    {f : E → ℂ} (hf : Continuous f) {C R : ℝ} (hC : 0 < C) (hR : 0 ≤ R)
+    (hbound : ∀ z : E, 1 ≤ ‖z‖ → ‖f z‖ ≤ C * Real.exp (R * ‖z‖)) :
+    FiniteExponentialType f := by
+  obtain ⟨M, hM⟩ := (isCompact_closedBall (0 : E) 1).bddAbove_image hf.norm.continuousOn
+  refine ⟨max C M, R, lt_of_lt_of_le hC (le_max_left _ _), hR, ?_⟩
+  intro z
+  have hexp : 1 ≤ Real.exp (R * ‖z‖) := Real.one_le_exp (mul_nonneg hR (norm_nonneg z))
+  by_cases hz : 1 ≤ ‖z‖
+  · exact (hbound z hz).trans
+      (mul_le_mul_of_nonneg_right (le_max_left _ _) (Real.exp_pos _).le)
+  · have hzB : z ∈ closedBall (0 : E) 1 := by
+      simpa only [mem_closedBall, dist_zero_right] using (le_of_not_ge hz)
+    calc
+      ‖f z‖ ≤ M := hM ⟨z, hzB, rfl⟩
+      _ ≤ max C M := le_max_right _ _
+      _ ≤ max C M * Real.exp (R * ‖z‖) :=
+        le_mul_of_one_le_right (le_trans hC.le (le_max_left _ _)) hexp
+
+/-- The variant needed after using a Poisson estimate only outside radius one. -/
+theorem finiteExponentialType_of_posLog_line_bound_outside_unitBall [ProperSpace E]
+    {f : E → ℂ} (hf : Continuous f) {a b : ℝ} (hb : 0 ≤ b)
+    (hbound : ∀ u : E, ‖u‖ ≤ 1 → ∀ w : ℂ, 1 ≤ ‖w‖ →
+      Real.posLog ‖complexLineRestriction f u w‖ ≤ a + b * ‖w‖) :
+    FiniteExponentialType f := by
+  apply finiteExponentialType_of_bound_outside_unitBall hf (Real.exp_pos a) hb
+  intro z hz
+  have hz0 : z ≠ 0 := by
+    intro heq
+    simp only [heq, norm_zero] at hz
+    linarith
+  let u : E := ((‖z‖ : ℂ)⁻¹) • z
+  have hu : ‖u‖ = 1 := norm_smul_inv_norm hz0
+  have hw : (‖z‖ : ℂ) • u = z := by
+    dsimp only [u]
+    rw [smul_smul, mul_inv_cancel₀, one_smul]
+    exact_mod_cast norm_ne_zero_iff.mpr hz0
+  have hlog := hbound u hu.le (‖z‖ : ℂ) (by simpa using hz)
+  simp only [complexLineRestriction, hw, Complex.norm_real, Real.norm_eq_abs, abs_norm] at hlog
+  calc
+    ‖f z‖ ≤ Real.exp (Real.posLog ‖f z‖) := norm_le_exp_posLog _
+    _ ≤ Real.exp (a + b * ‖z‖) := Real.exp_le_exp.mpr hlog
+    _ = Real.exp a * Real.exp (b * ‖z‖) := Real.exp_add _ _
+
+/-- The angular circle mean used in Jensen's and Poisson's estimates. -/
+def angularCircleMean (f : ℂ → ℝ) (r : ℝ) : ℝ :=
+  (2 * Real.pi)⁻¹ * ∫ θ in (0 : ℝ)..2 * Real.pi, f (circleMap 0 r θ)
+
+/-- A uniform upper bound on a circle is also an upper bound on its angular mean. -/
+theorem angularCircleMean_le_const {f : ℂ → ℝ} {r M : ℝ}
+    (hf : IntervalIntegrable (fun θ => f (circleMap 0 r θ)) volume 0 (2 * Real.pi))
+    (hbound : ∀ θ, f (circleMap 0 r θ) ≤ M) : angularCircleMean f r ≤ M := by
+  unfold angularCircleMean
+  have h := intervalIntegral.integral_mono (by positivity : (0 : ℝ) ≤ 2 * Real.pi)
+    hf intervalIntegrable_const hbound
+  have hm : (∫ _θ in (0 : ℝ)..2 * Real.pi, M) = (2 * Real.pi) * M := by simp
+  rw [hm] at h
+  have hpos : 0 < 2 * Real.pi := by positivity
+  apply (mul_le_mul_of_nonneg_left h (inv_nonneg.mpr hpos.le)).trans_eq
+  rw [← mul_assoc, inv_mul_cancel₀ hpos.ne', one_mul]
+
+/-- A finite exponential bound yields the uniform circle estimate for its
+positive logarithm used in the paper's Jensen argument. -/
+theorem angularCircleMean_posLog_le_of_exponential_bound {f : ℂ → ℂ}
+    (hf : Continuous f) {C R r : ℝ} (hC : 0 < C) (hR : 0 ≤ R) (hr : 0 ≤ r)
+    (hbound : ∀ w, ‖f w‖ ≤ C * Real.exp (R * ‖w‖)) :
+    angularCircleMean (fun w => Real.posLog ‖f w‖) r ≤ Real.posLog C + R * r := by
+  apply angularCircleMean_le_const
+  · exact ((continuous_posLog_norm hf).comp (continuous_circleMap 0 r)).intervalIntegrable _ _
+  · intro θ
+    apply posLog_norm_le_of_exponential_bound hC hR hr
+    simpa only [norm_circleMap_zero, abs_of_nonneg hr] using hbound (circleMap 0 r θ)
+
+/-- On a circle avoiding zeros, the negative logarithm is integrable and its
+mean is the positive-log mean minus the ordinary-log mean. -/
+theorem angularCircleMean_posLog_inv_eq {D : ℂ → ℂ} (hD : Continuous D)
+    {r : ℝ} (hDz : ∀ θ : ℝ, D (circleMap 0 r θ) ≠ 0) :
+    angularCircleMean (fun w => Real.posLog ‖D w‖⁻¹) r =
+      angularCircleMean (fun w => Real.posLog ‖D w‖) r -
+        angularCircleMean (fun w => Real.log ‖D w‖) r := by
+  have hcircle : Continuous (fun θ => D (circleMap 0 r θ)) :=
+    hD.comp (continuous_circleMap 0 r)
+  have hpos := ((continuous_posLog_norm hD).comp (continuous_circleMap 0 r)).intervalIntegrable (μ := volume)
+    (0 : ℝ) (2 * Real.pi)
+  have hlog := (hcircle.norm.log (fun θ => norm_ne_zero_iff.mpr (hDz θ))).intervalIntegrable (μ := volume)
+    (0 : ℝ) (2 * Real.pi)
+  have heq : (fun w => Real.posLog ‖D w‖⁻¹) =
+      (fun w => Real.posLog ‖D w‖ - Real.log ‖D w‖) := by
+    funext w
+    have h := Real.posLog_sub_posLog_inv (r := ‖D w‖)
+    linarith
+  rw [heq]
+  unfold angularCircleMean
+  simp only [Function.comp_def] at hpos hlog ⊢
+  rw [intervalIntegral.integral_sub hpos hlog, mul_sub]
+
+/-- The mean-log lower bound from Jensen implies the precise negative-log
+estimate used in division. This is an arithmetic consequence; the Jensen
+lower bound itself is an explicit hypothesis. -/
+theorem angularCircleMean_posLog_inv_le_of_log_nonneg {D : ℂ → ℂ}
+    (hD : Continuous D) {r : ℝ} (hDz : ∀ θ : ℝ, D (circleMap 0 r θ) ≠ 0)
+    (hJensen : 0 ≤ angularCircleMean (fun w => Real.log ‖D w‖) r) :
+    angularCircleMean (fun w => Real.posLog ‖D w‖⁻¹) r ≤
+      angularCircleMean (fun w => Real.posLog ‖D w‖) r := by
+  rw [angularCircleMean_posLog_inv_eq hD hDz]
+  linarith
+
+/-- The algebraic mean estimate for division on a zero-free circle. The
+Jensen lower bound is supplied separately by `jensen_diskRealMean_log_norm`. -/
+theorem angularCircleMean_quotient_posLog_le {A D G : ℂ → ℂ}
+    (hA : Continuous A) (hD : Continuous D) (hG : Continuous G)
+    (hADG : ∀ w, A w = D w * G w) {r : ℝ}
+    (hDz : ∀ θ : ℝ, D (circleMap 0 r θ) ≠ 0)
+    (hJensen : 0 ≤ angularCircleMean (fun w => Real.log ‖D w‖) r) :
+    angularCircleMean (fun w => Real.posLog ‖G w‖) r ≤
+      angularCircleMean (fun w => Real.posLog ‖A w‖) r +
+        angularCircleMean (fun w => Real.posLog ‖D w‖) r := by
+  have hAc := ((continuous_posLog_norm hA).comp (continuous_circleMap 0 r)).intervalIntegrable (μ := volume)
+    (0 : ℝ) (2 * Real.pi)
+  have hGc := ((continuous_posLog_norm hG).comp (continuous_circleMap 0 r)).intervalIntegrable (μ := volume)
+    (0 : ℝ) (2 * Real.pi)
+  have hDc : Continuous (fun θ => (D (circleMap 0 r θ))⁻¹) :=
+    (hD.comp (continuous_circleMap 0 r)).inv₀ hDz
+  have hDi : IntervalIntegrable (fun θ => Real.posLog ‖D (circleMap 0 r θ)‖⁻¹)
+      volume 0 (2 * Real.pi) := by
+    simpa only [norm_inv] using (continuous_posLog_norm hDc).intervalIntegrable (μ := volume)
+      (0 : ℝ) (2 * Real.pi)
+  have hmono := intervalIntegral.integral_mono
+    (by positivity : (0 : ℝ) ≤ 2 * Real.pi) hGc (hAc.add hDi)
+    (fun θ => posLog_norm_quotient_le (hADG (circleMap 0 r θ)) (hDz θ))
+  have hmean : angularCircleMean (fun w => Real.posLog ‖G w‖) r ≤
+      angularCircleMean (fun w => Real.posLog ‖A w‖) r +
+        angularCircleMean (fun w => Real.posLog ‖D w‖⁻¹) r := by
+    unfold angularCircleMean
+    simp only [Function.comp_def] at hAc hDi ⊢
+    rw [← mul_add, ← intervalIntegral.integral_add hAc hDi]
+    exact mul_le_mul_of_nonneg_left hmono (by positivity)
+  exact hmean.trans (add_le_add_left
+    (angularCircleMean_posLog_inv_le_of_log_nonneg hD hDz hJensen) _)
+
+/-- The explicit circle bound from the paper, once Jensen's analytic lower
+bound has been supplied for that radius. -/
+theorem angularCircleMean_quotient_posLog_le_exponential {A D G : ℂ → ℂ}
+    (hA : Continuous A) (hD : Continuous D) (hG : Continuous G)
+    (hADG : ∀ w, A w = D w * G w) {C R r : ℝ}
+    (hC : 0 < C) (hR : 0 ≤ R) (hr : 0 ≤ r)
+    (hAbound : ∀ w, ‖A w‖ ≤ C * Real.exp (R * ‖w‖))
+    (hDbound : ∀ w, ‖D w‖ ≤ C * Real.exp (R * ‖w‖))
+    (hDz : ∀ θ : ℝ, D (circleMap 0 r θ) ≠ 0)
+    (hJensen : 0 ≤ angularCircleMean (fun w => Real.log ‖D w‖) r) :
+    angularCircleMean (fun w => Real.posLog ‖G w‖) r ≤ 2 * Real.posLog C + 2 * R * r := by
+  have hquot := angularCircleMean_quotient_posLog_le hA hD hG hADG hDz hJensen
+  have hAm := angularCircleMean_posLog_le_of_exponential_bound hA hC hR hr hAbound
+  have hDm := angularCircleMean_posLog_le_of_exponential_bound hD hC hR hr hDbound
+  linarith
+
+/-- An entire function nonzero at the origin has only finitely many zeros
+in each closed disk. -/
+theorem finite_zeros_in_closedBall {D : ℂ → ℂ} (hD : Differentiable ℂ D)
+    (hD0 : D 0 ≠ 0) (r : ℝ) :
+    (closedBall (0 : ℂ) r ∩ {z : ℂ | D z = 0}).Finite := by
+  have ha : AnalyticOnNhd ℂ D Set.univ := fun z _ => hD.analyticAt z
+  have hcod : {z : ℂ | D z ≠ 0} ∈ Filter.codiscreteWithin (Set.univ : Set ℂ) := by
+    rcases ha.eqOn_zero_or_eventually_ne_zero_of_preconnected isPreconnected_univ with h | h
+    · exact False.elim (hD0 (h (Set.mem_univ 0)))
+    · exact h
+  have heq : ({z : ℂ | D z ≠ 0}ᶜ ∩ Set.univ : Set ℂ) = {z : ℂ | D z = 0} := by
+    ext z
+    simp
+  have hdisc : DiscreteTopology {z : ℂ | D z = 0} :=
+    heq ▸ discreteTopology_of_codiscreteWithin hcod
+  have hclosed : IsClosed {z : ℂ | D z = 0} := isClosed_eq hD.continuous continuous_const
+  exact ((isCompact_closedBall (0 : ℂ) r).inter_right hclosed).finite
+    (DiscreteTopology.of_subset hdisc Set.inter_subset_right)
+
+/-- There is a zero-free integration circle at some radius in every positive
+interval. This lets a Jensen/Poisson proof avoid limiting circles through zeros. -/
+theorem exists_zero_free_circle_radius {D : ℂ → ℂ} (hD : Differentiable ℂ D)
+    (hD0 : D 0 ≠ 0) {a b : ℝ} (ha : 0 ≤ a) (hab : a < b) :
+    ∃ r ∈ Set.Ioo a b, ∀ θ : ℝ, D (circleMap 0 r θ) ≠ 0 := by
+  have hz := finite_zeros_in_closedBall hD hD0 b
+  obtain ⟨r, hr, hnot⟩ := (Set.Ioo_infinite hab).exists_not_mem_finite (hz.image norm)
+  refine ⟨r, hr, ?_⟩
+  intro θ hzero
+  apply hnot
+  refine ⟨circleMap 0 r θ, ⟨?_, hzero⟩, ?_⟩
+  · rw [mem_closedBall, dist_zero_right, norm_circleMap_zero, abs_of_pos (ha.trans_lt hr.1)]
+    exact hr.2.le
+  · rw [norm_circleMap_zero, abs_of_pos (ha.trans_lt hr.1)]
+
+/-- The factor-three kernel estimate remains valid at any radius at least twice
+that of the evaluation point, including a nearby zero-free radius. -/
+theorem norm_herglotzKernel_le_three_of_two_norm_le {ζ w : ℂ} (hw : w ≠ 0)
+    (hζ : 2 * ‖w‖ ≤ ‖ζ‖) : ‖(ζ + w) / (ζ - w)‖ ≤ 3 := by
+  have hwpos : 0 < ‖w‖ := norm_pos_iff.mpr hw
+  have hsub := norm_sub_norm_le ζ w
+  have hdenpos : 0 < ‖ζ - w‖ := by linarith
+  rw [norm_div]
+  apply (div_le_iff₀ hdenpos).mpr
+  have hnum := norm_add_le ζ w
+  linarith
+
+/-- The factor three in the Poisson estimate is uniform: the Herglotz kernel
+is bounded by three on the circle of radius twice the evaluation radius. -/
+theorem norm_herglotzKernel_le_three {ζ w : ℂ} (hw : w ≠ 0)
+    (hζ : ‖ζ‖ = 2 * ‖w‖) : ‖(ζ + w) / (ζ - w)‖ ≤ 3 := by
+  have hwpos : 0 < ‖w‖ := norm_pos_iff.mpr hw
+  have hden : ‖w‖ ≤ ‖ζ - w‖ := by
+    have h := norm_sub_norm_le ζ w
+    rw [hζ] at h
+    linarith
+  have hdenpos : 0 < ‖ζ - w‖ := hwpos.trans_le hden
+  rw [norm_div]
+  apply (div_le_iff₀ hdenpos).mpr
+  have hnum := norm_add_le ζ w
+  rw [hζ] at hnum
+  linarith
+
+/-- The corresponding real Poisson weight lies between zero and three.
+This proves only the kernel estimate; it does not assert Poisson's formula. -/
+theorem re_herglotzKernel_mem_Icc {ζ w : ℂ} (hw : w ≠ 0)
+    (hζ : ‖ζ‖ = 2 * ‖w‖) : ((ζ + w) / (ζ - w)).re ∈ Set.Icc (0 : ℝ) 3 := by
+  have hnorm := norm_herglotzKernel_le_three hw hζ
+  refine ⟨?_, (Complex.re_le_norm _).trans hnorm⟩
+  have hsq : Complex.normSq w ≤ Complex.normSq ζ := by
+    rw [Complex.normSq_eq_norm_sq, Complex.normSq_eq_norm_sq, hζ]
+    nlinarith [norm_nonneg w]
+  have hnum : (ζ + w).re * (ζ - w).re + (ζ + w).im * (ζ - w).im =
+      Complex.normSq ζ - Complex.normSq w := by
+    simp only [Complex.add_re, Complex.sub_re, Complex.add_im, Complex.sub_im,
+      Complex.normSq_apply]
+    ring
+  rw [Complex.div_re, ← add_div, hnum]
+  exact div_nonneg (sub_nonneg.mpr hsq) (Complex.normSq_nonneg _)
+
+/-- Choose one circle avoiding the zeros of both functions. The second
+function may vanish at the origin; a nonzero value elsewhere suffices. -/
+theorem exists_common_zero_free_circle_radius {D G : ℂ → ℂ}
+    (hD : Differentiable ℂ D) (hG : Differentiable ℂ G) (hD0 : D 0 ≠ 0)
+    {w : ℂ} (hGw : G w ≠ 0) {a b : ℝ} (ha : 0 ≤ a) (hab : a < b)
+    (hwb : ‖w‖ < b) :
+    ∃ r ∈ Set.Ioo a b, (∀ θ : ℝ, D (circleMap 0 r θ) ≠ 0) ∧
+      (∀ θ : ℝ, G (circleMap 0 r θ) ≠ 0) := by
+  have hzD := finite_zeros_in_closedBall hD hD0 b
+  have hzG := disk_finite_zeros (ρ := b) (R := b + 1) (by linarith)
+    hG.differentiableOn (w := w)
+    (by simpa only [mem_ball, dist_zero_right] using (by linarith : ‖w‖ < b + 1)) hGw
+  obtain ⟨r, hr, hnot⟩ := (Set.Ioo_infinite hab).exists_not_mem_finite
+    ((hzD.union hzG).image norm)
+  have hrpos : 0 < r := ha.trans_lt hr.1
+  have hcircle (θ : ℝ) : circleMap 0 r θ ∈ closedBall (0 : ℂ) b := by
+    rw [mem_closedBall, dist_zero_right, norm_circleMap_zero, abs_of_pos hrpos]
+    exact hr.2.le
+  refine ⟨r, hr, ?_, ?_⟩
+  · intro θ hzero
+    apply hnot
+    refine ⟨circleMap 0 r θ, Or.inl ⟨hcircle θ, hzero⟩, ?_⟩
+    rw [norm_circleMap_zero, abs_of_pos hrpos]
+  · intro θ hzero
+    apply hnot
+    refine ⟨circleMap 0 r θ, Or.inr ⟨hcircle θ, hzero⟩, ?_⟩
+    rw [norm_circleMap_zero, abs_of_pos hrpos]
+
+/-- Entire division preserves finite exponential type (`cm:lem:type`). The
+origin value of the denominator supplies the uniform Jensen lower bound;
+Poisson's inequality on each complex line then controls the quotient. -/
+theorem finiteExponentialType_entire_quotient [ProperSpace E]
+    {A D G : E → ℂ} (hA : Differentiable ℂ A) (hD : Differentiable ℂ D)
+    (hG : Differentiable ℂ G) (hADG : ∀ z, A z = D z * G z) (hD0 : D 0 ≠ 0)
+    (hAtype : FiniteExponentialType A) (hDtype : FiniteExponentialType D) :
+    FiniteExponentialType G := by
+  let A' : E → ℂ := fun z => A z / D 0
+  let D' : E → ℂ := fun z => D z / D 0
+  have hA' : Differentiable ℂ A' := differentiable_div_const hA (D 0)
+  have hD' : Differentiable ℂ D' := differentiable_div_const hD (D 0)
+  have hD'0 : D' 0 = 1 := div_self hD0
+  have hEq : ∀ z, A' z = D' z * G z := (normalize_entire_factorization hADG hD0).2
+  obtain ⟨CA, RA, hCA, hRA, hAb⟩ :=
+    finiteExponentialType_uniform_line_bound (hAtype.div_const hD0)
+  obtain ⟨CD, RD, hCD, hRD, hDb⟩ :=
+    finiteExponentialType_uniform_line_bound (hDtype.div_const hD0)
+  let C : ℝ := max CA CD
+  let R : ℝ := max RA RD
+  have hC : 0 < C := hCA.trans_le (le_max_left _ _)
+  have hR : 0 ≤ R := hRA.trans (le_max_left _ _)
+  have hAb' (u : E) (hu : ‖u‖ ≤ 1) (w : ℂ) :
+      ‖complexLineRestriction A' u w‖ ≤ C * Real.exp (R * ‖w‖) := by
+    apply (hAb u hu w).trans
+    exact mul_le_mul (le_max_left _ _)
+      (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg w)))
+      (Real.exp_pos _).le hC.le
+  have hDb' (u : E) (hu : ‖u‖ ≤ 1) (w : ℂ) :
+      ‖complexLineRestriction D' u w‖ ≤ C * Real.exp (R * ‖w‖) := by
+    apply (hDb u hu w).trans
+    exact mul_le_mul (le_max_right _ _)
+      (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right (le_max_right _ _) (norm_nonneg w)))
+      (Real.exp_pos _).le hC.le
+  apply finiteExponentialType_of_posLog_line_bound_outside_unitBall
+    hG.continuous (a := 6 * Real.posLog C) (b := 18 * R) (by positivity)
+  intro u hu w hw
+  let a := complexLineRestriction A' u
+  let d := complexLineRestriction D' u
+  let g := complexLineRestriction G u
+  have ha : Differentiable ℂ a := differentiable_complexLineRestriction hA' u
+  have hd : Differentiable ℂ d := differentiable_complexLineRestriction hD' u
+  have hg : Differentiable ℂ g := differentiable_complexLineRestriction hG u
+  have hd0 : d 0 = 1 := by simpa only [d, complexLineRestriction, zero_smul] using hD'0
+  have hEq' (ζ : ℂ) : a ζ = d ζ * g ζ := hEq (ζ • u)
+  change Real.posLog ‖g w‖ ≤ 6 * Real.posLog C + 18 * R * ‖w‖
+  by_cases hgw : g w = 0
+  · simp only [hgw, norm_zero, Real.posLog_def, Real.log_zero, max_self]
+    positivity
+  · obtain ⟨r, hr, hdz, hgz⟩ := exists_common_zero_free_circle_radius hd hg
+      (by rw [hd0]; exact one_ne_zero) hgw
+      (a := 2 * ‖w‖) (b := 3 * ‖w‖) (by positivity) (by linarith)
+      (by linarith)
+    have hrpos : 0 < r := (by positivity : 0 ≤ 2 * ‖w‖).trans_lt hr.1
+    have hJ := jensen_diskRealMean_log_norm hrpos (R := r + 1) (by linarith)
+      hd.differentiableOn (by rw [hd0]; exact one_ne_zero) hdz
+    have hJ' : 0 ≤ angularCircleMean (fun ζ => Real.log ‖d ζ‖) r := by
+      simpa only [hd0, norm_one, Real.log_one, diskRealMean, angularCircleMean] using hJ
+    have hm := angularCircleMean_quotient_posLog_le_exponential
+      ha.continuous hd.continuous hg.continuous hEq' hC hR hrpos.le
+      (hAb' u hu) (hDb' u hu) hdz hJ'
+    have hp := posLog_norm_le_three_diskRealMean hrpos (R := r + 1)
+      (by linarith) hg.differentiableOn (w := w) hr.1.le hgz
+    change Real.posLog ‖g w‖ ≤ 3 * angularCircleMean (fun ζ => Real.posLog ‖g ζ‖) r at hp
+    have hrR : R * r ≤ R * (3 * ‖w‖) := mul_le_mul_of_nonneg_left hr.2.le hR
+    linarith
+
+/-- The form of `cm:lem:type` with a single exponential bound for the sum
+of the numerator and denominator norms. The signs of its constants need not
+be assumed: the nonzero denominator forces a positive leading constant. -/
+theorem finiteExponentialType_entire_quotient_of_sum_bound [ProperSpace E]
+    {A D G : E → ℂ} (hA : Differentiable ℂ A) (hD : Differentiable ℂ D)
+    (hG : Differentiable ℂ G) (hADG : ∀ z, A z = D z * G z) (hD0 : D 0 ≠ 0)
+    {C R : ℝ} (hbound : ∀ z, ‖A z‖ + ‖D z‖ ≤ C * Real.exp (R * ‖z‖)) :
+    FiniteExponentialType G := by
+  have hzero := hbound 0
+  simp only [norm_zero, mul_zero, Real.exp_zero, mul_one] at hzero
+  have hC : 0 < C := by linarith [norm_pos_iff.mpr hD0, norm_nonneg (A 0)]
+  have hb (z : E) : ‖A z‖ + ‖D z‖ ≤ C * Real.exp (max R 0 * ‖z‖) := by
+    exact (hbound z).trans (mul_le_mul_of_nonneg_left
+      (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg z)))
+      hC.le)
+  apply finiteExponentialType_entire_quotient hA hD hG hADG hD0
+  · refine ⟨C, max R 0, hC, le_max_right _ _, fun z => ?_⟩
+    exact (le_add_of_nonneg_right (norm_nonneg (D z))).trans (hb z)
+  · refine ⟨C, max R 0, hC, le_max_right _ _, fun z => ?_⟩
+    exact (le_add_of_nonneg_left (norm_nonneg (A z))).trans (hb z)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalBessel.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# The normalized ball transform
+
+This file uses the actual Fourier transform of the unit-ball indicator.
+The moment expansion below is an integral identity, rather than an assumed
+identification with a special function. The zero product and sharp asymptotic
+estimates require additional theorems and are not postulated here.
+-/
+
+noncomputable section
+open MeasureTheory Filter Topology
+open scoped BigOperators
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The open physical unit ball. -/
+def physicalUnitBall (d : ℕ) : Set (Euclidean d) := Metric.ball 0 1
+
+/-- The complex indicator of the physical unit ball. -/
+def ballIndicator (d : ℕ) : Euclidean d → ℂ :=
+  (physicalUnitBall d).indicator (fun _ => 1)
+
+/-- The real Lebesgue volume of the physical unit ball. -/
+def ballVolume (d : ℕ) : ℝ := volume.real (physicalUnitBall d)
+
+theorem physicalUnitBall_measurable (d : ℕ) : MeasurableSet (physicalUnitBall d) :=
+  measurableSet_ball
+
+theorem physicalUnitBall_volume_lt_top (d : ℕ) : volume (physicalUnitBall d) < ⊤ :=
+  (Metric.isBounded_ball (x := (0 : Euclidean d)) (r := 1)).measure_lt_top
+
+theorem ballVolume_pos (d : ℕ) : 0 < ballVolume d := by
+  exact ENNReal.toReal_pos (Metric.measure_ball_pos volume 0 zero_lt_one).ne'
+    (physicalUnitBall_volume_lt_top d).ne
+
+theorem ballIndicator_integrable (d : ℕ) : Integrable (ballIndicator d) := by
+  apply (integrable_indicator_iff (physicalUnitBall_measurable d)).mpr
+  exact integrableOn_const.mpr (Or.inr (physicalUnitBall_volume_lt_top d))
+
+theorem ballIndicator_support_bound (d : ℕ) :
+    ∀ᵐ x, ballIndicator d x ≠ 0 → ‖x‖ ≤ 1 := by
+  filter_upwards with x hx
+  have hmem : x ∈ physicalUnitBall d := by
+    by_contra h
+    exact hx (Set.indicator_of_not_mem h _)
+  exact (mem_ball_zero_iff.mp hmem).le
+
+theorem ballIndicator_integral (d : ℕ) : ∫ x, ballIndicator d x = (ballVolume d : ℂ) := by
+  rw [ballIndicator, integral_indicator (physicalUnitBall_measurable d)]
+  simp [ballVolume, integral_const]
+
+/-- The entire Fourier transform of the normalized unit-ball indicator. -/
+def normalizedBallFourier (d : ℕ) (z : ComplexEuclidean d) : ℂ :=
+  entireFourier (ballIndicator d) z / (ballVolume d : ℂ)
+
+@[simp]
+theorem normalizedBallFourier_zero (d : ℕ) : normalizedBallFourier d 0 = 1 := by
+  have hv : (ballVolume d : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ballVolume_pos d).ne'
+  simp [normalizedBallFourier, entireFourier, complexFourierKernel,
+    ballIndicator_integral, hv]
+
+theorem normalizedBallFourier_eq_setIntegral (d : ℕ) (z : ComplexEuclidean d) :
+    normalizedBallFourier d z =
+      (∫ x in physicalUnitBall d, complexFourierKernel x z) / (ballVolume d : ℂ) := by
+  unfold normalizedBallFourier entireFourier ballIndicator
+  rw [← integral_indicator (physicalUnitBall_measurable d)]
+  congr 1
+  apply integral_congr_ae
+  filter_upwards with x
+  by_cases hx : x ∈ physicalUnitBall d <;> simp [hx]
+
+theorem normalizedBallFourier_differentiable (d : ℕ) :
+    Differentiable ℂ (normalizedBallFourier d) := by
+  change Differentiable ℂ (fun z => entireFourier (ballIndicator d) z / (ballVolume d : ℂ))
+  have h := (entireFourier_differentiable (ballIndicator_integrable d) zero_le_one
+    (ballIndicator_support_bound d)).const_smul ((ballVolume d : ℂ)⁻¹)
+  simpa [normalizedBallFourier, smul_eq_mul, div_eq_mul_inv, mul_comm] using h
+
+theorem normalizedBallFourier_analyticAlongLine (d : ℕ) (z u : ComplexEuclidean d) :
+    AnalyticOnNhd ℂ (fun w : ℂ => normalizedBallFourier d (z + w • u)) Set.univ := by
+  apply (Complex.analyticOnNhd_univ_iff_differentiable).mpr
+  exact (normalizedBallFourier_differentiable d).comp
+    ((differentiable_const z).add (differentiable_id.smul_const u))
+
+theorem ballIndicator_comp_isometry {d : ℕ} (A : Euclidean d ≃ₗᵢ[ℝ] Euclidean d) :
+    ballIndicator d ∘ A = ballIndicator d := by
+  funext x
+  simp only [Function.comp_apply, ballIndicator, physicalUnitBall, Set.indicator,
+    mem_ball_zero_iff, A.norm_map]
+
+theorem normalizedBallFourier_real_isometry {d : ℕ}
+    (A : Euclidean d ≃ₗᵢ[ℝ] Euclidean d) (ξ : Euclidean d) :
+    normalizedBallFourier d (realToComplex (A ξ)) =
+      normalizedBallFourier d (realToComplex ξ) := by
+  unfold normalizedBallFourier
+  rw [entireFourier_realToComplex, entireFourier_realToComplex,
+    ← Real.fourierIntegral_comp_linearIsometry A, ballIndicator_comp_isometry]
+
+theorem ballIndicator_norm_integral (d : ℕ) : ∫ x, ‖ballIndicator d x‖ = ballVolume d := by
+  have he : (fun x => ‖ballIndicator d x‖) =
+      (physicalUnitBall d).indicator (fun _ => (1 : ℝ)) := by
+    funext x
+    by_cases hx : x ∈ physicalUnitBall d <;> simp [ballIndicator, hx]
+  rw [he, integral_indicator (physicalUnitBall_measurable d)]
+  simp [ballVolume, integral_const]
+
+theorem normalizedBallFourier_real_norm_le (d : ℕ) (ξ : Euclidean d) :
+    ‖normalizedBallFourier d (realToComplex ξ)‖ ≤ 1 := by
+  rw [normalizedBallFourier, norm_div, Complex.norm_real,
+    Real.norm_of_nonneg (ballVolume_pos d).le]
+  apply (div_le_one (ballVolume_pos d)).mpr
+  exact (entireFourier_real_norm_le (ballIndicator_integrable d) ξ).trans_eq
+    (ballIndicator_norm_integral d)
+
+theorem normalizedBallFourier_real_eq_of_norm_eq {d : ℕ} (ξ η : Euclidean d)
+    (h : ‖ξ‖ = ‖η‖) :
+    normalizedBallFourier d (realToComplex ξ) =
+      normalizedBallFourier d (realToComplex η) := by
+  have he := normalizedBallFourier_real_isometry (ℝ ∙ (ξ - η))ᗮ.reflection ξ
+  rw [Submodule.reflection_sub h] at he
+  exact he.symm
+
+/-- A complex frequency on the first coordinate axis, with Fourier scaling removed. -/
+def radialFrequency (n : ℕ) (s : ℂ) : ComplexEuclidean (n + 1) :=
+  EuclideanSpace.single 0 (s / (2 * Real.pi : ℂ))
+
+/-- The normalized ball transform in its scalar radial variable. -/
+def radialBallFourier (n : ℕ) (s : ℂ) : ℂ :=
+  normalizedBallFourier (n + 1) (radialFrequency n s)
+
+theorem radialFrequency_eq_smul (n : ℕ) (s : ℂ) :
+    radialFrequency n s = s • radialFrequency n 1 := by
+  ext i
+  simp [radialFrequency, EuclideanSpace.single_apply, PiLp.smul_apply,
+    div_eq_mul_inv, smul_eq_mul]
+
+@[simp]
+theorem radialBallFourier_zero (n : ℕ) : radialBallFourier n 0 = 1 := by
+  simp [radialBallFourier, radialFrequency, EuclideanSpace.single]
+
+theorem radialBallFourier_analytic (n : ℕ) :
+    AnalyticOnNhd ℂ (radialBallFourier n) Set.univ := by
+  change AnalyticOnNhd ℂ (fun s => normalizedBallFourier (n + 1) (radialFrequency n s)) Set.univ
+  have h := normalizedBallFourier_analyticAlongLine (n + 1) 0 (radialFrequency n 1)
+  have he : (fun s => normalizedBallFourier (n + 1) (radialFrequency n s)) =
+      (fun s => normalizedBallFourier (n + 1) (0 + s • radialFrequency n 1)) := by
+    funext s
+    rw [radialFrequency_eq_smul]
+    simp
+  rw [he]
+  exact h
+
+theorem realToComplex_single {d : ℕ} (i : Fin d) (s : ℝ) :
+    realToComplex (EuclideanSpace.single i s) = EuclideanSpace.single i (s : ℂ) := by
+  ext j
+  by_cases hj : j = i <;> simp [EuclideanSpace.single_apply, hj]
+
+/-- The real-frequency ball transform is genuinely radial, with the manuscript's `2π` scaling. -/
+theorem normalizedBallFourier_real_radial (n : ℕ) (ξ : Euclidean (n + 1)) :
+    normalizedBallFourier (n + 1) (realToComplex ξ) =
+      radialBallFourier n (2 * Real.pi * ‖ξ‖ : ℝ) := by
+  have h := normalizedBallFourier_real_eq_of_norm_eq ξ
+    (EuclideanSpace.single 0 ‖ξ‖) (by simp)
+  rw [realToComplex_single] at h
+  convert h using 1
+  simp [radialBallFourier, radialFrequency, Real.pi_ne_zero]
+
+/-- Qualitative Fourier decay, without asserting a sharp Bessel asymptotic. -/
+theorem normalizedBallFourier_real_tendsto_zero (d : ℕ) :
+    Tendsto (fun ξ : Euclidean d => normalizedBallFourier d (realToComplex ξ))
+      (cocompact (Euclidean d)) (𝓝 0) := by
+  have h := (tendsto_integral_exp_inner_smul_cocompact
+    (f := ballIndicator d)).div_const (ballVolume d : ℂ)
+  simpa [normalizedBallFourier, entireFourier_realToComplex,
+    Real.fourierIntegral_eq] using h
+
+/-- On the complex radial line the zero set is locally finite. -/
+theorem radialBallFourier_zeros_locallyFinite (n : ℕ) (z : ℂ) :
+    ∃ U ∈ 𝓝 z, Set.Finite (U ∩ {s : ℂ | radialBallFourier n s = 0}) := by
+  have h := (radialBallFourier_analytic n).eqOn_zero_or_eventually_ne_zero_of_preconnected
+    isPreconnected_univ
+  rcases h with hzero | hdiscrete
+  · have h₀ := hzero (Set.mem_univ (0 : ℂ))
+    simp at h₀
+  · have hlocal := codiscreteWithin_iff_locallyFiniteComplementWithin.mp hdiscrete
+      z (Set.mem_univ z)
+    obtain ⟨U, hU, hfinite⟩ := hlocal
+    refine ⟨U, hU, ?_⟩
+    convert hfinite using 1
+    ext s
+    simp only [Set.mem_inter_iff, Set.mem_setOf_eq, Set.mem_diff, Set.mem_univ,
+      true_and, not_not]
+
+theorem fourierPhaseCLM_radialFrequency (n : ℕ) (x : Euclidean (n + 1)) (s : ℂ) :
+    fourierPhaseCLM x (radialFrequency n s) = (-Complex.I * (x 0 : ℂ)) * s := by
+  have hp : (2 * Real.pi : ℂ) ≠ 0 := by exact_mod_cast (mul_ne_zero (by norm_num) Real.pi_ne_zero)
+  simp [fourierPhaseCLM, complexPairingCLM_apply, complexPairing, radialFrequency,
+    EuclideanSpace.single_apply, Finset.mul_sum, Finset.sum_ite_eq', smul_eq_mul]
+  field_simp
+  ring
+
+/-- A normalized coordinate moment giving a radial Taylor coefficient. -/
+def radialBallMoment (n k : ℕ) : ℂ :=
+  (∫ x in physicalUnitBall (n + 1), (-Complex.I * (x 0 : ℂ)) ^ k / (k.factorial : ℂ)) /
+    (ballVolume (n + 1) : ℂ)
+
+/-- The integrand of a radial Taylor term before integration over the ball. -/
+def radialTaylorTerm (n : ℕ) (s : ℂ) (k : ℕ) (x : Euclidean (n + 1)) : ℂ :=
+  ((-Complex.I * (x 0 : ℂ)) * s) ^ k / (k.factorial : ℂ)
+
+theorem radialTaylorTerm_continuous (n : ℕ) (s : ℂ) (k : ℕ) :
+    Continuous (radialTaylorTerm n s k) := by
+  unfold radialTaylorTerm
+  fun_prop
+
+theorem radialTaylorTerm_norm_le (n : ℕ) (s : ℂ) (k : ℕ) (x : Euclidean (n + 1))
+    (hx : x ∈ physicalUnitBall (n + 1)) :
+    ‖radialTaylorTerm n s k x‖ ≤ ‖s‖ ^ k / (k.factorial : ℝ) := by
+  have hxnorm : ‖x‖ ≤ 1 := (mem_ball_zero_iff.mp hx).le
+  have hx₀ : ‖(-Complex.I * (x 0 : ℂ)) * s‖ ≤ ‖s‖ := by
+    simp only [norm_mul, norm_neg, Complex.norm_I, one_mul, Complex.norm_real]
+    exact (mul_le_mul_of_nonneg_right ((PiLp.norm_apply_le x 0).trans hxnorm)
+      (norm_nonneg s)).trans_eq (one_mul _)
+  unfold radialTaylorTerm
+  simp only [norm_div, norm_pow, Complex.norm_natCast]
+  exact div_le_div_of_nonneg_right (pow_le_pow_left₀ (norm_nonneg _) hx₀ k) (by positivity)
+
+theorem radialBallMoment_norm_le (n k : ℕ) :
+    ‖radialBallMoment n k‖ ≤ 1 / (k.factorial : ℝ) := by
+  have hint : Integrable (fun _ : Euclidean (n + 1) => 1 / (k.factorial : ℝ))
+      (volume.restrict (physicalUnitBall (n + 1))) :=
+    integrableOn_const.mpr (Or.inr (physicalUnitBall_volume_lt_top (n + 1)))
+  have hbound : ∀ᵐ x ∂volume.restrict (physicalUnitBall (n + 1)),
+      ‖(-Complex.I * (x 0 : ℂ)) ^ k / (k.factorial : ℂ)‖ ≤ 1 / (k.factorial : ℝ) := by
+    filter_upwards [ae_restrict_mem (physicalUnitBall_measurable (n + 1))] with x hx
+    simpa [radialTaylorTerm] using radialTaylorTerm_norm_le n 1 k x hx
+  have h := norm_integral_le_of_norm_le hint hbound
+  rw [radialBallMoment, norm_div, Complex.norm_real,
+    Real.norm_of_nonneg (ballVolume_pos (n + 1)).le]
+  apply (div_le_iff₀ (ballVolume_pos (n + 1))).mpr
+  simpa [integral_const, ballVolume, smul_eq_mul, mul_comm] using h
+
+theorem radialTaylorBound_integrable (n : ℕ) (s : ℂ) :
+    Integrable (fun _ : Euclidean (n + 1) => ∑' k : ℕ, ‖s‖ ^ k / (k.factorial : ℝ))
+      (volume.restrict (physicalUnitBall (n + 1))) := by
+  exact (integrableOn_const (C := ∑' k : ℕ, ‖s‖ ^ k / (k.factorial : ℝ))).mpr
+    (Or.inr (physicalUnitBall_volume_lt_top (n + 1)))
+
+theorem radialBallMoment_eq_zero_of_odd (n : ℕ) {k : ℕ} (hk : Odd k) :
+    radialBallMoment n k = 0 := by
+  let f : Euclidean (n + 1) → ℂ := fun x =>
+    (-Complex.I * (x 0 : ℂ)) ^ k / (k.factorial : ℂ)
+  let g := (physicalUnitBall (n + 1)).indicator f
+  have hodd : (fun x => g (-x)) = (fun x => -g x) := by
+    funext x
+    have hneg : (-x) ∈ physicalUnitBall (n + 1) ↔ x ∈ physicalUnitBall (n + 1) := by
+      simp [physicalUnitBall, mem_ball_zero_iff]
+    by_cases hx : x ∈ physicalUnitBall (n + 1)
+    · simp only [g, Set.indicator_of_mem hx, Set.indicator_of_mem (hneg.mpr hx)]
+      dsimp [f]
+      rw [Complex.ofReal_neg]
+      have he : -Complex.I * -(x 0 : ℂ) = -(-Complex.I * (x 0 : ℂ)) := by ring
+      rw [he, hk.neg_pow, neg_div]
+    · simp [g, hx, hneg]
+  have hi := integral_neg_eq_self g volume
+  change (∫ x, g (-x)) = ∫ x, g x at hi
+  rw [hodd, integral_neg] at hi
+  have hz : (∫ x, g x) = 0 := by linear_combination -hi / 2
+  rw [radialBallMoment, ← integral_indicator (physicalUnitBall_measurable (n + 1))]
+  change (∫ x, g x) / (ballVolume (n + 1) : ℂ) = 0
+  rw [hz, zero_div]
+
+/-- Exact entire power series of the radial ball Fourier transform, with integral coefficients. -/
+theorem radialBallFourier_hasSum (n : ℕ) (s : ℂ) :
+    HasSum (fun k => radialBallMoment n k * s ^ k) (radialBallFourier n s) := by
+  let F : ℕ → Euclidean (n + 1) → ℂ := radialTaylorTerm n s
+  let bound : ℕ → Euclidean (n + 1) → ℝ := fun k _ => ‖s‖ ^ k / k.factorial
+  have hmeas : ∀ k, AEStronglyMeasurable (F k) (volume.restrict (physicalUnitBall (n + 1))) := by
+    intro k
+    exact (radialTaylorTerm_continuous n s k).aestronglyMeasurable
+  have hbound : ∀ k, ∀ᵐ x ∂volume.restrict (physicalUnitBall (n + 1)),
+      ‖F k x‖ ≤ bound k x := by
+    intro k
+    filter_upwards [ae_restrict_mem (physicalUnitBall_measurable (n + 1))] with x hx
+    exact radialTaylorTerm_norm_le n s k x hx
+  have hsummable : ∀ᵐ x ∂volume.restrict (physicalUnitBall (n + 1)),
+      Summable (fun k => bound k x) :=
+    Eventually.of_forall fun _ => Real.summable_pow_div_factorial ‖s‖
+  have hint : Integrable (fun x => ∑' k, bound k x)
+      (volume.restrict (physicalUnitBall (n + 1))) := radialTaylorBound_integrable n s
+  have hlim : ∀ᵐ x ∂volume.restrict (physicalUnitBall (n + 1)),
+      HasSum (fun k => F k x) (complexFourierKernel x (radialFrequency n s)) := by
+    filter_upwards with x
+    rw [complexFourierKernel, fourierPhaseCLM_radialFrequency]
+    simpa only [F, radialTaylorTerm, ← Complex.exp_eq_exp_ℂ] using
+      NormedSpace.expSeries_div_hasSum_exp ℂ ((-Complex.I * (x 0 : ℂ)) * s)
+  have h := (hasSum_integral_of_dominated_convergence bound hmeas hbound hsummable hint hlim).div_const
+    (ballVolume (n + 1) : ℂ)
+  rw [radialBallFourier, normalizedBallFourier_eq_setIntegral]
+  convert h using 1
+  funext k
+  dsimp [F, radialTaylorTerm, radialBallMoment]
+  simp_rw [mul_pow, mul_div_right_comm]
+  rw [integral_mul_const]
+  ring
+
+theorem radialBallFourier_even (n : ℕ) (s : ℂ) :
+    radialBallFourier n (-s) = radialBallFourier n s := by
+  have he : ∀ k, radialBallMoment n k * (-s) ^ k = radialBallMoment n k * s ^ k := by
+    intro k
+    rcases Nat.even_or_odd k with hk | hk
+    · rw [hk.neg_pow]
+    · simp [radialBallMoment_eq_zero_of_odd n hk]
+  exact ((radialBallFourier_hasSum n (-s)).congr_fun (fun k => (he k).symm)).unique
+    (radialBallFourier_hasSum n s)
+
+theorem radialBallFourier_hasSum_odd_zero (n : ℕ) (s : ℂ) :
+    HasSum (fun k => radialBallMoment n (2 * k + 1) * s ^ (2 * k + 1)) 0 := by
+  convert (hasSum_zero : HasSum (fun _ : ℕ => (0 : ℂ)) 0) using 1
+  funext k
+  rw [radialBallMoment_eq_zero_of_odd n (by exact ⟨k, by rw [two_mul]⟩), zero_mul]
+
+/-- The radial transform's entire series is even, including in odd dimensions. -/
+theorem radialBallFourier_hasSum_even (n : ℕ) (s : ℂ) :
+    HasSum (fun k => radialBallMoment n (2 * k) * (s ^ 2) ^ k) (radialBallFourier n s) := by
+  have hall := radialBallFourier_hasSum n s
+  have hinj : Function.Injective (fun k : ℕ => 2 * k) :=
+    mul_right_injective₀ (by norm_num : (2 : ℕ) ≠ 0)
+  have hzero : ∀ k, k ∉ Set.range (fun j : ℕ => 2 * j) → radialBallMoment n k * s ^ k = 0 := by
+    intro k hk
+    rcases Nat.even_or_odd k with he | ho
+    · obtain ⟨j, hj⟩ := he
+      exact False.elim (hk ⟨j, by simpa only [two_mul] using hj.symm⟩)
+    · rw [radialBallMoment_eq_zero_of_odd n ho, zero_mul]
+  have h := (hinj.hasSum_iff hzero).mpr hall
+  simpa only [Function.comp_def, pow_mul] using h
+
+/-- The even radial Taylor series expressed in the squared radial variable. -/
+def ballSquareSeries (n : ℕ) : FormalMultilinearSeries ℂ ℂ ℂ :=
+  FormalMultilinearSeries.ofScalars ℂ (fun k => radialBallMoment n (2 * k))
+
+/-- The even radial series is entire in the squared variable; no square-root branch is chosen. -/
+theorem ballSquareSeries_radius (n : ℕ) : (ballSquareSeries n).radius = ⊤ := by
+  apply FormalMultilinearSeries.radius_eq_top_of_summable_norm
+  intro r
+  apply Summable.of_nonneg_of_le (fun k => mul_nonneg (norm_nonneg _) (by positivity))
+    (fun k => ?_) (Real.summable_pow_div_factorial (r : ℝ))
+  rw [ballSquareSeries, FormalMultilinearSeries.ofScalars_norm]
+  have hfactorial : (k.factorial : ℝ) ≤ (2 * k).factorial := by
+    exact_mod_cast Nat.factorial_le (Nat.le_mul_of_pos_left k (by decide : 0 < 2))
+  have h := (radialBallMoment_norm_le n (2 * k)).trans
+    (one_div_le_one_div_of_le (by positivity : (0 : ℝ) < k.factorial) hfactorial)
+  calc
+    ‖radialBallMoment n (2 * k)‖ * (r : ℝ) ^ k ≤ (1 / (k.factorial : ℝ)) * (r : ℝ) ^ k :=
+      mul_le_mul_of_nonneg_right h (by positivity)
+    _ = _ := by ring
+
+/-- The entire function of the squared radial variable defined by the ball series. -/
+def ballSquareFunction (n : ℕ) : ℂ → ℂ := (ballSquareSeries n).sum
+
+theorem ballSquareFunction_analytic (n : ℕ) : AnalyticOnNhd ℂ (ballSquareFunction n) Set.univ := by
+  have hpos : 0 < (ballSquareSeries n).radius := by rw [ballSquareSeries_radius]; exact ENNReal.zero_lt_top
+  have h := ((ballSquareSeries n).hasFPowerSeriesOnBall hpos).analyticOnNhd
+  simpa [ballSquareFunction, ballSquareSeries_radius] using h
+
+theorem radialBallFourier_eq_squareFunction (n : ℕ) (s : ℂ) :
+    radialBallFourier n s = ballSquareFunction n (s ^ 2) := by
+  rw [ballSquareFunction, ballSquareSeries, FormalMultilinearSeries.sum]
+  simp only [FormalMultilinearSeries.ofScalars_apply_eq, smul_eq_mul]
+  exact (radialBallFourier_hasSum_even n s).tsum_eq.symm
+
+/-- The complex quadratic form with the Fourier normalization factor. -/
+def ballQuadraticForm (d : ℕ) (z : ComplexEuclidean d) : ℂ :=
+  (2 * Real.pi : ℂ) ^ 2 * ∑ i, z i ^ 2
+
+theorem ballQuadraticForm_differentiable (d : ℕ) :
+    Differentiable ℂ (ballQuadraticForm d) := by
+  change Differentiable ℂ (fun z : ComplexEuclidean d => (2 * Real.pi : ℂ) ^ 2 * ∑ i, z i ^ 2)
+  apply Differentiable.const_mul (𝕜 := ℂ)
+  apply Differentiable.sum
+  intro i _
+  have hproj : Differentiable ℂ (fun z : ComplexEuclidean d => z i) :=
+    (PiLp.proj (𝕜 := ℂ) 2 (fun _ : Fin d => ℂ) i).differentiable
+  exact hproj.pow 2
+
+theorem ballQuadraticForm_realToComplex {d : ℕ} (ξ : Euclidean d) :
+    ballQuadraticForm d (realToComplex ξ) = (2 * Real.pi * ‖ξ‖ : ℝ) ^ 2 := by
+  have hnorm : (∑ i, ξ i ^ 2) = ‖ξ‖ ^ 2 := by
+    simpa [Real.norm_eq_abs, sq_abs] using (PiLp.norm_sq_eq_of_L2 (fun _ : Fin d => ℝ) ξ).symm
+  simp only [ballQuadraticForm, realToComplex_apply]
+  norm_cast
+  rw [hnorm]
+  ring
+
+theorem realToComplex_add_real_smul {d : ℕ} (x y : Euclidean d) (t : ℝ) :
+    realToComplex (x + t • y) = realToComplex x + (t : ℂ) • realToComplex y := by
+  ext i
+  simp [PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+
+/-- The actual ball transform is given on all complex frequencies by the same even series.
+The squares are complex squares; conjugation and square-root branches do not occur. -/
+theorem normalizedBallFourier_eq_squareFunction (n : ℕ) (z : ComplexEuclidean (n + 1)) :
+    normalizedBallFourier (n + 1) z = ballSquareFunction n (ballQuadraticForm (n + 1) z) := by
+  let x : Euclidean (n + 1) := (WithLp.equiv 2 _).symm (fun i => (z i).re)
+  let y : Euclidean (n + 1) := (WithLp.equiv 2 _).symm (fun i => (z i).im)
+  let L : ℂ → ComplexEuclidean (n + 1) := fun w => realToComplex x + w • realToComplex y
+  have hL : Differentiable ℂ L :=
+    (differentiable_const _).add (differentiable_id.smul_const _)
+  have hF : Differentiable ℂ (fun w => normalizedBallFourier (n + 1) (L w) -
+      ballSquareFunction n (ballQuadraticForm (n + 1) (L w))) :=
+    ((normalizedBallFourier_differentiable (n + 1)).comp hL).sub
+      (((Complex.analyticOnNhd_univ_iff_differentiable).mp (ballSquareFunction_analytic n)).comp
+        ((ballQuadraticForm_differentiable (n + 1)).comp hL))
+  have hreal : ∀ t : ℝ, normalizedBallFourier (n + 1) (L t) -
+      ballSquareFunction n (ballQuadraticForm (n + 1) (L t)) = 0 := by
+    intro t
+    have he : L t = realToComplex (x + t • y) := (realToComplex_add_real_smul x y t).symm
+    rw [he, normalizedBallFourier_real_radial, radialBallFourier_eq_squareFunction,
+      ballQuadraticForm_realToComplex, sub_self]
+  have hz : L Complex.I = z := by
+    ext i
+    simp only [L, PiLp.add_apply, PiLp.smul_apply, realToComplex_apply, x, y,
+      WithLp.equiv_symm_pi_apply, smul_eq_mul]
+    apply Complex.ext <;> simp
+  have h := entire_zero_of_real_zero _ hF hreal Complex.I
+  rw [hz] at h
+  exact sub_eq_zero.mp h
+
+theorem integral_volumeIoiPow_eq (m : ℕ) (g : ℝ → ℝ) :
+    (∫ r : Set.Ioi (0 : ℝ), g r ∂Measure.volumeIoiPow m) =
+      ∫ r in Set.Ioi (0 : ℝ), r ^ m * g r := by
+  simp only [Measure.volumeIoiPow, ENNReal.ofReal]
+  rw [integral_withDensity_eq_integral_smul
+    (measurable_subtype_coe.pow_const m).real_toNNReal,
+    integral_subtype_comap measurableSet_Ioi (fun r : ℝ => Real.toNNReal (r ^ m) • g r)]
+  apply setIntegral_congr_fun measurableSet_Ioi
+  intro r hr
+  change Real.toNNReal (r ^ m) • g r = r ^ m * g r
+  rw [NNReal.smul_def, Real.coe_toNNReal _ (pow_nonneg hr.le _), smul_eq_mul]
+
+/-- A coordinate moment on the unit sphere with its polar measure. -/
+def coordinateSphereMoment (n k : ℕ) : ℝ :=
+  ∫ θ : Metric.sphere (0 : Euclidean (n + 1)) 1, (θ.val 0) ^ k
+    ∂(volume : Measure (Euclidean (n + 1))).toSphere
+
+/-- Full polar decomposition for one homogeneous coordinate moment and an arbitrary radial factor. -/
+theorem coordinateMoment_polar (n k : ℕ) (g : ℝ → ℝ) :
+    (∫ x : Euclidean (n + 1), (x 0) ^ k * g ‖x‖) =
+      coordinateSphereMoment n k * (∫ r in Set.Ioi (0 : ℝ), r ^ (n + k) * g r) := by
+  letI : IsLocallyFiniteMeasure ((volume : Measure (Euclidean (n + 1))).toSphere) :=
+    IsFiniteMeasure.toIsLocallyFiniteMeasure _
+  let H := homeomorphUnitSphereProd (Euclidean (n + 1))
+  let F : Metric.sphere (0 : Euclidean (n + 1)) 1 × Set.Ioi (0 : ℝ) → ℝ :=
+    fun u => (u.1.val 0) ^ k * ((u.2.val) ^ k * g u.2.val)
+  have hcomp : ∀ x : ({(0 : Euclidean (n + 1))}ᶜ : Set (Euclidean (n + 1))),
+      F (H x) = (x.val 0) ^ k * g ‖x.val‖ := by
+    intro x
+    have hx : ‖x.val‖ ≠ 0 := norm_ne_zero_iff.mpr x.prop
+    simp only [F, H, homeomorphUnitSphereProd_apply_fst_coe,
+      homeomorphUnitSphereProd_apply_snd_coe, PiLp.smul_apply, smul_eq_mul, mul_pow]
+    field_simp
+    ring
+  calc
+    _ = ∫ x : ({(0 : Euclidean (n + 1))}ᶜ : Set (Euclidean (n + 1))),
+        (x.val 0) ^ k * g ‖x.val‖ ∂(volume.comap Subtype.val) := by
+      rw [integral_subtype_comap (measurableSet_singleton _).compl
+        (fun x : Euclidean (n + 1) => (x 0) ^ k * g ‖x‖),
+        restrict_compl_singleton]
+    _ = ∫ u, F u ∂(volume : Measure (Euclidean (n + 1))).toSphere.prod
+        (Measure.volumeIoiPow n) := by
+      have h := (volume : Measure (Euclidean (n + 1))).measurePreserving_homeomorphUnitSphereProd.integral_comp
+        H.measurableEmbedding F
+      simpa only [H, hcomp, finrank_euclideanSpace, Fintype.card_fin, Nat.add_sub_cancel] using h
+    _ = coordinateSphereMoment n k *
+        (∫ r : Set.Ioi (0 : ℝ), r.val ^ k * g r.val ∂Measure.volumeIoiPow n) := by
+      exact integral_prod_mul (μ := (volume : Measure (Euclidean (n + 1))).toSphere)
+        (ν := Measure.volumeIoiPow n)
+        (fun θ : Metric.sphere (0 : Euclidean (n + 1)) 1 => (θ.val 0) ^ k)
+        (fun r : Set.Ioi (0 : ℝ) => r.val ^ k * g r.val)
+    _ = _ := by
+      rw [integral_volumeIoiPow_eq n (fun r : ℝ => r ^ k * g r)]
+      congr 1
+      apply setIntegral_congr_fun measurableSet_Ioi
+      intro r _
+      change r ^ n * (r ^ k * g r) = r ^ (n + k) * g r
+      rw [pow_add]
+      ring
+
+theorem gaussian_even_moment (k : ℕ) :
+    (∫ x : ℝ, x ^ (2 * k) * Real.exp (-x ^ (2 : ℕ))) = Real.Gamma (k + 1 / 2 : ℝ) := by
+  let f : ℝ → ℝ := fun x => x ^ (2 * k) * Real.exp (-x ^ (2 : ℕ))
+  have hf : Integrable f := by
+    simpa only [f, Real.rpow_natCast, neg_one_mul] using
+      integrable_rpow_mul_exp_neg_mul_sq (b := 1) (s := (2 * k : ℕ))
+        (by norm_num) (by exact lt_of_lt_of_le (by norm_num : (-1 : ℝ) < 0) (Nat.cast_nonneg _))
+  have heven : Even (2 * k) := ⟨k, by rw [two_mul]⟩
+  have he : (fun x => f (-x)) = f := by
+    funext x
+    simp only [f, heven.neg_pow, neg_sq]
+  have hhalf : (∫ x in Set.Ioi (0 : ℝ), f x) = (1 / 2 : ℝ) * Real.Gamma (k + 1 / 2 : ℝ) := by
+    have h := integral_rpow_mul_exp_neg_rpow (p := 2) (q := (2 * k : ℕ))
+      (by norm_num) (by exact lt_of_lt_of_le (by norm_num : (-1 : ℝ) < 0) (Nat.cast_nonneg _))
+    have harg : (((2 * k : ℕ) : ℝ) + 1) / 2 = k + 1 / 2 := by push_cast; ring
+    simpa only [f, Real.rpow_natCast, Real.rpow_two, harg] using h
+  have hneg := integral_comp_neg_Iic 0 f
+  rw [he, neg_zero] at hneg
+  change (∫ x, f x) = _
+  rw [← integral_add_compl measurableSet_Ioi hf, Set.compl_Ioi, hneg, hhalf]
+  ring
+
+/-- A coordinate moment weighted by the standard radial Gaussian. -/
+def gaussianCoordinateMoment (n k : ℕ) : ℝ :=
+  ∫ x : Euclidean (n + 1), (x 0) ^ (2 * k) * Real.exp (-‖x‖ ^ (2 : ℕ))
+
+theorem gaussianCoordinateMoment_eq (n k : ℕ) :
+    gaussianCoordinateMoment n k = (Real.sqrt Real.pi) ^ n * Real.Gamma (k + 1 / 2 : ℝ) := by
+  let f : Fin (n + 1) → ℝ → ℝ := fun i t =>
+    if i = 0 then t ^ (2 * k) * Real.exp (-t ^ (2 : ℕ)) else Real.exp (-t ^ (2 : ℕ))
+  have hprod : ∀ x : Euclidean (n + 1), ∏ i, f i (x i) =
+      (x 0) ^ (2 * k) * Real.exp (-‖x‖ ^ (2 : ℕ)) := by
+    intro x
+    simp only [Fin.prod_univ_succ, f, if_pos rfl, Fin.succ_ne_zero, if_false, ite_true, ite_false]
+    rw [← Real.exp_sum]
+    have hnorm : ‖x‖ ^ (2 : ℕ) = ∑ i, (x i) ^ (2 : ℕ) := by
+      simpa [Real.norm_eq_abs, sq_abs] using PiLp.norm_sq_eq_of_L2 (fun _ : Fin (n + 1) => ℝ) x
+    rw [hnorm, Fin.sum_univ_succ]
+    simp only [Finset.sum_neg_distrib]
+    rw [neg_add, Real.exp_add]
+    ring
+  have hchange := (EuclideanSpace.volume_preserving_measurableEquiv (Fin (n + 1))).integral_comp
+    (EuclideanSpace.measurableEquiv (Fin (n + 1))).measurableEmbedding
+    (fun x : Fin (n + 1) → ℝ => ∏ i, f i (x i))
+  have hchange' : gaussianCoordinateMoment n k =
+      ∫ x : Fin (n + 1) → ℝ, ∏ i, f i (x i) := by
+    simpa only [gaussianCoordinateMoment, EuclideanSpace.coe_measurableEquiv, hprod] using hchange
+  rw [hchange', integral_fintype_prod_eq_prod, Fin.prod_univ_succ]
+  simp only [f, if_pos rfl, Fin.succ_ne_zero, if_false, ite_true, ite_false]
+  rw [gaussian_even_moment]
+  have hgauss : (∫ x : ℝ, Real.exp (-x ^ (2 : ℕ))) = Real.sqrt Real.pi := by
+    simpa only [neg_one_mul, div_one] using integral_gaussian (1 : ℝ)
+  simp only [hgauss, Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  ring
+
+theorem gaussianCoordinateMoment_polar (n k : ℕ) :
+    gaussianCoordinateMoment n k = coordinateSphereMoment n (2 * k) *
+      ((1 / 2 : ℝ) * Real.Gamma ((n + 2 * k + 1 : ℕ) / 2 : ℝ)) := by
+  rw [gaussianCoordinateMoment,
+    coordinateMoment_polar n (2 * k) (fun r : ℝ => Real.exp (-r ^ (2 : ℕ)))]
+  congr 1
+  have h := integral_rpow_mul_exp_neg_rpow (p := 2) (q := (n + 2 * k : ℕ))
+    (by norm_num) (by exact lt_of_lt_of_le (by norm_num : (-1 : ℝ) < 0) (Nat.cast_nonneg _))
+  have harg : ((n + 2 * k + 1 : ℕ) : ℝ) = ((n + 2 * k : ℕ) : ℝ) + 1 := by
+    push_cast
+    ring
+  rw [harg]
+  simpa only [Real.rpow_natCast, Real.rpow_two] using h
+
+/-- A coordinate moment over the physical unit ball. -/
+def ballCoordinateMoment (n k : ℕ) : ℝ :=
+  ∫ x in physicalUnitBall (n + 1), (x 0) ^ k
+
+theorem ballCoordinateMoment_polar (n k : ℕ) :
+    ballCoordinateMoment n k = coordinateSphereMoment n k / (n + k + 1 : ℕ) := by
+  let g : ℝ → ℝ := (Set.Iio (1 : ℝ)).indicator (fun _ => 1)
+  have hfun : (fun x : Euclidean (n + 1) => (x 0) ^ k * g ‖x‖) =
+      (physicalUnitBall (n + 1)).indicator (fun x => (x 0) ^ k) := by
+    funext x
+    by_cases hx : ‖x‖ < 1 <;> simp [g, physicalUnitBall, Set.indicator, mem_ball_zero_iff, hx]
+  have hrad : (∫ r in Set.Ioi (0 : ℝ), r ^ (n + k) * g r) = 1 / (n + k + 1 : ℕ) := by
+    have hfunr : (fun r : ℝ => r ^ (n + k) * g r) =
+        (Set.Iio (1 : ℝ)).indicator (fun r => r ^ (n + k)) := by
+      funext r
+      by_cases hr : r < 1 <;> simp [g, Set.indicator, hr]
+    rw [hfunr, setIntegral_indicator measurableSet_Iio]
+    have hint : Set.Ioi (0 : ℝ) ∩ Set.Iio 1 = Set.Ioo 0 1 := by ext r; simp
+    rw [hint, ← integral_Ioc_eq_integral_Ioo, ← intervalIntegral.integral_of_le zero_le_one,
+      integral_pow]
+    simp
+  have h := coordinateMoment_polar n k g
+  rw [hfun, integral_indicator (physicalUnitBall_measurable (n + 1)), hrad] at h
+  simpa only [ballCoordinateMoment, div_eq_mul_inv, one_mul] using h
+
+/-- Evaluation of the even coordinate moments of the real Euclidean unit ball. -/
+theorem ballCoordinateMoment_even_eq (n k : ℕ) :
+    ballCoordinateMoment n (2 * k) = (Real.sqrt Real.pi) ^ n *
+      Real.Gamma (k + 1 / 2 : ℝ) / Real.Gamma ((n + 2 * k + 3 : ℕ) / 2 : ℝ) := by
+  let b : ℝ := (n + 2 * k + 1 : ℕ) / 2
+  have hb : 0 < b := by dsimp [b]; positivity
+  have harg : ((n + 2 * k + 3 : ℕ) : ℝ) / 2 = b + 1 := by dsimp [b]; push_cast; ring
+  have hG : Real.Gamma (b + 1) ≠ 0 := (Real.Gamma_pos_of_pos (by positivity)).ne'
+  have hA : coordinateSphereMoment n (2 * k) * Real.Gamma b =
+      2 * ((Real.sqrt Real.pi) ^ n * Real.Gamma (k + 1 / 2 : ℝ)) := by
+    have h := gaussianCoordinateMoment_polar n k
+    rw [gaussianCoordinateMoment_eq] at h
+    change _ = coordinateSphereMoment n (2 * k) * ((1 / 2 : ℝ) * Real.Gamma b) at h
+    linarith
+  rw [ballCoordinateMoment_polar, harg]
+  apply (eq_div_iff hG).mpr
+  rw [Real.Gamma_add_one hb.ne']
+  dsimp [b]
+  field_simp
+  dsimp [b] at hA
+  have hnum : ((k : ℝ) * 2 + 1) / 2 = (k : ℝ) + 1 / 2 := by ring
+  rw [hnum]
+  push_cast at hA
+  nlinarith [hA]
+
+theorem ballCoordinateMoment_even_recurrence (n k : ℕ) :
+    ballCoordinateMoment n (2 * (k + 1)) =
+      ((2 * k + 1 : ℕ) : ℝ) / (n + 2 * k + 3 : ℕ) * ballCoordinateMoment n (2 * k) := by
+  rw [ballCoordinateMoment_even_eq, ballCoordinateMoment_even_eq]
+  have ha : ((k + 1 : ℕ) : ℝ) + 1 / 2 = (k : ℝ) + 1 / 2 + 1 := by push_cast; ring
+  have hb : ((n + 2 * (k + 1) + 3 : ℕ) : ℝ) / 2 =
+      ((n + 2 * k + 3 : ℕ) : ℝ) / 2 + 1 := by push_cast; ring
+  rw [ha, hb, Real.Gamma_add_one (by positivity : (k : ℝ) + 1 / 2 ≠ 0),
+    Real.Gamma_add_one (by positivity : ((n + 2 * k + 3 : ℕ) : ℝ) / 2 ≠ 0)]
+  field_simp
+  ring
+
+theorem radialBallMoment_even_eq_coordinateMoment (n k : ℕ) :
+    radialBallMoment n (2 * k) = (-1 : ℂ) ^ k * (ballCoordinateMoment n (2 * k) : ℂ) /
+      (((2 * k).factorial : ℂ) * (ballVolume (n + 1) : ℂ)) := by
+  have hpow : (-Complex.I) ^ (2 * k) = (-1 : ℂ) ^ k := by
+    rw [pow_mul]
+    simp
+  rw [radialBallMoment]
+  simp_rw [mul_pow, hpow, integral_div, integral_const_mul, ← Complex.ofReal_pow,
+    integral_complex_ofReal]
+  rw [ballCoordinateMoment]
+  ring
+
+/-- The recurrence obtained from the actual ball moments, in the squared radial variable. -/
+theorem radialBallMoment_even_recurrence (n k : ℕ) :
+    radialBallMoment n (2 * (k + 1)) =
+      -radialBallMoment n (2 * k) /
+        ((2 : ℂ) * (k + 1 : ℕ) * (n + 2 * k + 3 : ℕ)) := by
+  rw [radialBallMoment_even_eq_coordinateMoment, radialBallMoment_even_eq_coordinateMoment,
+    ballCoordinateMoment_even_recurrence]
+  rw [Complex.ofReal_mul, Complex.ofReal_div, Complex.ofReal_natCast, Complex.ofReal_natCast,
+    pow_succ]
+  have hfac : (2 * (k + 1)).factorial = (2 * k + 2) * (2 * k + 1) * (2 * k).factorial := by
+    have he : 2 * (k + 1) = 2 * k + 1 + 1 := by rw [Nat.mul_add, Nat.mul_one]
+    rw [he, Nat.factorial_succ, Nat.factorial_succ]
+    ring
+  rw [hfac]
+  have hv : (ballVolume (n + 1) : ℂ) ≠ 0 := by
+    exact_mod_cast (ballVolume_pos (n + 1)).ne'
+  have hf : ((2 * k).factorial : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
+  have hk : (k : ℂ) + 1 ≠ 0 := by exact_mod_cast (Nat.succ_ne_zero k)
+  have hk' : 2 * (k : ℂ) + 1 ≠ 0 := by exact_mod_cast (Nat.ne_of_gt (Nat.add_pos_right (2 * k) (by decide : 0 < 1)))
+  have hk'' : 2 * (k : ℂ) + 2 ≠ 0 := by
+    exact_mod_cast Nat.ne_of_gt (Nat.add_pos_right (2 * k) (by decide : 0 < 2))
+  have hn : (n : ℂ) + 2 * k + 3 ≠ 0 := by
+    exact_mod_cast Nat.ne_of_gt (Nat.add_pos_right (n + 2 * k) (by decide : 0 < 3))
+  have hbig : (2 * (k : ℂ) + 2) * (2 * k + 1) * ((2 * k).factorial : ℂ) *
+      (ballVolume (n + 1) : ℂ) ≠ 0 :=
+    mul_ne_zero (mul_ne_zero (mul_ne_zero hk'' hk') hf) hv
+  push_cast
+  field_simp [hv, hf, hk, hk', hk'', hn, hbig]
+  ring
+
+/-- The formal scalar derivative of a complex multilinear power series. -/
+def scalarDerivativeSeries (p : FormalMultilinearSeries ℂ ℂ ℂ) :
+    FormalMultilinearSeries ℂ ℂ ℂ :=
+  (ContinuousLinearMap.apply ℂ ℂ (1 : ℂ)).compFormalMultilinearSeries p.derivSeries
+
+theorem scalarDerivativeSeries_coeff (p : FormalMultilinearSeries ℂ ℂ ℂ) (k : ℕ) :
+    (scalarDerivativeSeries p).coeff k = (k + 1 : ℕ) * p.coeff (k + 1) := by
+  change p.derivSeries.coeff k 1 = _
+  rw [FormalMultilinearSeries.derivSeries_coeff_one, nsmul_eq_mul]
+
+theorem hasFPowerSeriesOnBall_deriv {f : ℂ → ℂ} {p : FormalMultilinearSeries ℂ ℂ ℂ}
+    {x : ℂ} {r : ENNReal} (h : HasFPowerSeriesOnBall f p x r) :
+    HasFPowerSeriesOnBall (deriv f) (scalarDerivativeSeries p) x r := by
+  exact (ContinuousLinearMap.apply ℂ ℂ (1 : ℂ)).comp_hasFPowerSeriesOnBall h.fderiv
+
+theorem ballSquareFunction_hasFPowerSeries (n : ℕ) :
+    HasFPowerSeriesOnBall (ballSquareFunction n) (ballSquareSeries n) 0 ⊤ := by
+  have hpos : 0 < (ballSquareSeries n).radius := by
+    rw [ballSquareSeries_radius]
+    exact ENNReal.zero_lt_top
+  simpa only [ballSquareFunction, ballSquareSeries_radius] using
+    (ballSquareSeries n).hasFPowerSeriesOnBall hpos
+
+theorem ballSquareFunction_deriv_hasSum (n : ℕ) (z : ℂ) :
+    HasSum (fun k => (k + 1 : ℕ) * radialBallMoment n (2 * (k + 1)) * z ^ k)
+      (deriv (ballSquareFunction n) z) := by
+  have h := (hasFPowerSeriesOnBall_deriv (ballSquareFunction_hasFPowerSeries n)).hasSum
+    (y := z) (by simp)
+  simpa only [zero_add, FormalMultilinearSeries.apply_eq_pow_smul_coeff,
+    scalarDerivativeSeries_coeff, ballSquareSeries, FormalMultilinearSeries.coeff_ofScalars,
+    smul_eq_mul, mul_comm] using h
+
+theorem ballSquareFunction_deriv2_hasSum (n : ℕ) (z : ℂ) :
+    HasSum (fun k => (k + 1 : ℕ) * (k + 2 : ℕ) *
+      radialBallMoment n (2 * (k + 2)) * z ^ k)
+      (deriv (deriv (ballSquareFunction n)) z) := by
+  have h := (hasFPowerSeriesOnBall_deriv
+    (hasFPowerSeriesOnBall_deriv (ballSquareFunction_hasFPowerSeries n))).hasSum
+    (y := z) (by simp)
+  convert h using 1
+  · funext k
+    rw [FormalMultilinearSeries.apply_eq_pow_smul_coeff, scalarDerivativeSeries_coeff,
+      scalarDerivativeSeries_coeff]
+    simp only [ballSquareSeries, FormalMultilinearSeries.coeff_ofScalars, smul_eq_mul]
+    push_cast
+    ring
+  · simp
+
+/-- The normalized ball transform solves the Bessel equation in the squared radial variable. -/
+theorem ballSquareFunction_ode (n : ℕ) (z : ℂ) :
+    4 * z * deriv (deriv (ballSquareFunction n)) z +
+      2 * (n + 3 : ℕ) * deriv (ballSquareFunction n) z + ballSquareFunction n z = 0 := by
+  let c : ℕ → ℂ := fun k => radialBallMoment n (2 * k)
+  have hc : ∀ k : ℕ, (4 * k * (k + 1 : ℕ) + 2 * (n + 3 : ℕ) * (k + 1 : ℕ)) *
+      c (k + 1) + c k = 0 := by
+    intro k
+    dsimp [c]
+    rw [radialBallMoment_even_recurrence]
+    have hk : (k : ℂ) + 1 ≠ 0 := by exact_mod_cast (Nat.succ_ne_zero k)
+    have hn : (n : ℂ) + 2 * k + 3 ≠ 0 := by
+      exact_mod_cast Nat.ne_of_gt (Nat.add_pos_right (n + 2 * k) (by decide : 0 < 3))
+    push_cast
+    field_simp [hk, hn]
+    ring
+  let f : ℕ → ℂ := fun k => (k : ℂ) * (k + 1 : ℕ) * c (k + 1) * z ^ k
+  have hshift : HasSum (fun k => f (k + 1)) (z * deriv (deriv (ballSquareFunction n)) z) := by
+    convert (ballSquareFunction_deriv2_hasSum n z).mul_left z using 1
+    funext k
+    dsimp [f, c]
+    have he : k + 1 + 1 = k + 2 := rfl
+    rw [he, pow_succ]
+    ring
+  have hsecond : HasSum f (z * deriv (deriv (ballSquareFunction n)) z) := by
+    have h := (hasSum_nat_add_iff 1).mp hshift
+    simpa only [Finset.sum_range_one, f, Nat.cast_zero, zero_mul, add_zero] using h
+  have hfirst := ballSquareFunction_deriv_hasSum n z
+  have hzero := (ballSquareFunction_hasFPowerSeries n).hasSum (y := z) (by simp)
+  have hsum := ((hsecond.mul_left (4 : ℂ)).add
+    (hfirst.mul_left (2 * (n + 3 : ℕ) : ℂ))).add hzero
+  have heq : ∀ k, 4 * f k + (2 * (n + 3 : ℕ) : ℂ) *
+      ((k + 1 : ℕ) * radialBallMoment n (2 * (k + 1)) * z ^ k) +
+      ballSquareSeries n k (fun _ => z) = 0 := by
+    intro k
+    rw [FormalMultilinearSeries.apply_eq_pow_smul_coeff]
+    simp only [ballSquareSeries, FormalMultilinearSeries.coeff_ofScalars, smul_eq_mul]
+    dsimp [f]
+    have h := congrArg (fun w : ℂ => w * z ^ k) (hc k)
+    dsimp [c] at h ⊢
+    linear_combination h
+  have h := hsum.congr_fun (fun k => (heq k).symm)
+  have hz := h.unique (hasSum_zero : HasSum (fun _ : ℕ => (0 : ℂ)) 0)
+  simpa only [zero_add, mul_assoc] using hz
+
+theorem radialBallFourier_hasDerivAt (n : ℕ) (s : ℂ) :
+    HasDerivAt (radialBallFourier n)
+      (2 * s * deriv (ballSquareFunction n) (s ^ 2)) s := by
+  have hf := ((ballSquareFunction_analytic n) (s ^ 2) (Set.mem_univ _)).differentiableAt.hasDerivAt
+  have h := hf.comp s ((hasDerivAt_id s).pow 2)
+  convert h using 1
+  · funext z
+    exact radialBallFourier_eq_squareFunction n z
+  · simp only [Nat.cast_ofNat, pow_one, id_eq, Function.comp_apply]
+    ring
+
+theorem radialBallFourier_deriv (n : ℕ) (s : ℂ) :
+    deriv (radialBallFourier n) s = 2 * s * deriv (ballSquareFunction n) (s ^ 2) :=
+  (radialBallFourier_hasDerivAt n s).deriv
+
+theorem radialBallFourier_deriv_hasDerivAt (n : ℕ) (s : ℂ) :
+    HasDerivAt (deriv (radialBallFourier n))
+      (2 * deriv (ballSquareFunction n) (s ^ 2) +
+        4 * s ^ 2 * deriv (deriv (ballSquareFunction n)) (s ^ 2)) s := by
+  have hf : AnalyticAt ℂ (deriv (ballSquareFunction n)) (s ^ 2) := by
+    have h := (hasFPowerSeriesOnBall_deriv (ballSquareFunction_hasFPowerSeries n)).analyticOnNhd
+    apply h
+    simp
+  have h := ((hasDerivAt_id s).const_mul (2 : ℂ)).mul
+    (hf.differentiableAt.hasDerivAt.comp s ((hasDerivAt_id s).pow 2))
+  convert h using 1
+  · funext z
+    exact radialBallFourier_deriv n z
+  · simp only [Nat.cast_ofNat, pow_one, id_eq, Function.comp_apply]
+    ring
+
+theorem radialBallFourier_ode (n : ℕ) (s : ℂ) :
+    s * deriv (deriv (radialBallFourier n)) s +
+      (n + 2 : ℕ) * deriv (radialBallFourier n) s + s * radialBallFourier n s = 0 := by
+  rw [(radialBallFourier_deriv_hasDerivAt n s).deriv, radialBallFourier_deriv,
+    radialBallFourier_eq_squareFunction]
+  have h := congrArg (fun w : ℂ => s * w) (ballSquareFunction_ode n (s ^ 2))
+  push_cast at h ⊢
+  linear_combination h
+
+/-- The real restriction of the scalar radial ball transform. -/
+def realRadialBallFourier (n : ℕ) (s : ℝ) : ℝ := (radialBallFourier n s).re
+
+@[simp]
+theorem realRadialBallFourier_zero (n : ℕ) : realRadialBallFourier n 0 = 1 := by
+  simp [realRadialBallFourier]
+
+theorem realRadialBallFourier_hasDerivAt (n : ℕ) (s : ℝ) :
+    HasDerivAt (realRadialBallFourier n) (deriv (radialBallFourier n) s).re s := by
+  exact ((radialBallFourier_analytic n) s (Set.mem_univ _)).differentiableAt.hasDerivAt.real_of_complex
+
+theorem realRadialBallFourier_deriv (n : ℕ) (s : ℝ) :
+    deriv (realRadialBallFourier n) s = (deriv (radialBallFourier n) s).re :=
+  (realRadialBallFourier_hasDerivAt n s).deriv
+
+theorem realRadialBallFourier_deriv_hasDerivAt (n : ℕ) (s : ℝ) :
+    HasDerivAt (deriv (realRadialBallFourier n))
+      (deriv (deriv (radialBallFourier n)) s).re s := by
+  have h := (((radialBallFourier_analytic n).deriv) s (Set.mem_univ _)).differentiableAt.hasDerivAt.real_of_complex
+  convert h using 1
+  funext t
+  exact realRadialBallFourier_deriv n t
+
+theorem realRadialBallFourier_ode (n : ℕ) (s : ℝ) :
+    s * deriv (deriv (realRadialBallFourier n)) s +
+      (n + 2 : ℕ) * deriv (realRadialBallFourier n) s + s * realRadialBallFourier n s = 0 := by
+  rw [(realRadialBallFourier_deriv_hasDerivAt n s).deriv, realRadialBallFourier_deriv]
+  have h := congrArg Complex.re (radialBallFourier_ode n (s : ℂ))
+  simpa only [Complex.add_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im,
+    Complex.natCast_re, Complex.natCast_im, zero_mul, sub_zero, Complex.zero_re,
+    realRadialBallFourier] using h
+
+theorem radialBallFourier_ofReal_im (n : ℕ) (s : ℝ) :
+    (radialBallFourier n s).im = 0 := by
+  have h := Complex.hasSum_im (radialBallFourier_hasSum_even n (s : ℂ))
+  have hz : ∀ k, (radialBallMoment n (2 * k) * ((s : ℂ) ^ 2) ^ k).im = 0 := by
+    intro k
+    have he : radialBallMoment n (2 * k) * ((s : ℂ) ^ 2) ^ k =
+        ((((-1 : ℝ) ^ k * ballCoordinateMoment n (2 * k) /
+          (((2 * k).factorial : ℝ) * ballVolume (n + 1))) * (s ^ (2 : ℕ)) ^ k : ℝ) : ℂ) := by
+      rw [radialBallMoment_even_eq_coordinateMoment]
+      push_cast
+      rfl
+    rw [he]
+    rfl
+  have h0 := h.congr_fun (fun k => (hz k).symm)
+  exact h0.unique (hasSum_zero : HasSum (fun _ : ℕ => (0 : ℝ)) 0)
+
+theorem radialBallFourier_ofReal_eq (n : ℕ) (s : ℝ) :
+    radialBallFourier n s = (realRadialBallFourier n s : ℂ) := by
+  apply Complex.ext
+  · rfl
+  · simp only [Complex.ofReal_im, radialBallFourier_ofReal_im]
+
+theorem exists_pos_realRadialBallFourier_ne_zero (n : ℕ) :
+    ∃ s : ℝ, 0 < s ∧ realRadialBallFourier n s ≠ 0 := by
+  have h : ∀ᶠ s in 𝓝 (0 : ℝ), realRadialBallFourier n s ≠ 0 :=
+    (realRadialBallFourier_hasDerivAt n 0).continuousAt.eventually_ne (by simp)
+  obtain ⟨ε, hε, hsub⟩ := Metric.mem_nhds_iff.mp h
+  refine ⟨ε / 2, by positivity, hsub ?_⟩
+  simp only [Metric.mem_ball, Real.dist_eq, sub_zero, abs_of_pos (by positivity : 0 < ε / 2)]
+  linarith
+
+theorem exists_pos_le_realRadialBallFourier_ne_zero (n : ℕ) {b : ℝ} (hb : 0 < b) :
+    ∃ s : ℝ, 0 < s ∧ s ≤ b ∧ realRadialBallFourier n s ≠ 0 := by
+  have h : ∀ᶠ s in 𝓝 (0 : ℝ), realRadialBallFourier n s ≠ 0 :=
+    (realRadialBallFourier_hasDerivAt n 0).continuousAt.eventually_ne (by simp)
+  obtain ⟨ε, hε, hsub⟩ := Metric.mem_nhds_iff.mp h
+  have hm : 0 < min ε b := lt_min hε hb
+  refine ⟨min ε b / 2, by positivity, ?_, hsub ?_⟩
+  · exact (by linarith : min ε b / 2 ≤ min ε b).trans (min_le_right _ _)
+  · simp only [Metric.mem_ball, Real.dist_eq, sub_zero, abs_of_pos (by positivity : 0 < min ε b / 2)]
+    have he := min_le_left ε b
+    linarith
+
+/-- The radial transform multiplied by its asymptotic power weight. -/
+def weightedRadialBallFourier (n : ℕ) (s : ℝ) : ℝ :=
+  s ^ ((n + 2 : ℕ) / 2 : ℝ) * realRadialBallFourier n s
+
+/-- The derivative of the weighted radial transform on positive radii. -/
+def weightedRadialBallFourierDeriv (n : ℕ) (s : ℝ) : ℝ :=
+  ((n + 2 : ℕ) / 2 : ℝ) * s ^ (((n + 2 : ℕ) / 2 : ℝ) - 1) * realRadialBallFourier n s +
+    s ^ ((n + 2 : ℕ) / 2 : ℝ) * deriv (realRadialBallFourier n) s
+
+theorem weightedRadialBallFourier_hasDerivAt (n : ℕ) {s : ℝ} (hs : 0 < s) :
+    HasDerivAt (weightedRadialBallFourier n) (weightedRadialBallFourierDeriv n s) s := by
+  have h := (Real.hasDerivAt_rpow_const (p := ((n + 2 : ℕ) / 2 : ℝ)) (Or.inl hs.ne')).mul
+    (realRadialBallFourier_hasDerivAt n s)
+  simpa only [weightedRadialBallFourier, weightedRadialBallFourierDeriv,
+    realRadialBallFourier_deriv] using h
+
+/-- Conjugating the actual radial equation gives an oscillator with an inverse-square potential. -/
+theorem weightedRadialBallFourierDeriv_hasDerivAt (n : ℕ) {s : ℝ} (hs : 0 < s) :
+    HasDerivAt (weightedRadialBallFourierDeriv n)
+      ((((n : ℝ) * (n + 2) / 4) / s ^ (2 : ℕ) - 1) * weightedRadialBallFourier n s) s := by
+  let a : ℝ := (n + 2 : ℕ) / 2
+  have hfirst := ((Real.hasDerivAt_rpow_const (p := a - 1) (Or.inl hs.ne')).const_mul a).mul
+    (realRadialBallFourier_hasDerivAt n s)
+  have hsecond := (Real.hasDerivAt_rpow_const (p := a) (Or.inl hs.ne')).mul
+    (realRadialBallFourier_deriv_hasDerivAt n s)
+  have h := hfirst.add hsecond
+  convert h using 1
+  rw [← realRadialBallFourier_deriv, ← (realRadialBallFourier_deriv_hasDerivAt n s).deriv]
+  have hpa : s ^ a = s ^ (a - 2) * s ^ (2 : ℕ) := by
+    rw [← Real.rpow_natCast, ← Real.rpow_add hs]
+    congr 1
+    push_cast
+    ring
+  have hpa' : s ^ (a - 1) = s ^ (a - 2) * s := by
+    calc
+      s ^ (a - 1) = s ^ ((a - 2) + 1) := congrArg (fun t : ℝ => s ^ t) (by ring)
+      _ = s ^ (a - 2) * s ^ (1 : ℝ) := Real.rpow_add hs _ _
+      _ = _ := by rw [Real.rpow_one]
+  have harg : a - 1 - 1 = a - 2 := by ring
+  change (((n : ℝ) * (n + 2) / 4) / s ^ (2 : ℕ) - 1) *
+        (s ^ a * realRadialBallFourier n s) =
+      (a * ((a - 1) * s ^ (a - 1 - 1)) * realRadialBallFourier n s +
+        a * s ^ (a - 1) * deriv (realRadialBallFourier n) s) +
+        (a * s ^ (a - 1) * deriv (realRadialBallFourier n) s +
+          s ^ a * deriv (deriv (realRadialBallFourier n)) s)
+  rw [harg, hpa, hpa']
+  have hode := realRadialBallFourier_ode n s
+  have hc : (n : ℝ) * (n + 2) / 4 = a * (a - 1) := by dsimp [a]; push_cast; ring
+  have hn : ((n + 2 : ℕ) : ℝ) = 2 * a := by dsimp [a]; ring
+  rw [hc]
+  rw [hn] at hode
+  field_simp [hs.ne']
+  linear_combination -(s ^ (a - 2) * s ^ (3 : ℕ)) * hode
+
+theorem exists_pos_weightedRadialBallFourier_energy (n : ℕ) :
+    ∃ s : ℝ, 0 < s ∧ 0 < (weightedRadialBallFourier n s) ^ (2 : ℕ) +
+      (weightedRadialBallFourierDeriv n s) ^ (2 : ℕ) := by
+  obtain ⟨s, hs, hk⟩ := exists_pos_realRadialBallFourier_ne_zero n
+  have hh : weightedRadialBallFourier n s ≠ 0 :=
+    mul_ne_zero (Real.rpow_pos_of_pos hs _).ne' hk
+  exact ⟨s, hs, add_pos_of_pos_of_nonneg (sq_pos_of_ne_zero hh) (sq_nonneg _)⟩
+
+@[simp]
+theorem radialBallMoment_zero (n : ℕ) : radialBallMoment n 0 = 1 := by
+  have hv : (ballVolume (n + 1) : ℂ) ≠ 0 := by exact_mod_cast (ballVolume_pos (n + 1)).ne'
+  unfold ballVolume at hv
+  simp [radialBallMoment, integral_const, ballVolume, hv]
+
+/-- Explicit Bessel-series coefficients, derived from ball integration and the Gamma recurrence. -/
+theorem radialBallMoment_even_eq_gamma (n k : ℕ) :
+    radialBallMoment n (2 * k) = (-1 : ℂ) ^ k *
+      (Real.Gamma ((n + 3 : ℕ) / 2 : ℝ) : ℂ) /
+      ((4 : ℂ) ^ k * (k.factorial : ℂ) *
+        (Real.Gamma ((k : ℝ) + (n + 3 : ℕ) / 2) : ℂ)) := by
+  let a : ℝ := (n + 3 : ℕ) / 2
+  have hG : ∀ k : ℕ, (Real.Gamma ((k : ℝ) + a) : ℂ) ≠ 0 := by
+    intro k
+    exact_mod_cast (Real.Gamma_pos_of_pos (by positivity : 0 < (k : ℝ) + a)).ne'
+  induction k with
+  | zero =>
+    simpa only [Nat.mul_zero, radialBallMoment_zero, pow_zero, Nat.factorial_zero,
+      Nat.cast_one, Nat.cast_zero, Complex.ofReal_zero, zero_add, one_mul] using
+      (div_self (hG 0)).symm
+  | succ k ih =>
+    change radialBallMoment n (2 * (k + 1)) = _
+    rw [radialBallMoment_even_recurrence, ih, pow_succ, pow_succ, Nat.factorial_succ]
+    have harg : ((k + 1 : ℕ) : ℝ) + (n + 3 : ℕ) / 2 = (k : ℝ) + a + 1 := by
+      dsimp [a]
+      push_cast
+      ring
+    rw [harg, Real.Gamma_add_one (by positivity : (k : ℝ) + a ≠ 0), Complex.ofReal_mul]
+    push_cast
+    field_simp [hG k]
+    dsimp [a]
+    push_cast
+    ring
+
+theorem radialBallFourier_hasSum_gamma (n : ℕ) (s : ℂ) :
+    HasSum (fun k : ℕ => (-1 : ℂ) ^ k * (Real.Gamma ((n + 3 : ℕ) / 2 : ℝ) : ℂ) /
+      ((4 : ℂ) ^ k * (k.factorial : ℂ) *
+        (Real.Gamma ((k : ℝ) + (n + 3 : ℕ) / 2) : ℂ)) * (s ^ 2) ^ k)
+      (radialBallFourier n s) := by
+  simpa only [radialBallMoment_even_eq_gamma] using radialBallFourier_hasSum_even n s
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalDistributions.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-
+Copyright (c) 2025 Moritz Doll. All rights reserved.
+Released under Apache 2.0 license; see third_party/mathlib/LICENSE.
+Authors: Moritz Doll
+
+The L² embedding below adapts the construction in Mathlib's
+Analysis/Distribution/TemperedDistribution.lean at commit
+9658bdd6ca3a5c557ef9a46698d9e7aedc6bcffd to this project's pinned Mathlib.
+The remaining definitions specialize the existing Schwartz-space API.
+-/
+
+/-! Tempered distributions and their basic support operations.
+
+Distributions here are actual continuous complex-linear functionals on Schwartz
+space. No support theorem or Paley–Wiener theorem is included in their definition.
+-/
+
+noncomputable section
+
+open MeasureTheory SchwartzMap
+open scoped SchwartzMap FourierTransform
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Continuous complex-linear functionals on the Schwartz test space. -/
+abbrev TemperedDistribution (d : ℕ) := 𝓢(Euclidean d, ℂ) →L[ℂ] ℂ
+
+/-- The Fourier transform on distributions, by transposition of the negative-sign
+Fourier transform on Schwartz functions. -/
+def distributionFourierEquiv (d : ℕ) :
+    TemperedDistribution d ≃L[ℂ] TemperedDistribution d :=
+  (SchwartzMap.fourierTransformCLE ℂ).symm.arrowCongr
+    (ContinuousLinearEquiv.refl ℂ ℂ)
+
+/-- The negative-sign Fourier transform of a tempered distribution. -/
+def distributionFourier {d : ℕ} (u : TemperedDistribution d) : TemperedDistribution d :=
+  distributionFourierEquiv d u
+
+/-- The inverse Fourier transform of a tempered distribution. -/
+def distributionInverseFourier {d : ℕ} (u : TemperedDistribution d) :
+    TemperedDistribution d := (distributionFourierEquiv d).symm u
+
+@[simp] theorem distributionFourier_apply {d : ℕ} (u : TemperedDistribution d)
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    distributionFourier u φ = u (SchwartzMap.fourierTransformCLE ℂ φ) := rfl
+
+@[simp] theorem distributionInverseFourier_apply {d : ℕ} (u : TemperedDistribution d)
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    distributionInverseFourier u φ = u ((SchwartzMap.fourierTransformCLE ℂ).symm φ) := rfl
+
+@[simp] theorem distributionInverseFourier_fourier {d : ℕ} (u : TemperedDistribution d) :
+    distributionInverseFourier (distributionFourier u) = u :=
+  (distributionFourierEquiv d).symm_apply_apply u
+
+@[simp] theorem distributionFourier_inverseFourier {d : ℕ} (u : TemperedDistribution d) :
+    distributionFourier (distributionInverseFourier u) = u :=
+  (distributionFourierEquiv d).apply_symm_apply u
+
+theorem distributionFourier_injective {d : ℕ} :
+    Function.Injective (@distributionFourier d) := (distributionFourierEquiv d).injective
+
+/-- The Dirac distribution given by evaluation at a point. -/
+def distributionDelta {d : ℕ} (x : Euclidean d) : TemperedDistribution d :=
+  SchwartzMap.delta ℂ ℂ x
+
+@[simp] theorem distributionDelta_apply {d : ℕ} (x : Euclidean d)
+    (φ : 𝓢(Euclidean d, ℂ)) : distributionDelta x φ = φ x := rfl
+
+/-- The distributional directional derivative, with its integration-by-parts sign. -/
+def distributionDerivative {d : ℕ} (v : Euclidean d) (u : TemperedDistribution d) :
+    TemperedDistribution d := -(u.comp (SchwartzMap.pderivCLM ℂ v))
+
+@[simp] theorem distributionDerivative_apply {d : ℕ} (v : Euclidean d)
+    (u : TemperedDistribution d) (φ : 𝓢(Euclidean d, ℂ)) :
+    distributionDerivative v u φ = -u (SchwartzMap.pderivCLM ℂ v φ) := rfl
+
+/-- The bilinear (unconjugated) pairing of an L² function with a test function. -/
+def l2Distribution {d : ℕ} (f : FullL2 d) : TemperedDistribution d :=
+  ((ContinuousLinearMap.mul ℂ ℂ).lpPairing volume 2 2 f).comp
+    (SchwartzMap.toLpCLM ℂ ℂ 2 volume)
+
+@[simp] theorem l2Distribution_apply {d : ℕ} (f : FullL2 d)
+    (φ : 𝓢(Euclidean d, ℂ)) : l2Distribution f φ = ∫ x, f x * φ x := by
+  simp only [l2Distribution, ContinuousLinearMap.comp_apply,
+    SchwartzMap.toLpCLM_apply, ContinuousLinearMap.lpPairing_eq_integral,
+    ContinuousLinearMap.mul_apply']
+  apply integral_congr_ae
+  filter_upwards [φ.coeFn_toLp 2 volume] with x hx
+  rw [hx]
+
+/-- Support in `S` means annihilating every compactly supported smooth test whose
+closed support is disjoint from `S`. -/
+def DistributionSupportedIn {d : ℕ} (u : TemperedDistribution d)
+    (S : Set (Euclidean d)) : Prop :=
+  ∀ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) →
+    Disjoint (tsupport (φ : Euclidean d → ℂ)) S → u φ = 0
+
+theorem DistributionSupportedIn.mono {d : ℕ} {u : TemperedDistribution d}
+    {S T : Set (Euclidean d)} (hu : DistributionSupportedIn u S) (hST : S ⊆ T) :
+    DistributionSupportedIn u T := by
+  intro φ hφ hdisj
+  exact hu φ hφ (hdisj.mono_right hST)
+
+theorem distributionSupportedIn_zero {d : ℕ} (S : Set (Euclidean d)) :
+    DistributionSupportedIn (0 : TemperedDistribution d) S := by
+  intro φ _ _
+  rfl
+
+theorem DistributionSupportedIn.add {d : ℕ} {u v : TemperedDistribution d}
+    {S : Set (Euclidean d)} (hu : DistributionSupportedIn u S)
+    (hv : DistributionSupportedIn v S) : DistributionSupportedIn (u + v) S := by
+  intro φ hφ hdisj
+  simp [hu φ hφ hdisj, hv φ hφ hdisj]
+
+theorem DistributionSupportedIn.smul {d : ℕ} {u : TemperedDistribution d}
+    {S : Set (Euclidean d)} (hu : DistributionSupportedIn u S) (c : ℂ) :
+    DistributionSupportedIn (c • u) S := by
+  intro φ hφ hdisj
+  simp [hu φ hφ hdisj]
+
+theorem distributionDelta_supported {d : ℕ} (x : Euclidean d) :
+    DistributionSupportedIn (distributionDelta x) {x} := by
+  intro φ _ hdisj
+  change φ x = 0
+  apply image_eq_zero_of_nmem_tsupport
+  exact fun hx => Set.disjoint_left.mp hdisj hx (Set.mem_singleton x)
+
+theorem tsupport_schwartz_pderiv_subset {d : ℕ} (v : Euclidean d)
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    tsupport (SchwartzMap.pderivCLM ℂ v φ : Euclidean d → ℂ) ⊆
+      tsupport (φ : Euclidean d → ℂ) := by
+  apply closure_minimal _ isClosed_closure
+  intro x hx
+  by_contra h
+  have hz := fderiv_of_not_mem_tsupport ℝ h
+  exact hx (by simp [SchwartzMap.pderivCLM_apply, hz])
+
+theorem DistributionSupportedIn.derivative {d : ℕ} {u : TemperedDistribution d}
+    {S : Set (Euclidean d)} (hu : DistributionSupportedIn u S) (v : Euclidean d) :
+    DistributionSupportedIn (distributionDerivative v u) S := by
+  intro φ hφ hdisj
+  have hs := tsupport_schwartz_pderiv_subset v φ
+  have hc : HasCompactSupport (SchwartzMap.pderivCLM ℂ v φ : Euclidean d → ℂ) :=
+    hφ.of_isClosed_subset isClosed_closure hs
+  simp only [distributionDerivative_apply]
+  rw [hu _ hc (hdisj.mono_left hs), neg_zero]
+
+theorem l2Distribution_supported {d : ℕ} (f : FullL2 d) (S : Set (Euclidean d))
+    (hf : ∀ᵐ x, x ∉ S → f x = 0) : DistributionSupportedIn (l2Distribution f) S := by
+  intro φ _ hdisj
+  rw [l2Distribution_apply]
+  apply integral_eq_zero_of_ae
+  filter_upwards [hf] with x hx
+  by_cases hxS : x ∈ S
+  · have hφx : φ x = 0 := image_eq_zero_of_nmem_tsupport
+      (fun h => Set.disjoint_left.mp hdisj h hxS)
+    simp [hφx]
+  · simp [hx hxS]
+
+theorem l2Distribution_injective {d : ℕ} : Function.Injective (@l2Distribution d) := by
+  intro f g h
+  apply Lp.ext
+  apply ae_eq_of_integral_contDiff_smul_eq
+    ((Lp.memLp f).locallyIntegrable (by norm_num))
+    ((Lp.memLp g).locallyIntegrable (by norm_num))
+  intro φ hφ hc
+  let ψ := compactSchwartz (fun x => (φ x : ℂ))
+    (Complex.ofRealCLM.contDiff.comp hφ) (hc.comp_left Complex.ofReal_zero)
+  have hh := congrArg (fun u : TemperedDistribution d => u ψ) h
+  change l2Distribution f ψ = l2Distribution g ψ at hh
+  rw [l2Distribution_apply, l2Distribution_apply] at hh
+  change (∫ x, f x * (φ x : ℂ)) = ∫ x, g x * (φ x : ℂ) at hh
+  simpa only [Complex.real_smul, mul_comm] using hh
+
+/-- A quantitative decay bound for multiplying a Schwartz test by a function of
+polynomial growth. The bound involves finitely many Schwartz seminorms. -/
+theorem polynomial_schwartz_bound {d N n : ℕ} {f : Euclidean d → ℂ} {C : ℝ}
+    (hC : 0 ≤ C) (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    ‖f x * φ x‖ ≤ (1 + ‖x‖) ^ (-(n : ℝ)) *
+      (C * 2 ^ (N + n) *
+        (Finset.Iic (N + n, 0)).sup (schwartzSeminormFamily ℂ (Euclidean d) ℂ) φ) := by
+  have hp : 0 < 1 + ‖x‖ := by positivity
+  have hs := one_add_le_sup_seminorm_apply (𝕜 := ℂ)
+    (m := (N + n, 0)) (k := N + n) (n := 0) le_rfl le_rfl φ x
+  simp only [norm_iteratedFDeriv_zero, schwartzSeminormFamily_apply] at hs
+  rw [Real.rpow_neg hp.le, Real.rpow_natCast, ← div_eq_inv_mul,
+    le_div_iff₀ (pow_pos hp _), norm_mul]
+  calc
+    ‖f x‖ * ‖φ x‖ * (1 + ‖x‖) ^ n
+        ≤ (C * (1 + ‖x‖) ^ N) * ‖φ x‖ * (1 + ‖x‖) ^ n := by
+          gcongr
+          exact hf x
+    _ = C * ((1 + ‖x‖) ^ (N + n) * ‖φ x‖) := by rw [pow_add]; ring
+    _ ≤ C * (2 ^ (N + n) *
+        (Finset.Iic (N + n, 0)).sup (schwartzSeminormFamily ℂ (Euclidean d) ℂ) φ) :=
+      mul_le_mul_of_nonneg_left hs hC
+    _ = _ := by ring
+
+theorem polynomial_schwartz_integrable {d N : ℕ} {f : Euclidean d → ℂ} {C : ℝ}
+    (hC : 0 ≤ C) (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable f volume) (φ : 𝓢(Euclidean d, ℂ)) :
+    Integrable (fun x => f x * φ x) := by
+  let n := (volume : Measure (Euclidean d)).integrablePower
+  apply ((integrable_pow_neg_integrablePower (volume : Measure (Euclidean d))).mul_const
+    (C * 2 ^ (N + n) *
+      (Finset.Iic (N + n, 0)).sup (schwartzSeminormFamily ℂ (Euclidean d) ℂ) φ)).mono'
+      (hm.mul φ.continuous.aestronglyMeasurable)
+  exact Filter.Eventually.of_forall (polynomial_schwartz_bound hC hf φ)
+
+/-- A measurable function with an explicit polynomial bound defines a continuous
+functional on Schwartz space by the actual integral. Smoothness is unnecessary. -/
+def polynomialDistribution {d N : ℕ} (f : Euclidean d → ℂ) {C : ℝ}
+    (hC : 0 ≤ C) (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable f volume) : TemperedDistribution d := by
+  refine SchwartzMap.mkCLMtoNormedSpace (fun φ => ∫ x, f x * φ x) ?_ ?_ ?_
+  · intro φ ψ
+    simp only [SchwartzMap.add_apply, mul_add]
+    exact integral_add (polynomial_schwartz_integrable hC hf hm φ)
+      (polynomial_schwartz_integrable hC hf hm ψ)
+  · intro a φ
+    simp only [SchwartzMap.smul_apply, smul_eq_mul, RingHom.id_apply]
+    simp_rw [mul_left_comm (f _) a]
+    exact integral_const_mul _ _
+  · let n := (volume : Measure (Euclidean d)).integrablePower
+    let J := ∫ x : Euclidean d, (1 + ‖x‖) ^ (-(n : ℝ))
+    refine ⟨Finset.Iic (N + n, 0), J * C * 2 ^ (N + n), ?_, ?_⟩
+    · have hJ : 0 ≤ J := integral_nonneg (fun x => by positivity)
+      positivity
+    · intro φ
+      apply (norm_integral_le_integral_norm _).trans
+      calc
+        (∫ x, ‖f x * φ x‖) ≤ ∫ x, (1 + ‖x‖) ^ (-(n : ℝ)) *
+            (C * 2 ^ (N + n) *
+              (Finset.Iic (N + n, 0)).sup (schwartzSeminormFamily ℂ (Euclidean d) ℂ) φ) := by
+          apply integral_mono (polynomial_schwartz_integrable hC hf hm φ).norm
+            ((integrable_pow_neg_integrablePower (volume : Measure (Euclidean d))).mul_const _)
+          exact polynomial_schwartz_bound hC hf φ
+        _ = _ := by rw [integral_mul_const]; dsimp [J]; ring
+
+@[simp] theorem polynomialDistribution_apply {d N : ℕ} (f : Euclidean d → ℂ) {C : ℝ}
+    (hC : 0 ≤ C) (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable f volume) (φ : 𝓢(Euclidean d, ℂ)) :
+    polynomialDistribution f hC hf hm φ = ∫ x, f x * φ x := rfl
+
+/-- Pointwise complex conjugation preserves the Schwartz test space. -/
+def schwartzConjugate {d : ℕ} (φ : 𝓢(Euclidean d, ℂ)) : 𝓢(Euclidean d, ℂ) where
+  toFun := Complex.conjLIE ∘ φ
+  smooth' := Complex.conjCLE.contDiff.comp φ.smooth'
+  decay' := by
+    intro k n
+    obtain ⟨C, hC⟩ := φ.decay' k n
+    exact ⟨C, fun x => by
+      rw [Complex.conjLIE.norm_iteratedFDeriv_comp_left]
+      exact hC x⟩
+
+@[simp] theorem schwartzConjugate_apply {d : ℕ} (φ : 𝓢(Euclidean d, ℂ))
+    (x : Euclidean d) : schwartzConjugate φ x = starRingEnd ℂ (φ x) := rfl
+
+/-- Transposition on distributions agrees with the existing unitary L² transform. -/
+theorem distributionFourier_l2Distribution {d : ℕ} (f : FullL2 d) :
+    distributionFourier (l2Distribution f) = l2Distribution (fourierL2Equiv d f) := by
+  ext φ
+  rw [distributionFourier_apply, l2Distribution_apply, l2Distribution_apply]
+  have h := fourierL2_pairing f (schwartzConjugate φ)
+  simp only [schwartzConjugate_apply, map_star, star_star] at h
+  have hc : (schwartzConjugate φ : Euclidean d → ℂ) =
+      fun x => starRingEnd ℂ (φ x) := rfl
+  rw [hc] at h
+  simp only [inverseFourier_conj, map_star, star_star] at h
+  simpa only [SchwartzMap.fourierTransformCLE_apply, Complex.conj_conj] using h.symm
+
+theorem distributionInverseFourier_l2Distribution {d : ℕ} (f : FullL2 d) :
+    distributionInverseFourier (l2Distribution f) =
+      l2Distribution ((fourierL2Equiv d).symm f) := by
+  apply distributionFourier_injective
+  rw [distributionFourier_inverseFourier, distributionFourier_l2Distribution,
+    LinearIsometryEquiv.apply_symm_apply]
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalConvolutionSupport.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# The Titchmarsh–Lions hypothesis and its John-ellipsoid consequence
+
+Distribution support is defined by actual local compact Schwartz tests. The
+convolution relation is the iterated action on `φ(x+y)`; its definition contains
+no support assertion. `TitchmarshLions` is an explicit proposition to be supplied
+as a hypothesis, not an axiom or a theorem asserted without proof.
+-/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap Pointwise Manifold
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- A point belongs to distribution support when every open neighborhood admits
+a compactly supported smooth test on which the distribution does not vanish. -/
+def distributionSupport (u : TemperedDistribution d) : Set (Euclidean d) :=
+  {x | ∀ U : Set (Euclidean d), IsOpen U → x ∈ U →
+    ∃ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) ∧
+      tsupport (φ : Euclidean d → ℂ) ⊆ U ∧ u φ ≠ 0}
+
+theorem distributionSupport_isClosed (u : TemperedDistribution d) :
+    IsClosed (distributionSupport u) := by
+  rw [← isOpen_compl_iff]
+  apply isOpen_iff_forall_mem_open.mpr
+  intro x hx
+  change ¬ ∀ U : Set (Euclidean d), IsOpen U → x ∈ U →
+    ∃ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) ∧
+      tsupport (φ : Euclidean d → ℂ) ⊆ U ∧ u φ ≠ 0 at hx
+  push_neg at hx
+  obtain ⟨U, hU, hxU, hzero⟩ := hx
+  refine ⟨U, ?_, hU, hxU⟩
+  intro y hy
+  change y ∉ distributionSupport u
+  intro hys
+  obtain ⟨φ, hc, hs, hn⟩ := hys U hU hy
+  exact hn (hzero φ hc hs)
+
+/-- A closed supporting set contains the exact local-test support. -/
+theorem DistributionSupportedIn.support_subset {u : TemperedDistribution d}
+    {S : Set (Euclidean d)} (hu : DistributionSupportedIn u S) (hS : IsClosed S) :
+    distributionSupport u ⊆ S := by
+  intro x hx
+  by_contra hn
+  obtain ⟨φ, hc, hs, hnonzero⟩ := hx Sᶜ hS.isOpen_compl hn
+  apply hnonzero
+  apply hu φ hc
+  exact Set.disjoint_left.mpr fun y hy hyS => hs hy hyS
+
+/-- A finite smooth partition of unity turns local vanishing into vanishing on
+every compact Schwartz test outside the exact distribution support. -/
+theorem distributionSupportedIn_support (u : TemperedDistribution d) :
+    DistributionSupportedIn u (distributionSupport u) := by
+  classical
+  intro φ hφ hdisjoint
+  have hlocal : ∀ x : tsupport (φ : Euclidean d → ℂ),
+      ∃ U : Set (Euclidean d), IsOpen U ∧ x.val ∈ U ∧
+        ∀ ψ : 𝓢(Euclidean d, ℂ), HasCompactSupport (ψ : Euclidean d → ℂ) →
+          tsupport (ψ : Euclidean d → ℂ) ⊆ U → u ψ = 0 := by
+    intro x
+    have hx : x.val ∉ distributionSupport u :=
+      fun h => Set.disjoint_left.mp hdisjoint x.property h
+    change ¬ ∀ U : Set (Euclidean d), IsOpen U → x.val ∈ U →
+      ∃ ψ : 𝓢(Euclidean d, ℂ), HasCompactSupport (ψ : Euclidean d → ℂ) ∧
+        tsupport (ψ : Euclidean d → ℂ) ⊆ U ∧ u ψ ≠ 0 at hx
+    push_neg at hx
+    exact hx
+  choose U hU hxU hzero using hlocal
+  have hcover : tsupport (φ : Euclidean d → ℂ) ⊆ ⋃ i, U i := by
+    intro x hx
+    exact mem_iUnion.mpr ⟨⟨x, hx⟩, hxU ⟨x, hx⟩⟩
+  obtain ⟨J, hJ⟩ := hφ.elim_finite_subcover U hU hcover
+  have hcoverJ : tsupport (φ : Euclidean d → ℂ) ⊆ ⋃ i : J, U i.val := by
+    intro x hx
+    obtain ⟨i, hi, hxi⟩ := mem_iUnion₂.mp (hJ hx)
+    exact mem_iUnion.mpr ⟨⟨i, hi⟩, hxi⟩
+  obtain ⟨ρ, hρ⟩ := SmoothPartitionOfUnity.exists_isSubordinate
+    𝓘(ℝ, Euclidean d) isClosed_closure (fun i : J => U i.val)
+    (fun i => hU i.val) hcoverJ
+  let ψ : J → 𝓢(Euclidean d, ℂ) := fun i =>
+    compactSchwartz (fun x => ρ i x • φ x)
+      ((ρ i).contMDiff.contDiff.smul (φ.smooth ⊤)) hφ.smul_left
+  have hz : ∀ i : J, u (ψ i) = 0 := by
+    intro i
+    apply hzero i.val (ψ i) hφ.smul_left
+    exact (tsupport_smul_subset_left (ρ i) φ).trans (hρ i)
+  have he : φ = ∑ i : J, ψ i := by
+    ext x
+    change distributionDelta x φ = distributionDelta x (∑ i : J, ψ i)
+    rw [map_sum]
+    change φ x = ∑ i : J, ρ i x • φ x
+    by_cases hx : φ x = 0
+    · simp [hx]
+    · have hxs : x ∈ tsupport (φ : Euclidean d → ℂ) := subset_tsupport _ hx
+      have hone : (∑ i : J, ρ i x) = 1 := by
+        rw [← finsum_eq_sum_of_fintype]
+        exact ρ.sum_eq_one hxs
+      rw [← Finset.sum_smul, hone, one_smul]
+  rw [he, map_sum]
+  exact Finset.sum_eq_zero fun i _ => hz i
+
+/-- Exact local support and closed supporting sets give equivalent support conditions. -/
+theorem distributionSupportedIn_iff_support_subset (u : TemperedDistribution d)
+    (S : Set (Euclidean d)) (hS : IsClosed S) :
+    DistributionSupportedIn u S ↔ distributionSupport u ⊆ S :=
+  ⟨fun h => h.support_subset hS, fun h => (distributionSupportedIn_support u).mono h⟩
+
+/-- Compact support of a distribution is an actual compact physical supporting set. -/
+def CompactlySupportedDistribution (u : TemperedDistribution d) : Prop :=
+  ∃ K : Set (Euclidean d), IsCompact K ∧ DistributionSupportedIn u K
+
+theorem CompactlySupportedDistribution.support_isCompact {u : TemperedDistribution d}
+    (hu : CompactlySupportedDistribution u) : IsCompact (distributionSupport u) := by
+  obtain ⟨K, hK, hs⟩ := hu
+  exact hK.of_isClosed_subset (distributionSupport_isClosed u) (hs.support_subset hK.isClosed)
+
+@[simp] theorem distributionSupport_zero :
+    distributionSupport (0 : TemperedDistribution d) = ∅ := by
+  ext x
+  simp only [Set.mem_empty_iff_false, iff_false]
+  intro hx
+  obtain ⟨φ, _, _, hφ⟩ := hx univ isOpen_univ (mem_univ x)
+  exact hφ rfl
+
+theorem distributionDelta_compactlySupported (x : Euclidean d) :
+    CompactlySupportedDistribution (distributionDelta x) :=
+  ⟨{x}, isCompact_singleton, distributionDelta_supported x⟩
+
+/-- Translation grows at most linearly and is smooth to every order. -/
+theorem addLeft_hasTemperateGrowth (x : Euclidean d) :
+    Function.HasTemperateGrowth (fun y : Euclidean d => x + y) := by
+  apply Function.HasTemperateGrowth.of_fderiv
+    (f := fun y : Euclidean d => x + y)
+    (k := 1) (C := ‖x‖ + 1)
+  · have he : fderiv ℝ (fun y : Euclidean d => x + y) =
+        fun _ => ContinuousLinearMap.id ℝ (Euclidean d) := by
+      funext y
+      simpa using ((hasFDerivAt_const (𝕜 := ℝ) x y).add (hasFDerivAt_id y)).fderiv
+    rw [he]
+    exact Function.HasTemperateGrowth.const _
+  · exact (differentiable_const x).add differentiable_id
+  · intro y
+    have h := norm_add_le x y
+    simp only [pow_one]
+    nlinarith [norm_nonneg x, norm_nonneg y]
+
+/-- Translation acts on actual Schwartz functions as a continuous linear map. -/
+def schwartzTranslateCLM (x : Euclidean d) :
+    𝓢(Euclidean d, ℂ) →L[ℂ] 𝓢(Euclidean d, ℂ) :=
+  SchwartzMap.compCLMOfAntilipschitz ℂ (addLeft_hasTemperateGrowth x)
+    (show AntilipschitzWith 1 (fun y : Euclidean d => x + y) from by
+      intro y z
+      simp)
+
+@[simp] theorem schwartzTranslateCLM_apply (x y : Euclidean d) (φ : 𝓢(Euclidean d, ℂ)) :
+    schwartzTranslateCLM x φ y = φ (x + y) := rfl
+
+/-- Pushforward translation of a distribution, with the usual test-function convention. -/
+def distributionTranslate (x : Euclidean d) (u : TemperedDistribution d) :
+    TemperedDistribution d := u.comp (schwartzTranslateCLM x)
+
+@[simp] theorem distributionTranslate_apply (x : Euclidean d) (u : TemperedDistribution d)
+    (φ : 𝓢(Euclidean d, ℂ)) : distributionTranslate x u φ = u (schwartzTranslateCLM x φ) := rfl
+
+/-- Honest distribution convolution, expressed relationally through iterated test action.
+The outer Schwartz representative is certified by pointwise equality to the inner
+distribution action, so this definition does not assert a support theorem. -/
+def IsDistributionConvolution (u v w : TemperedDistribution d) : Prop :=
+  ∀ φ : 𝓢(Euclidean d, ℂ), ∃ ψ : 𝓢(Euclidean d, ℂ),
+    (∀ x : Euclidean d, ψ x = v (schwartzTranslateCLM x φ)) ∧ w φ = u ψ
+
+/-- The relational definition determines the resulting distribution uniquely. -/
+theorem IsDistributionConvolution.unique {u v w z : TemperedDistribution d}
+    (hw : IsDistributionConvolution u v w) (hz : IsDistributionConvolution u v z) : w = z := by
+  ext φ
+  obtain ⟨ψ, hψ, hwp⟩ := hw φ
+  obtain ⟨χ, hχ, hzp⟩ := hz φ
+  have he : ψ = χ := by ext x; exact (hψ x).trans (hχ x).symm
+  rw [hwp, hzp, he]
+
+/-- Convolution with a Dirac mass is the actual distribution translation. -/
+theorem distributionConvolution_delta_right (u : TemperedDistribution d) (t : Euclidean d) :
+    IsDistributionConvolution u (distributionDelta t) (distributionTranslate t u) := by
+  intro φ
+  refine ⟨schwartzTranslateCLM t φ, ?_, rfl⟩
+  intro x
+  simp only [schwartzTranslateCLM_apply, distributionDelta_apply, add_comm]
+
+/-- The exact classical Titchmarsh–Lions convex-support theorem, formulated for
+nonzero compactly supported distributions and their actual iterated-action convolution. -/
+def TitchmarshLions (d : ℕ) : Prop :=
+  ∀ u v w : TemperedDistribution d,
+    CompactlySupportedDistribution u → CompactlySupportedDistribution v →
+    u ≠ 0 → v ≠ 0 → IsDistributionConvolution u v w →
+    convexHull ℝ (distributionSupport w) =
+      convexHull ℝ (distributionSupport u) + convexHull ℝ (distributionSupport v)
+
+/-- Titchmarsh–Lions makes every point of the second factor's support a physical
+translation of the first factor's convex support inside the result's convex support. -/
+theorem TitchmarshLions.translated_support_subset (hTL : TitchmarshLions d)
+    {u v w : TemperedDistribution d} (hu : CompactlySupportedDistribution u)
+    (hv : CompactlySupportedDistribution v) (hu0 : u ≠ 0) (hv0 : v ≠ 0)
+    (hc : IsDistributionConvolution u v w) {t : Euclidean d}
+    (ht : t ∈ distributionSupport v) :
+    (fun x : Euclidean d => t + x) '' convexHull ℝ (distributionSupport u) ⊆
+      convexHull ℝ (distributionSupport w) := by
+  rintro _ ⟨x, hx, rfl⟩
+  rw [hTL u v w hu hv hu0 hv0 hc]
+  exact Set.mem_add.mpr ⟨x, hx, t, subset_convexHull ℝ _ ht, add_comm x t⟩
+
+/-- The geometric support step: if the first factor fills a John ellipsoid and
+the convolution is supported in the convex body, the second factor is supported
+at the origin in the exact local-test sense. -/
+theorem TitchmarshLions.support_subset_origin_of_john (hTL : TitchmarshLions d)
+    {u v w : TemperedDistribution d} (hu : CompactlySupportedDistribution u)
+    (hv : CompactlySupportedDistribution v) (hu0 : u ≠ 0) (hv0 : v ≠ 0)
+    (hc : IsDistributionConvolution u v w) {K E : Set (Euclidean d)}
+    (hK : Convex ℝ K) (hKclosed : IsClosed K) (hJ : IsJohnEllipsoid K E)
+    (hEu : convexHull ℝ (distributionSupport u) = E)
+    (hw : DistributionSupportedIn w K) : distributionSupport v ⊆ {0} := by
+  intro t ht
+  apply Set.mem_singleton_iff.mpr
+  apply hJ.eq_zero_of_translated_subset hK
+  have hs := hTL.translated_support_subset hu hv hu0 hv0 hc ht
+  rw [hEu] at hs
+  exact hs.trans (convexHull_min (hw.support_subset hKclosed) hK)
+
+/-- The geometric convolution conclusion in the original test-annihilation support API. -/
+theorem TitchmarshLions.supportedIn_origin_of_john (hTL : TitchmarshLions d)
+    {u v w : TemperedDistribution d} (hu : CompactlySupportedDistribution u)
+    (hv : CompactlySupportedDistribution v) (hu0 : u ≠ 0) (hv0 : v ≠ 0)
+    (hc : IsDistributionConvolution u v w) {K E : Set (Euclidean d)}
+    (hK : Convex ℝ K) (hKclosed : IsClosed K) (hJ : IsJohnEllipsoid K E)
+    (hEu : convexHull ℝ (distributionSupport u) = E)
+    (hw : DistributionSupportedIn w K) : DistributionSupportedIn v {0} :=
+  (distributionSupportedIn_support v).mono
+    (hTL.support_subset_origin_of_john hu hv hu0 hv0 hc hK hKclosed hJ hEu hw)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalDistributionConvolution.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Fourier multiplication and actual distribution convolution
+
+For a compactly supported integrable L² kernel, all moments are integrable and
+its Fourier transform is a smooth function of temperate growth. Multiplication
+by this transform preserves the Schwartz test space. Fourier transposition then
+gives actual convolution, with the integrable kernel in the inner test action.
+-/
+
+noncomputable section
+open MeasureTheory SchwartzMap Set
+open scoped SchwartzMap FourierTransform ENNReal Pointwise
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- Compact a.e. physical support supplies all the moments needed for Fourier differentiation. -/
+theorem integrable_moments_of_compact_support {f : Euclidean d → ℂ} (hf : Integrable f)
+    {K : Set (Euclidean d)} (hK : IsCompact K)
+    (hs : ∀ᵐ x, x ∉ K → f x = 0) (n : ℕ) :
+    Integrable (fun x => ‖x‖ ^ n * ‖f x‖) := by
+  have hOn : IntegrableOn (fun x => ‖f x‖ * ‖x‖ ^ n) K :=
+    hf.norm.integrableOn.mul_continuousOn (continuous_norm.pow n).continuousOn hK
+  have hI := (integrable_indicator_iff hK.measurableSet).mpr hOn
+  apply hI.congr
+  filter_upwards [hs] with x hx
+  by_cases hmem : x ∈ K
+  · simp [hmem, mul_comm]
+  · simp [hmem, hx hmem]
+
+/-- A Fourier transform with all integrable moments has bounded derivatives of
+every order, hence the precise temperate-growth property used by Schwartz multipliers. -/
+theorem fourier_hasTemperateGrowth_of_moments {f : Euclidean d → ℂ}
+    (hf : Integrable f) (hm : ∀ n : ℕ, Integrable (fun x => ‖x‖ ^ n * ‖f x‖)) :
+    Function.HasTemperateGrowth (𝓕 f) := by
+  refine ⟨Real.contDiff_fourierIntegral (N := ⊤) (fun n _ => hm n), ?_⟩
+  intro n
+  let g := fun x : Euclidean d => VectorFourier.fourierPowSMulRight (innerSL ℝ) f x n
+  refine ⟨0, ∫ x, ‖g x‖, ?_⟩
+  intro ξ
+  rw [Real.iteratedFDeriv_fourierIntegral (N := ⊤) (fun k _ => hm k) hf.1 (by simp)]
+  simpa only [pow_zero, mul_one] using
+    VectorFourier.norm_fourierIntegral_le_integral_norm 𝐞 volume (innerₗ (Euclidean d)) g ξ
+
+theorem fourier_hasTemperateGrowth_of_compact_support {f : Euclidean d → ℂ}
+    (hf : Integrable f) {K : Set (Euclidean d)} (hK : IsCompact K)
+    (hs : ∀ᵐ x, x ∉ K → f x = 0) : Function.HasTemperateGrowth (𝓕 f) :=
+  fourier_hasTemperateGrowth_of_moments hf (integrable_moments_of_compact_support hf hK hs)
+
+/-- Multiplication of an actual Schwartz test by a smooth function of temperate growth. -/
+def schwartzMultiplierCLM (m : Euclidean d → ℂ) (hm : Function.HasTemperateGrowth m) :
+    𝓢(Euclidean d, ℂ) →L[ℂ] 𝓢(Euclidean d, ℂ) :=
+  SchwartzMap.bilinLeftCLM (ContinuousLinearMap.mul ℂ ℂ) hm
+
+@[simp] theorem schwartzMultiplierCLM_apply (m : Euclidean d → ℂ)
+    (hm : Function.HasTemperateGrowth m) (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    schwartzMultiplierCLM m hm φ x = φ x * m x := rfl
+
+/-- The Fourier-conjugated multiplier that will be identified with the actual
+inner convolution action of the integrable physical kernel. -/
+def kernelConvolutionTestCLM (f : Euclidean d → ℂ)
+    (hm : Function.HasTemperateGrowth (𝓕 f)) :
+    𝓢(Euclidean d, ℂ) →L[ℂ] 𝓢(Euclidean d, ℂ) :=
+  (SchwartzMap.fourierTransformCLE ℂ).toContinuousLinearMap.comp
+    ((schwartzMultiplierCLM (𝓕 f) hm).comp
+      (SchwartzMap.fourierTransformCLE ℂ).symm.toContinuousLinearMap)
+
+/-- Inverse Fourier transform converts physical test translation to the actual
+negative Fourier phase, with no distributional identity assumed. -/
+theorem inverseFourier_schwartzTranslate (φ : 𝓢(Euclidean d, ℂ)) (y ξ : Euclidean d) :
+    (SchwartzMap.fourierTransformCLE ℂ).symm (schwartzTranslateCLM y φ) ξ =
+      𝐞 (-inner (𝕜 := ℝ) y ξ) • ((SchwartzMap.fourierTransformCLE ℂ).symm φ ξ) := by
+  have h := congrFun (VectorFourier.fourierIntegral_comp_add_right 𝐞 volume
+    (-innerₗ (Euclidean d)) (φ : Euclidean d → ℂ) y) ξ
+  simpa only [SchwartzMap.fourierTransformCLE_symm_apply, Real.fourierIntegralInv,
+    Function.comp_def, schwartzTranslateCLM_apply, add_comm, LinearMap.neg_apply,
+    innerₗ_apply] using h
+
+/-- The outer Schwartz witness is exactly the iterated inner-kernel action.
+The proof is scalar Fourier Fubini and Schwartz Fourier inversion. -/
+theorem kernelConvolutionTestCLM_apply (f : Euclidean d → ℂ) (hf : Integrable f)
+    (hm : Function.HasTemperateGrowth (𝓕 f)) (φ : 𝓢(Euclidean d, ℂ)) (y : Euclidean d) :
+    kernelConvolutionTestCLM f hm φ y = ∫ x, f x * φ (y + x) := by
+  let χ := (SchwartzMap.fourierTransformCLE ℂ).symm (schwartzTranslateCLM y φ)
+  have hfirst : kernelConvolutionTestCLM f hm φ y = ∫ ξ, 𝓕 f ξ * χ ξ := by
+    change 𝓕 (schwartzMultiplierCLM (𝓕 f) hm
+      ((SchwartzMap.fourierTransformCLE ℂ).symm φ)) y = _
+    rw [Real.fourierIntegral_eq]
+    apply integral_congr_ae
+    exact Filter.Eventually.of_forall fun ξ => by
+      dsimp only
+      rw [schwartzMultiplierCLM_apply]
+      dsimp [χ]
+      rw [inverseFourier_schwartzTranslate]
+      rw [real_inner_comm ξ y]
+      simp [Circle.smul_def, mul_comm, mul_left_comm]
+  rw [hfirst, integral_fourier_mul hf χ.integrable]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun x => by
+    dsimp only
+    have hx := congrArg (fun ψ : 𝓢(Euclidean d, ℂ) => ψ x)
+      ((SchwartzMap.fourierTransformCLE ℂ).apply_symm_apply (schwartzTranslateCLM y φ))
+    change 𝓕 χ x = φ (y + x) at hx
+    rw [hx]
+
+/-- Multiplication of a tempered distribution by an actual smooth multiplier. -/
+def distributionMultiply (m : Euclidean d → ℂ) (hm : Function.HasTemperateGrowth m)
+    (u : TemperedDistribution d) : TemperedDistribution d :=
+  u.comp (schwartzMultiplierCLM m hm)
+
+@[simp] theorem distributionMultiply_apply (m : Euclidean d → ℂ)
+    (hm : Function.HasTemperateGrowth m) (u : TemperedDistribution d)
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    distributionMultiply m hm u φ = u (schwartzMultiplierCLM m hm φ) := rfl
+
+/-- For regular distributions this operation is the actual pointwise product.
+Polynomial bounds merely certify the integrals defining the two distributions. -/
+theorem distributionMultiply_polynomialDistribution {N M : ℕ}
+    (m q p : Euclidean d → ℂ) (hm : Function.HasTemperateGrowth m)
+    {C D : ℝ} (hC : 0 ≤ C) (hq : ∀ x, ‖q x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hqm : AEStronglyMeasurable q volume)
+    (hD : 0 ≤ D) (hp : ∀ x, ‖p x‖ ≤ D * (1 + ‖x‖) ^ M)
+    (hpm : AEStronglyMeasurable p volume) (hprod : ∀ x, p x = m x * q x) :
+    distributionMultiply m hm (polynomialDistribution q hC hq hqm) =
+      polynomialDistribution p hD hp hpm := by
+  ext φ
+  rw [distributionMultiply_apply, polynomialDistribution_apply, polynomialDistribution_apply]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun x => by
+    dsimp only
+    rw [schwartzMultiplierCLM_apply, hprod]
+    ring
+
+/-- Fourier multiplication by an integrable kernel is actual distribution convolution.
+The order places the L² kernel in the inner iterated test action. -/
+theorem isDistributionConvolution_fourierMultiplier (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ))
+    (hm : Function.HasTemperateGrowth (𝓕 (f : Euclidean d → ℂ)))
+    (v : TemperedDistribution d) :
+    IsDistributionConvolution v (l2Distribution f)
+      (distributionInverseFourier
+        (distributionMultiply (𝓕 (f : Euclidean d → ℂ)) hm (distributionFourier v))) := by
+  intro φ
+  refine ⟨kernelConvolutionTestCLM f hm φ, ?_, rfl⟩
+  intro x
+  rw [kernelConvolutionTestCLM_apply _ hf, l2Distribution_apply]
+  rfl
+
+/-- Any proved Fourier-product identity therefore certifies genuine convolution. -/
+theorem isDistributionConvolution_of_fourier_product (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ))
+    (hm : Function.HasTemperateGrowth (𝓕 (f : Euclidean d → ℂ)))
+    {v w : TemperedDistribution d}
+    (hproduct : distributionFourier w =
+      distributionMultiply (𝓕 (f : Euclidean d → ℂ)) hm (distributionFourier v)) :
+    IsDistributionConvolution v (l2Distribution f) w := by
+  have hw : w = distributionInverseFourier
+      (distributionMultiply (𝓕 (f : Euclidean d → ℂ)) hm (distributionFourier v)) := by
+    rw [← hproduct, distributionInverseFourier_fourier]
+  rw [hw]
+  exact isDistributionConvolution_fourierMultiplier f hf hm v
+
+/-- A compactly supported L² kernel needs no additional smoothness hypothesis:
+its Fourier multiplier has temperate growth by the proved moment estimates. -/
+theorem isDistributionConvolution_compact_fourierMultiplier (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ)) {K : Set (Euclidean d)}
+    (hK : IsCompact K) (hs : ∀ᵐ x, x ∉ K → f x = 0) (v : TemperedDistribution d) :
+    IsDistributionConvolution v (l2Distribution f)
+      (distributionInverseFourier
+        (distributionMultiply (𝓕 (f : Euclidean d → ℂ))
+          (fourier_hasTemperateGrowth_of_compact_support hf hK hs) (distributionFourier v))) :=
+  isDistributionConvolution_fourierMultiplier f hf
+    (fourier_hasTemperateGrowth_of_compact_support hf hK hs) v
+
+/-- The John-ellipsoid conclusion with the kernel in the inner convolution action,
+which is the order proved directly by the Fourier-multiplier bridge. -/
+theorem TitchmarshLions.supportedIn_origin_of_john_right (hTL : TitchmarshLions d)
+    {u v w : TemperedDistribution d} (hu : CompactlySupportedDistribution u)
+    (hv : CompactlySupportedDistribution v) (hu0 : u ≠ 0) (hv0 : v ≠ 0)
+    (hc : IsDistributionConvolution v u w) {K E : Set (Euclidean d)}
+    (hK : Convex ℝ K) (hKclosed : IsClosed K) (hJ : IsJohnEllipsoid K E)
+    (hEu : convexHull ℝ (distributionSupport u) = E)
+    (hw : DistributionSupportedIn w K) : DistributionSupportedIn v {0} := by
+  apply (distributionSupportedIn_support v).mono
+  intro t ht
+  apply Set.mem_singleton_iff.mpr
+  apply hJ.eq_zero_of_translated_subset hK
+  rintro _ ⟨x, hx, rfl⟩
+  have hconv : t + x ∈ convexHull ℝ (distributionSupport w) := by
+    rw [hTL v u w hv hu hv0 hu0 hc]
+    exact Set.mem_add.mpr ⟨t, subset_convexHull ℝ _ ht, x, hEu.symm ▸ hx, rfl⟩
+  exact convexHull_min (hw.support_subset hKclosed) hK hconv
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalRegularSupport.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Local tests and exact support of regular L² distributions. -/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+set_option maxHeartbeats 800000 in
+/-- Distributional local vanishing of an L² function implies actual a.e. vanishing. -/
+theorem l2Distribution_ae_zero_on_open {f : FullL2 d} {U : Set (Euclidean d)}
+    (hU : IsOpen U)
+    (hz : ∀ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) →
+      tsupport (φ : Euclidean d → ℂ) ⊆ U → l2Distribution f φ = 0) :
+    ∀ᵐ x, x ∈ U → f x = 0 := by
+  refine hU.ae_eq_zero_of_integral_contDiff_smul_eq_zero
+    (f := (f : Euclidean d → ℂ))
+    (((Lp.memLp f).locallyIntegrable (by norm_num)).locallyIntegrableOn U) ?_
+  intro g hg hc hs
+  let φ := compactSchwartz (fun x => (g x : ℂ))
+    (Complex.ofRealCLM.contDiff.comp hg) (hc.comp_left Complex.ofReal_zero)
+  have hsup : tsupport (φ : Euclidean d → ℂ) = tsupport g := by
+    change closure (Function.support (fun x => (g x : ℂ))) = closure (Function.support g)
+    apply congrArg closure
+    exact Set.ext fun x => Complex.ofReal_ne_zero
+  have hh := hz φ (hc.comp_left Complex.ofReal_zero) (hsup.symm ▸ hs)
+  rw [l2Distribution_apply] at hh
+  change (∫ x, f x * (g x : ℂ)) = 0 at hh
+  simpa only [Complex.real_smul, mul_comm] using hh
+
+/-- A nonzero a.e. constant on an open set makes every point of that set belong
+to the exact distribution support. -/
+theorem open_subset_l2Distribution_support_of_const {f : FullL2 d}
+    {V : Set (Euclidean d)} (hV : IsOpen V) {c : ℂ} (hc : c ≠ 0)
+    (hf : ∀ᵐ x, x ∈ V → f x = c) : V ⊆ distributionSupport (l2Distribution f) := by
+  intro x hx
+  by_contra hn
+  change ¬ ∀ U : Set (Euclidean d), IsOpen U → x ∈ U →
+    ∃ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) ∧
+      tsupport (φ : Euclidean d → ℂ) ⊆ U ∧ l2Distribution f φ ≠ 0 at hn
+  push_neg at hn
+  obtain ⟨U, hU, hxU, hzero⟩ := hn
+  have hfae := l2Distribution_ae_zero_on_open hU hzero
+  have hmeasure : volume (U ∩ V) = 0 := by
+    apply compl_mem_ae_iff.mp
+    filter_upwards [hfae, hf] with y hy hconst
+    intro hmem
+    exact hc ((hconst hmem.2).symm.trans (hy hmem.1))
+  exact (hU.inter hV).measure_ne_zero volume ⟨x, hxU, hx⟩ hmeasure
+
+/-- For a closed set, distributional support of an L² function is equivalent to
+its actual a.e. vanishing outside the set. -/
+theorem l2Distribution_supported_iff {f : FullL2 d} {S : Set (Euclidean d)}
+    (hS : IsClosed S) : DistributionSupportedIn (l2Distribution f) S ↔
+      ∀ᵐ x, x ∉ S → f x = 0 := by
+  constructor
+  · intro h
+    apply l2Distribution_ae_zero_on_open hS.isOpen_compl
+    intro φ hc hs
+    apply h φ hc
+    exact Set.disjoint_left.mpr fun x hx hxS => (hs hx) hxS
+  · exact l2Distribution_supported f S
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalBallSupport.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Exact support of the normalized ball distribution
+
+The seed is the actual unit-ball indicator divided by its positive volume.
+Local distributional vanishing forces a.e. vanishing; positivity of volume on
+open sets then identifies its exact support with the closed unit ball.
+-/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap FourierTransform ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+theorem ballIndicator_memLp (d : ℕ) : MemLp (ballIndicator d) 2 volume :=
+  memLp_indicator_const 2 (physicalUnitBall_measurable d) 1
+    (Or.inr (physicalUnitBall_volume_lt_top d).ne)
+
+/-- The normalized physical-space unit-ball indicator. -/
+def normalizedBallIndicator (d : ℕ) : Euclidean d → ℂ :=
+  (ballVolume d : ℂ)⁻¹ • ballIndicator d
+
+theorem normalizedBallIndicator_memLp (d : ℕ) :
+    MemLp (normalizedBallIndicator d) 2 volume :=
+  (ballIndicator_memLp d).const_smul ((ballVolume d : ℂ)⁻¹)
+
+/-- The actual normalized ball vector in full Euclidean L². -/
+def normalizedBallL2 (d : ℕ) : FullL2 d :=
+  (normalizedBallIndicator_memLp d).toLp (normalizedBallIndicator d)
+
+theorem normalizedBallL2_ae (d : ℕ) :
+    (normalizedBallL2 d : Euclidean d → ℂ) =ᵐ[volume] normalizedBallIndicator d :=
+  (normalizedBallIndicator_memLp d).coeFn_toLp
+
+theorem normalizedBallL2_integrable (d : ℕ) :
+    Integrable (normalizedBallL2 d : Euclidean d → ℂ) :=
+  (Integrable.smul ((ballVolume d : ℂ)⁻¹) (ballIndicator_integrable d)).congr
+    (normalizedBallL2_ae d).symm
+
+theorem normalizedBallL2_supported (d : ℕ) :
+    ∀ᵐ x, x ∉ Metric.closedBall (0 : Euclidean d) 1 → normalizedBallL2 d x = 0 := by
+  filter_upwards [normalizedBallL2_ae d] with x hx
+  intro hn
+  have hb : x ∉ physicalUnitBall d :=
+    fun h => hn (Metric.ball_subset_closedBall h)
+  simp [hx, normalizedBallIndicator, ballIndicator, hb]
+
+/-- The seed is an actual continuous functional on Schwartz space. -/
+def normalizedBallDistribution (d : ℕ) : TemperedDistribution d :=
+  l2Distribution (normalizedBallL2 d)
+
+theorem normalizedBallDistribution_supported (d : ℕ) :
+    DistributionSupportedIn (normalizedBallDistribution d)
+      (Metric.closedBall (0 : Euclidean d) 1) :=
+  l2Distribution_supported _ _ (normalizedBallL2_supported d)
+
+theorem normalizedBallDistribution_compactlySupported (d : ℕ) :
+    CompactlySupportedDistribution (normalizedBallDistribution d) :=
+  ⟨Metric.closedBall (0 : Euclidean d) 1, isCompact_closedBall _ _,
+    normalizedBallDistribution_supported d⟩
+
+/-- The exact local-test support is the entire closed unit ball, not merely a subset. -/
+theorem normalizedBallDistribution_support (d : ℕ) :
+    distributionSupport (normalizedBallDistribution d) =
+      Metric.closedBall (0 : Euclidean d) 1 := by
+  apply Set.Subset.antisymm
+  · exact (normalizedBallDistribution_supported d).support_subset Metric.isClosed_closedBall
+  · have hinner : physicalUnitBall d ⊆ distributionSupport (normalizedBallDistribution d) := by
+      apply open_subset_l2Distribution_support_of_const Metric.isOpen_ball
+        (inv_ne_zero (Complex.ofReal_ne_zero.mpr (ballVolume_pos d).ne'))
+      filter_upwards [normalizedBallL2_ae d] with x hx
+      intro hmem
+      simp [hx, normalizedBallIndicator, ballIndicator, physicalUnitBall, hmem]
+    have hclosure := closure_minimal hinner (distributionSupport_isClosed _)
+    simpa only [physicalUnitBall, closure_ball _ one_ne_zero] using hclosure
+
+theorem normalizedBallDistribution_ne_zero (d : ℕ) : normalizedBallDistribution d ≠ 0 := by
+  intro hz
+  have hmem : (0 : Euclidean d) ∈ distributionSupport (normalizedBallDistribution d) := by
+    rw [normalizedBallDistribution_support]
+    simp
+  rw [hz, distributionSupport_zero] at hmem
+  exact hmem
+
+theorem normalizedBallDistribution_convexSupport (d : ℕ) :
+    convexHull ℝ (distributionSupport (normalizedBallDistribution d)) =
+      Metric.closedBall (0 : Euclidean d) 1 := by
+  rw [normalizedBallDistribution_support, (convex_closedBall _ _).convexHull_eq]
+
+/-- Its entire integral transform is exactly the actual normalized ball transform. -/
+theorem entireFourier_normalizedBallL2 (d : ℕ) :
+    entireFourier (normalizedBallL2 d : Euclidean d → ℂ) = normalizedBallFourier d := by
+  rw [entireFourier_congr (normalizedBallL2_ae d)]
+  change entireFourier ((ballVolume d : ℂ)⁻¹ • ballIndicator d) = _
+  rw [entireFourier_smul]
+  funext z
+  simp [normalizedBallFourier, div_eq_mul_inv, mul_comm]
+
+/-- Pointwise Fourier integral agreement at every real frequency. -/
+theorem fourier_normalizedBallL2 (d : ℕ) (ξ : Euclidean d) :
+    𝓕 (normalizedBallL2 d : Euclidean d → ℂ) ξ =
+      normalizedBallFourier d (realToComplex ξ) := by
+  rw [← entireFourier_realToComplex, entireFourier_normalizedBallL2]
+
+/-- The unitary L² Fourier transform has the normalized ball transform as its actual a.e. values. -/
+theorem fourierL2_normalizedBallL2_ae (d : ℕ) :
+    (fourierL2Equiv d (normalizedBallL2 d) : Euclidean d → ℂ) =ᵐ[volume]
+      fun ξ => normalizedBallFourier d (realToComplex ξ) :=
+  (fourierL2Equiv_eq_integral _ (normalizedBallL2_integrable d)).trans
+    (Filter.Eventually.of_forall (fourier_normalizedBallL2 d))
+
+theorem normalizedBallFourier_real_hasTemperateGrowth (d : ℕ) :
+    Function.HasTemperateGrowth (fun ξ => normalizedBallFourier d (realToComplex ξ)) := by
+  have he : 𝓕 (normalizedBallL2 d : Euclidean d → ℂ) =
+      fun ξ => normalizedBallFourier d (realToComplex ξ) := funext (fourier_normalizedBallL2 d)
+  rw [← he]
+  exact fourier_hasTemperateGrowth_of_compact_support (normalizedBallL2_integrable d)
+    (isCompact_closedBall _ _) (normalizedBallL2_supported d)
+
+/-- The transposed distribution Fourier transform agrees with the regular
+distribution of the concrete normalized ball Fourier function. -/
+theorem distributionFourier_normalizedBallDistribution (d : ℕ) :
+    distributionFourier (normalizedBallDistribution d) =
+      polynomialDistribution (fun ξ => normalizedBallFourier d (realToComplex ξ))
+        zero_le_one (N := 0)
+        (fun ξ => by simpa using normalizedBallFourier_real_norm_le d ξ)
+        (normalizedBallFourier_real_hasTemperateGrowth d).1.continuous.aestronglyMeasurable := by
+  ext φ
+  rw [normalizedBallDistribution, distributionFourier_l2Distribution,
+    l2Distribution_apply, polynomialDistribution_apply]
+  apply integral_congr_ae
+  filter_upwards [fourierL2_normalizedBallL2_ae d] with ξ hξ
+  rw [hξ]
+
+/-- With this actual ball seed, Titchmarsh–Lions and John rigidity force the
+remaining compact distribution factor to be supported at the origin. -/
+theorem normalized_ball_convolution_supported_origin (hTL : TitchmarshLions d)
+    {v w : TemperedDistribution d} (hv : CompactlySupportedDistribution v) (hv0 : v ≠ 0)
+    (hc : IsDistributionConvolution v (normalizedBallDistribution d) w)
+    {K : Set (Euclidean d)} (hK : Convex ℝ K) (hKclosed : IsClosed K)
+    (hJ : IsJohnEllipsoid K (Metric.closedBall (0 : Euclidean d) 1))
+    (hw : DistributionSupportedIn w K) : DistributionSupportedIn v {0} :=
+  hTL.supportedIn_origin_of_john_right (normalizedBallDistribution_compactlySupported d)
+    hv (normalizedBallDistribution_ne_zero d) hv0 hc hK hKclosed hJ
+    (normalizedBallDistribution_convexSupport d) hw
+
+/-- The same conclusion from the paper's actual Fourier-product identity, using
+the proved Fourier-multiplier/convolution bridge. -/
+theorem normalized_ball_fourier_product_supported_origin (hTL : TitchmarshLions d)
+    {v w : TemperedDistribution d} (hv : CompactlySupportedDistribution v) (hv0 : v ≠ 0)
+    (hproduct : distributionFourier w =
+      distributionMultiply (fun ξ => normalizedBallFourier d (realToComplex ξ))
+        (normalizedBallFourier_real_hasTemperateGrowth d) (distributionFourier v))
+    {K : Set (Euclidean d)} (hK : Convex ℝ K) (hKclosed : IsClosed K)
+    (hJ : IsJohnEllipsoid K (Metric.closedBall (0 : Euclidean d) 1))
+    (hw : DistributionSupportedIn w K) : DistributionSupportedIn v {0} := by
+  apply normalized_ball_convolution_supported_origin hTL hv hv0 _ hK hKclosed hJ hw
+  change IsDistributionConvolution v (l2Distribution (normalizedBallL2 d)) w
+  apply isDistributionConvolution_of_fourier_product (normalizedBallL2 d)
+    (normalizedBallL2_integrable d)
+    (fourier_hasTemperateGrowth_of_compact_support (normalizedBallL2_integrable d)
+      (isCompact_closedBall _ _) (normalizedBallL2_supported d))
+  have he : 𝓕 (normalizedBallL2 d : Euclidean d → ℂ) =
+      fun ξ => normalizedBallFourier d (realToComplex ξ) := funext (fourier_normalizedBallL2 d)
+  simpa only [he] using hproduct
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalSchwartzDensity.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Compact smooth tests are dense in the Schwartz seminorm topology. -/
+noncomputable section
+open SchwartzMap Filter Topology
+open scoped SchwartzMap ContDiff
+namespace RieszEuclidean.CompleteMinimal
+set_option maxHeartbeats 800000
+variable {d : ℕ}
+
+private def densityBump : ContDiffBump (0 : Euclidean d) :=
+  { rIn := 1, rOut := 2, rIn_pos := by norm_num, rIn_lt_rOut := by norm_num }
+
+private def densityCutoff : 𝓢(Euclidean d, ℂ) :=
+  compactSchwartz (fun x => ((densityBump (d := d)) x : ℂ))
+    (Complex.ofRealCLM.contDiff.comp (densityBump (d := d)).contDiff)
+    ((densityBump (d := d)).hasCompactSupport.comp_left Complex.ofReal_zero)
+
+/-- Multiplication by a fixed bump expanded to radius `n + 1`. -/
+def compactSchwartzApprox (φ : 𝓢(Euclidean d, ℂ)) (n : ℕ) : 𝓢(Euclidean d, ℂ) :=
+  compactSchwartz (fun x => ((densityBump (d := d)) (((n : ℝ) + 1)⁻¹ • x) : ℂ) * φ x)
+    ((Complex.ofRealCLM.contDiff.comp
+      ((densityBump (d := d)).contDiff.comp (contDiff_const.smul contDiff_id))).mul φ.smooth')
+    ((((densityBump (d := d)).hasCompactSupport.comp_left Complex.ofReal_zero).comp_homeomorph
+      (Homeomorph.smulOfNeZero (((n : ℝ) + 1)⁻¹) (by positivity))).mul_right)
+
+theorem compactSchwartzApprox_hasCompactSupport (φ : 𝓢(Euclidean d, ℂ)) (n : ℕ) :
+    HasCompactSupport (compactSchwartzApprox φ n : Euclidean d → ℂ) :=
+  (((densityBump (d := d)).hasCompactSupport.comp_left Complex.ofReal_zero).comp_homeomorph
+    (Homeomorph.smulOfNeZero (((n : ℝ) + 1)⁻¹) (by positivity))).mul_right
+
+private theorem density_scaled_derivative (r : ℝ) (hr : 1 ≤ r) (i : ℕ)
+    (x : Euclidean d) :
+    ‖iteratedFDeriv ℝ i (fun y => (densityCutoff (d := d)) (r⁻¹ • y)) x‖ ≤
+      SchwartzMap.seminorm ℂ 0 i (densityCutoff (d := d)) := by
+  let g : Euclidean d →L[ℝ] Euclidean d := r⁻¹ • ContinuousLinearMap.id ℝ _
+  have hg : ‖g‖ ≤ 1 := by
+    calc
+      ‖g‖ ≤ |r⁻¹| * ‖ContinuousLinearMap.id ℝ (Euclidean d)‖ := by
+        simpa only [g, Real.norm_eq_abs] using
+          ContinuousLinearMap.opNorm_smul_le r⁻¹ (ContinuousLinearMap.id ℝ (Euclidean d))
+      _ ≤ |r⁻¹| * 1 := mul_le_mul_of_nonneg_left ContinuousLinearMap.norm_id_le (abs_nonneg _)
+      _ ≤ 1 := by rw [mul_one, abs_of_nonneg (by positivity)]; exact inv_le_one_of_one_le₀ hr
+  change ‖iteratedFDeriv ℝ i ((densityCutoff (d := d)).toFun ∘ g) x‖ ≤ _
+  rw [g.iteratedFDeriv_comp_right (densityCutoff (d := d)).smooth' x (by exact_mod_cast (le_top : (i : ℕ∞) ≤ ⊤))]
+  apply (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans
+  simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  calc
+    ‖iteratedFDeriv ℝ i (densityCutoff (d := d)) (g x)‖ * ‖g‖ ^ i ≤
+        SchwartzMap.seminorm ℂ 0 i (densityCutoff (d := d)) * 1 :=
+      mul_le_mul (SchwartzMap.norm_iteratedFDeriv_le_seminorm ℂ (densityCutoff (d := d)) i (g x))
+        (pow_le_one₀ (norm_nonneg _) hg) (by positivity) (apply_nonneg _ _)
+    _ = _ := mul_one _
+
+private theorem density_error_derivative (r : ℝ) (hr : 1 ≤ r) (i : ℕ)
+    (x : Euclidean d) :
+    ‖iteratedFDeriv ℝ i (fun y => (densityCutoff (d := d)) (r⁻¹ • y) - 1) x‖ ≤
+      SchwartzMap.seminorm ℂ 0 i (densityCutoff (d := d)) + 1 := by
+  have hs : ContDiff ℝ ∞ (fun y : Euclidean d => (densityCutoff (d := d)) (r⁻¹ • y)) :=
+    (densityCutoff (d := d)).smooth'.comp (contDiff_const.smul contDiff_id)
+  by_cases hi : i = 0
+  · subst i
+    simp only [norm_iteratedFDeriv_zero]
+    exact (norm_sub_le _ _).trans (by
+      simpa only [norm_iteratedFDeriv_zero, norm_one] using
+        (add_le_add_right (density_scaled_derivative r hr 0 x) (1 : ℝ)))
+  · simp only [sub_eq_add_neg]
+    rw [iteratedFDeriv_add_apply' (hs.of_le (by exact_mod_cast (le_top : (i : ℕ∞) ≤ ⊤))).contDiffAt
+      contDiffAt_const, iteratedFDeriv_const_of_ne hi, Pi.zero_apply, add_zero]
+    exact (density_scaled_derivative r hr i x).trans (le_add_of_nonneg_right zero_le_one)
+
+private theorem density_error_zero (φ : 𝓢(Euclidean d, ℂ)) (n : ℕ)
+    (x : Euclidean d) (hx : ‖x‖ < (n : ℝ) + 1) :
+    (compactSchwartzApprox φ n - φ : Euclidean d → ℂ) =ᶠ[𝓝 x] 0 := by
+  have hr : 0 < (n : ℝ) + 1 := by positivity
+  have hball : x ∈ Metric.ball 0 ((n : ℝ) + 1) := by simpa using hx
+  filter_upwards [Metric.isOpen_ball.mem_nhds hball] with y hy
+  have hnorm : ‖y‖ ≤ (n : ℝ) + 1 := (by simpa using hy : ‖y‖ < (n : ℝ) + 1).le
+  have hb : (((n : ℝ) + 1)⁻¹ • y) ∈ Metric.closedBall (0 : Euclidean d) (densityBump (d := d)).rIn := by
+    change _ ∈ Metric.closedBall 0 1
+    simp only [Metric.mem_closedBall, dist_zero_right, norm_smul, Real.norm_eq_abs,
+      abs_of_pos (inv_pos.mpr hr)]
+    exact (inv_mul_le_one₀ hr).mpr hnorm
+  change ((densityBump (d := d)) (((n : ℝ) + 1)⁻¹ • y) : ℂ) * φ y - φ y = 0
+  rw [(densityBump (d := d)).one_of_mem_closedBall hb]
+  simp
+
+/-- Quantitative convergence in each individual Schwartz seminorm. -/
+theorem compactSchwartzApprox_seminorm_bound (φ : 𝓢(Euclidean d, ℂ)) (k j n : ℕ) :
+    SchwartzMap.seminorm ℂ k j (compactSchwartzApprox φ n - φ) ≤
+      (∑ i ∈ Finset.range (j + 1), (j.choose i : ℝ) *
+        (SchwartzMap.seminorm ℂ 0 i (densityCutoff (d := d)) + 1) *
+        SchwartzMap.seminorm ℂ (k + 1) (j - i) φ) / ((n : ℝ) + 1) := by
+  let C := ∑ i ∈ Finset.range (j + 1), (j.choose i : ℝ) *
+        (SchwartzMap.seminorm ℂ 0 i (densityCutoff (d := d)) + 1) *
+        SchwartzMap.seminorm ℂ (k + 1) (j - i) φ
+  have hC : 0 ≤ C := Finset.sum_nonneg (fun i _ => by positivity)
+  have hr : 0 < (n : ℝ) + 1 := by positivity
+  apply SchwartzMap.seminorm_le_bound ℂ k j _ (div_nonneg hC hr.le)
+  intro x
+  have hco : ((compactSchwartzApprox φ n - φ : 𝓢(Euclidean d, ℂ)) : Euclidean d → ℂ) =
+      (compactSchwartzApprox φ n : Euclidean d → ℂ) - φ := by ext y; rfl
+  rw [hco]
+  by_cases hx : ‖x‖ < (n : ℝ) + 1
+  · have heq := density_error_zero φ n x hx
+    have heqw : (compactSchwartzApprox φ n - φ : Euclidean d → ℂ) =ᶠ[𝓝[Set.univ] x] 0 := by
+      simpa only [nhdsWithin_univ] using heq
+    have hz := heqw.iteratedFDerivWithin_eq (𝕜 := ℝ) heq.eq_of_nhds j
+    simp only [iteratedFDerivWithin_univ] at hz
+    rw [hz]
+    simp only [Pi.zero_def, iteratedFDeriv_zero_fun, Pi.zero_apply, norm_zero, mul_zero]
+    exact div_nonneg hC hr.le
+  · have hxr : (n : ℝ) + 1 ≤ ‖x‖ := le_of_not_gt hx
+    have hs : ContDiff ℝ ∞ (fun y : Euclidean d => (densityCutoff (d := d)) (((n : ℝ) + 1)⁻¹ • y) - 1) :=
+      ((densityCutoff (d := d)).smooth'.comp (contDiff_const.smul contDiff_id)).sub contDiff_const
+    have heq : (compactSchwartzApprox φ n - φ : Euclidean d → ℂ) =
+        fun y => ((densityCutoff (d := d)) (((n : ℝ) + 1)⁻¹ • y) - 1) * φ y := by
+      ext y
+      change ((densityBump (d := d)) _ : ℂ) * φ y - φ y = (((densityBump (d := d)) _ : ℂ) - 1) * φ y
+      ring
+    rw [heq, le_div_iff₀ hr]
+    have hp := norm_iteratedFDeriv_mul_le hs φ.smooth' x
+      (by exact_mod_cast (le_top : (j : ℕ∞) ≤ ⊤))
+    calc
+      ‖x‖ ^ k * ‖iteratedFDeriv ℝ j (fun y =>
+          ((densityCutoff (d := d)) (((n : ℝ) + 1)⁻¹ • y) - 1) * φ y) x‖ * ((n : ℝ) + 1)
+          ≤ ‖x‖ ^ (k + 1) * ∑ i ∈ Finset.range (j + 1), (j.choose i : ℝ) *
+              ‖iteratedFDeriv ℝ i (fun y => (densityCutoff (d := d)) (((n : ℝ) + 1)⁻¹ • y) - 1) x‖ *
+              ‖iteratedFDeriv ℝ (j - i) φ x‖ := by
+        calc
+          _ ≤ ‖x‖ ^ k * (∑ i ∈ Finset.range (j + 1), (j.choose i : ℝ) *
+              ‖iteratedFDeriv ℝ i (fun y => (densityCutoff (d := d)) (((n : ℝ) + 1)⁻¹ • y) - 1) x‖ *
+              ‖iteratedFDeriv ℝ (j - i) φ x‖) * ‖x‖ := by
+            gcongr
+            exact hp
+          _ = _ := by rw [pow_succ]; ring
+      _ = ∑ i ∈ Finset.range (j + 1), (j.choose i : ℝ) *
+              ‖iteratedFDeriv ℝ i (fun y => (densityCutoff (d := d)) (((n : ℝ) + 1)⁻¹ • y) - 1) x‖ *
+              (‖x‖ ^ (k + 1) * ‖iteratedFDeriv ℝ (j - i) φ x‖) := by
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro i _
+        ring
+      _ ≤ C := by
+        apply Finset.sum_le_sum
+        intro i _
+        apply mul_le_mul
+        · apply mul_le_mul_of_nonneg_left (density_error_derivative _ (by linarith) i x)
+            (by positivity)
+        · exact SchwartzMap.le_seminorm ℂ (k + 1) (j - i) φ x
+        · positivity
+        · positivity
+
+/-- The expanded compact smooth cutoffs converge in the Schwartz topology. -/
+theorem compactSchwartzApprox_tendsto (φ : 𝓢(Euclidean d, ℂ)) :
+    Tendsto (compactSchwartzApprox φ) atTop (𝓝 φ) := by
+  apply (schwartz_withSeminorms ℂ (Euclidean d) ℂ).tendsto_nhds_atTop _ _ |>.mpr
+  intro i ε hε
+  let C := ∑ l ∈ Finset.range (i.2 + 1), (i.2.choose l : ℝ) *
+        (SchwartzMap.seminorm ℂ 0 l (densityCutoff (d := d)) + 1) *
+        SchwartzMap.seminorm ℂ (i.1 + 1) (i.2 - l) φ
+  obtain ⟨N, hN⟩ := exists_nat_gt (C / ε)
+  refine ⟨N, fun n hn => ?_⟩
+  apply (compactSchwartzApprox_seminorm_bound φ i.1 i.2 n).trans_lt
+  change C / ((n : ℝ) + 1) < ε
+  rw [div_lt_iff₀ (by positivity)]
+  have hNc : (N : ℝ) ≤ n := Nat.cast_le.mpr hn
+  have hC : C < (N : ℝ) * ε := (div_lt_iff₀ hε).mp hN
+  nlinarith
+
+/-- Compact smooth tests form a dense subset of Schwartz space. -/
+theorem compactSchwartz_dense (d : ℕ) :
+    Dense {φ : 𝓢(Euclidean d, ℂ) | HasCompactSupport (φ : Euclidean d → ℂ)} := by
+  intro φ
+  exact mem_closure_of_tendsto (compactSchwartzApprox_tendsto φ)
+    (Eventually.of_forall (compactSchwartzApprox_hasCompactSupport φ))
+
+theorem compactSchwartzApprox_tsupport_subset (φ : 𝓢(Euclidean d, ℂ)) (n : ℕ) :
+    tsupport (compactSchwartzApprox φ n : Euclidean d → ℂ) ⊆
+      tsupport (φ : Euclidean d → ℂ) := by
+  apply closure_mono
+  intro x hx
+  change (densityBump (d := d) (((n : ℝ) + 1)⁻¹ • x) : ℂ) * φ x ≠ 0 at hx
+  exact fun hz => hx (by simp [hz])
+
+/-- The support definition extends from compact tests to all Schwartz tests. -/
+theorem DistributionSupportedIn.schwartz_test {u : TemperedDistribution d}
+    {S : Set (Euclidean d)} (hu : DistributionSupportedIn u S)
+    (φ : 𝓢(Euclidean d, ℂ)) (hφ : Disjoint (tsupport (φ : Euclidean d → ℂ)) S) :
+    u φ = 0 := by
+  have ht := u.continuous.tendsto φ |>.comp (compactSchwartzApprox_tendsto φ)
+  have hz : ∀ n, u (compactSchwartzApprox φ n) = 0 := fun n =>
+    hu _ (compactSchwartzApprox_hasCompactSupport φ n)
+      (hφ.mono_left (compactSchwartzApprox_tsupport_subset φ n))
+  have ht0 : Tendsto (fun n => u (compactSchwartzApprox φ n)) atTop (𝓝 0) :=
+    (tendsto_const_nhds : Tendsto (fun _ : ℕ => (0 : ℂ)) atTop (𝓝 0)).congr
+      (fun n => (hz n).symm)
+  exact tendsto_nhds_unique ht ht0
+
+/-- Every point-supported distribution depends only on the germ of a Schwartz test. -/
+theorem DistributionSupportedIn.schwartz_locality {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)})
+    (φ ψ : 𝓢(Euclidean d, ℂ))
+    (heq : (φ : Euclidean d → ℂ) =ᶠ[𝓝 0] ψ) : u φ = u ψ := by
+  have hzero : (φ - ψ : Euclidean d → ℂ) =ᶠ[𝓝 0] 0 := by
+    filter_upwards [heq] with x hx
+    change φ x - ψ x = 0
+    exact sub_eq_zero.mpr hx
+  have hnot := not_mem_tsupport_iff_eventuallyEq.mpr hzero
+  have hz := hu.schwartz_test (φ - ψ) (Set.disjoint_singleton_right.mpr hnot)
+  exact sub_eq_zero.mp ((map_sub u φ ψ).symm.trans hz)
+
+/-- Continuous distributions are determined by their values on compact smooth tests. -/
+theorem distribution_eq_of_compact_tests {u v : TemperedDistribution d}
+    (h : ∀ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) → u φ = v φ) :
+    u = v := by
+  ext φ
+  apply tendsto_nhds_unique
+    (u.continuous.tendsto φ |>.comp (compactSchwartzApprox_tendsto φ))
+  have ht := v.continuous.tendsto φ |>.comp (compactSchwartzApprox_tendsto φ)
+  exact ht.congr' (Eventually.of_forall (fun n =>
+    (h _ (compactSchwartzApprox_hasCompactSupport φ n)).symm))
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalPointSupport.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Finite order and localization for point-supported distributions
+
+The results here use actual continuous functionals on Schwartz space. They
+derive finite seminorm bounds from continuity and localize compact tests using
+smooth cutoffs. The point-support classification is not assumed.
+-/
+
+noncomputable section
+
+open SchwartzMap Filter Topology
+open scoped SchwartzMap ContDiff
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- Every tempered distribution is controlled by finitely many Schwartz seminorms. -/
+theorem distribution_finite_seminorm_bound (u : TemperedDistribution d) :
+    ∃ s : Finset (ℕ × ℕ), ∃ C : ℝ, 0 < C ∧
+      ∀ φ : 𝓢(Euclidean d, ℂ),
+        ‖u φ‖ ≤ C * s.sup (schwartzSeminormFamily ℂ (Euclidean d) ℂ) φ := by
+  let q : Seminorm ℂ 𝓢(Euclidean d, ℂ) := (normSeminorm ℂ ℂ).comp u.toLinearMap
+  have hq : Continuous q := continuous_norm.comp u.continuous
+  obtain ⟨s, C, hC, hbound⟩ := Seminorm.bound_of_continuous
+    (schwartz_withSeminorms ℂ (Euclidean d) ℂ) q hq
+  refine ⟨s, C, NNReal.coe_pos.mpr (pos_iff_ne_zero.mpr hC), ?_⟩
+  intro φ
+  exact hbound φ
+
+/-- The finite family in the continuity bound can be replaced by a square of
+derivative and polynomial-weight indices. -/
+theorem distribution_finite_order_bound (u : TemperedDistribution d) :
+    ∃ N : ℕ, ∃ C : ℝ, 0 < C ∧
+      ∀ φ : 𝓢(Euclidean d, ℂ),
+        ‖u φ‖ ≤ C * (Finset.Iic (N, N)).sup
+          (schwartzSeminormFamily ℂ (Euclidean d) ℂ) φ := by
+  obtain ⟨s, C, hC, hbound⟩ := distribution_finite_seminorm_bound u
+  let N := s.sup (fun i => max i.1 i.2)
+  have hsub : s ⊆ Finset.Iic (N, N) := by
+    intro i hi
+    have hh : max i.1 i.2 ≤ N := by
+      change max i.1 i.2 ≤ s.sup (fun i => max i.1 i.2)
+      exact Finset.le_sup (f := fun i : ℕ × ℕ => max i.1 i.2) hi
+    exact Finset.mem_Iic.mpr ⟨(le_max_left _ _).trans hh, (le_max_right _ _).trans hh⟩
+  refine ⟨N, C, hC, fun φ => (hbound φ).trans ?_⟩
+  apply mul_le_mul_of_nonneg_left _ hC.le
+  have hp : s.sup (schwartzSeminormFamily ℂ (Euclidean d) ℂ) ≤
+      (Finset.Iic (N, N)).sup (schwartzSeminormFamily ℂ (Euclidean d) ℂ) :=
+    Finset.sup_mono hsub
+  exact hp φ
+
+/-- On tests supported in the unit ball, polynomial weights do not increase
+the derivative seminorms. -/
+theorem seminorm_le_unweighted_of_unit_support (φ : 𝓢(Euclidean d, ℂ))
+    (hs : tsupport (φ : Euclidean d → ℂ) ⊆ Metric.closedBall 0 1) (k n : ℕ) :
+    SchwartzMap.seminorm ℂ k n φ ≤ SchwartzMap.seminorm ℂ 0 n φ := by
+  apply SchwartzMap.seminorm_le_bound ℂ k n φ (apply_nonneg _ _)
+  intro x
+  by_cases hx : x ∈ Metric.closedBall (0 : Euclidean d) 1
+  · have hnorm : ‖x‖ ≤ 1 := by simpa only [Metric.mem_closedBall, dist_zero_right] using hx
+    have hpow : ‖x‖ ^ k ≤ 1 := pow_le_one₀ (norm_nonneg x) hnorm
+    calc
+      ‖x‖ ^ k * ‖iteratedFDeriv ℝ n φ x‖ ≤ 1 * ‖iteratedFDeriv ℝ n φ x‖ :=
+        mul_le_mul_of_nonneg_right hpow (norm_nonneg _)
+      _ ≤ SchwartzMap.seminorm ℂ 0 n φ := by
+        simpa only [one_mul] using SchwartzMap.norm_iteratedFDeriv_le_seminorm ℂ φ n x
+  · have hz : iteratedFDeriv ℝ n φ x = 0 :=
+      image_eq_zero_of_nmem_tsupport
+        (fun h => hx (hs (tsupport_iteratedFDeriv_subset n h)))
+    simp only [hz, norm_zero, mul_zero]
+    exact apply_nonneg _ _
+
+/-- A genuine finite-order estimate on a fixed compact neighborhood, with
+only derivative seminorms up to `N` and no polynomial weights. -/
+theorem distribution_local_finite_order_bound (u : TemperedDistribution d) :
+    ∃ N : ℕ, ∃ C : ℝ, 0 < C ∧
+      ∀ φ : 𝓢(Euclidean d, ℂ),
+        tsupport (φ : Euclidean d → ℂ) ⊆ Metric.closedBall 0 1 →
+        ‖u φ‖ ≤ C * (Finset.range (N + 1)).sup
+          (fun n => SchwartzMap.seminorm ℂ 0 n) φ := by
+  obtain ⟨N, C, hC, hbound⟩ := distribution_finite_order_bound u
+  refine ⟨N, C, hC, ?_⟩
+  intro φ hs
+  apply (hbound φ).trans
+  apply mul_le_mul_of_nonneg_left _ hC.le
+  apply Seminorm.finset_sup_apply_le (apply_nonneg _ _)
+  intro i hi
+  have hn : i.2 ≤ N := (Finset.mem_Iic.mp hi).2
+  exact (seminorm_le_unweighted_of_unit_support φ hs i.1 i.2).trans
+    (Seminorm.le_finset_sup_apply (Finset.mem_range.mpr (by omega)))
+
+/-- Multivariable Taylor flatness, derived by repeatedly applying the convex
+mean-value estimate: if the jet through `n + m` vanishes, the `n`th derivative
+is little-o of the `m`th power of the distance to the origin. -/
+theorem flat_jet_iteratedFDeriv_isLittleO (φ : 𝓢(Euclidean d, ℂ)) (n m : ℕ)
+    (hzero : ∀ j ≤ n + m, iteratedFDeriv ℝ j φ 0 = 0) :
+    (iteratedFDeriv ℝ n φ) =o[𝓝 (0 : Euclidean d)] (fun x => ‖x‖ ^ m) := by
+  induction m generalizing n with
+  | zero =>
+      have hc : Continuous (iteratedFDeriv ℝ n (φ : Euclidean d → ℂ)) :=
+        φ.smooth'.continuous_iteratedFDeriv
+          (by exact_mod_cast (le_top : (n : ℕ∞) ≤ ⊤))
+      have ht := hc.tendsto 0
+      have hz := hzero n (by omega)
+      rw [hz] at ht
+      simpa only [pow_zero] using ((Asymptotics.isLittleO_one_iff ℝ).mpr ht)
+  | succ m ih =>
+      have hnext : (iteratedFDeriv ℝ (n + 1) φ) =o[𝓝 (0 : Euclidean d)]
+          (fun x => ‖x‖ ^ m) := ih (n + 1) (fun j hj => hzero j (by omega))
+      have hderiv : (fderiv ℝ (iteratedFDeriv ℝ n φ)) =o[𝓝 (0 : Euclidean d)]
+          (fun x => ‖x‖ ^ m) := by
+        rw [Asymptotics.isLittleO_iff] at hnext ⊢
+        simpa only [norm_fderiv_iteratedFDeriv] using hnext
+      have hsmooth : ContDiff ℝ 1 (iteratedFDeriv ℝ n φ) :=
+        φ.smooth'.iteratedFDeriv_right
+          (by exact_mod_cast (le_top : ((1 + n : ℕ) : ℕ∞) ≤ ⊤))
+      have hh := (convex_univ : Convex ℝ (Set.univ : Set (Euclidean d))).isLittleO_pow_succ
+        (x₀ := (0 : Euclidean d)) (Set.mem_univ _) (n := m)
+        (fun x _ => (hsmooth.differentiable le_rfl).differentiableAt.hasFDerivAt.hasFDerivWithinAt)
+        (by simpa only [nhdsWithin_univ, sub_zero] using hderiv)
+      simpa only [nhdsWithin_univ, hzero n (by omega), sub_zero] using hh
+
+/-- Compactly supported tests that agree near the support point give the same
+distribution value. -/
+theorem DistributionSupportedIn.compact_locality {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)})
+    (φ ψ : 𝓢(Euclidean d, ℂ))
+    (hφ : HasCompactSupport (φ : Euclidean d → ℂ))
+    (hψ : HasCompactSupport (ψ : Euclidean d → ℂ))
+    (heq : (φ : Euclidean d → ℂ) =ᶠ[𝓝 0] ψ) : u φ = u ψ := by
+  have hzero : (φ - ψ : 𝓢(Euclidean d, ℂ)) =ᶠ[𝓝 0] (0 : Euclidean d → ℂ) := by
+    filter_upwards [heq] with x hx
+    change φ x - ψ x = 0
+    exact sub_eq_zero.mpr hx
+  have hnot : (0 : Euclidean d) ∉ tsupport (φ - ψ : Euclidean d → ℂ) :=
+    not_mem_tsupport_iff_eventuallyEq.mpr hzero
+  have hdisj : Disjoint (tsupport (φ - ψ : Euclidean d → ℂ)) {(0 : Euclidean d)} :=
+    Set.disjoint_singleton_right.mpr hnot
+  have hc : HasCompactSupport (φ - ψ : Euclidean d → ℂ) := by
+    change HasCompactSupport (fun x => φ x - ψ x)
+    simpa only [sub_eq_add_neg] using
+      hφ.add (hψ.comp_left (neg_zero : -(0 : ℂ) = 0))
+  have hz := hu (φ - ψ) hc hdisj
+  exact sub_eq_zero.mp ((map_sub u φ ψ).symm.trans hz)
+
+/-- An actual compactly supported smooth localization of a Schwartz test. -/
+def pointCutoffTest (b : ContDiffBump (0 : Euclidean d))
+    (φ : 𝓢(Euclidean d, ℂ)) : 𝓢(Euclidean d, ℂ) :=
+  compactSchwartz (fun x => (b x : ℂ) * φ x)
+    ((Complex.ofRealCLM.contDiff.comp b.contDiff).mul φ.smooth')
+    ((b.hasCompactSupport.comp_left Complex.ofReal_zero).mul_right)
+
+@[simp] theorem pointCutoffTest_apply (b : ContDiffBump (0 : Euclidean d))
+    (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    pointCutoffTest b φ x = (b x : ℂ) * φ x := rfl
+
+theorem pointCutoffTest_hasCompactSupport (b : ContDiffBump (0 : Euclidean d))
+    (φ : 𝓢(Euclidean d, ℂ)) : HasCompactSupport (pointCutoffTest b φ : Euclidean d → ℂ) :=
+  (b.hasCompactSupport.comp_left Complex.ofReal_zero).mul_right
+
+/-- Cutoff multiplication does not change the germ at the support point. -/
+theorem pointCutoffTest_eventuallyEq (b : ContDiffBump (0 : Euclidean d))
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    (pointCutoffTest b φ : Euclidean d → ℂ) =ᶠ[𝓝 0] φ := by
+  filter_upwards [b.eventuallyEq_one] with x hx
+  simp only [pointCutoffTest_apply, hx, Pi.one_apply, Complex.ofReal_one, one_mul]
+
+/-- Every derivative jet at the origin is preserved by localization. -/
+theorem pointCutoffTest_iteratedFDeriv_zero (b : ContDiffBump (0 : Euclidean d))
+    (φ : 𝓢(Euclidean d, ℂ)) (n : ℕ) :
+    iteratedFDeriv ℝ n (pointCutoffTest b φ) 0 = iteratedFDeriv ℝ n φ 0 := by
+  have heq := pointCutoffTest_eventuallyEq b φ
+  have hw : (pointCutoffTest b φ : Euclidean d → ℂ) =ᶠ[𝓝[Set.univ] 0] φ := by
+    simpa only [nhdsWithin_univ] using heq
+  simpa only [iteratedFDerivWithin_univ] using
+    hw.iteratedFDerivWithin_eq (𝕜 := ℝ) heq.eq_of_nhds n
+
+theorem pointCutoffTest_tsupport_subset (b : ContDiffBump (0 : Euclidean d))
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    tsupport (pointCutoffTest b φ : Euclidean d → ℂ) ⊆ Metric.closedBall 0 b.rOut := by
+  have hs : tsupport (pointCutoffTest b φ : Euclidean d → ℂ) ⊆ tsupport (b : Euclidean d → ℝ) := by
+    apply closure_mono
+    intro x hx
+    change (b x : ℂ) * φ x ≠ 0 at hx
+    exact fun h => hx (by simp [h])
+  exact hs.trans (le_of_eq b.tsupport_eq)
+
+/-- Point support allows every compact test to be replaced by any smaller cutoff. -/
+theorem DistributionSupportedIn.compact_cutoff {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)})
+    (b : ContDiffBump (0 : Euclidean d)) (φ : 𝓢(Euclidean d, ℂ))
+    (hφ : HasCompactSupport (φ : Euclidean d → ℂ)) : u (pointCutoffTest b φ) = u φ :=
+  hu.compact_locality _ _ (pointCutoffTest_hasCompactSupport b φ) hφ
+    (pointCutoffTest_eventuallyEq b φ)
+
+/-- Point support permits compact tests to be localized in arbitrarily small
+balls, preserving their value and every derivative jet at the origin. -/
+theorem DistributionSupportedIn.compact_localize_radius {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)})
+    (φ : 𝓢(Euclidean d, ℂ)) (hφ : HasCompactSupport (φ : Euclidean d → ℂ))
+    (r : ℝ) (hr : 0 < r) :
+    ∃ ψ : 𝓢(Euclidean d, ℂ), HasCompactSupport (ψ : Euclidean d → ℂ) ∧
+      tsupport (ψ : Euclidean d → ℂ) ⊆ Metric.closedBall 0 r ∧ u ψ = u φ ∧
+      ∀ n : ℕ, iteratedFDeriv ℝ n ψ 0 = iteratedFDeriv ℝ n φ 0 := by
+  let b : ContDiffBump (0 : Euclidean d) :=
+    { rIn := r / 2
+      rOut := r
+      rIn_pos := by positivity
+      rIn_lt_rOut := by linarith }
+  exact ⟨pointCutoffTest b φ, pointCutoffTest_hasCompactSupport b φ,
+    pointCutoffTest_tsupport_subset b φ, hu.compact_cutoff b φ hφ,
+    pointCutoffTest_iteratedFDeriv_zero b φ⟩
+
+/-- Combining point-support localization with continuity gives a finite-order
+estimate on every shrinking cutoff of a compact test. -/
+theorem DistributionSupportedIn.compact_cutoff_finite_order_bound
+    {u : TemperedDistribution d} (hu : DistributionSupportedIn u {(0 : Euclidean d)}) :
+    ∃ N : ℕ, ∃ C : ℝ, 0 < C ∧
+      ∀ (φ : 𝓢(Euclidean d, ℂ)) (b : ContDiffBump (0 : Euclidean d)),
+        HasCompactSupport (φ : Euclidean d → ℂ) → b.rOut ≤ 1 →
+        ‖u φ‖ ≤ C * (Finset.range (N + 1)).sup
+          (fun n => SchwartzMap.seminorm ℂ 0 n) (pointCutoffTest b φ) := by
+  obtain ⟨N, C, hC, hbound⟩ := distribution_local_finite_order_bound u
+  refine ⟨N, C, hC, ?_⟩
+  intro φ b hφ hb
+  rw [← hu.compact_cutoff b φ hφ]
+  apply hbound
+  exact (pointCutoffTest_tsupport_subset b φ).trans (Metric.closedBall_subset_closedBall hb)
+
+/-- The precise derivative scaling estimate for a fixed Schwartz cutoff. -/
+theorem scaled_schwartz_iteratedFDeriv_bound (χ : 𝓢(Euclidean d, ℂ))
+    (r : ℝ) (hr : 0 < r) (n : ℕ) (x : Euclidean d) :
+    ‖iteratedFDeriv ℝ n (fun y => χ (r⁻¹ • y)) x‖ ≤
+      SchwartzMap.seminorm ℂ 0 n χ * (r⁻¹) ^ n := by
+  let g : Euclidean d →L[ℝ] Euclidean d := r⁻¹ • ContinuousLinearMap.id ℝ (Euclidean d)
+  have hg : ‖g‖ ≤ r⁻¹ := by
+    calc
+      ‖g‖ ≤ |r⁻¹| * ‖ContinuousLinearMap.id ℝ (Euclidean d)‖ := by
+        simpa only [g, Real.norm_eq_abs] using
+          ContinuousLinearMap.opNorm_smul_le r⁻¹ (ContinuousLinearMap.id ℝ (Euclidean d))
+      _ ≤ |r⁻¹| * 1 := mul_le_mul_of_nonneg_left ContinuousLinearMap.norm_id_le (abs_nonneg _)
+      _ = r⁻¹ := by rw [abs_of_pos (inv_pos.mpr hr), mul_one]
+  change ‖iteratedFDeriv ℝ n (χ.toFun ∘ g) x‖ ≤ _
+  rw [g.iteratedFDeriv_comp_right χ.smooth' x (by exact_mod_cast (le_top : (n : ℕ∞) ≤ ⊤))]
+  apply (ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _).trans
+  simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
+  exact mul_le_mul (SchwartzMap.norm_iteratedFDeriv_le_seminorm ℂ χ n (g x))
+    (pow_le_pow_left₀ (norm_nonneg g) hg n) (by positivity) (apply_nonneg _ _)
+
+/-- A fixed bump, shrunk by the real parameter `r`, localizes any Schwartz test. -/
+def scaledPointCutoffTest (b : ContDiffBump (0 : Euclidean d))
+    (r : ℝ) (hr : r ≠ 0) (φ : 𝓢(Euclidean d, ℂ)) : 𝓢(Euclidean d, ℂ) :=
+  compactSchwartz (fun x => (b (r⁻¹ • x) : ℂ) * φ x)
+    ((Complex.ofRealCLM.contDiff.comp
+      (b.contDiff.comp (contDiff_const.smul contDiff_id))).mul φ.smooth')
+    ((((b.hasCompactSupport.comp_left Complex.ofReal_zero).comp_homeomorph
+      (Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr)))).mul_right)
+
+@[simp] theorem scaledPointCutoffTest_apply (b : ContDiffBump (0 : Euclidean d))
+    (r : ℝ) (hr : r ≠ 0) (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    scaledPointCutoffTest b r hr φ x = (b (r⁻¹ • x) : ℂ) * φ x := rfl
+
+theorem scaledPointCutoffTest_hasCompactSupport (b : ContDiffBump (0 : Euclidean d))
+    (r : ℝ) (hr : r ≠ 0) (φ : 𝓢(Euclidean d, ℂ)) :
+    HasCompactSupport (scaledPointCutoffTest b r hr φ : Euclidean d → ℂ) :=
+  ((b.hasCompactSupport.comp_left Complex.ofReal_zero).comp_homeomorph
+    (Homeomorph.smulOfNeZero r⁻¹ (inv_ne_zero hr))).mul_right
+
+theorem scaledPointCutoffTest_eventuallyEq (b : ContDiffBump (0 : Euclidean d))
+    (r : ℝ) (hr : r ≠ 0) (φ : 𝓢(Euclidean d, ℂ)) :
+    (scaledPointCutoffTest b r hr φ : Euclidean d → ℂ) =ᶠ[𝓝 0] φ := by
+  have ht : Tendsto (fun x : Euclidean d => r⁻¹ • x) (𝓝 0) (𝓝 0) := by
+    simpa using ((continuous_const : Continuous (fun _ : Euclidean d => r⁻¹)).smul
+      continuous_id).tendsto (0 : Euclidean d)
+  filter_upwards [ht.eventually b.eventuallyEq_one] with x hx
+  simp only [scaledPointCutoffTest_apply, hx, Pi.one_apply, Complex.ofReal_one, one_mul]
+
+/-- The scaled construction preserves the value of a compact test. -/
+theorem DistributionSupportedIn.compact_scaled_cutoff {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)})
+    (b : ContDiffBump (0 : Euclidean d)) (r : ℝ) (hr : r ≠ 0)
+    (φ : 𝓢(Euclidean d, ℂ)) (hφ : HasCompactSupport (φ : Euclidean d → ℂ)) :
+    u (scaledPointCutoffTest b r hr φ) = u φ :=
+  hu.compact_locality _ _ (scaledPointCutoffTest_hasCompactSupport b r hr φ) hφ
+    (scaledPointCutoffTest_eventuallyEq b r hr φ)
+
+set_option maxHeartbeats 800000 in
+/-- The complex-valued Schwartz realization of a real smooth bump. -/
+def pointBumpSchwartz (b : ContDiffBump (0 : Euclidean d)) : 𝓢(Euclidean d, ℂ) :=
+  compactSchwartz (fun x => (b x : ℂ)) (Complex.ofRealCLM.contDiff.comp b.contDiff)
+    (b.hasCompactSupport.comp_left Complex.ofReal_zero)
+
+@[simp] theorem pointBumpSchwartz_apply (b : ContDiffBump (0 : Euclidean d)) (x : Euclidean d) :
+    pointBumpSchwartz b x = (b x : ℂ) := rfl
+
+/-- Scaled cutoff tests remain supported in a correspondingly scaled ball. -/
+theorem scaledPointCutoffTest_tsupport_subset (b : ContDiffBump (0 : Euclidean d))
+    (r : ℝ) (hr : 0 < r) (φ : 𝓢(Euclidean d, ℂ)) :
+    tsupport (scaledPointCutoffTest b r hr.ne' φ : Euclidean d → ℂ) ⊆
+      Metric.closedBall 0 (r * b.rOut) := by
+  apply closure_minimal _ Metric.isClosed_closedBall
+  intro x hx
+  have hb : r⁻¹ • x ∈ Function.support (b : Euclidean d → ℝ) := by
+    intro hz
+    exact hx (by simp only [scaledPointCutoffTest_apply, hz, Complex.ofReal_zero, zero_mul])
+  rw [b.support_eq, Metric.mem_ball, dist_zero_right] at hb
+  rw [norm_smul, Real.norm_eq_abs, abs_of_pos (inv_pos.mpr hr)] at hb
+  have hh : ‖x‖ < r * b.rOut := by
+    have hb' : ‖x‖ / r < b.rOut := by simpa only [div_eq_inv_mul] using hb
+    have := (div_lt_iff₀ hr).mp hb'
+    simpa only [mul_comm] using this
+  exact Metric.mem_closedBall.mpr (by simpa only [dist_zero_right] using hh.le)
+
+/-- A Leibniz estimate for a shrinking cutoff, with the cutoff derivative
+scaling exposed separately from the derivatives of the test. -/
+theorem scaledPointCutoffTest_derivative_bound (b : ContDiffBump (0 : Euclidean d))
+    (r : ℝ) (hr : 0 < r) (φ : 𝓢(Euclidean d, ℂ)) (n : ℕ) (x : Euclidean d) :
+    ‖iteratedFDeriv ℝ n (scaledPointCutoffTest b r hr.ne' φ) x‖ ≤
+      ‖(ContinuousLinearMap.mul ℂ ℂ).bilinearRestrictScalars ℝ‖ *
+        ∑ i ∈ Finset.range (n + 1), (n.choose i : ℝ) * ‖iteratedFDeriv ℝ i φ x‖ *
+          (SchwartzMap.seminorm ℂ 0 (n - i) (pointBumpSchwartz b) * (r⁻¹) ^ (n - i)) := by
+  let B := (ContinuousLinearMap.mul ℂ ℂ).bilinearRestrictScalars ℝ
+  have hc : ContDiff ℝ ∞ (fun y : Euclidean d => pointBumpSchwartz b (r⁻¹ • y)) :=
+    (pointBumpSchwartz b).smooth'.comp (contDiff_const.smul contDiff_id)
+  have hn := B.norm_iteratedFDeriv_le_of_bilinear φ.smooth' hc x
+    (n := n) (by exact_mod_cast (le_top : (n : ℕ∞) ≤ ⊤))
+  have hfun : (fun y => B (φ.toFun y) (pointBumpSchwartz b (r⁻¹ • y))) =
+      (scaledPointCutoffTest b r hr.ne' φ : Euclidean d → ℂ) := by
+    funext y
+    exact mul_comm _ _
+  rw [hfun] at hn
+  apply hn.trans
+  apply mul_le_mul_of_nonneg_left _ (norm_nonneg B)
+  apply Finset.sum_le_sum
+  intro i _
+  exact mul_le_mul_of_nonneg_left
+    (scaled_schwartz_iteratedFDeriv_bound (pointBumpSchwartz b) r hr (n - i) x)
+    (by positivity)
+
+/-- A radius-independent constant in the Leibniz estimate for a fixed cutoff. -/
+def cutoffLeibnizConstant (b : ContDiffBump (0 : Euclidean d)) (n : ℕ) : ℝ :=
+  ‖(ContinuousLinearMap.mul ℂ ℂ).bilinearRestrictScalars ℝ‖ *
+    ∑ i ∈ Finset.range (n + 1), (n.choose i : ℝ) *
+      SchwartzMap.seminorm ℂ 0 (n - i) (pointBumpSchwartz b)
+
+theorem cutoffLeibnizConstant_nonneg (b : ContDiffBump (0 : Euclidean d)) (n : ℕ) :
+    0 ≤ cutoffLeibnizConstant b n := by
+  apply mul_nonneg (norm_nonneg _)
+  exact Finset.sum_nonneg (fun i _ => mul_nonneg (by positivity) (apply_nonneg _ _))
+
+/-- Quantified shrinking-cutoff control for a Taylor-flat test. This estimate
+contains the cancellation between inverse cutoff scales and Taylor powers. -/
+theorem scaledPointCutoffTest_seminorm_bound (b : ContDiffBump (0 : Euclidean d))
+    (hb : b.rOut = 1) (r : ℝ) (hr : 0 < r) (hr1 : r ≤ 1)
+    (φ : 𝓢(Euclidean d, ℂ)) (N : ℕ) (a : ℝ) (ha : 0 ≤ a)
+    (hflat : ∀ i ≤ N, ∀ x : Euclidean d, ‖x‖ ≤ r →
+      ‖iteratedFDeriv ℝ i φ x‖ ≤ a * ‖x‖ ^ (N - i)) (j : ℕ) (hj : j ≤ N) :
+    SchwartzMap.seminorm ℂ 0 j (scaledPointCutoffTest b r hr.ne' φ) ≤
+      a * cutoffLeibnizConstant b j := by
+  apply SchwartzMap.seminorm_le_bound ℂ 0 j _
+    (mul_nonneg ha (cutoffLeibnizConstant_nonneg b j))
+  intro x
+  simp only [pow_zero, one_mul]
+  by_cases hx : ‖x‖ ≤ r
+  · apply (scaledPointCutoffTest_derivative_bound b r hr φ j x).trans
+    have hsum : (∑ i ∈ Finset.range (j + 1), (j.choose i : ℝ) *
+        ‖iteratedFDeriv ℝ i φ x‖ *
+          (SchwartzMap.seminorm ℂ 0 (j - i) (pointBumpSchwartz b) * (r⁻¹) ^ (j - i))) ≤
+        a * ∑ i ∈ Finset.range (j + 1), (j.choose i : ℝ) *
+          SchwartzMap.seminorm ℂ 0 (j - i) (pointBumpSchwartz b) := by
+      rw [Finset.mul_sum]
+      apply Finset.sum_le_sum
+      intro i hi
+      have hij : i ≤ j := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
+      have hiN : i ≤ N := hij.trans hj
+      let M := SchwartzMap.seminorm ℂ 0 (j - i) (pointBumpSchwartz b)
+      have hM : 0 ≤ M := apply_nonneg _ _
+      have hexp : N - i = (j - i) + (N - j) := by omega
+      calc
+        (j.choose i : ℝ) * ‖iteratedFDeriv ℝ i φ x‖ * (M * (r⁻¹) ^ (j - i))
+            ≤ (j.choose i : ℝ) * (a * ‖x‖ ^ (N - i)) * (M * (r⁻¹) ^ (j - i)) := by
+              gcongr
+              exact hflat i hiN x hx
+        _ ≤ (j.choose i : ℝ) * (a * r ^ (N - i)) * (M * (r⁻¹) ^ (j - i)) := by
+              gcongr
+        _ = a * ((j.choose i : ℝ) * M) * r ^ (N - j) := by
+              rw [hexp, pow_add, inv_pow]
+              have hcancel : r ^ (j - i) * (r ^ (j - i))⁻¹ = 1 :=
+                mul_inv_cancel₀ (pow_ne_zero _ hr.ne')
+              calc
+                _ = a * ((j.choose i : ℝ) * M) * r ^ (N - j) *
+                    (r ^ (j - i) * (r ^ (j - i))⁻¹) := by ring
+                _ = _ := by rw [hcancel, mul_one]
+        _ ≤ a * ((j.choose i : ℝ) * M) :=
+              mul_le_of_le_one_right (mul_nonneg ha (mul_nonneg (by positivity) hM))
+                (pow_le_one₀ hr.le hr1)
+    calc
+      _ ≤ ‖(ContinuousLinearMap.mul ℂ ℂ).bilinearRestrictScalars ℝ‖ *
+          (a * ∑ i ∈ Finset.range (j + 1), (j.choose i : ℝ) *
+            SchwartzMap.seminorm ℂ 0 (j - i) (pointBumpSchwartz b)) :=
+        mul_le_mul_of_nonneg_left hsum (norm_nonneg _)
+      _ = a * cutoffLeibnizConstant b j := by unfold cutoffLeibnizConstant; ring
+  · have hsupport : tsupport (scaledPointCutoffTest b r hr.ne' φ : Euclidean d → ℂ) ⊆
+        Metric.closedBall 0 r := by
+      simpa only [hb, mul_one] using scaledPointCutoffTest_tsupport_subset b r hr φ
+    have hz : iteratedFDeriv ℝ j (scaledPointCutoffTest b r hr.ne' φ) x = 0 :=
+      image_eq_zero_of_nmem_tsupport (fun h => hx (by
+        simpa only [Metric.mem_closedBall, dist_zero_right] using
+          hsupport (tsupport_iteratedFDeriv_subset j h)))
+    rw [hz, norm_zero]
+    exact mul_nonneg ha (cutoffLeibnizConstant_nonneg b j)
+
+/-- Flat jets yield simultaneous derivative bounds on a sufficiently small
+closed ball. -/
+theorem flat_jet_uniform_derivative_bound (φ : 𝓢(Euclidean d, ℂ)) (N : ℕ)
+    (hzero : ∀ j ≤ N, iteratedFDeriv ℝ j φ 0 = 0) (a : ℝ) (ha : 0 < a) :
+    ∃ r : ℝ, 0 < r ∧ ∀ i ≤ N, ∀ x : Euclidean d, ‖x‖ ≤ r →
+      ‖iteratedFDeriv ℝ i φ x‖ ≤ a * ‖x‖ ^ (N - i) := by
+  have he : ∀ i ∈ Finset.range (N + 1), ∀ᶠ x in 𝓝 (0 : Euclidean d),
+      ‖iteratedFDeriv ℝ i φ x‖ ≤ a * ‖x‖ ^ (N - i) := by
+    intro i hi
+    have hiN : i ≤ N := Nat.lt_succ_iff.mp (Finset.mem_range.mp hi)
+    have hh := flat_jet_iteratedFDeriv_isLittleO φ i (N - i)
+      (fun j hj => hzero j (by omega))
+    have hh' := (Asymptotics.isLittleO_iff.mp hh) ha
+    simpa only [norm_pow, norm_norm] using hh'
+  have hall : ∀ᶠ x in 𝓝 (0 : Euclidean d), ∀ i ∈ Finset.range (N + 1),
+      ‖iteratedFDeriv ℝ i φ x‖ ≤ a * ‖x‖ ^ (N - i) :=
+    (eventually_all_finset _).mpr he
+  obtain ⟨r, hr, hball⟩ := Metric.nhds_basis_closedBall.mem_iff.mp hall
+  refine ⟨r, hr, ?_⟩
+  intro i hi x hx
+  exact hball (by simpa only [Metric.mem_closedBall, dist_zero_right] using hx)
+    i (Finset.mem_range.mpr (by omega))
+
+/-- A point-supported distribution annihilates every compact test with a
+sufficiently long vanishing jet. -/
+theorem DistributionSupportedIn.exists_order_compact_flat_annihilation
+    {u : TemperedDistribution d} (hu : DistributionSupportedIn u {(0 : Euclidean d)}) :
+    ∃ N : ℕ, ∀ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) →
+      (∀ j ≤ N, iteratedFDeriv ℝ j φ 0 = 0) → u φ = 0 := by
+  obtain ⟨N, C, hC, hbound⟩ := distribution_local_finite_order_bound u
+  let b : ContDiffBump (0 : Euclidean d) :=
+    { rIn := 1 / 2
+      rOut := 1
+      rIn_pos := by norm_num
+      rIn_lt_rOut := by norm_num }
+  let K := 1 + ∑ j ∈ Finset.range (N + 1), cutoffLeibnizConstant b j
+  have hK : 0 < K := by
+    have hh : 0 ≤ ∑ j ∈ Finset.range (N + 1), cutoffLeibnizConstant b j :=
+      Finset.sum_nonneg (fun j _ => cutoffLeibnizConstant_nonneg b j)
+    dsimp only [K]
+    linarith
+  have hKj : ∀ j ≤ N, cutoffLeibnizConstant b j ≤ K := by
+    intro j hj
+    have hh : cutoffLeibnizConstant b j ≤
+        ∑ j ∈ Finset.range (N + 1), cutoffLeibnizConstant b j :=
+      Finset.single_le_sum (fun i _ => cutoffLeibnizConstant_nonneg b i)
+        (Finset.mem_range.mpr (by omega))
+    dsimp only [K]
+    linarith
+  refine ⟨N, ?_⟩
+  intro φ hφ hzero
+  apply norm_eq_zero.mp
+  apply le_antisymm _ (norm_nonneg _)
+  apply le_of_forall_pos_le_add
+  intro ε hε
+  let a := ε / (C * K)
+  have ha : 0 < a := div_pos hε (mul_pos hC hK)
+  obtain ⟨δ, hδ, hflat⟩ := flat_jet_uniform_derivative_bound φ N hzero a ha
+  let r := min δ 1
+  have hr : 0 < r := lt_min hδ (by norm_num)
+  have hr1 : r ≤ 1 := min_le_right _ _
+  have hsr : tsupport (scaledPointCutoffTest b r hr.ne' φ : Euclidean d → ℂ) ⊆
+      Metric.closedBall 0 1 := by
+    apply (scaledPointCutoffTest_tsupport_subset b r hr φ).trans
+    exact Metric.closedBall_subset_closedBall (by simpa only [b, mul_one] using hr1)
+  rw [← hu.compact_scaled_cutoff b r hr.ne' φ hφ]
+  apply (hbound _ hsr).trans
+  have hseminorm : (Finset.range (N + 1)).sup (fun j => SchwartzMap.seminorm ℂ 0 j)
+      (scaledPointCutoffTest b r hr.ne' φ) ≤ a * K := by
+    apply Seminorm.finset_sup_apply_le (mul_nonneg ha.le hK.le)
+    intro j hj
+    have hjN : j ≤ N := Nat.lt_succ_iff.mp (Finset.mem_range.mp hj)
+    apply (scaledPointCutoffTest_seminorm_bound b rfl r hr hr1 φ N a ha.le
+      (fun i hi x hx => hflat i hi x (hx.trans (min_le_left _ _))) j hjN).trans
+    exact mul_le_mul_of_nonneg_left (hKj j hjN) ha.le
+  calc
+    _ ≤ C * (a * K) := mul_le_mul_of_nonneg_left hseminorm hC.le
+    _ = 0 + ε := by dsimp only [a]; field_simp [hC.ne', hK.ne']; ring
+
+/-- Finite coordinate derivative jets through order `N`. Repeated directions
+are allowed, so the indexing covers mixed partial derivatives. -/
+abbrev PointJetIndex (d N : ℕ) := Σ n : Fin (N + 1), Fin n.val → Fin d
+
+/-- The coordinate directions of one derivative jet. -/
+def pointJetDirections {N : ℕ} (i : PointJetIndex d N) : Fin i.1.val → Euclidean d :=
+  fun j => (EuclideanSpace.basisFun (Fin d) ℝ) (i.2 j)
+
+/-- Evaluation at zero of an actual iterated coordinate derivative. -/
+def pointJetDistribution (N : ℕ) (i : PointJetIndex d N) : TemperedDistribution d :=
+  (distributionDelta (0 : Euclidean d)).comp (SchwartzMap.iteratedPDeriv ℂ (pointJetDirections i))
+
+@[simp] theorem pointJetDistribution_apply (N : ℕ) (i : PointJetIndex d N)
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    pointJetDistribution N i φ = iteratedFDeriv ℝ i.1.val φ 0 (pointJetDirections i) := by
+  simp only [pointJetDistribution, ContinuousLinearMap.comp_apply,
+    distributionDelta_apply, SchwartzMap.iteratedPDeriv_eq_iteratedFDeriv]
+
+/-- The compact tests form a genuine complex linear subspace of Schwartz space. -/
+def compactTestSubmodule (d : ℕ) : Submodule ℂ 𝓢(Euclidean d, ℂ) where
+  carrier := {φ | HasCompactSupport (φ : Euclidean d → ℂ)}
+  zero_mem' := by
+    change HasCompactSupport (fun _ : Euclidean d => (0 : ℂ))
+    simp [HasCompactSupport, tsupport]
+  add_mem' := fun hφ hψ => hφ.add hψ
+  smul_mem' := by
+    intro c φ hφ
+    change HasCompactSupport (fun x => c • φ x)
+    exact hφ.comp_left (smul_zero c : c • (0 : ℂ) = 0)
+
+/-- Finite derivative classification on compact tests, obtained from the
+kernel/span theorem for finitely many linear forms. -/
+theorem DistributionSupportedIn.exists_finite_derivatives_compact
+    {u : TemperedDistribution d} (hu : DistributionSupportedIn u {(0 : Euclidean d)}) :
+    ∃ N : ℕ, ∃ c : PointJetIndex d N → ℂ,
+      ∀ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) →
+        u φ = ∑ i : PointJetIndex d N, c i * pointJetDistribution N i φ := by
+  classical
+  obtain ⟨N, hann⟩ := hu.exists_order_compact_flat_annihilation
+  let L : PointJetIndex d N → compactTestSubmodule d →ₗ[ℂ] ℂ := fun i =>
+    (pointJetDistribution N i).toLinearMap.comp (compactTestSubmodule d).subtype
+  let K : compactTestSubmodule d →ₗ[ℂ] ℂ :=
+    u.toLinearMap.comp (compactTestSubmodule d).subtype
+  have hker : (⨅ i, LinearMap.ker (L i)) ≤ LinearMap.ker K := by
+    intro φ hφ
+    apply hann φ.val φ.property
+    intro n hn
+    apply ContinuousMultilinearMap.toMultilinearMap_injective
+    apply (EuclideanSpace.basisFun (Fin d) ℝ).toBasis.ext_multilinear
+    intro dirs
+    let i : PointJetIndex d N := ⟨⟨n, by omega⟩, dirs⟩
+    have hz := (Submodule.mem_iInf (fun i => LinearMap.ker (L i))).mp hφ i
+    change pointJetDistribution N i φ.val = 0 at hz
+    simpa only [pointJetDistribution_apply, pointJetDirections, i,
+      ContinuousMultilinearMap.zero_apply, MultilinearMap.zero_apply] using hz
+  have hspan := mem_span_of_iInf_ker_le_ker hker
+  obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).mp hspan
+  refine ⟨N, c, ?_⟩
+  intro φ hφ
+  have hh := LinearMap.congr_fun hc (⟨φ, hφ⟩ : compactTestSubmodule d)
+  simpa only [LinearMap.sum_apply, LinearMap.smul_apply, L, K, LinearMap.comp_apply,
+    Submodule.subtype_apply, ContinuousLinearMap.coe_coe, smul_eq_mul] using hh.symm
+
+/-- A distribution supported at the origin is an actual finite linear combination
+of coordinate derivative evaluations there. Compact-test density upgrades the
+classification to equality of continuous functionals on the whole Schwartz space. -/
+theorem DistributionSupportedIn.eq_sum_pointJets {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)}) :
+    ∃ N : ℕ, ∃ c : PointJetIndex d N → ℂ,
+      u = ∑ i : PointJetIndex d N, c i • pointJetDistribution N i := by
+  classical
+  obtain ⟨N, c, hc⟩ := hu.exists_finite_derivatives_compact
+  refine ⟨N, c, distribution_eq_of_compact_tests ?_⟩
+  intro φ hφ
+  simpa only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+    using hc φ hφ
+
+/-- The same classification written explicitly as a finite sum of derivatives
+of an arbitrary Schwartz test at zero. -/
+theorem DistributionSupportedIn.exists_finite_derivatives {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)}) :
+    ∃ N : ℕ, ∃ c : PointJetIndex d N → ℂ, ∀ φ : 𝓢(Euclidean d, ℂ),
+      u φ = ∑ i : PointJetIndex d N,
+        c i * iteratedFDeriv ℝ i.1.val φ 0 (pointJetDirections i) := by
+  classical
+  obtain ⟨N, c, rfl⟩ := hu.eq_sum_pointJets
+  exact ⟨N, c, fun φ => by simp only [ContinuousLinearMap.sum_apply,
+    ContinuousLinearMap.smul_apply, smul_eq_mul, pointJetDistribution_apply]⟩
+
+/-- Every individual coordinate derivative evaluation is supported at zero. -/
+theorem pointJetDistribution_supported (N : ℕ) (i : PointJetIndex d N) :
+    DistributionSupportedIn (pointJetDistribution N i) {(0 : Euclidean d)} := by
+  intro φ _ hdisj
+  rw [pointJetDistribution_apply]
+  have hnot : (0 : Euclidean d) ∉ tsupport (φ : Euclidean d → ℂ) :=
+    Set.disjoint_singleton_right.mp hdisj
+  have hz : iteratedFDeriv ℝ i.1.val φ 0 = 0 := image_eq_zero_of_nmem_tsupport
+    (fun h => hnot (tsupport_iteratedFDeriv_subset i.1.val h))
+  simp only [hz, ContinuousMultilinearMap.zero_apply]
+
+/-- Point support is equivalent to the finite derivative classification, with
+no support or classification hypothesis encoded in a structure. -/
+theorem distributionSupportedIn_origin_iff_sum_pointJets (u : TemperedDistribution d) :
+    DistributionSupportedIn u {(0 : Euclidean d)} ↔
+      ∃ N : ℕ, ∃ c : PointJetIndex d N → ℂ,
+        u = ∑ i : PointJetIndex d N, c i • pointJetDistribution N i := by
+  classical
+  constructor
+  · exact DistributionSupportedIn.eq_sum_pointJets
+  · rintro ⟨N, c, rfl⟩
+    intro φ hφ hdisj
+    simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+    apply Finset.sum_eq_zero
+    intro i _
+    rw [pointJetDistribution_supported N i φ hφ hdisj, mul_zero]
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalPointFourier.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Fourier transforms of point-supported distributions
+
+Actual coordinate jets at the origin transform into regular distributions given
+by complex multivariate monomials. The point-support classification therefore
+supplies a genuine polynomial Fourier transform.
+-/
+
+noncomputable section
+open MeasureTheory SchwartzMap
+open scoped SchwartzMap FourierTransform
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d N : ℕ}
+
+/-- The polynomial corresponding to a coordinate jet under negative Fourier transposition. -/
+def pointJetPolynomial (i : PointJetIndex d N) : ComplexPolynomial d :=
+  MvPolynomial.C (-(2 * Real.pi * Complex.I)) ^ i.1.val *
+    ∏ j, MvPolynomial.X (i.2 j)
+
+/-- A jet of order `n` gives a polynomial of total degree at most `n`. -/
+theorem pointJetPolynomial_totalDegree_le (i : PointJetIndex d N) :
+    (pointJetPolynomial i).totalDegree ≤ i.1.val := by
+  unfold pointJetPolynomial
+  rw [← MvPolynomial.C_pow]
+  apply (MvPolynomial.totalDegree_mul _ _).trans
+  simp only [MvPolynomial.totalDegree_C, zero_add]
+  simpa only [MvPolynomial.totalDegree_X, Finset.sum_const, Finset.card_univ,
+    Fintype.card_fin, smul_eq_mul, mul_one] using
+    MvPolynomial.totalDegree_finset_prod Finset.univ
+      (fun j => (MvPolynomial.X (i.2 j) : ComplexPolynomial d))
+
+/-- The value of a jet polynomial at a real frequency. -/
+theorem pointJetPolynomial_eval (i : PointJetIndex d N) (x : Euclidean d) :
+    polynomialEvaluation x (pointJetPolynomial i) =
+      (-(2 * Real.pi * Complex.I)) ^ i.1.val * ∏ j, (x (i.2 j) : ℂ) := by
+  simp [polynomialEvaluation_apply, pointJetPolynomial, MvPolynomial.eval_prod]
+
+/-- The coordinate directions in the jet recover the corresponding coordinates in the phase. -/
+theorem pointJetDirections_inner (i : PointJetIndex d N) (x : Euclidean d) (j : Fin i.1.val) :
+    (innerSL ℝ x) (pointJetDirections i j) = x (i.2 j) := by
+  rw [innerSL_apply, pointJetDirections, EuclideanSpace.basisFun_apply,
+    EuclideanSpace.inner_single_right]
+  simp
+
+/-- Every jet monomial has an explicit polynomial growth bound. -/
+theorem pointJetPolynomial_norm_le (i : PointJetIndex d N) (x : Euclidean d) :
+    ‖polynomialEvaluation x (pointJetPolynomial i)‖ ≤
+      (2 * Real.pi) ^ i.1.val * (1 + ‖x‖) ^ N := by
+  rw [pointJetPolynomial_eval, norm_mul, norm_pow, norm_neg]
+  have hconst : ‖(2 * Real.pi * Complex.I : ℂ)‖ = 2 * Real.pi := by
+    rw [norm_mul, Complex.norm_I, mul_one]
+    norm_cast
+    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+  rw [hconst, norm_prod]
+  have hprod : (∏ j : Fin i.1.val, ‖(x (i.2 j) : ℂ)‖) ≤ (1 + ‖x‖) ^ i.1.val := by
+    calc
+      _ ≤ ∏ _j : Fin i.1.val, (1 + ‖x‖) := by
+        apply Finset.prod_le_prod (fun _ _ => norm_nonneg _)
+        intro j _
+        simpa only [Complex.norm_real] using (PiLp.norm_apply_le x (i.2 j)).trans
+          (by linarith [norm_nonneg x])
+      _ = _ := by simp
+  exact mul_le_mul_of_nonneg_left
+    (hprod.trans (pow_le_pow_right₀ (by linarith [norm_nonneg x]) (by omega))) (by positivity)
+
+/-- Evaluation of an actual Fourier-transformed jet is the monomial integral. -/
+theorem distributionFourier_pointJet_apply (i : PointJetIndex d N)
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    distributionFourier (pointJetDistribution N i) φ =
+      ∫ x, polynomialEvaluation x (pointJetPolynomial i) * φ x := by
+  rw [distributionFourier_apply, pointJetDistribution_apply]
+  change iteratedFDeriv ℝ i.1.val (𝓕 (φ : Euclidean d → ℂ)) 0 (pointJetDirections i) = _
+  rw [Real.iteratedFDeriv_fourierIntegral (N := ⊤)
+    (fun k _ => φ.integrable_pow_mul volume k) φ.continuous.aestronglyMeasurable (by simp),
+    Real.fourierIntegral_continuousMultilinearMap_apply
+      (VectorFourier.integrable_fourierPowSMulRight (innerSL ℝ)
+        (φ.integrable_pow_mul volume i.1.val) φ.continuous.aestronglyMeasurable),
+    Real.fourierIntegral_eq]
+  apply integral_congr_ae
+  filter_upwards with x
+  simp only [inner_zero_right, neg_zero, VectorFourier.fourierPowSMulRight_apply,
+    pointJetPolynomial_eval]
+  simp_rw [pointJetDirections_inner (N := N) i]
+  simp [Circle.smul_def, Complex.real_smul, Complex.ofReal_prod, mul_assoc]
+
+/-- The Fourier transform of a coordinate jet is the regular monomial distribution. -/
+theorem distributionFourier_pointJet (i : PointJetIndex d N) :
+    distributionFourier (pointJetDistribution N i) =
+      polynomialDistribution (fun x => polynomialEvaluation x (pointJetPolynomial i))
+        (by positivity : 0 ≤ (2 * Real.pi) ^ i.1.val)
+        (pointJetPolynomial_norm_le i)
+        (((MvPolynomial.continuous_eval (pointJetPolynomial i)).comp
+          (continuous_pi (fun j => Complex.continuous_ofReal.comp (PiLp.proj (𝕜 := ℝ) 2 (fun _ : Fin d => ℝ) j).continuous))).aestronglyMeasurable) := by
+  ext φ
+  exact distributionFourier_pointJet_apply i φ
+
+/-- The finite polynomial supplied by the coordinate-jet classification. -/
+def pointSupportedFourierPolynomial (c : PointJetIndex d N → ℂ) : ComplexPolynomial d :=
+  ∑ i, MvPolynomial.C (c i) * pointJetPolynomial i
+
+/-- The polynomial supplied by jets through order `N` has total degree at most `N`. -/
+theorem pointSupportedFourierPolynomial_totalDegree_le (c : PointJetIndex d N → ℂ) :
+    (pointSupportedFourierPolynomial c).totalDegree ≤ N := by
+  apply MvPolynomial.totalDegree_finsetSum_le
+  intro i _
+  apply (MvPolynomial.totalDegree_mul _ _).trans
+  simp only [MvPolynomial.totalDegree_C, zero_add]
+  exact (pointJetPolynomial_totalDegree_le i).trans (by omega)
+
+/-- An explicit nonnegative bound for the finite jet polynomial. -/
+def pointSupportedFourierBound (c : PointJetIndex d N → ℂ) : ℝ :=
+  ∑ i, ‖c i‖ * (2 * Real.pi) ^ i.1.val
+
+/-- Evaluation commutes with the finite jet polynomial sum. -/
+theorem pointSupportedFourierPolynomial_eval (c : PointJetIndex d N → ℂ) (x : Euclidean d) :
+    polynomialEvaluation x (pointSupportedFourierPolynomial c) =
+      ∑ i, c i * polynomialEvaluation x (pointJetPolynomial i) := by
+  simp [polynomialEvaluation_apply, pointSupportedFourierPolynomial]
+
+/-- The finite jet polynomial obeys a genuine degree-`N` growth bound. -/
+theorem pointSupportedFourierPolynomial_norm_le (c : PointJetIndex d N → ℂ) (x : Euclidean d) :
+    ‖polynomialEvaluation x (pointSupportedFourierPolynomial c)‖ ≤
+      pointSupportedFourierBound c * (1 + ‖x‖) ^ N := by
+  rw [pointSupportedFourierPolynomial_eval, pointSupportedFourierBound, Finset.sum_mul]
+  apply (norm_sum_le _ _).trans
+  apply Finset.sum_le_sum
+  intro i _
+  rw [norm_mul, mul_assoc]
+  exact mul_le_mul_of_nonneg_left (pointJetPolynomial_norm_le i x) (norm_nonneg _)
+
+/-- An actual point-supported distribution has a polynomial Fourier transform,
+expressed by its regular distribution and by its integral on every Schwartz test. -/
+theorem DistributionSupportedIn.fourier_polynomial {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)}) :
+    ∃ p : ComplexPolynomial d, ∃ N : ℕ, ∃ C : ℝ, ∃ hC : 0 ≤ C,
+      ∃ hp : ∀ x, ‖polynomialEvaluation x p‖ ≤ C * (1 + ‖x‖) ^ N,
+      ∃ hm : AEStronglyMeasurable (fun x => polynomialEvaluation x p) volume,
+      distributionFourier u = polynomialDistribution (fun x => polynomialEvaluation x p) hC hp hm := by
+  classical
+  obtain ⟨N, c, rfl⟩ := hu.eq_sum_pointJets
+  let p := pointSupportedFourierPolynomial c
+  have hC : 0 ≤ pointSupportedFourierBound c := by
+    exact Finset.sum_nonneg fun _ _ => mul_nonneg (norm_nonneg _) (by positivity)
+  have hm : AEStronglyMeasurable (fun x => polynomialEvaluation x p) volume :=
+    ((MvPolynomial.continuous_eval p).comp
+      (continuous_pi (fun j => Complex.continuous_ofReal.comp (PiLp.proj (𝕜 := ℝ) 2 (fun _ : Fin d => ℝ) j).continuous))).aestronglyMeasurable
+  refine ⟨p, N, pointSupportedFourierBound c, hC,
+    pointSupportedFourierPolynomial_norm_le c, hm, ?_⟩
+  ext φ
+  simp only [distributionFourier_apply, ContinuousLinearMap.sum_apply,
+    ContinuousLinearMap.smul_apply, smul_eq_mul, polynomialDistribution_apply]
+  change (∑ i, c i * distributionFourier (pointJetDistribution N i) φ) = _
+  simp_rw [distributionFourier_pointJet_apply, ← integral_const_mul]
+  rw [← integral_finset_sum]
+  · apply integral_congr_ae
+    filter_upwards with x
+    rw [pointSupportedFourierPolynomial_eval, Finset.sum_mul]
+    simp only [mul_assoc]
+  · intro i _
+    exact (polynomial_schwartz_integrable (by positivity : 0 ≤ (2 * Real.pi) ^ i.1.val)
+      (pointJetPolynomial_norm_le i)
+      (((MvPolynomial.continuous_eval (pointJetPolynomial i)).comp
+        (continuous_pi (fun j => Complex.continuous_ofReal.comp (PiLp.proj (𝕜 := ℝ) 2 (fun _ : Fin d => ℝ) j).continuous))).aestronglyMeasurable) φ).const_mul (c i)
+
+/-- Point support gives an actual polynomial integral on the Fourier side, with
+the degree bound of the finite-order classification. -/
+theorem DistributionSupportedIn.fourier_polynomial_integral {u : TemperedDistribution d}
+    (hu : DistributionSupportedIn u {(0 : Euclidean d)}) :
+    ∃ N : ℕ, ∃ p : ComplexPolynomial d, p.totalDegree ≤ N ∧
+      ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier u φ =
+        ∫ x, polynomialEvaluation x p * φ x := by
+  classical
+  obtain ⟨N, c, hc⟩ := hu.eq_sum_pointJets
+  refine ⟨N, pointSupportedFourierPolynomial c,
+    pointSupportedFourierPolynomial_totalDegree_le c, ?_⟩
+  intro φ
+  rw [hc]
+  simp only [distributionFourier_apply, ContinuousLinearMap.sum_apply,
+    ContinuousLinearMap.smul_apply, smul_eq_mul]
+  change (∑ i, c i * distributionFourier (pointJetDistribution N i) φ) = _
+  simp_rw [distributionFourier_pointJet_apply, ← integral_const_mul]
+  rw [← integral_finset_sum]
+  · apply integral_congr_ae
+    filter_upwards with x
+    rw [pointSupportedFourierPolynomial_eval, Finset.sum_mul]
+    simp only [mul_assoc]
+  · intro i _
+    exact (polynomial_schwartz_integrable (by positivity : 0 ≤ (2 * Real.pi) ^ i.1.val)
+      (pointJetPolynomial_norm_le i)
+      (((MvPolynomial.continuous_eval (pointJetPolynomial i)).comp
+        (continuous_pi (fun j => Complex.continuous_ofReal.comp
+          (PiLp.proj (𝕜 := ℝ) 2 (fun _ : Fin d => ℝ) j).continuous))).aestronglyMeasurable)
+      φ).const_mul (c i)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalDifferentialOperators.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Constant-coefficient physical derivatives and their actual Fourier multipliers. -/
+noncomputable section
+open MeasureTheory SchwartzMap
+open scoped SchwartzMap FourierTransform BigOperators
+namespace RieszEuclidean.CompleteMinimal
+variable {d : ℕ}
+
+/-- The real-frequency symbol of a physical directional derivative. -/
+def derivativeSymbolCLM (v : Euclidean d) : Euclidean d →L[ℝ] ℂ :=
+  (2 * Real.pi * Complex.I : ℂ) • (Complex.ofRealCLM.comp (innerSL ℝ v))
+
+@[simp] theorem derivativeSymbolCLM_apply (v x : Euclidean d) :
+    derivativeSymbolCLM v x = (2 * Real.pi * Complex.I : ℂ) * (inner (𝕜 := ℝ) v x : ℂ) := rfl
+
+/-- A derivative symbol is a genuine smooth multiplier of temperate growth. -/
+def derivativeMultiplierCLM (v : Euclidean d) :
+    𝓢(Euclidean d, ℂ) →L[ℂ] 𝓢(Euclidean d, ℂ) :=
+  schwartzMultiplierCLM (derivativeSymbolCLM v) (derivativeSymbolCLM v).hasTemperateGrowth
+
+/-- Differentiating a transformed test gives the negative derivative symbol. -/
+theorem pderiv_fourier_schwartz (v : Euclidean d) (φ : 𝓢(Euclidean d, ℂ)) :
+    SchwartzMap.pderivCLM ℂ v (SchwartzMap.fourierTransformCLE ℂ φ) =
+      -(SchwartzMap.fourierTransformCLE ℂ (derivativeMultiplierCLM v φ)) := by
+  ext x
+  change (fderiv ℝ (𝓕 (φ : Euclidean d → ℂ)) x) v =
+    -(𝓕 (derivativeMultiplierCLM v φ : Euclidean d → ℂ) x)
+  have hi : Integrable (fun y : Euclidean d => ‖y‖ * ‖φ y‖) := by
+    simpa only [pow_one] using φ.integrable_pow_mul volume 1
+  have hsm : Integrable (VectorFourier.fourierSMulRight (innerSL ℝ) (φ : Euclidean d → ℂ)) := by
+    apply (hi.const_mul (2 * Real.pi * ‖(innerSL ℝ : Euclidean d →L[ℝ] Euclidean d →L[ℝ] ℝ)‖)).mono'
+      φ.continuous.aestronglyMeasurable.fourierSMulRight
+    filter_upwards with y
+    simpa only [mul_assoc] using VectorFourier.norm_fourierSMulRight_le (innerSL ℝ) (φ : Euclidean d → ℂ) y
+  rw [Real.fderiv_fourierIntegral φ.integrable hi,
+    Real.fourierIntegral_continuousLinearMap_apply hsm,
+    Real.fourierIntegral_eq, Real.fourierIntegral_eq, ← integral_neg]
+  apply integral_congr_ae
+  filter_upwards with y
+  simp only [VectorFourier.fourierSMulRight_apply, innerSL_apply,
+    derivativeMultiplierCLM, schwartzMultiplierCLM_apply, derivativeSymbolCLM_apply,
+    Complex.real_smul, smul_eq_mul, Circle.smul_def, real_inner_comm v y]
+  rw [show (innerSL ℝ y) v = inner (𝕜 := ℝ) v y by exact (real_inner_comm y v).symm]
+  ring
+
+/-- The Fourier transform of a physical derivative is multiplication by its symbol. -/
+theorem distributionFourier_derivative (v : Euclidean d) (u : TemperedDistribution d) :
+    distributionFourier (distributionDerivative v u) =
+      distributionMultiply (derivativeSymbolCLM v) (derivativeSymbolCLM v).hasTemperateGrowth
+        (distributionFourier u) := by
+  ext φ
+  simp only [distributionFourier_apply, distributionDerivative_apply,
+    distributionMultiply_apply]
+  rw [pderiv_fourier_schwartz, map_neg, neg_neg]
+  rfl
+
+/-- Division by the Fourier derivative constant gives the coordinate operator. -/
+def normalizedCoordinateDerivative (j : Fin d) (u : TemperedDistribution d) :
+    TemperedDistribution d :=
+  (2 * Real.pi * Complex.I : ℂ)⁻¹ •
+    distributionDerivative (EuclideanSpace.basisFun (Fin d) ℝ j) u
+
+/-- Coordinate multiplication on the actual Schwartz test space. -/
+def coordinateTestCLM (j : Fin d) : 𝓢(Euclidean d, ℂ) →L[ℂ] 𝓢(Euclidean d, ℂ) :=
+  let c : Euclidean d →L[ℝ] ℂ := Complex.ofRealCLM.comp (PiLp.proj (𝕜 := ℝ) 2 (fun _ : Fin d => ℝ) j)
+  schwartzMultiplierCLM c c.hasTemperateGrowth
+
+@[simp] theorem coordinateTestCLM_apply (j : Fin d) (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    coordinateTestCLM j φ x = φ x * (x j : ℂ) := rfl
+
+theorem distributionFourier_normalizedCoordinateDerivative (j : Fin d) (u : TemperedDistribution d) :
+    distributionFourier (normalizedCoordinateDerivative j u) =
+      (distributionFourier u).comp (coordinateTestCLM j) := by
+  have hc : (2 * Real.pi * Complex.I : ℂ) ≠ 0 := by
+    apply mul_ne_zero
+    · exact mul_ne_zero (by norm_num) (Complex.ofReal_ne_zero.mpr Real.pi_ne_zero)
+    · exact Complex.I_ne_zero
+  ext φ
+  change (2 * Real.pi * Complex.I : ℂ)⁻¹ *
+    distributionFourier (distributionDerivative (EuclideanSpace.basisFun (Fin d) ℝ j) u) φ = _
+  rw [distributionFourier_derivative]
+  have he : derivativeMultiplierCLM (EuclideanSpace.basisFun (Fin d) ℝ j) φ =
+      (2 * Real.pi * Complex.I : ℂ) • coordinateTestCLM j φ := by
+    ext x
+    simp only [derivativeMultiplierCLM, schwartzMultiplierCLM_apply,
+      derivativeSymbolCLM_apply, SchwartzMap.smul_apply, coordinateTestCLM_apply,
+      EuclideanSpace.basisFun_apply, EuclideanSpace.inner_single_left]
+    simp only [conj_trivial, one_mul, smul_eq_mul]
+    ring
+  change _ * (distributionFourier u) (derivativeMultiplierCLM _ φ) = _
+  rw [he, map_smul]
+  simp only [smul_eq_mul, ← mul_assoc, inv_mul_cancel₀ hc, one_mul,
+    ContinuousLinearMap.comp_apply]
+
+/-- A finite word of actual physical coordinate derivatives. -/
+def coordinateWordDerivative : List (Fin d) → TemperedDistribution d → TemperedDistribution d
+  | [], u => u
+  | j :: w, u => normalizedCoordinateDerivative j (coordinateWordDerivative w u)
+
+/-- The matching finite composition of actual coordinate multipliers. -/
+def coordinateWordTestCLM : List (Fin d) → 𝓢(Euclidean d, ℂ) →L[ℂ] 𝓢(Euclidean d, ℂ)
+  | [] => ContinuousLinearMap.id ℂ _
+  | j :: w => (coordinateWordTestCLM w).comp (coordinateTestCLM j)
+
+theorem coordinateWordTestCLM_apply (w : List (Fin d)) (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    coordinateWordTestCLM w φ x = φ x * (w.map (fun j => (x j : ℂ))).prod := by
+  induction w generalizing φ with
+  | nil => simp [coordinateWordTestCLM]
+  | cons j w ih =>
+    simp only [coordinateWordTestCLM, ContinuousLinearMap.comp_apply, ih,
+      coordinateTestCLM_apply, List.map_cons, List.prod_cons]
+    ring
+
+theorem distributionFourier_coordinateWordDerivative (w : List (Fin d)) (u : TemperedDistribution d) :
+    distributionFourier (coordinateWordDerivative w u) =
+      (distributionFourier u).comp (coordinateWordTestCLM w) := by
+  induction w with
+  | nil => ext φ; rfl
+  | cons j w ih =>
+    rw [coordinateWordDerivative, distributionFourier_normalizedCoordinateDerivative, ih]
+    ext φ
+    rfl
+
+theorem DistributionSupportedIn.coordinateWordDerivative {u : TemperedDistribution d}
+    {S : Set (Euclidean d)} (hu : DistributionSupportedIn u S) (w : List (Fin d)) :
+    DistributionSupportedIn (coordinateWordDerivative w u) S := by
+  induction w with
+  | nil => exact hu
+  | cons j w ih =>
+    exact (ih.derivative _).smul _
+
+
+/-- A monomial's exponents encoded as a finite coordinate word. -/
+def polynomialMonomialWord (a : Fin d →₀ ℕ) : List (Fin d) :=
+  (List.ofFn (fun j : Fin d => List.replicate (a j) j)).flatten
+
+theorem polynomialMonomialWord_eval (a : Fin d →₀ ℕ) (x : Euclidean d) :
+    ((polynomialMonomialWord a).map (fun j => (x j : ℂ))).prod =
+      ∏ j : Fin d, (x j : ℂ) ^ a j := by
+  simp [polynomialMonomialWord, List.map_flatten, List.prod_flatten, List.map_map,
+    List.map_ofFn, List.prod_ofFn]
+
+/-- The coefficient sum of actual finite physical derivative words representing
+an arbitrary complex polynomial Fourier multiplier. -/
+def polynomialDifferentialOperator (p : ComplexPolynomial d) (u : TemperedDistribution d) :
+    TemperedDistribution d :=
+  p.sum (fun a c => c • coordinateWordDerivative (polynomialMonomialWord a) u)
+
+/-- The matching Schwartz multiplier, assembled from finite coordinate products. -/
+def polynomialTestCLM (p : ComplexPolynomial d) :
+    𝓢(Euclidean d, ℂ) →L[ℂ] 𝓢(Euclidean d, ℂ) :=
+  p.sum (fun a c => c • coordinateWordTestCLM (polynomialMonomialWord a))
+
+/-- This finite operator acts by actual pointwise polynomial multiplication. -/
+theorem polynomialTestCLM_apply (p : ComplexPolynomial d)
+    (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    polynomialTestCLM p φ x = φ x * polynomialEvaluation x p := by
+  classical
+  change distributionDelta x (polynomialTestCLM p φ) = _
+  simp only [polynomialTestCLM, MvPolynomial.sum_def,
+    ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, map_sum, map_smul,
+    distributionDelta_apply, smul_eq_mul, coordinateWordTestCLM_apply,
+    polynomialMonomialWord_eval, polynomialEvaluation_apply, MvPolynomial.eval_eq',
+    Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro a _
+  ring
+
+/-- Polynomial Fourier multiplication is exactly the transform of the finite
+constant-coefficient physical differential operator above. -/
+theorem distributionFourier_polynomialDifferentialOperator (p : ComplexPolynomial d)
+    (u : TemperedDistribution d) :
+    distributionFourier (polynomialDifferentialOperator p u) =
+      (distributionFourier u).comp (polynomialTestCLM p) := by
+  classical
+  ext φ
+  simp only [polynomialDifferentialOperator, polynomialTestCLM, MvPolynomial.sum_def,
+    distributionFourier_apply, ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply,
+    smul_eq_mul, ContinuousLinearMap.comp_apply, map_sum, map_smul]
+  apply Finset.sum_congr rfl
+  intro a _
+  change _ * distributionFourier (coordinateWordDerivative (polynomialMonomialWord a) u) φ = _
+  rw [distributionFourier_coordinateWordDerivative]
+  rfl
+
+/-- The operator multiplies an actual Fourier integral representation by its polynomial. -/
+theorem distributionFourier_polynomialDifferentialOperator_integral
+    (p : ComplexPolynomial d) (u : TemperedDistribution d) (F : Euclidean d → ℂ)
+    (hF : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier u φ = ∫ x, F x * φ x)
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    distributionFourier (polynomialDifferentialOperator p u) φ =
+      ∫ x, polynomialEvaluation x p * F x * φ x := by
+  rw [distributionFourier_polynomialDifferentialOperator, ContinuousLinearMap.comp_apply, hF]
+  apply integral_congr_ae
+  filter_upwards with x
+  rw [polynomialTestCLM_apply]
+  ring
+
+/-- The actual Fourier integral of an integrable L² function represents its
+transformed tempered distribution. -/
+theorem distributionFourier_l2_integral (f : FullL2 d)
+    (hf : Integrable (f : Euclidean d → ℂ)) (φ : 𝓢(Euclidean d, ℂ)) :
+    distributionFourier (l2Distribution f) φ = ∫ x, 𝓕 (f : Euclidean d → ℂ) x * φ x := by
+  rw [distributionFourier_apply, l2Distribution_apply]
+  change (∫ x, f x * 𝓕 (φ : Euclidean d → ℂ) x) = _
+  exact (integral_fourier_mul hf φ.integrable).symm
+
+/-- A pointwise product of actual Fourier representatives gives the precise
+Fourier product of distributions needed by the convolution support theorem. -/
+theorem fourier_polynomial_product_of_integral_representatives
+    (p : ComplexPolynomial d) (u v : TemperedDistribution d)
+    (F G m : Euclidean d → ℂ) (hm : Function.HasTemperateGrowth m)
+    (hF : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier u φ = ∫ x, F x * φ x)
+    (hG : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier v φ = ∫ x, G x * φ x)
+    (hproduct : ∀ x, polynomialEvaluation x p * F x = m x * G x) :
+    distributionFourier (polynomialDifferentialOperator p u) =
+      distributionMultiply m hm (distributionFourier v) := by
+  ext φ
+  rw [distributionFourier_polynomialDifferentialOperator_integral p u F hF,
+    distributionMultiply_apply, hG]
+  apply integral_congr_ae
+  filter_upwards with x
+  rw [hproduct, schwartzMultiplierCLM_apply]
+  ring
+
+
+/-- Every finite constant-coefficient differential operator preserves physical support. -/
+theorem DistributionSupportedIn.polynomialDifferentialOperator {u : TemperedDistribution d}
+    {S : Set (Euclidean d)} (hu : DistributionSupportedIn u S) (p : ComplexPolynomial d) :
+    DistributionSupportedIn (polynomialDifferentialOperator p u) S := by
+  classical
+  intro φ hφ hdisj
+  simp only [RieszEuclidean.CompleteMinimal.polynomialDifferentialOperator, MvPolynomial.sum_def,
+    ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+  apply Finset.sum_eq_zero
+  intro a _
+  rw [hu.coordinateWordDerivative (polynomialMonomialWord a) φ hφ hdisj, mul_zero]
+
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalInterpolationFunctions.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! The finite polynomial denominators of the spherical interpolation spaces.
+
+The radii in this file are frequency-space radii `a_j / (2π)`. Consequently
+the paper's denominator is `(4π²)^N` times `sphereDenominator`.
+-/
+
+noncomputable section
+open MvPolynomial
+open scoped BigOperators
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The denominator containing the first `N` positive-index sphere factors. -/
+def sphereDenominator (d : ℕ) (radius : ℕ → ℝ) (N : ℕ) : ComplexPolynomial d :=
+  ∏ j ∈ Finset.range N, spherePolynomial d (radius (j + 1))
+
+@[simp] theorem sphereDenominator_zero (d : ℕ) (radius : ℕ → ℝ) :
+    sphereDenominator d radius 0 = 1 := by simp [sphereDenominator]
+
+theorem sphereDenominator_succ (d N : ℕ) (radius : ℕ → ℝ) :
+    sphereDenominator d radius (N + 1) =
+      sphereDenominator d radius N * spherePolynomial d (radius (N + 1)) := by
+  simp only [sphereDenominator, Finset.prod_range_succ]
+
+theorem spherePolynomial_ne_zero {d : ℕ} (hd : 1 ≤ d) (r : ℝ) :
+    spherePolynomial d r ≠ 0 := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : d ≠ 0)
+  intro h
+  have hh := spherePolynomial_totalDegree n r
+  simp [h] at hh
+
+theorem sphereDenominator_ne_zero {d : ℕ} (hd : 1 ≤ d) (radius : ℕ → ℝ) (N : ℕ) :
+    sphereDenominator d radius N ≠ 0 := by
+  exact Finset.prod_ne_zero_iff.mpr (fun j _ => spherePolynomial_ne_zero hd (radius (j + 1)))
+
+theorem sphereDenominator_totalDegree {d : ℕ} (hd : 1 ≤ d) (radius : ℕ → ℝ) (N : ℕ) :
+    (sphereDenominator d radius N).totalDegree = 2 * N := by
+  induction N with
+  | zero => simp
+  | succ N ih =>
+    rw [sphereDenominator_succ, complexPolynomial_totalDegree_mul _ _
+      (sphereDenominator_ne_zero hd radius N) (spherePolynomial_ne_zero hd _), ih]
+    obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (by omega : d ≠ 0)
+    rw [spherePolynomial_totalDegree]
+    omega
+
+theorem sphereDenominator_eval_real {d N : ℕ} (radius : ℕ → ℝ) (x : Euclidean d) :
+    eval (fun j => (x j : ℂ)) (sphereDenominator d radius N) =
+      ∏ j ∈ Finset.range N, ((‖x‖ ^ 2 - radius (j + 1) ^ 2 : ℝ) : ℂ) := by
+  simp only [sphereDenominator, map_prod, polynomialEvaluation_spherePolynomial]
+
+theorem sphereDenominator_eval_eq_zero_on_sphere {d N j : ℕ} (radius : ℕ → ℝ)
+    (hj : 0 < j) (hjN : j ≤ N) (x : Euclidean d) (hx : ‖x‖ = radius j) :
+    eval (fun k => (x k : ℂ)) (sphereDenominator d radius N) = 0 := by
+  rw [sphereDenominator_eval_real]
+  apply Finset.prod_eq_zero_iff.mpr
+  refine ⟨j - 1, Finset.mem_range.mpr (by omega), ?_⟩
+  have hj' : j - 1 + 1 = j := by omega
+  simp [hj', hx]
+
+theorem sphereDenominator_eval_ne_zero {d N : ℕ} (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) (x : Euclidean d)
+    (hx : ∀ j, 0 < j → j ≤ N → ‖x‖ ≠ radius j) :
+    eval (fun k => (x k : ℂ)) (sphereDenominator d radius N) ≠ 0 := by
+  rw [sphereDenominator, map_prod]
+  apply Finset.prod_ne_zero_iff.mpr
+  intro j hj
+  have he := polynomialEvaluation_spherePolynomial_eq_zero_iff x (radius (j + 1))
+    (hr _ (by omega)).le
+  exact fun hz => hx (j + 1) (by omega) (by simpa using Finset.mem_range.mp hj) (he.mp hz)
+
+theorem sphereDenominator_eval_zero_ne_zero {d N : ℕ} (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) :
+    eval (fun _ : Fin d => (0 : ℂ)) (sphereDenominator d radius N) ≠ 0 := by
+  simpa using sphereDenominator_eval_ne_zero (N := N) radius hr (0 : Euclidean d)
+    (fun j hj _ => by simpa using (hr j hj).ne)
+
+/-- The denominator in the paper's `q=4π²∑zᵢ²` convention. -/
+def sourceSphereDenominator (d : ℕ) (radius : ℕ → ℝ) (N : ℕ) : ComplexPolynomial d :=
+  ∏ j ∈ Finset.range N,
+    C ((4 * Real.pi ^ 2 : ℝ) : ℂ) * spherePolynomial d (radius (j + 1))
+
+theorem sourceSphereDenominator_eq (d N : ℕ) (radius : ℕ → ℝ) :
+    sourceSphereDenominator d radius N =
+      C (((4 * Real.pi ^ 2) ^ N : ℝ) : ℂ) * sphereDenominator d radius N := by
+  simp [sourceSphereDenominator, sphereDenominator, Finset.prod_mul_distrib, map_pow]
+
+theorem sourceSphereFactor_eval {d : ℕ} (r : ℝ) (z : ComplexEuclidean d) :
+    eval (fun j => z j) (C ((4 * Real.pi ^ 2 : ℝ) : ℂ) * spherePolynomial d r) =
+      4 * (Real.pi : ℂ) ^ 2 * (∑ j, z j ^ 2) - ((2 * Real.pi * r : ℝ) : ℂ) ^ 2 := by
+  simp only [spherePolynomial, map_mul, eval_C, map_sub, map_sum, map_pow, eval_X]
+  push_cast
+  ring
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalTail.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# The geometric support-to-polynomial step
+
+These composition theorems take an actual compactly supported inverse quotient
+and an actual Fourier-product identity. Their conclusion is derived from the
+single named Titchmarsh–Lions hypothesis, John maximality, and the proved
+point-support classification. They do not assert the still separate analytic
+division or the sharp polynomial degree estimate.
+-/
+noncomputable section
+open MeasureTheory SchwartzMap
+open scoped SchwartzMap FourierTransform
+namespace RieszEuclidean.CompleteMinimal
+variable {d : ℕ}
+
+/-- Compact Fourier division and the physical support of its ball product force
+its inverse distribution to be supported at the origin. -/
+theorem normalized_ball_product_supported_origin (hTL : TitchmarshLions d)
+    {v w : TemperedDistribution d} (hv : CompactlySupportedDistribution v)
+    (hproduct : distributionFourier w =
+      distributionMultiply (fun ξ => normalizedBallFourier d (realToComplex ξ))
+        (normalizedBallFourier_real_hasTemperateGrowth d) (distributionFourier v))
+    {K : Set (Euclidean d)} (hK : Convex ℝ K) (hKclosed : IsClosed K)
+    (hJ : IsJohnEllipsoid K (Metric.closedBall (0 : Euclidean d) 1))
+    (hw : DistributionSupportedIn w K) : DistributionSupportedIn v {0} := by
+  by_cases hv0 : v = 0
+  · rw [hv0]
+    exact distributionSupportedIn_zero _
+  · exact normalized_ball_fourier_product_supported_origin hTL hv hv0 hproduct
+      hK hKclosed hJ hw
+
+/-- The quotient's actual Fourier distribution is a polynomial regular
+ distribution, with the growth certificates needed by the integral definition. -/
+theorem normalized_ball_product_fourier_polynomial (hTL : TitchmarshLions d)
+    {v w : TemperedDistribution d} (hv : CompactlySupportedDistribution v)
+    (hproduct : distributionFourier w =
+      distributionMultiply (fun ξ => normalizedBallFourier d (realToComplex ξ))
+        (normalizedBallFourier_real_hasTemperateGrowth d) (distributionFourier v))
+    {K : Set (Euclidean d)} (hK : Convex ℝ K) (hKclosed : IsClosed K)
+    (hJ : IsJohnEllipsoid K (Metric.closedBall (0 : Euclidean d) 1))
+    (hw : DistributionSupportedIn w K) :
+    ∃ p : ComplexPolynomial d, ∃ N : ℕ, ∃ C : ℝ, ∃ hC : 0 ≤ C,
+      ∃ hp : ∀ x, ‖polynomialEvaluation x p‖ ≤ C * (1 + ‖x‖) ^ N,
+      ∃ hm : AEStronglyMeasurable (fun x => polynomialEvaluation x p) volume,
+        distributionFourier v = polynomialDistribution (fun x => polynomialEvaluation x p) hC hp hm := by
+  exact DistributionSupportedIn.fourier_polynomial
+    (normalized_ball_product_supported_origin hTL hv hproduct hK hKclosed hJ hw)
+
+/-- The actual finite sphere denominator gives a physical differential operator
+supported in the original closed body whenever the original L² function is. -/
+theorem sphereDenominator_l2_operator_supported (radius : ℕ → ℝ) (N : ℕ)
+    (f : FullL2 d) (K : Set (Euclidean d))
+    (hf : ∀ᵐ x, x ∉ K → f x = 0) :
+    DistributionSupportedIn
+      (polynomialDifferentialOperator (sphereDenominator d radius N) (l2Distribution f)) K :=
+  (l2Distribution_supported f K hf).polynomialDifferentialOperator _
+
+/-- The tail's geometric support step applied to the actual denominator operator.
+The remaining input is exactly the Fourier product supplied by analytic division. -/
+theorem sphere_tail_inverse_supported_origin (hTL : TitchmarshLions d)
+    (radius : ℕ → ℝ) (N : ℕ) (f : FullL2 d) {v : TemperedDistribution d}
+    (hv : CompactlySupportedDistribution v)
+    (hproduct : distributionFourier
+        (polynomialDifferentialOperator (sphereDenominator d radius N) (l2Distribution f)) =
+      distributionMultiply (fun ξ => normalizedBallFourier d (realToComplex ξ))
+        (normalizedBallFourier_real_hasTemperateGrowth d) (distributionFourier v))
+    {K : Set (Euclidean d)} (hK : Convex ℝ K) (hKclosed : IsClosed K)
+    (hJ : IsJohnEllipsoid K (Metric.closedBall (0 : Euclidean d) 1))
+    (hf : ∀ᵐ x, x ∉ K → f x = 0) : DistributionSupportedIn v {0} :=
+  normalized_ball_product_supported_origin hTL hv hproduct hK hKclosed hJ
+    (sphereDenominator_l2_operator_supported radius N f K hf)
+
+/-- A continuous integral representative of the Fourier transform of a
+point-supported distribution is an actual polynomial on every real frequency. -/
+theorem DistributionSupportedIn.continuous_fourier_polynomial
+    {v : TemperedDistribution d} (hv : DistributionSupportedIn v {(0 : Euclidean d)})
+    (G : Euclidean d → ℂ) (hG : Continuous G)
+    (htransform : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier v φ = ∫ x, G x * φ x) :
+    ∃ m : ℕ, ∃ p : ComplexPolynomial d, p.totalDegree ≤ m ∧
+      ∀ x : Euclidean d, G x = polynomialEvaluation x p := by
+  obtain ⟨m, p, hdegree, hpoly⟩ := hv.fourier_polynomial_integral
+  have hP : Continuous (fun x : Euclidean d => polynomialEvaluation x p) :=
+    (MvPolynomial.continuous_eval p).comp
+      (continuous_pi (fun j => Complex.continuous_ofReal.comp
+        (PiLp.proj (𝕜 := ℝ) 2 (fun _ : Fin d => ℝ) j).continuous))
+  have hae : G =ᵐ[volume] (fun x => polynomialEvaluation x p) := by
+    apply ae_eq_of_integral_contDiff_smul_eq hG.locallyIntegrable hP.locallyIntegrable
+    intro φ hφ hc
+    let ψ : 𝓢(Euclidean d, ℂ) := compactSchwartz (fun x => (φ x : ℂ))
+      (Complex.ofRealCLM.contDiff.comp hφ) (hc.comp_left Complex.ofReal_zero)
+    have h := (htransform ψ).symm.trans (hpoly ψ)
+    change (∫ x, G x * (φ x : ℂ)) = ∫ x, polynomialEvaluation x p * (φ x : ℂ) at h
+    simpa only [Complex.real_smul, mul_comm] using h
+  have heq := MeasureTheory.Measure.eq_of_ae_eq hae hG hP
+  exact ⟨m, p, hdegree, fun x => congrFun heq x⟩
+
+/-- The support-to-polynomial conclusion for the actual tail quotient, once its
+compact inverse distribution and Fourier product have been constructed. -/
+theorem sphere_tail_quotient_polynomial (hTL : TitchmarshLions d)
+    (radius : ℕ → ℝ) (N : ℕ) (f : FullL2 d) {v : TemperedDistribution d}
+    (hv : CompactlySupportedDistribution v)
+    (hproduct : distributionFourier
+        (polynomialDifferentialOperator (sphereDenominator d radius N) (l2Distribution f)) =
+      distributionMultiply (fun ξ => normalizedBallFourier d (realToComplex ξ))
+        (normalizedBallFourier_real_hasTemperateGrowth d) (distributionFourier v))
+    {K : Set (Euclidean d)} (hK : Convex ℝ K) (hKclosed : IsClosed K)
+    (hJ : IsJohnEllipsoid K (Metric.closedBall (0 : Euclidean d) 1))
+    (hf : ∀ᵐ x, x ∉ K → f x = 0)
+    (G : Euclidean d → ℂ) (hG : Continuous G)
+    (htransform : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier v φ = ∫ x, G x * φ x) :
+    ∃ m : ℕ, ∃ p : ComplexPolynomial d, p.totalDegree ≤ m ∧
+      ∀ x : Euclidean d, G x = polynomialEvaluation x p :=
+  DistributionSupportedIn.continuous_fourier_polynomial
+    (sphere_tail_inverse_supported_origin hTL radius N f hv hproduct hK hKclosed hJ hf) G hG htransform
+
+
+/-- The proved tail support-to-polynomial step with only scalar analytic inputs:
+a compact inverse quotient, its integral transform, and `Q_N F = κ G`.
+The sharp degree estimate is a separate statement. -/
+theorem sphere_tail_fourier_polynomial_product (hTL : TitchmarshLions d)
+    (radius : ℕ → ℝ) (N : ℕ) (f : FullL2 d)
+    (hfi : Integrable (f : Euclidean d → ℂ)) {v : TemperedDistribution d}
+    (hv : CompactlySupportedDistribution v)
+    {K : Set (Euclidean d)} (hK : Convex ℝ K) (hKclosed : IsClosed K)
+    (hJ : IsJohnEllipsoid K (Metric.closedBall (0 : Euclidean d) 1))
+    (hf : ∀ᵐ x, x ∉ K → f x = 0)
+    (G : Euclidean d → ℂ) (hG : Continuous G)
+    (htransform : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier v φ = ∫ x, G x * φ x)
+    (hproduct : ∀ x, polynomialEvaluation x (sphereDenominator d radius N) *
+        𝓕 (f : Euclidean d → ℂ) x = normalizedBallFourier d (realToComplex x) * G x) :
+    ∃ m : ℕ, ∃ p : ComplexPolynomial d, p.totalDegree ≤ m ∧
+      (∀ x : Euclidean d, G x = polynomialEvaluation x p) ∧
+      (∀ x : Euclidean d, polynomialEvaluation x (sphereDenominator d radius N) *
+        𝓕 (f : Euclidean d → ℂ) x = normalizedBallFourier d (realToComplex x) *
+          polynomialEvaluation x p) := by
+  have hdistribution := fourier_polynomial_product_of_integral_representatives
+    (sphereDenominator d radius N) (l2Distribution f) v
+    (𝓕 (f : Euclidean d → ℂ)) G
+    (fun x => normalizedBallFourier d (realToComplex x))
+    (normalizedBallFourier_real_hasTemperateGrowth d)
+    (distributionFourier_l2_integral f hfi) htransform hproduct
+  obtain ⟨m, p, hdegree, hpoly⟩ := sphere_tail_quotient_polynomial hTL radius N f hv
+    hdistribution hK hKclosed hJ hf G hG htransform
+  refine ⟨m, p, hdegree, hpoly, fun x => ?_⟩
+  rw [hproduct x, hpoly x]
+
+/-- The same support-to-polynomial composition for an arbitrary actual finite
+polynomial denominator, including the paper's `sourceSphereDenominator`. -/
+theorem polynomial_tail_fourier_polynomial_product (hTL : TitchmarshLions d)
+    (q : ComplexPolynomial d) (f : FullL2 d)
+    (hfi : Integrable (f : Euclidean d → ℂ)) {v : TemperedDistribution d}
+    (hv : CompactlySupportedDistribution v)
+    {K : Set (Euclidean d)} (hK : Convex ℝ K) (hKclosed : IsClosed K)
+    (hJ : IsJohnEllipsoid K (Metric.closedBall (0 : Euclidean d) 1))
+    (hf : ∀ᵐ x, x ∉ K → f x = 0)
+    (G : Euclidean d → ℂ) (hG : Continuous G)
+    (htransform : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier v φ = ∫ x, G x * φ x)
+    (hproduct : ∀ x, polynomialEvaluation x q * 𝓕 (f : Euclidean d → ℂ) x =
+      normalizedBallFourier d (realToComplex x) * G x) :
+    ∃ m : ℕ, ∃ p : ComplexPolynomial d, p.totalDegree ≤ m ∧
+      (∀ x : Euclidean d, G x = polynomialEvaluation x p) ∧
+      (∀ x : Euclidean d, polynomialEvaluation x q * 𝓕 (f : Euclidean d → ℂ) x =
+        normalizedBallFourier d (realToComplex x) * polynomialEvaluation x p) := by
+  have hdistribution := fourier_polynomial_product_of_integral_representatives q (l2Distribution f) v
+    (𝓕 (f : Euclidean d → ℂ)) G
+    (fun x => normalizedBallFourier d (realToComplex x))
+    (normalizedBallFourier_real_hasTemperateGrowth d)
+    (distributionFourier_l2_integral f hfi) htransform hproduct
+  have hs := normalized_ball_product_supported_origin hTL hv hdistribution hK hKclosed hJ
+    ((l2Distribution_supported f K hf).polynomialDifferentialOperator q)
+  obtain ⟨m, p, hdegree, hpoly⟩ := hs.continuous_fourier_polynomial G hG htransform
+  refine ⟨m, p, hdegree, hpoly, fun x => ?_⟩
+  rw [hproduct x, hpoly x]
+
+/-- The polynomial product is the paper's rational expression wherever the
+finite denominator is nonzero. -/
+theorem fourier_eq_polynomial_ball_quotient (f : FullL2 d) (p q : ComplexPolynomial d)
+    (hproduct : ∀ x : Euclidean d, polynomialEvaluation x q * 𝓕 (f : Euclidean d → ℂ) x =
+      normalizedBallFourier d (realToComplex x) * polynomialEvaluation x p)
+    (x : Euclidean d) (hq : polynomialEvaluation x q ≠ 0) :
+    𝓕 (f : Euclidean d → ℂ) x =
+      polynomialEvaluation x p * normalizedBallFourier d (realToComplex x) /
+        polynomialEvaluation x q := by
+  apply (eq_div_iff hq).mpr
+  simpa only [mul_comm] using hproduct x
+
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalRestriction.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+open MeasureTheory
+open Classical
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Zero extend a domain class, then restrict it to a second domain. -/
+def domainToDomain {d : ℕ} (source target : Set (Euclidean d))
+    (hsource : MeasurableSet source) : DomainL2 source →ₗ[ℂ] DomainL2 target :=
+  (domainRestrictionLM target).comp (domainExtensionLI source hsource).toLinearMap
+
+/-- The transported class is represented by the source indicator times the original class. -/
+theorem domainToDomain_coe {d : ℕ} (source target : Set (Euclidean d))
+    (hsource : MeasurableSet source) (f : DomainL2 source) :
+    (domainToDomain source target hsource f : Euclidean d → ℂ) =ᵐ[volume.restrict target]
+      source.indicator f :=
+  (domainRestriction_coe target _).trans ((domainExtension_coe source hsource f).filter_mono
+    (ae_mono Measure.restrict_le_self))
+
+/-- Restricting to an almost-everywhere smaller domain keeps the original representative. -/
+theorem domainToDomain_coe_of_subset_ae {d : ℕ} (source target : Set (Euclidean d))
+    (hsource : MeasurableSet source) (htarget : MeasurableSet target)
+    (hsubset : target ≤ᵐ[volume] source) (f : DomainL2 source) :
+    (domainToDomain source target hsource f : Euclidean d → ℂ) =ᵐ[volume.restrict target] f := by
+  have hsub := hsubset.filter_mono (ae_mono (Measure.restrict_le_self (s := target)))
+  filter_upwards [domainToDomain_coe source target hsource f, hsub, ae_restrict_mem htarget]
+    with x hx hst ht
+  exact hx.trans (Set.indicator_of_mem (hst ht) _)
+
+/-- Lifting a class to an almost-everywhere larger domain preserves its ambient zero extension. -/
+theorem domainExtension_domainToDomain_of_subset_ae {d : ℕ}
+    (source target : Set (Euclidean d)) (hsource : MeasurableSet source)
+    (htarget : MeasurableSet target) (hsubset : source ≤ᵐ[volume] target)
+    (f : DomainL2 source) :
+    domainExtension target htarget (domainToDomain source target hsource f) =
+      domainExtension source hsource f := by
+  change domainExtension target htarget (domainRestriction target _) = _
+  rw [domainExtension_restriction]
+  apply (domainCutoff_eq_self_iff target htarget _).mpr
+  filter_upwards [domainExtension_coe source hsource f, hsubset] with x hx hst
+  intro hnot
+  change (domainExtension source hsource f : Euclidean d → ℂ) x = 0
+  rw [hx]
+  exact Set.indicator_of_not_mem (fun hs => hnot (hst hs)) _
+
+/-- The lift to a larger domain is injective on actual L² classes. -/
+theorem domainToDomain_injective_of_subset_ae {d : ℕ}
+    (source target : Set (Euclidean d)) (hsource : MeasurableSet source)
+    (htarget : MeasurableSet target) (hsubset : source ≤ᵐ[volume] target) :
+    Function.Injective (domainToDomain source target hsource) := by
+  intro f g hfg
+  apply (domainExtensionLI source hsource).injective
+  change domainExtension source hsource f = domainExtension source hsource g
+  rw [← domainExtension_domainToDomain_of_subset_ae source target hsource htarget hsubset f,
+    ← domainExtension_domainToDomain_of_subset_ae source target hsource htarget hsubset g, hfg]
+
+/-- Almost-everywhere inclusion is sufficient to enlarge a physical support set. -/
+theorem SupportedOn.mono_ae {d : ℕ} {Ω E F : Set (Euclidean d)} {f : DomainL2 Ω}
+    (hf : SupportedOn Ω f E) (hEF : E ≤ᵐ[volume] F) : SupportedOn Ω f F := by
+  have hsub := hEF.filter_mono (ae_mono (Measure.restrict_le_self (s := Ω)))
+  filter_upwards [hf, hsub] with x hx hEFx
+  intro hxF
+  exact hx (fun hxE => hxF (hEFx hxE))
+
+/-- A core-supported vector retains its ambient zero extension after restriction
+to any domain containing that core up to null sets. -/
+theorem domainExtension_domainToDomain_of_supported {d : ℕ}
+    (source target E : Set (Euclidean d)) (hsource : MeasurableSet source)
+    (htarget : MeasurableSet target) (hE : E ≤ᵐ[volume] target)
+    (f : DomainL2 source) (hf : SupportedOn source f E) :
+    domainExtension target htarget (domainToDomain source target hsource f) =
+      domainExtension source hsource f := by
+  change domainExtension target htarget (domainRestriction target _) = _
+  rw [domainExtension_restriction]
+  apply (domainCutoff_eq_self_iff target htarget _).mpr
+  have hs := (ae_restrict_iff' hsource).mp (hf.mono_ae hE)
+  filter_upwards [domainExtension_coe source hsource f, hs] with x hx hsx
+  intro hnot
+  change (domainExtension source hsource f : Euclidean d → ℂ) x = 0
+  rw [hx]
+  by_cases hsourcex : x ∈ source
+  · rw [Set.indicator_of_mem hsourcex]
+    exact hsx hsourcex hnot
+  · exact Set.indicator_of_not_mem hsourcex _
+
+/-- Restriction to a smaller domain preserves an individual vector's support. -/
+theorem SupportedOn.domainToDomain {d : ℕ} {source target E : Set (Euclidean d)}
+    (hsource : MeasurableSet source) (htarget : MeasurableSet target)
+    (hsubset : target ≤ᵐ[volume] source) {f : DomainL2 source}
+    (hf : SupportedOn source f E) :
+    SupportedOn target (domainToDomain source target hsource f) E := by
+  have hs := hf.filter_mono (ae_mono (Measure.restrict_mono_ae hsubset))
+  filter_upwards [domainToDomain_coe_of_subset_ae source target hsource htarget hsubset f, hs]
+    with x hx hsx
+  intro hnot
+  exact hx.trans (hsx hnot)
+
+/-- The same exponential frequencies remain complete after restricting the domain
+by an almost-everywhere inclusion. -/
+theorem IsCompleteExponential.restrict_domain_ae {d : ℕ}
+    (source target : Set (Euclidean d)) (hsource : MeasurableSet source)
+    (htarget : MeasurableSet target) (hfinite : volume source ≠ ⊤)
+    (hfinite' : volume target ≠ ⊤) (hsubset : target ≤ᵐ[volume] source)
+    (Λ : Set (Euclidean d)) (hcomplete : IsCompleteExponential source hfinite Λ) :
+    IsCompleteExponential target hfinite' Λ := by
+  apply (isCompleteExponential_iff_annihilator target hfinite' Λ).mpr
+  intro f hf
+  have hzero : domainToDomain target source htarget f = 0 := by
+    apply (isCompleteExponential_iff_annihilator source hfinite Λ).mp hcomplete
+    intro ξ
+    apply (inner_eq_zero_symm (𝕜 := ℂ)).mpr
+    rw [← domainEntireFourier_real_inner hsource hfinite]
+    have htransform : domainEntireFourier source hsource
+        (domainToDomain target source htarget f) = domainEntireFourier target htarget f := by
+      unfold domainEntireFourier
+      rw [domainExtension_domainToDomain_of_subset_ae target source htarget hsource hsubset f]
+    rw [htransform, domainEntireFourier_real_inner htarget hfinite']
+    exact (inner_eq_zero_symm (𝕜 := ℂ)).mp (hf ξ)
+  apply domainToDomain_injective_of_subset_ae target source htarget hsource hsubset
+  exact hzero.trans (map_zero _).symm
+
+/-- Core-supported biorthogonals remain biorthogonal on every intermediate
+measurable domain, including almost-everywhere inclusions. -/
+theorem biorthogonal_restrict_domain_ae {d : ℕ}
+    (source target E : Set (Euclidean d)) (hsource : MeasurableSet source)
+    (htarget : MeasurableSet target) (hfinite : volume source ≠ ⊤)
+    (hfinite' : volume target ≠ ⊤) (hE : E ≤ᵐ[volume] target)
+    (Λ : Set (Euclidean d)) (g : Λ → DomainL2 source)
+    (hg : IsBiorthogonal (exponentialFamily source hfinite Λ) g)
+    (hs : ∀ ξ, SupportedOn source (g ξ) E) :
+    IsBiorthogonal (exponentialFamily target hfinite' Λ)
+      (fun ξ => domainToDomain source target hsource (g ξ)) := by
+  intro ξ η
+  have htransform : domainEntireFourier target htarget
+      (domainToDomain source target hsource (g ξ)) = domainEntireFourier source hsource (g ξ) := by
+    unfold domainEntireFourier
+    rw [domainExtension_domainToDomain_of_supported source target E hsource htarget hE (g ξ) (hs ξ)]
+  have hinner : inner (𝕜 := ℂ) (domainToDomain source target hsource (g ξ))
+      (exponentialL2 target hfinite' η.val) =
+      inner (𝕜 := ℂ) (g ξ) (exponentialL2 source hfinite η.val) := by
+    rw [← inner_conj_symm, ← domainEntireFourier_real_inner htarget hfinite', htransform,
+      domainEntireFourier_real_inner hsource hfinite, inner_conj_symm]
+  exact hinner.trans (hg ξ η)
+
+/-- The scope remark for intermediate domains, with both inclusions interpreted
+up to volume-null sets and actual restricted supported dual vectors. -/
+theorem complete_minimal_on_intermediate_domain_ae {d : ℕ}
+    (Ω Ω' E : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hΩ' : MeasurableSet Ω')
+    (hfinite : volume Ω ≠ ⊤) (hE : E ≤ᵐ[volume] Ω') (hsubset : Ω' ≤ᵐ[volume] Ω)
+    (Λ : Set (Euclidean d)) (hcomplete : IsCompleteExponential Ω hfinite Λ)
+    (g : Λ → DomainL2 Ω) (hg : IsBiorthogonal (exponentialFamily Ω hfinite Λ) g)
+    (hs : ∀ ξ, SupportedOn Ω (g ξ) E) :
+    ∃ hfinite' : volume Ω' ≠ ⊤,
+      IsCompleteExponential Ω' hfinite' Λ ∧ IsMinimalExponential Ω' hfinite' Λ ∧
+      IsBiorthogonal (exponentialFamily Ω' hfinite' Λ)
+        (fun ξ => domainToDomain Ω Ω' hΩ (g ξ)) ∧
+      ∀ ξ, SupportedOn Ω' (domainToDomain Ω Ω' hΩ (g ξ)) E := by
+  have hfinite' : volume Ω' ≠ ⊤ :=
+    ((measure_mono_ae hsubset).trans_lt hfinite.lt_top).ne
+  have hbi := biorthogonal_restrict_domain_ae Ω Ω' E hΩ hΩ' hfinite hfinite' hE Λ g hg hs
+  exact ⟨hfinite', hcomplete.restrict_domain_ae Ω Ω' hΩ hΩ' hfinite hfinite' hsubset Λ,
+    hbi.isMinimal, hbi, fun ξ => (hs ξ).domainToDomain hΩ hΩ' hsubset⟩
+
+/-- Literal-inclusion form of the intermediate-domain scope remark. -/
+theorem complete_minimal_on_intermediate_domain {d : ℕ}
+    (Ω Ω' E : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hΩ' : MeasurableSet Ω')
+    (hfinite : volume Ω ≠ ⊤) (hE : E ⊆ Ω') (hsubset : Ω' ⊆ Ω)
+    (Λ : Set (Euclidean d)) (hcomplete : IsCompleteExponential Ω hfinite Λ)
+    (g : Λ → DomainL2 Ω) (hg : IsBiorthogonal (exponentialFamily Ω hfinite Λ) g)
+    (hs : ∀ ξ, SupportedOn Ω (g ξ) E) :
+    ∃ hfinite' : volume Ω' ≠ ⊤,
+      IsCompleteExponential Ω' hfinite' Λ ∧ IsMinimalExponential Ω' hfinite' Λ ∧
+      IsBiorthogonal (exponentialFamily Ω' hfinite' Λ)
+        (fun ξ => domainToDomain Ω Ω' hΩ (g ξ)) ∧
+      ∀ ξ, SupportedOn Ω' (domainToDomain Ω Ω' hΩ (g ξ)) E :=
+  complete_minimal_on_intermediate_domain_ae Ω Ω' E hΩ hΩ' hfinite
+    (Filter.Eventually.of_forall hE) (Filter.Eventually.of_forall hsubset) Λ hcomplete g hg hs
+
+/-- The actual domain L² indicator of the part outside a measurable core. -/
+def outsideCoreVector {d : ℕ} (Ω E : Set (Euclidean d)) (hfinite : volume Ω ≠ ⊤)
+    (hE : MeasurableSet E) : DomainL2 Ω := by
+  letI : IsFiniteMeasure (volume.restrict Ω) := ⟨by simpa using hfinite.lt_top⟩
+  exact ((memLp_const (1 : ℂ)).indicator hE.compl).toLp (Eᶜ.indicator (fun _ => (1 : ℂ)))
+
+/-- The outside-core vector has its expected indicator representative. -/
+theorem outsideCoreVector_coe {d : ℕ} (Ω E : Set (Euclidean d))
+    (hfinite : volume Ω ≠ ⊤) (hE : MeasurableSet E) :
+    (outsideCoreVector Ω E hfinite hE : Euclidean d → ℂ) =ᵐ[volume.restrict Ω]
+      Eᶜ.indicator (fun _ => (1 : ℂ)) := by
+  letI : IsFiniteMeasure (volume.restrict Ω) := ⟨by simpa using hfinite.lt_top⟩
+  exact MemLp.coeFn_toLp _
+
+/-- Positive volume outside the core makes its indicator a nonzero actual L² vector. -/
+theorem outsideCoreVector_ne_zero {d : ℕ} (Ω E : Set (Euclidean d))
+    (hΩ : MeasurableSet Ω) (hfinite : volume Ω ≠ ⊤) (hE : MeasurableSet E)
+    (hpositive : 0 < volume (Ω \ E)) : outsideCoreVector Ω E hfinite hE ≠ 0 := by
+  intro hzero
+  have hcoe : Eᶜ.indicator (fun _ : Euclidean d => (1 : ℂ)) =ᵐ[volume.restrict Ω] 0 := by
+    have hvec := outsideCoreVector_coe Ω E hfinite hE
+    rw [hzero] at hvec
+    exact hvec.symm.trans (Lp.coeFn_zero _ _ _)
+  have hglobal := (ae_restrict_iff' hΩ).mp hcoe
+  have hnot : ∀ᵐ x ∂volume, x ∉ Ω \ E := by
+    filter_upwards [hglobal] with x hx
+    intro hxset
+    have hone : (1 : ℂ) = 0 := by
+      simpa only [Set.indicator_of_mem (show x ∈ Eᶜ from hxset.2), Pi.zero_apply]
+        using hx hxset.1
+    exact one_ne_zero hone
+  have hmeasure : volume (Ω \ E) = 0 := by
+    simpa only [Classical.not_not, Set.setOf_mem_eq] using ae_iff.mp hnot
+  exact hpositive.ne' hmeasure
+
+/-- Every vector supported on the core is orthogonal to the outside-core indicator. -/
+theorem inner_outsideCoreVector_eq_zero {d : ℕ} (Ω E : Set (Euclidean d))
+    (hfinite : volume Ω ≠ ⊤) (hE : MeasurableSet E) (f : DomainL2 Ω)
+    (hf : SupportedOn Ω f E) :
+    inner (𝕜 := ℂ) (outsideCoreVector Ω E hfinite hE) f = 0 := by
+  rw [L2.inner_def]
+  apply integral_eq_zero_of_ae
+  filter_upwards [outsideCoreVector_coe Ω E hfinite hE, hf] with x hx hfx
+  by_cases hxE : x ∈ E
+  · rw [hx, Set.indicator_of_not_mem (by simpa using hxE)]
+    exact inner_zero_left _
+  · rw [hfx hxE]
+    exact inner_zero_right _
+
+/-- A dual family supported on a core cannot be complete on a domain with a
+positive-volume part outside that core. -/
+theorem supported_family_not_complete {d : ℕ} {ι : Type*}
+    (Ω E : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hfinite : volume Ω ≠ ⊤)
+    (hE : MeasurableSet E) (hpositive : 0 < volume (Ω \ E))
+    (g : ι → DomainL2 Ω) (hs : ∀ i, SupportedOn Ω (g i) E) : ¬ IsComplete g := by
+  intro hcomplete
+  have hzero := (isComplete_iff_annihilator g).mp hcomplete
+    (outsideCoreVector Ω E hfinite hE)
+    (fun i => inner_outsideCoreVector_eq_zero Ω E hfinite hE (g i) (hs i))
+  exact outsideCoreVector_ne_zero Ω E hΩ hfinite hE hpositive hzero
+
+/-- An open domain properly containing the interior of a closed core has positive
+volume outside the core. Convexity is unnecessary for this implication. -/
+theorem volume_outside_closed_core_pos {d : ℕ} (Ω E : Set (Euclidean d))
+    (hΩ : IsOpen Ω) (hE : IsClosed E) (hproper : interior E ⊂ Ω) :
+    0 < volume (Ω \ E) := by
+  have hnot : ¬ Ω ⊆ E := by
+    intro hsubset
+    have hinterior : Ω ⊆ interior E := hΩ.subset_interior_iff.mpr hsubset
+    exact hproper.ne (Set.Subset.antisymm hproper.le hinterior)
+  obtain ⟨x, hxΩ, hxE⟩ := Set.not_subset.mp hnot
+  exact (hΩ.sdiff hE).measure_pos volume ⟨x, hxΩ, hxE⟩
+
+/-- Closed-core form of the noncompleteness part of the scope remark. -/
+theorem supported_family_not_complete_of_proper_closed_core {d : ℕ} {ι : Type*}
+    (Ω E : Set (Euclidean d)) (hΩ : IsOpen Ω) (hfinite : volume Ω ≠ ⊤)
+    (hE : IsClosed E) (hproper : interior E ⊂ Ω)
+    (g : ι → DomainL2 Ω) (hs : ∀ i, SupportedOn Ω (g i) E) : ¬ IsComplete g :=
+  supported_family_not_complete Ω E hΩ.measurableSet hfinite hE.measurableSet
+    (volume_outside_closed_core_pos Ω E hΩ hE hproper) g hs
+
+/-- In particular, duals supported on a proper inscribed closed ellipsoid are
+incomplete in the larger open domain. -/
+theorem ellipsoid_supported_duals_not_complete {d : ℕ} {ι : Type*}
+    (Ω E : Set (Euclidean d)) (hΩ : IsOpen Ω) (hfinite : volume Ω ≠ ⊤)
+    (hE : IsEllipsoid E) (hproper : interior E ⊂ Ω)
+    (g : ι → DomainL2 Ω) (hs : ∀ i, SupportedOn Ω (g i) E) : ¬ IsComplete g :=
+  supported_family_not_complete_of_proper_closed_core Ω E hΩ hfinite
+    hE.isCompact.isClosed hproper g hs
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalPolynomialGrowth.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+open Classical MeasureTheory
+open scoped ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+open MvPolynomial
+
+/-- The highest-degree homogeneous part of a complex polynomial. -/
+def leadingHomogeneousPart {d : ℕ} (p : ComplexPolynomial d) : ComplexPolynomial d :=
+  homogeneousComponent p.totalDegree p
+
+/-- A nonzero polynomial has a nonzero leading homogeneous part. -/
+theorem leadingHomogeneousPart_ne_zero {d : ℕ} {p : ComplexPolynomial d} (hp : p ≠ 0) :
+    leadingHomogeneousPart p ≠ 0 := by
+  have hsupport : p.support.Nonempty := Finset.nonempty_iff_ne_empty.mpr
+    (fun h => hp (Finsupp.support_eq_empty.mp h))
+  obtain ⟨s, hs, hdegree⟩ := Finset.exists_mem_eq_sup p.support hsupport Finsupp.degree
+  have hdegree' : s.degree = p.totalDegree := hdegree.symm
+  intro hzero
+  have hc := congrArg (MvPolynomial.coeff s) hzero
+  rw [leadingHomogeneousPart, coeff_homogeneousComponent, if_pos hdegree', coeff_zero] at hc
+  exact (mem_support_iff.mp hs) hc
+
+/-- Radial evaluation separates the scalar power of each monomial. -/
+theorem polynomialEvaluation_radial_expansion {d : ℕ} (p : ComplexPolynomial d)
+    (r : ℝ) (θ : RealPoint d) :
+    polynomialEvaluation (r • θ) p =
+      ∑ s ∈ p.support, (p.coeff s * ∏ i ∈ s.support, (θ i : ℂ) ^ s i) * (r : ℂ) ^ s.degree := by
+  rw [polynomialEvaluation_apply, eval_eq]
+  apply Finset.sum_congr rfl
+  intro s _
+  simp only [PiLp.smul_apply, smul_eq_mul, Complex.ofReal_mul, mul_pow,
+    Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, Finsupp.degree]
+  ring
+
+/-- A homogeneous polynomial scales by its homogeneous degree on a real ray. -/
+theorem polynomialEvaluation_homogeneous_smul {d m : ℕ} (p : ComplexPolynomial d)
+    (hp : p.IsHomogeneous m) (r : ℝ) (θ : RealPoint d) :
+    polynomialEvaluation (r • θ) p = (r : ℂ) ^ m * polynomialEvaluation θ p := by
+  rw [polynomialEvaluation_radial_expansion, polynomialEvaluation_apply, eval_eq, Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intro s hs
+  have hdegree : s.degree = m := by
+    by_contra hn
+    exact (mem_support_iff.mp hs) (hp.coeff_eq_zero hn)
+  rw [hdegree]
+  ring
+
+/-- Remove the leading homogeneous part and the degree decreases by at least one. -/
+theorem remainder_totalDegree_le {d : ℕ} (p : ComplexPolynomial d) :
+    (p - leadingHomogeneousPart p).totalDegree ≤ p.totalDegree - 1 := by
+  rw [totalDegree, Finset.sup_le_iff]
+  intro s hs
+  have hcoeff : (p - leadingHomogeneousPart p).coeff s ≠ 0 := mem_support_iff.mp hs
+  have hdegree : s.degree ≠ p.totalDegree := by
+    intro hd
+    apply hcoeff
+    simp [leadingHomogeneousPart, coeff_homogeneousComponent, hd]
+  have hcoeffp : p.coeff s ≠ 0 := by
+    simpa only [coeff_sub, leadingHomogeneousPart, coeff_homogeneousComponent,
+      if_neg hdegree, sub_zero] using hcoeff
+  have hle : s.degree ≤ p.totalDegree := le_totalDegree (mem_support_iff.mpr hcoeffp)
+  change s.degree ≤ p.totalDegree - 1
+  omega
+
+/-- The sum of coefficient norms controls polynomial growth on the unit sphere. -/
+def coefficientNormSum {d : ℕ} (p : ComplexPolynomial d) : ℝ :=
+  ∑ s ∈ p.support, ‖p.coeff s‖
+
+theorem coefficientNormSum_nonneg {d : ℕ} (p : ComplexPolynomial d) :
+    0 ≤ coefficientNormSum p := Finset.sum_nonneg fun _ _ => norm_nonneg _
+
+/-- A uniform upper bound on real rays with bounded coordinates. -/
+theorem polynomialEvaluation_radial_norm_le {d : ℕ} (p : ComplexPolynomial d)
+    {r : ℝ} (hr : 1 ≤ r) (θ : RealPoint d) (hθ : ∀ i, ‖θ i‖ ≤ 1) :
+    ‖polynomialEvaluation (r • θ) p‖ ≤ coefficientNormSum p * r ^ p.totalDegree := by
+  rw [polynomialEvaluation_radial_expansion]
+  calc
+    _ ≤ ∑ s ∈ p.support,
+        ‖(p.coeff s * ∏ i ∈ s.support, (θ i : ℂ) ^ s i) * (r : ℂ) ^ s.degree‖ :=
+      norm_sum_le _ _
+    _ ≤ ∑ s ∈ p.support, ‖p.coeff s‖ * r ^ p.totalDegree := by
+      apply Finset.sum_le_sum
+      intro s hs
+      have hprod : ‖∏ i ∈ s.support, (θ i : ℂ) ^ s i‖ ≤ 1 := by
+        rw [norm_prod]
+        apply Finset.prod_le_one (fun _ _ => norm_nonneg _)
+        intro i _
+        simpa only [norm_pow, Complex.norm_real, Real.norm_eq_abs] using
+          pow_le_one₀ (n := s i) (norm_nonneg (θ i)) (hθ i)
+      simp only [norm_mul, norm_pow, Complex.norm_real, Real.norm_eq_abs,
+        abs_of_nonneg (zero_le_one.trans hr)]
+      have hpow : r ^ s.degree ≤ r ^ p.totalDegree :=
+        pow_le_pow_right₀ hr (le_totalDegree hs)
+      exact mul_le_mul (mul_le_of_le_one_right (norm_nonneg _) hprod) hpow
+        (pow_nonneg (zero_le_one.trans hr) _) (norm_nonneg _)
+    _ = coefficientNormSum p * r ^ p.totalDegree := by rw [coefficientNormSum, Finset.sum_mul]
+
+/-- Evaluation of a complex polynomial on the real Euclidean coordinates is continuous. -/
+theorem polynomialEvaluation_continuous {d : ℕ} (p : ComplexPolynomial d) :
+    Continuous (fun x : RealPoint d => polynomialEvaluation x p) := by
+  apply p.continuous_eval.comp
+  apply continuous_pi
+  intro i
+  exact Complex.continuous_ofReal.comp
+    ((continuous_apply i).comp (PiLp.continuous_equiv 2 (fun _ : Fin d => ℝ)))
+
+/-- A nonzero real-evaluated homogeneous complex polynomial is nonzero somewhere
+on the real unit sphere. -/
+theorem homogeneous_exists_unit_evaluation_ne_zero {d m : ℕ} (hd : 1 ≤ d)
+    (p : ComplexPolynomial d) (hp : p.IsHomogeneous m) (hpn : p ≠ 0) :
+    ∃ θ : RealPoint d, ‖θ‖ = 1 ∧ polynomialEvaluation θ p ≠ 0 := by
+  haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  obtain ⟨θ₀, hθ₀⟩ := exists_norm_eq (RealPoint d) (by norm_num : (0 : ℝ) ≤ 1)
+  by_contra hn
+  push_neg at hn
+  have hreal : ∀ x : RealPoint d, polynomialEvaluation x p = 0 := by
+    intro x
+    by_cases hx : x = 0
+    · subst x
+      simpa using polynomialEvaluation_homogeneous_smul p hp 0 θ₀
+        |>.trans (by rw [hn θ₀ hθ₀, mul_zero])
+    · have hnorm : ‖x‖ ≠ 0 := norm_ne_zero_iff.mpr hx
+      let θ : RealPoint d := ‖x‖⁻¹ • x
+      have hθ : ‖θ‖ = 1 := norm_smul_inv_norm (𝕜 := ℝ) hx
+      have hxθ : ‖x‖ • θ = x := by
+        dsimp [θ]
+        rw [smul_smul, mul_inv_cancel₀ hnorm, one_smul]
+      rw [← hxθ, polynomialEvaluation_homogeneous_smul p hp, hn θ hθ, mul_zero]
+  apply hpn
+  apply polynomial_eq_zero_of_real_box p (fun _ => -1) (fun _ => 1) (by intro i; norm_num)
+  intro x _hx
+  exact hreal ((WithLp.equiv 2 _).symm x)
+
+/-- Uniform leading-term polynomial growth on a nonempty open patch of the real
+unit sphere. Both the patch and the constants are produced from the polynomial. -/
+theorem polynomial_growth_on_open_sphere_patch {d : ℕ} (hd : 1 ≤ d)
+    (p : ComplexPolynomial d) (hp : p ≠ 0) :
+    ∃ (U : Set ↥(Metric.sphere (0 : RealPoint d) 1)) (c R : ℝ),
+      IsOpen U ∧ U.Nonempty ∧ 0 < c ∧ 1 ≤ R ∧
+      ∀ θ ∈ U, ∀ r : ℝ, R ≤ r → c * r ^ p.totalDegree ≤
+        ‖polynomialEvaluation (r • θ.val) p‖ := by
+  let H := leadingHomogeneousPart p
+  have hH : H.IsHomogeneous p.totalDegree := homogeneousComponent_isHomogeneous _ _
+  obtain ⟨θ₀, hθ₀, hHθ₀⟩ := homogeneous_exists_unit_evaluation_ne_zero hd H hH
+    (leadingHomogeneousPart_ne_zero hp)
+  let a := ‖polynomialEvaluation θ₀ H‖
+  have ha : 0 < a := norm_pos_iff.mpr hHθ₀
+  let U : Set ↥(Metric.sphere (0 : RealPoint d) 1) :=
+    {θ | a / 2 < ‖polynomialEvaluation θ.val H‖}
+  have hU : IsOpen U := isOpen_lt continuous_const
+    (((polynomialEvaluation_continuous H).comp continuous_subtype_val).norm)
+  have hUne : U.Nonempty := ⟨⟨θ₀, mem_sphere_zero_iff_norm.mpr hθ₀⟩, by
+    change a / 2 < a
+    linarith⟩
+  let q := p - H
+  let B := coefficientNormSum q
+  let R := max 1 (4 * B / a)
+  refine ⟨U, a / 4, R, hU, hUne, by positivity, le_max_left _ _, ?_⟩
+  intro θ hθ r hr
+  have hrone : 1 ≤ r := (le_max_left _ _).trans hr
+  have hrzero : 0 ≤ r := zero_le_one.trans hrone
+  have hθnorm : ‖θ.val‖ = 1 := mem_sphere_zero_iff_norm.mp θ.property
+  have hleadnorm : ‖polynomialEvaluation (r • θ.val) H‖ =
+      r ^ p.totalDegree * ‖polynomialEvaluation θ.val H‖ := by
+    rw [polynomialEvaluation_homogeneous_smul H hH, norm_mul, norm_pow,
+      Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hrzero]
+  have hlead : (a / 2) * r ^ p.totalDegree ≤ ‖polynomialEvaluation (r • θ.val) H‖ := by
+    rw [hleadnorm]
+    rw [mul_comm (a / 2)]
+    exact mul_le_mul_of_nonneg_left hθ.le (pow_nonneg hrzero _)
+  by_cases hm : p.totalDegree = 0
+  · have hpeq : p = H := by
+      dsimp [H, leadingHomogeneousPart]
+      rw [hm, homogeneousComponent_zero]
+      exact totalDegree_eq_zero_iff_eq_C.mp hm
+    rw [hpeq] at hlead ⊢
+    have hpow : r ^ H.totalDegree ≥ 0 := pow_nonneg hrzero _
+    nlinarith
+  · have hcoords : ∀ i, ‖θ.val i‖ ≤ 1 := fun i =>
+      (PiLp.norm_apply_le θ.val i).trans_eq hθnorm
+    have hqnorm := polynomialEvaluation_radial_norm_le q hrone θ.val hcoords
+    have hqdegree : q.totalDegree ≤ p.totalDegree - 1 := remainder_totalDegree_le p
+    have hqnorm' : ‖polynomialEvaluation (r • θ.val) q‖ ≤ B * r ^ (p.totalDegree - 1) :=
+      hqnorm.trans (mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hrone hqdegree)
+        (coefficientNormSum_nonneg q))
+    have hBr : B ≤ (a / 4) * r := by
+      have hRr : 4 * B / a ≤ r := (le_max_right _ _).trans hr
+      have hmul := (div_le_iff₀ ha).mp hRr
+      nlinarith
+    have hpow : r ^ p.totalDegree = r ^ (p.totalDegree - 1) * r := by
+      rw [← pow_succ]
+      congr 1
+      omega
+    have hqsmall : ‖polynomialEvaluation (r • θ.val) q‖ ≤ (a / 4) * r ^ p.totalDegree := by
+      rw [hpow]
+      have hh := mul_le_mul_of_nonneg_right hBr (pow_nonneg hrzero (p.totalDegree - 1))
+      nlinarith [hqnorm']
+    have htriangle : ‖polynomialEvaluation (r • θ.val) H‖ -
+        ‖polynomialEvaluation (r • θ.val) p‖ ≤ ‖polynomialEvaluation (r • θ.val) q‖ := by
+      simpa only [q, polynomialEvaluation_apply, map_sub, norm_sub_rev] using
+        norm_sub_norm_le (polynomialEvaluation (r • θ.val) H) (polynomialEvaluation (r • θ.val) p)
+    linarith
+
+/-- Every nonempty open real sphere patch has positive polar surface measure. -/
+theorem open_sphere_patch_measure_pos {d : ℕ} (hd : 1 ≤ d)
+    (U : Set ↥(Metric.sphere (0 : RealPoint d) 1)) (hU : IsOpen U) (hne : U.Nonempty) :
+    0 < (volume : Measure (RealPoint d)).toSphere U := by
+  haveI : Nonempty (Fin d) := ⟨⟨0, hd⟩⟩
+  let oneRadius : Set.Ioi (0 : ℝ) := ⟨(1 : ℝ), by norm_num⟩
+  let W := (homeomorphUnitSphereProd (RealPoint d)) ⁻¹' (U ×ˢ Set.Iio oneRadius)
+  have hW : IsOpen W := (hU.prod isOpen_Iio).preimage (homeomorphUnitSphereProd _).continuous
+  have hcone : IsOpen (((↑) : ({0}ᶜ : Set (RealPoint d)) → RealPoint d) '' W) :=
+    (isClosed_singleton.isOpen_compl.isOpenMap_subtype_val _ hW)
+  obtain ⟨θ, hθ⟩ := hne
+  let halfRadius : Set.Ioi (0 : ℝ) := ⟨1 / 2, by norm_num⟩
+  have hconene : (((↑) : ({0}ᶜ : Set (RealPoint d)) → RealPoint d) '' W).Nonempty := by
+    refine ⟨((homeomorphUnitSphereProd (RealPoint d)).symm (θ, halfRadius)).val, ?_⟩
+    refine ⟨_, ?_, rfl⟩
+    change homeomorphUnitSphereProd _ ((homeomorphUnitSphereProd _).symm (θ, halfRadius)) ∈
+      U ×ˢ Set.Iio oneRadius
+    rw [Homeomorph.apply_symm_apply]
+    exact ⟨hθ, by norm_num [halfRadius, oneRadius]⟩
+  have hvol := hcone.measure_pos volume hconene
+  rw [(volume : Measure (RealPoint d)).toSphere_apply' hU.measurableSet]
+  have haux := (volume : Measure (RealPoint d)).toSphere_apply_aux U oneRadius
+  change volume (((↑) : ({0}ᶜ : Set (RealPoint d)) → RealPoint d) '' W) = _ at haux
+  rw [← haux]
+  exact ENNReal.mul_pos (by simpa using
+    (Nat.cast_ne_zero.mpr (by omega : d ≠ 0) : (d : ENNReal) ≠ 0)) hvol.ne'
+
+/-- A continuous function cannot belong to L² if its polar squared norm, including
+the Jacobian, stays positive on a positive-measure angular patch and infinitely
+much radial Lebesgue measure. -/
+theorem not_memLp_of_polar_square_lower_bound {d : ℕ}
+    (F : RealPoint d → ℂ) (hF : Continuous F)
+    (U : Set ↥(Metric.sphere (0 : RealPoint d) 1))
+    (hUpos : 0 < (volume : Measure (RealPoint d)).toSphere U)
+    (G : Set ℝ) (hG : MeasurableSet G) (hGpositive : G ⊆ Set.Ioi 0)
+    (hGinfinite : volume G = ⊤) (c : ℝ) (hc : 0 < c)
+    (hlower : ∀ θ ∈ U, ∀ r ∈ G,
+      c ≤ ‖F (r • θ.val)‖ ^ 2 * r ^ (d - 1)) : ¬ MemLp F 2 volume := by
+  intro hmem
+  let μθ := (volume : Measure (RealPoint d)).toSphere
+  let μr := (volume : Measure ℝ).comap (Subtype.val : Set.Ioi (0 : ℝ) → ℝ)
+  let f : ↥(Metric.sphere (0 : RealPoint d) 1) × Set.Ioi (0 : ℝ) → ℝ≥0∞ :=
+    fun z => ENNReal.ofReal (‖F (z.2.val • z.1.val)‖ ^ 2)
+  have hf : Measurable f := by dsimp [f]; fun_prop
+  have hsquare : Integrable (fun x => ‖F x‖ ^ 2) volume :=
+    hmem.integrable_norm_pow (by norm_num : (2 : ℕ) ≠ 0)
+  have hfull : (∫⁻ x, ENNReal.ofReal (‖F x‖ ^ 2) ∂volume) < ⊤ := by
+    simpa only [HasFiniteIntegral, Real.enorm_eq_ofReal_abs, abs_sq] using hsquare.hasFiniteIntegral
+  have hpolar : (∫⁻ z, f z ∂μθ.prod (Measure.volumeIoiPow (d - 1))) =
+      ∫⁻ x : ({0}ᶜ : Set (RealPoint d)), ENNReal.ofReal (‖F x.val‖ ^ 2)
+        ∂(volume.comap Subtype.val) := by
+    have h := (volume : Measure (RealPoint d)).measurePreserving_homeomorphUnitSphereProd
+      |>.lintegral_comp_emb (homeomorphUnitSphereProd _).measurableEmbedding f
+    rw [finrank_euclideanSpace_fin] at h
+    rw [← h]
+    apply lintegral_congr
+    intro x
+    change ENNReal.ofReal (‖F ((homeomorphUnitSphereProd _).symm
+      (homeomorphUnitSphereProd _ x)).val‖ ^ 2) = _
+    rw [Homeomorph.symm_apply_apply]
+  have htotal : (∫⁻ z, f z ∂μθ.prod (Measure.volumeIoiPow (d - 1))) < ⊤ := by
+    rw [hpolar, lintegral_subtype_comap (measurableSet_singleton _).compl
+      (fun x => ENNReal.ofReal (‖F x‖ ^ 2))]
+    exact (lintegral_mono' Measure.restrict_le_self le_rfl).trans_lt hfull
+  have hiter : (∫⁻ θ, ∫⁻ r, f (θ, r) ∂Measure.volumeIoiPow (d - 1) ∂μθ) < ⊤ := by
+    rw [← lintegral_prod _ hf.aemeasurable]
+    exact htotal
+  have hae := ae_lt_top hf.lintegral_prod_right' hiter.ne
+  obtain ⟨θ, hθ, hθfinite⟩ := Measure.exists_mem_of_measure_ne_zero_of_ae hUpos.ne'
+    (hae.filter_mono (ae_mono (Measure.restrict_le_self (s := U))))
+  let G' : Set (Set.Ioi (0 : ℝ)) := Subtype.val ⁻¹' G
+  have hG' : MeasurableSet G' := hG.preimage measurable_subtype_coe
+  have hG'infinite : μr G' = ⊤ := by
+    dsimp [μr]
+    rw [comap_subtype_coe_apply measurableSet_Ioi]
+    have himage : Subtype.val '' G' = G := by
+      ext r
+      constructor
+      · rintro ⟨x, hx, rfl⟩
+        exact hx
+      · intro hr
+        exact ⟨⟨r, hGpositive hr⟩, hr, rfl⟩
+    rw [himage, hGinfinite]
+  have hradial : (∫⁻ r, f (θ, r) ∂Measure.volumeIoiPow (d - 1)) = ⊤ := by
+    rw [Measure.volumeIoiPow]
+    rw [lintegral_withDensity_eq_lintegral_mul _ (by fun_prop)
+      (show Measurable (fun r => f (θ, r)) from hf.comp measurable_prodMk_left)]
+    have hbound : (∫⁻ r, G'.indicator (fun _ => ENNReal.ofReal c) r ∂μr) ≤
+        ∫⁻ r, ENNReal.ofReal (r.val ^ (d - 1)) * f (θ, r) ∂μr := by
+      apply lintegral_mono
+      intro r
+      by_cases hr : r ∈ G'
+      · rw [Set.indicator_of_mem hr]
+        change ENNReal.ofReal c ≤ ENNReal.ofReal (r.val ^ (d - 1)) *
+          ENNReal.ofReal (‖F (r.val • θ.val)‖ ^ 2)
+        rw [← ENNReal.ofReal_mul (pow_nonneg r.property.le _)]
+        apply ENNReal.ofReal_le_ofReal
+        simpa only [mul_comm] using hlower θ hθ r.val hr
+      · rw [Set.indicator_of_not_mem hr]
+        exact zero_le _
+    have hleft : (∫⁻ r, G'.indicator (fun _ => ENNReal.ofReal c) r ∂μr) = ⊤ := by
+      rw [lintegral_indicator_const hG', hG'infinite, ENNReal.mul_top]
+      exact (ENNReal.ofReal_pos.mpr hc).ne'
+    exact top_unique (hleft ▸ hbound)
+  exact hθfinite.ne hradial
+
+/-- A radial square lower bound recurring arbitrarily far out on a set of infinite
+radial Lebesgue measure. This is the explicit analytic input for the L² obstruction. -/
+def RecurringRadialSquareLowerBound {d : ℕ} (M : RealPoint d → ℂ) (exponent : ℕ) : Prop :=
+  ∃ a : ℝ, 0 < a ∧ ∀ R : ℝ, ∃ G : Set ℝ,
+    MeasurableSet G ∧ volume G = ⊤ ∧
+    (∀ r ∈ G, R ≤ r ∧ 1 ≤ r) ∧
+    ∀ θ : ↥(Metric.sphere (0 : RealPoint d) 1), ∀ r ∈ G,
+      a ≤ ‖M (r • θ.val)‖ ^ 2 * r ^ exponent
+
+/-- Multiplying a polynomial of excessive degree by a multiplier with the stated
+recurring radial decay prevents L² integrability, by the genuine polar measure. -/
+theorem polynomial_totalDegree_le_of_memLp_multiplier {d : ℕ} (hd : 1 ≤ d)
+    (N : ℕ) (p : ComplexPolynomial d) (F M : RealPoint d → ℂ)
+    (hF : Continuous F) (hfactor : ∀ x, F x = polynomialEvaluation x p * M x)
+    (hlower : RecurringRadialSquareLowerBound M (4 * N + d + 1))
+    (hmem : MemLp F 2 volume) : p.totalDegree ≤ 2 * N := by
+  by_contra hdegree
+  have hm : 2 * N < p.totalDegree := by omega
+  have hp : p ≠ 0 := by intro hp; simp [hp] at hm
+  obtain ⟨U, c, R, hU, hUne, hc, hR, hgrowth⟩ :=
+    polynomial_growth_on_open_sphere_patch hd p hp
+  obtain ⟨a, ha, hrec⟩ := hlower
+  obtain ⟨G, hG, hGinf, hGr, hrad⟩ := hrec R
+  apply not_memLp_of_polar_square_lower_bound F hF U
+    (open_sphere_patch_measure_pos hd U hU hUne) G hG
+    (fun r hr => lt_of_lt_of_le zero_lt_one (hGr r hr).2) hGinf (c ^ 2 * a)
+    (mul_pos (sq_pos_of_pos hc) ha) ?_ hmem
+  intro θ hθ r hr
+  have hr1 := (hGr r hr).2
+  have hpbound := hgrowth θ hθ r (hGr r hr).1
+  have hpow : r ^ (4 * N + d + 1) ≤ r ^ (p.totalDegree + p.totalDegree + (d - 1)) :=
+    pow_le_pow_right₀ hr1 (by omega)
+  calc
+    c ^ 2 * a ≤ c ^ 2 * (‖M (r • θ.val)‖ ^ 2 * r ^ (4 * N + d + 1)) :=
+      mul_le_mul_of_nonneg_left (hrad θ r hr) (sq_nonneg c)
+    _ ≤ c ^ 2 * (‖M (r • θ.val)‖ ^ 2 *
+        r ^ (p.totalDegree + p.totalDegree + (d - 1))) := by gcongr
+    _ = ‖M (r • θ.val)‖ ^ 2 * (c * r ^ p.totalDegree) ^ 2 * r ^ (d - 1) := by
+      simp only [pow_add, mul_pow, pow_two]
+      ring
+    _ ≤ ‖M (r • θ.val)‖ ^ 2 * ‖polynomialEvaluation (r • θ.val) p‖ ^ 2 *
+        r ^ (d - 1) := by gcongr
+    _ = ‖F (r • θ.val)‖ ^ 2 * r ^ (d - 1) := by
+      rw [hfactor, norm_mul, mul_pow]
+      ring
+
+/-- A kernel lower bound and the polynomial denominator upper bound imply the
+radial multiplier estimate used in the degree obstruction. -/
+theorem recurringRadialSquareLowerBound_of_kernel_denominator {d : ℕ} (N : ℕ)
+    (M κ Q : RealPoint d → ℂ) (hfactor : ∀ x, M x * Q x = κ x)
+    (hκ : RecurringRadialSquareLowerBound κ (d + 1))
+    (C : ℝ) (hC : 0 < C)
+    (hQ : ∀ θ : ↥(Metric.sphere (0 : RealPoint d) 1), ∀ r : ℝ,
+      1 ≤ r → ‖Q (r • θ.val)‖ ^ 2 ≤ C * r ^ (4 * N)) :
+    RecurringRadialSquareLowerBound M (4 * N + d + 1) := by
+  obtain ⟨a, ha, hrec⟩ := hκ
+  refine ⟨a / C, div_pos ha hC, fun R => ?_⟩
+  obtain ⟨G, hG, hGinf, hGr, hrad⟩ := hrec R
+  refine ⟨G, hG, hGinf, hGr, ?_⟩
+  intro θ r hr
+  apply (div_le_iff₀ hC).mpr
+  have hr0 : 0 ≤ r := le_trans zero_le_one (hGr r hr).2
+  calc
+    a ≤ ‖κ (r • θ.val)‖ ^ 2 * r ^ (d + 1) := hrad θ r hr
+    _ = ‖M (r • θ.val)‖ ^ 2 * ‖Q (r • θ.val)‖ ^ 2 * r ^ (d + 1) := by
+      rw [← hfactor, norm_mul, mul_pow]
+    _ ≤ ‖M (r • θ.val)‖ ^ 2 * (C * r ^ (4 * N)) * r ^ (d + 1) := by
+      gcongr
+      exact hQ θ r (hGr r hr).2
+    _ = ‖M (r • θ.val)‖ ^ 2 * r ^ (4 * N + d + 1) * C := by
+      rw [show 4 * N + d + 1 = 4 * N + (d + 1) by omega, pow_add]
+      ring
+
+/-- Fixed positive-length separated intervals give the infinite radial measure
+in the lower-bound interface; no radial divergence is assumed. -/
+theorem recurringRadialSquareLowerBound_of_intervals {d : ℕ}
+    (M : RealPoint d → ℂ) (exponent : ℕ) (a δ : ℝ) (ha : 0 < a) (hδ : 0 < δ)
+    (s : ℕ → ℝ) (hgap : ∀ k, s k + δ ≤ s (k + 1))
+    (hunbounded : ∀ R : ℝ, ∃ k, R ≤ s k)
+    (hlower : ∀ k, ∀ θ : ↥(Metric.sphere (0 : RealPoint d) 1), ∀ r,
+      r ∈ Set.Ioc (s k) (s k + δ) → a ≤ ‖M (r • θ.val)‖ ^ 2 * r ^ exponent) :
+    RecurringRadialSquareLowerBound M exponent := by
+  have hsmono : Monotone s := monotone_nat_of_le_succ fun k => by linarith [hgap k]
+  refine ⟨a, ha, fun R => ?_⟩
+  obtain ⟨K, hK⟩ := hunbounded (max R 1)
+  let G := ⋃ k : ℕ, Set.Ioc (s (k + K)) (s (k + K) + δ)
+  have hdisjoint : Pairwise (fun i j : ℕ =>
+      Disjoint (Set.Ioc (s (i + K)) (s (i + K) + δ))
+        (Set.Ioc (s (j + K)) (s (j + K) + δ))) := by
+    intro i j hij
+    rcases lt_or_gt_of_ne hij with h | h
+    · exact Set.Ioc_disjoint_Ioc_of_le
+        ((hgap (i + K)).trans (hsmono (by omega)))
+    · exact (Set.Ioc_disjoint_Ioc_of_le
+        ((hgap (j + K)).trans (hsmono (by omega)))).symm
+  have hGinf : volume G = ⊤ := by
+    rw [show G = ⋃ k : ℕ, Set.Ioc (s (k + K)) (s (k + K) + δ) from rfl,
+      measure_iUnion hdisjoint (fun _ => measurableSet_Ioc)]
+    simp only [Real.volume_Ioc, add_sub_cancel_left]
+    exact ENNReal.tsum_const_eq_top_of_ne_zero (ENNReal.ofReal_pos.mpr hδ).ne'
+  refine ⟨G, MeasurableSet.iUnion (fun _ => measurableSet_Ioc), hGinf, ?_, ?_⟩
+  · intro r hr
+    obtain ⟨k, hk⟩ := Set.mem_iUnion.mp hr
+    have hkr : max R 1 ≤ r := hK.trans ((hsmono (by omega : K ≤ k + K)).trans hk.1.le)
+    exact ⟨(le_max_left R 1).trans hkr, (le_max_right R 1).trans hkr⟩
+  · intro θ r hr
+    obtain ⟨k, hk⟩ := Set.mem_iUnion.mp hr
+    exact hlower (k + K) θ r hk
+
+/-- Every denominator polynomial of degree at most `2N` has the required uniform
+square upper bound along all unit rays. -/
+theorem polynomial_denominator_radial_square_bound {d : ℕ} (N : ℕ)
+    (q : ComplexPolynomial d) (hdegree : q.totalDegree ≤ 2 * N) :
+    ∃ C : ℝ, 0 < C ∧ ∀ θ : ↥(Metric.sphere (0 : RealPoint d) 1), ∀ r : ℝ,
+      1 ≤ r → ‖polynomialEvaluation (r • θ.val) q‖ ^ 2 ≤ C * r ^ (4 * N) := by
+  let B := coefficientNormSum q
+  have hB : 0 ≤ B := coefficientNormSum_nonneg q
+  refine ⟨(B + 1) ^ 2, sq_pos_of_pos (by linarith), ?_⟩
+  intro θ r hr
+  have hθnorm : ‖θ.val‖ = 1 := mem_sphere_zero_iff_norm.mp θ.property
+  have hbound := polynomialEvaluation_radial_norm_le q hr θ.val
+    (fun i => (PiLp.norm_apply_le θ.val i).trans_eq hθnorm)
+  have hbound' : ‖polynomialEvaluation (r • θ.val) q‖ ≤ (B + 1) * r ^ (2 * N) := by
+    calc
+      _ ≤ B * r ^ q.totalDegree := hbound
+      _ ≤ B * r ^ (2 * N) :=
+        mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hr hdegree) hB
+      _ ≤ (B + 1) * r ^ (2 * N) := by gcongr; linarith
+  calc
+    _ ≤ ((B + 1) * r ^ (2 * N)) ^ 2 := by gcongr
+    _ = (B + 1) ^ 2 * r ^ (4 * N) := by
+      rw [mul_pow, ← pow_mul, show 2 * N * 2 = 4 * N by omega]
+
+/-- The cross-multiplied quotient identity, a recurring kernel lower bound, and
+an actual polynomial denominator of degree at most `2N` force the numerator degree
+bound. Zeros of the denominator require no pointwise division. -/
+theorem polynomial_totalDegree_le_of_memLp_quotient {d : ℕ} (hd : 1 ≤ d)
+    (N : ℕ) (p q : ComplexPolynomial d) (hqdegree : q.totalDegree ≤ 2 * N)
+    (F κ : RealPoint d → ℂ) (hF : Continuous F)
+    (hfactor : ∀ x, F x * polynomialEvaluation x q = polynomialEvaluation x p * κ x)
+    (hκ : RecurringRadialSquareLowerBound κ (d + 1))
+    (hmem : MemLp F 2 volume) : p.totalDegree ≤ 2 * N := by
+  by_contra hdegree
+  have hm : 2 * N < p.totalDegree := by omega
+  have hp : p ≠ 0 := by intro hp; simp [hp] at hm
+  obtain ⟨U, c, R, hU, hUne, hc, hR, hgrowth⟩ :=
+    polynomial_growth_on_open_sphere_patch hd p hp
+  obtain ⟨a, ha, hrec⟩ := hκ
+  obtain ⟨G, hG, hGinf, hGr, hrad⟩ := hrec R
+  obtain ⟨C, hC, hQ⟩ := polynomial_denominator_radial_square_bound N q hqdegree
+  apply not_memLp_of_polar_square_lower_bound F hF U
+    (open_sphere_patch_measure_pos hd U hU hUne) G hG
+    (fun r hr => lt_of_lt_of_le zero_lt_one (hGr r hr).2) hGinf (c ^ 2 * a / C)
+    (div_pos (mul_pos (sq_pos_of_pos hc) ha) hC) ?_ hmem
+  intro θ hθ r hr
+  have hr1 := (hGr r hr).2
+  have hrpos : 0 < r := lt_of_lt_of_le zero_lt_one hr1
+  have hpbound := hgrowth θ hθ r (hGr r hr).1
+  have hpow : r ^ (4 * N + d + 1) ≤ r ^ (p.totalDegree + p.totalDegree + (d - 1)) :=
+    pow_le_pow_right₀ hr1 (by omega)
+  have hid : ‖F (r • θ.val)‖ ^ 2 * ‖polynomialEvaluation (r • θ.val) q‖ ^ 2 =
+      ‖polynomialEvaluation (r • θ.val) p‖ ^ 2 * ‖κ (r • θ.val)‖ ^ 2 := by
+    have h := congrArg (fun z : ℂ => ‖z‖) (hfactor (r • θ.val))
+    simp only [norm_mul] at h
+    calc
+      _ = (‖F (r • θ.val)‖ * ‖polynomialEvaluation (r • θ.val) q‖) ^ 2 := by ring
+      _ = (‖polynomialEvaluation (r • θ.val) p‖ * ‖κ (r • θ.val)‖) ^ 2 := by rw [h]
+      _ = _ := by ring
+  have hbound : (c ^ 2 * a) * r ^ (p.totalDegree + p.totalDegree) ≤
+      (‖F (r • θ.val)‖ ^ 2 * r ^ (d - 1) * C) *
+        r ^ (p.totalDegree + p.totalDegree) := by
+    calc
+      _ = (c * r ^ p.totalDegree) ^ 2 * a := by
+        simp only [pow_add, mul_pow, pow_two]; ring
+      _ ≤ (c * r ^ p.totalDegree) ^ 2 * (‖κ (r • θ.val)‖ ^ 2 * r ^ (d + 1)) := by
+        gcongr
+        exact hrad θ r hr
+      _ ≤ ‖polynomialEvaluation (r • θ.val) p‖ ^ 2 *
+          (‖κ (r • θ.val)‖ ^ 2 * r ^ (d + 1)) := by gcongr
+      _ = (‖F (r • θ.val)‖ ^ 2 * ‖polynomialEvaluation (r • θ.val) q‖ ^ 2) *
+          r ^ (d + 1) := by rw [hid]; ring
+      _ ≤ (‖F (r • θ.val)‖ ^ 2 * (C * r ^ (4 * N))) * r ^ (d + 1) := by
+        gcongr
+        exact hQ θ r hr1
+      _ = ‖F (r • θ.val)‖ ^ 2 * C * r ^ (4 * N + d + 1) := by
+        rw [show 4 * N + d + 1 = 4 * N + (d + 1) by omega, pow_add]; ring
+      _ ≤ ‖F (r • θ.val)‖ ^ 2 * C * r ^ (p.totalDegree + p.totalDegree + (d - 1)) := by
+        gcongr
+      _ = _ := by rw [pow_add]; ring
+  exact (div_le_iff₀ hC).mpr ((mul_le_mul_right (pow_pos hrpos _)).mp hbound)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalMembership.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Supported L² synthesis from actual tempered distributions
+
+This file converts physical distribution support and quantitative Fourier decay
+into actual domain L² vectors. The hypotheses concern an inverse distribution
+and its Fourier action on tests, rather than Paley–Wiener membership.
+-/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap FourierTransform ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- Actual polynomial evaluation has a global bound with its total degree and
+the explicit sum of its coefficient norms. -/
+theorem polynomialEvaluation_norm_le (p : ComplexPolynomial d) (x : Euclidean d) :
+    ‖polynomialEvaluation x p‖ ≤ coefficientNormSum p * (1 + ‖x‖) ^ p.totalDegree := by
+  let r : ℝ := 1 + ‖x‖
+  have hr : 0 < r := by dsimp [r]; positivity
+  let θ : Euclidean d := r⁻¹ • x
+  have hθ : ∀ i, ‖θ i‖ ≤ 1 := by
+    intro i
+    calc
+      ‖θ i‖ ≤ ‖θ‖ := PiLp.norm_apply_le θ i
+      _ = ‖x‖ / r := by
+        simp only [θ, norm_smul, norm_inv, Real.norm_eq_abs, abs_of_pos hr,
+          div_eq_mul_inv]
+        ring
+      _ ≤ 1 := (div_le_one hr).mpr (by dsimp [r]; linarith)
+  have hx : r • θ = x := by simp [θ, smul_smul, mul_inv_cancel₀ hr.ne']
+  have hrone : 1 ≤ r := by dsimp [r]; linarith [norm_nonneg x]
+  have h := polynomialEvaluation_radial_norm_le p hrone θ hθ
+  simpa only [hx, r] using h
+
+/-- Polynomial numerators consume exactly their degree of decay, leaving the
+sharp ball-transform bound when the denominator supplies enough decay. -/
+theorem polynomial_mul_ball_decay {M : ℕ} (p : ComplexPolynomial d)
+    (hp : p.totalDegree ≤ M) (G : Euclidean d → ℂ) {C : ℝ}
+    (hG : ∀ x, ‖G x‖ ≤ C * (1 + ‖x‖) ^ (-(M : ℝ) - ((d : ℝ) + 1) / 2)) :
+    ∀ x, ‖polynomialEvaluation x p * G x‖ ≤
+      (coefficientNormSum p * C) * (1 + ‖x‖) ^ (-((d : ℝ) + 1) / 2) := by
+  intro x
+  have hrone : 1 ≤ 1 + ‖x‖ := by linarith [norm_nonneg x]
+  have hpoly : ‖polynomialEvaluation x p‖ ≤ coefficientNormSum p * (1 + ‖x‖) ^ M :=
+    (polynomialEvaluation_norm_le p x).trans
+      (mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hrone hp)
+        (coefficientNormSum_nonneg p))
+  calc
+    _ = ‖polynomialEvaluation x p‖ * ‖G x‖ := norm_mul _ _
+    _ ≤ (coefficientNormSum p * (1 + ‖x‖) ^ M) *
+        (C * (1 + ‖x‖) ^ (-(M : ℝ) - ((d : ℝ) + 1) / 2)) :=
+      mul_le_mul hpoly (hG x) (norm_nonneg _)
+        (mul_nonneg (coefficientNormSum_nonneg p) (by positivity))
+    _ = _ := by
+      rw [← Real.rpow_natCast]
+      calc
+        _ = (coefficientNormSum p * C) * ((1 + ‖x‖) ^ (M : ℝ) *
+            (1 + ‖x‖) ^ (-(M : ℝ) - ((d : ℝ) + 1) / 2)) := by ring
+        _ = _ := by rw [← Real.rpow_add (by positivity)]; congr 2; ring
+
+/-- An actual supported inverse distribution whose Fourier transform is an L²
+distribution is the distribution of the Plancherel inverse, with the same support. -/
+theorem supported_inverse_of_l2_fourier {S : Set (Euclidean d)} (hS : IsClosed S)
+    (u : TemperedDistribution d) (hu : DistributionSupportedIn u S)
+    (F : FullL2 d) (hF : distributionFourier u = l2Distribution F) :
+    u = l2Distribution ((fourierL2Equiv d).symm F) ∧
+      ∀ᵐ x, x ∉ S → ((fourierL2Equiv d).symm F) x = 0 := by
+  have heq : u = l2Distribution ((fourierL2Equiv d).symm F) := by
+    apply distributionFourier_injective
+    rw [hF, distributionFourier_l2Distribution, LinearIsometryEquiv.apply_symm_apply]
+  exact ⟨heq, (l2Distribution_supported_iff hS).mp (heq ▸ hu)⟩
+
+/-- A measurable Fourier representative is square integrable if its squared
+norm has an integrable radial majorant with exponent greater than the dimension. -/
+theorem memLp_two_of_radial_sq_bound {F : Euclidean d → ℂ}
+    (hF : AEStronglyMeasurable F volume) {C s : ℝ}
+    (hs : (d : ℝ) < s)
+    (hbound : ∀ᵐ x, ‖F x‖ ^ 2 ≤ C * (1 + ‖x‖) ^ (-s)) :
+    MemLp F 2 volume := by
+  apply (memLp_two_iff_integrable_sq_norm hF).mpr
+  have hint : Integrable (fun x : Euclidean d => (1 + ‖x‖) ^ (-s)) volume :=
+    integrable_one_add_norm (by simpa [Euclidean, finrank_euclideanSpace] using hs)
+  apply (hint.const_mul C).mono' (hF.norm.pow 2)
+  filter_upwards [hbound] with x hx
+  change |‖F x‖ ^ 2| ≤ _
+  rwa [abs_of_nonneg (sq_nonneg _)]
+
+/-- The usual Fourier decay estimate of order strictly greater than half the
+dimension supplies the square-integrability needed by Plancherel synthesis. -/
+theorem memLp_two_of_radial_bound {F : Euclidean d → ℂ}
+    (hF : AEStronglyMeasurable F volume) {C s : ℝ} (hC : 0 ≤ C)
+    (hs : (d : ℝ) < 2 * s)
+    (hbound : ∀ᵐ x, ‖F x‖ ≤ C * (1 + ‖x‖) ^ (-s)) :
+    MemLp F 2 volume := by
+  apply memLp_two_of_radial_sq_bound hF hs (C := C ^ 2)
+  filter_upwards [hbound] with x hx
+  calc
+    ‖F x‖ ^ 2 ≤ (C * (1 + ‖x‖) ^ (-s)) ^ 2 :=
+      (sq_le_sq₀ (norm_nonneg _) (mul_nonneg hC (Real.rpow_nonneg (by positivity) _))).2 hx
+    _ = C ^ 2 * (1 + ‖x‖) ^ (-(2 * s)) := by
+      rw [mul_pow, ← Real.rpow_mul_natCast (by positivity : 0 ≤ 1 + ‖x‖)]
+      congr 2
+      ring
+
+/-- The sharp ball-transform decay left after multiplying by a numerator of
+the allowed degree is sufficient in every Euclidean dimension. -/
+theorem memLp_two_of_ball_decay {F : Euclidean d → ℂ}
+    (hF : AEStronglyMeasurable F volume) {C : ℝ} (hC : 0 ≤ C)
+    (hbound : ∀ᵐ x, ‖F x‖ ≤ C * (1 + ‖x‖) ^ (-((d : ℝ) + 1) / 2)) :
+    MemLp F 2 volume := by
+  apply memLp_two_of_radial_bound hF hC (s := ((d : ℝ) + 1) / 2) (by linarith)
+  simpa only [neg_div] using hbound
+
+/-- Continuity absorbs the bounded-frequency region into a global radial
+bound, so an asymptotic decay estimate is enough for synthesis. -/
+theorem radial_bound_of_tail {F : Euclidean d → ℂ} (hF : Continuous F)
+    {C s R : ℝ} (hbound : ∀ x, R ≤ ‖x‖ → ‖F x‖ ≤ C * (1 + ‖x‖) ^ (-s)) :
+    ∃ C' : ℝ, 0 ≤ C' ∧ ∀ x, ‖F x‖ ≤ C' * (1 + ‖x‖) ^ (-s) := by
+  have hg : Continuous (fun x : Euclidean d => ‖F x‖ * (1 + ‖x‖) ^ s) :=
+    hF.norm.mul ((continuous_const.add continuous_norm).rpow_const
+      (fun x => Or.inl (by positivity)))
+  obtain ⟨B, hB⟩ := (isCompact_closedBall (0 : Euclidean d) R).exists_bound_of_continuousOn
+    hg.continuousOn
+  refine ⟨max (max B C) 0, le_max_right _ _, fun x => ?_⟩
+  by_cases hx : ‖x‖ ≤ R
+  · have hb := hB x (by simpa only [Metric.mem_closedBall, dist_zero_right] using hx)
+    have hnonneg : 0 ≤ ‖F x‖ * (1 + ‖x‖) ^ s :=
+      mul_nonneg (norm_nonneg _) (Real.rpow_nonneg (by positivity) _)
+    rw [Real.norm_eq_abs, abs_of_nonneg hnonneg] at hb
+    have hmul : ‖F x‖ * (1 + ‖x‖) ^ s ≤ max (max B C) 0 := by
+      exact hb.trans ((le_max_left B C).trans (le_max_left _ 0))
+    rw [Real.rpow_neg (by positivity : 0 ≤ 1 + ‖x‖), ← div_eq_mul_inv]
+    exact (le_div_iff₀ (Real.rpow_pos_of_pos (by positivity) s)).mpr hmul
+  · exact (hbound x (le_of_lt (lt_of_not_ge hx))).trans
+      (mul_le_mul_of_nonneg_right ((le_max_right B C).trans (le_max_left _ 0))
+        (Real.rpow_nonneg (by positivity) _))
+
+/-- An actual continuous Fourier representative with sharp decay at infinity
+is square integrable; no bound near its removable poles is required as input. -/
+theorem memLp_two_of_ball_decay_tail {F : Euclidean d → ℂ} (hF : Continuous F)
+    {C R : ℝ}
+    (hbound : ∀ x, R ≤ ‖x‖ → ‖F x‖ ≤ C * (1 + ‖x‖) ^ (-((d : ℝ) + 1) / 2)) :
+    MemLp F 2 volume := by
+  obtain ⟨C', hC', hb⟩ := radial_bound_of_tail (s := ((d : ℝ) + 1) / 2) hF (by
+    simpa only [neg_div] using hbound)
+  apply memLp_two_of_ball_decay hF.aestronglyMeasurable hC'
+  simpa only [neg_div] using (Filter.Eventually.of_forall hb : ∀ᵐ x ∂volume,
+    ‖F x‖ ≤ C' * (1 + ‖x‖) ^ (-(((d : ℝ) + 1) / 2)))
+
+/-- A regular polynomial-growth distribution agrees with its L² embedding
+whenever the underlying actual function is also square integrable. -/
+theorem polynomialDistribution_eq_l2Distribution {N : ℕ} (F : Euclidean d → ℂ)
+    {C : ℝ} (hC : 0 ≤ C) (hbound : ∀ x, ‖F x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable F volume) (hF : MemLp F 2 volume) :
+    polynomialDistribution F hC hbound hm = l2Distribution (hF.toLp F) := by
+  ext φ
+  rw [polynomialDistribution_apply, l2Distribution_apply]
+  apply integral_congr_ae
+  filter_upwards [hF.coeFn_toLp] with x hx
+  rw [hx]
+
+/-- Restricting an actual supported full-space vector to a measurable domain
+containing its support up to a null set preserves its zero extension. -/
+theorem domainExtension_restriction_of_supported {S Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hSΩ : S ≤ᵐ[volume] Ω) (f : FullL2 d)
+    (hf : ∀ᵐ x, x ∉ S → f x = 0) :
+    domainExtension Ω hΩ (domainRestriction Ω f) = f := by
+  rw [domainExtension_restriction]
+  apply (domainCutoff_eq_self_iff Ω hΩ f).mpr
+  filter_upwards [hf, hSΩ] with x hx hinc
+  intro hn
+  exact hx (fun hs => hn (hinc hs))
+
+/-- Actual supported domain-L² synthesis from a distributional Fourier identity.
+The domain may differ from the closed physical support by null sets. -/
+theorem exists_domainL2_of_supported_fourier {S Ω : Set (Euclidean d)}
+    (hS : IsClosed S) (hΩ : MeasurableSet Ω) (hSΩ : S ≤ᵐ[volume] Ω)
+    (u : TemperedDistribution d) (hu : DistributionSupportedIn u S)
+    (F : Euclidean d → ℂ) (hF : MemLp F 2 volume)
+    (htransform : distributionFourier u = l2Distribution (hF.toLp F)) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f S ∧
+      l2Distribution (domainExtension Ω hΩ f) = u ∧
+      (fourierL2Equiv d (domainExtension Ω hΩ f) : Euclidean d → ℂ) =ᵐ[volume] F := by
+  obtain ⟨huEq, hs⟩ := supported_inverse_of_l2_fourier hS u hu (hF.toLp F) htransform
+  let g := (fourierL2Equiv d).symm (hF.toLp F)
+  have hext := domainExtension_restriction_of_supported hΩ hSΩ g hs
+  refine ⟨domainRestriction Ω g, ?_, ?_, ?_⟩
+  · have hsr := hs.filter_mono (ae_mono (Measure.restrict_le_self (s := Ω)))
+    filter_upwards [domainRestriction_coe Ω g, hsr] with x hx hz
+    intro hn
+    exact hx.trans (hz hn)
+  · rw [hext]
+    exact huEq.symm
+  · rw [hext]
+    exact ((fourierL2Equiv d).apply_symm_apply (hF.toLp F)) ▸ hF.coeFn_toLp
+
+/-- Quantitative decay and an actual inverse-distribution identity yield a
+supported domain vector without any Paley–Wiener membership hypothesis. -/
+theorem exists_domainL2_of_supported_fourier_decay {S Ω : Set (Euclidean d)}
+    (hS : IsClosed S) (hΩ : MeasurableSet Ω) (hSΩ : S ≤ᵐ[volume] Ω)
+    (u : TemperedDistribution d) (hu : DistributionSupportedIn u S)
+    (F : Euclidean d → ℂ) (hm : AEStronglyMeasurable F volume)
+    {C : ℝ} (hC : 0 ≤ C)
+    (hdecay : ∀ᵐ x, ‖F x‖ ≤ C * (1 + ‖x‖) ^ (-((d : ℝ) + 1) / 2))
+    (htransform : ∀ φ : 𝓢(Euclidean d, ℂ),
+      distributionFourier u φ = ∫ x, F x * φ x) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f S ∧
+      l2Distribution (domainExtension Ω hΩ f) = u ∧
+      (fourierL2Equiv d (domainExtension Ω hΩ f) : Euclidean d → ℂ) =ᵐ[volume] F := by
+  have hF := memLp_two_of_ball_decay hm hC hdecay
+  apply exists_domainL2_of_supported_fourier hS hΩ hSΩ u hu F hF
+  ext φ
+  rw [htransform, l2Distribution_apply]
+  apply integral_congr_ae
+  filter_upwards [hF.coeFn_toLp] with x hx
+  rw [hx]
+
+/-- On a bounded domain the synthesized vector's entire Fourier transform
+agrees with any continuous representative at every real frequency. -/
+theorem exists_domainL2_of_supported_fourier_continuous {S Ω : Set (Euclidean d)}
+    (hS : IsClosed S) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hSΩ : S ≤ᵐ[volume] Ω) (u : TemperedDistribution d)
+    (hu : DistributionSupportedIn u S) (F : Euclidean d → ℂ) (hcont : Continuous F)
+    (hF : MemLp F 2 volume)
+    (htransform : distributionFourier u = l2Distribution (hF.toLp F)) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f S ∧
+      l2Distribution (domainExtension Ω hΩ f) = u ∧
+      ∀ ξ, domainEntireFourier Ω hΩ f (realToComplex ξ) = F ξ := by
+  obtain ⟨f, hs, heq, hFourier⟩ :=
+    exists_domainL2_of_supported_fourier hS hΩ hSΩ u hu F hF htransform
+  refine ⟨f, hs, heq, fun ξ => congrFun (MeasureTheory.Measure.eq_of_ae_eq
+    ((domainEntireFourier_eq_fourierL2 hΩ hbounded f).trans hFourier) ?_ hcont) ξ⟩
+  have hemb : Continuous (realToComplex : Euclidean d → ComplexEuclidean d) :=
+    (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+      change Continuous (fun x : Euclidean d => (x j : ℂ))
+      fun_prop)
+  exact (domainEntireFourier_differentiable hΩ hbounded f).continuous.comp hemb
+
+/-- Actual polynomial differentiation of a supported inverse distribution
+realizes every numerator whose degree is covered by the denominator decay. -/
+theorem exists_domainL2_polynomial_numerator {S Ω : Set (Euclidean d)}
+    (hS : IsClosed S) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hSΩ : S ≤ᵐ[volume] Ω) (u : TemperedDistribution d)
+    (hu : DistributionSupportedIn u S) (G : Euclidean d → ℂ) (hG : Continuous G)
+    {M : ℕ} {C : ℝ} (hC : 0 ≤ C)
+    (hdecay : ∀ x, ‖G x‖ ≤ C * (1 + ‖x‖) ^ (-(M : ℝ) - ((d : ℝ) + 1) / 2))
+    (htransform : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier u φ = ∫ x, G x * φ x)
+    (p : ComplexPolynomial d) (hp : p.totalDegree ≤ M) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f S ∧
+      l2Distribution (domainExtension Ω hΩ f) = polynomialDifferentialOperator p u ∧
+      ∀ ξ, domainEntireFourier Ω hΩ f (realToComplex ξ) = polynomialEvaluation ξ p * G ξ := by
+  let F := fun x => polynomialEvaluation x p * G x
+  have hcF : Continuous F := (polynomialEvaluation_continuous p).mul hG
+  have hmem : MemLp F 2 volume := memLp_two_of_ball_decay hcF.aestronglyMeasurable
+    (mul_nonneg (coefficientNormSum_nonneg p) hC)
+    (Filter.Eventually.of_forall (polynomial_mul_ball_decay p hp G hdecay))
+  apply exists_domainL2_of_supported_fourier_continuous hS hΩ hbounded hSΩ
+    (polynomialDifferentialOperator p u) (hu.polynomialDifferentialOperator p) F hcF hmem
+  ext φ
+  rw [distributionFourier_polynomialDifferentialOperator_integral p u G htransform,
+    l2Distribution_apply]
+  apply integral_congr_ae
+  filter_upwards [hmem.coeFn_toLp] with x hx
+  rw [hx]
+
+/-- The numerator synthesis theorem needs denominator decay only outside a
+bounded frequency region, because its actual representative is continuous. -/
+theorem exists_domainL2_polynomial_numerator_tail {S Ω : Set (Euclidean d)}
+    (hS : IsClosed S) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hSΩ : S ≤ᵐ[volume] Ω) (u : TemperedDistribution d)
+    (hu : DistributionSupportedIn u S) (G : Euclidean d → ℂ) (hG : Continuous G)
+    {M : ℕ} {C R : ℝ}
+    (hdecay : ∀ x, R ≤ ‖x‖ →
+      ‖G x‖ ≤ C * (1 + ‖x‖) ^ (-(M : ℝ) - ((d : ℝ) + 1) / 2))
+    (htransform : ∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier u φ = ∫ x, G x * φ x)
+    (p : ComplexPolynomial d) (hp : p.totalDegree ≤ M) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f S ∧
+      l2Distribution (domainExtension Ω hΩ f) = polynomialDifferentialOperator p u ∧
+      ∀ ξ, domainEntireFourier Ω hΩ f (realToComplex ξ) = polynomialEvaluation ξ p * G ξ := by
+  obtain ⟨C', hC', hb⟩ := radial_bound_of_tail
+    (s := (M : ℝ) + ((d : ℝ) + 1) / 2) hG (by
+      simpa only [neg_add, sub_eq_add_neg] using hdecay)
+  apply exists_domainL2_polynomial_numerator hS hΩ hbounded hSΩ u hu G hG hC' _ htransform p hp
+  simpa only [neg_add, sub_eq_add_neg] using hb
+
+/-- The coefficient of a simple resolvent in the partial fraction expansion. -/
+def resolventWeight {ι : Type*} [DecidableEq ι] (s : Finset ι) (a : ι → ℂ) (i : ι) : ℂ :=
+  ∏ j ∈ s.erase i, (a i - a j)⁻¹
+
+/-- The interpolation identity behind partial fractions, proved from the
+sum of the actual Lagrange basis polynomials. -/
+theorem resolventWeight_identity {ι : Type*} [DecidableEq ι]
+    (s : Finset ι) (a : ι → ℂ) (ha : Set.InjOn a s) (hs : s.Nonempty) (q : ℂ) :
+    ∑ i ∈ s, resolventWeight s a i * (∏ j ∈ s.erase i, (q - a j)) = 1 := by
+  have h := congrArg (Polynomial.eval q) (Lagrange.sum_basis ha hs)
+  simpa only [Polynomial.eval_finset_sum, Polynomial.eval_one, Lagrange.basis,
+    Polynomial.eval_prod, Lagrange.basisDivisor, Polynomial.eval_mul,
+    Polynomial.eval_C, Polynomial.eval_sub, Polynomial.eval_X,
+    resolventWeight, Finset.prod_mul_distrib] using h
+
+/-- Simple distinct poles give the actual scalar partial fraction formula,
+at every point away from those poles. -/
+theorem resolvent_partial_fractions {ι : Type*} [DecidableEq ι]
+    (s : Finset ι) (a : ι → ℂ) (ha : Set.InjOn a s) (hs : s.Nonempty) (q k : ℂ)
+    (hq : ∀ i ∈ s, q ≠ a i) :
+    k / (∏ i ∈ s, (q - a i)) = ∑ i ∈ s, resolventWeight s a i * (k / (q - a i)) := by
+  have hid := resolventWeight_identity s a ha hs q
+  calc
+    k / (∏ i ∈ s, (q - a i)) =
+        (∑ i ∈ s, resolventWeight s a i * (∏ j ∈ s.erase i, (q - a j))) *
+          (k / (∏ i ∈ s, (q - a i))) := by rw [hid, one_mul]
+    _ = ∑ i ∈ s, resolventWeight s a i * (k / (q - a i)) := by
+      rw [Finset.sum_mul]
+      apply Finset.sum_congr rfl
+      intro i hi
+      have hex : (∏ j ∈ s.erase i, (q - a j)) ≠ 0 :=
+        Finset.prod_ne_zero_iff.mpr fun j hj => sub_ne_zero.mpr (hq j (Finset.mem_of_mem_erase hj))
+      rw [← Finset.mul_prod_erase s (fun j => q - a j) hi]
+      rw [div_eq_mul_inv, div_eq_mul_inv, mul_inv_rev]
+      calc
+        _ = resolventWeight s a i * (k * (q - a i)⁻¹) *
+            ((∏ j ∈ s.erase i, (q - a j)) * (∏ j ∈ s.erase i, (q - a j))⁻¹) := by ring
+        _ = _ := by rw [mul_inv_cancel₀ hex, mul_one]
+
+/-- The canonical spherical denominator has the explicit simple-resolvent
+expansion at every real frequency off the finitely many selected spheres. -/
+theorem sphereDenominator_partial_fractions (radius : ℕ → ℝ)
+    (hstrict : StrictMono radius) (hpositive : ∀ j, 0 < j → 0 < radius j)
+    {N : ℕ} (hN : 0 < N) (x : Euclidean d) (k : ℂ)
+    (hx : ∀ j ∈ Finset.range N, ‖x‖ ≠ radius (j + 1)) :
+    k / MvPolynomial.eval (fun j => (x j : ℂ)) (sphereDenominator d radius N) =
+      ∑ j ∈ Finset.range N,
+        resolventWeight (Finset.range N) (fun i => ((radius (i + 1) ^ 2 : ℝ) : ℂ)) j *
+          (k / ((‖x‖ ^ 2 - radius (j + 1) ^ 2 : ℝ) : ℂ)) := by
+  have ha : Set.InjOn (fun i => ((radius (i + 1) ^ 2 : ℝ) : ℂ)) (Finset.range N) := by
+    intro i _ j _ hij
+    have hs : radius (i + 1) ^ 2 = radius (j + 1) ^ 2 := Complex.ofReal_injective hij
+    have hr := (sq_eq_sq₀ (hpositive _ (by omega)).le (hpositive _ (by omega)).le).mp hs
+    exact Nat.add_right_cancel (hstrict.injective hr)
+  have hq : ∀ j ∈ Finset.range N,
+      ((‖x‖ ^ 2 : ℝ) : ℂ) ≠ ((radius (j + 1) ^ 2 : ℝ) : ℂ) := by
+    intro j hj heq
+    exact hx j hj ((sq_eq_sq₀ (norm_nonneg _) (hpositive _ (by omega)).le).mp
+      (Complex.ofReal_injective heq))
+  rw [sphereDenominator_eval_real]
+  simp_rw [Complex.ofReal_sub]
+  exact resolvent_partial_fractions (Finset.range N) _ ha
+    (Finset.nonempty_range_iff.mpr (Nat.ne_of_gt hN)) _ k hq
+
+/-- Finite sums of actual inverse-resolvent distributions have the expected
+Fourier integral representative, including almost-everywhere scalar identities. -/
+theorem distributionFourier_resolvent_sum_integral {ι : Type*}
+    (s : Finset ι) (c : ι → ℂ) (u : ι → TemperedDistribution d)
+    (R : ι → Euclidean d → ℂ)
+    (hR : ∀ i ∈ s, ∀ φ : 𝓢(Euclidean d, ℂ), Integrable (fun x => R i x * φ x))
+    (htransform : ∀ i ∈ s, ∀ φ : 𝓢(Euclidean d, ℂ),
+      distributionFourier (u i) φ = ∫ x, R i x * φ x)
+    (F : Euclidean d → ℂ) (hF : F =ᵐ[volume] fun x => ∑ i ∈ s, c i * R i x)
+    (φ : 𝓢(Euclidean d, ℂ)) :
+    distributionFourier (∑ i ∈ s, c i • u i) φ = ∫ x, F x * φ x := by
+  calc
+    distributionFourier (∑ i ∈ s, c i • u i) φ =
+        ∑ i ∈ s, c i * (∫ x, R i x * φ x) := by
+      simp only [distributionFourier, map_sum, map_smul, ContinuousLinearMap.sum_apply,
+        ContinuousLinearMap.smul_apply, smul_eq_mul]
+      exact Finset.sum_congr rfl fun i hi => congrArg (fun z => c i * z) (htransform i hi φ)
+    _ = ∫ x, (∑ i ∈ s, c i * R i x) * φ x := by
+      simp_rw [Finset.sum_mul, mul_assoc]
+      rw [integral_finset_sum s (fun i hi => (hR i hi φ).const_mul (c i))]
+      simp only [integral_const_mul]
+    _ = ∫ x, F x * φ x := integral_congr_ae (hF.symm.mul Filter.EventuallyEq.rfl)
+
+/-- Finite supported inverse resolvents synthesize an actual supported domain
+vector once their explicit scalar sum has the ball-transform decay. -/
+theorem exists_domainL2_of_resolvent_sum {ι : Type*}
+    (s : Finset ι) (c : ι → ℂ) {S Ω : Set (Euclidean d)}
+    (hS : IsClosed S) (hΩ : MeasurableSet Ω) (hSΩ : S ≤ᵐ[volume] Ω)
+    (u : ι → TemperedDistribution d) (hu : ∀ i ∈ s, DistributionSupportedIn (u i) S)
+    (R : ι → Euclidean d → ℂ)
+    (hR : ∀ i ∈ s, ∀ φ : 𝓢(Euclidean d, ℂ), Integrable (fun x => R i x * φ x))
+    (htransform : ∀ i ∈ s, ∀ φ : 𝓢(Euclidean d, ℂ),
+      distributionFourier (u i) φ = ∫ x, R i x * φ x)
+    (F : Euclidean d → ℂ) (hm : AEStronglyMeasurable F volume)
+    (hF : F =ᵐ[volume] fun x => ∑ i ∈ s, c i * R i x)
+    {C : ℝ} (hC : 0 ≤ C)
+    (hdecay : ∀ᵐ x, ‖F x‖ ≤ C * (1 + ‖x‖) ^ (-((d : ℝ) + 1) / 2)) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f S ∧
+      l2Distribution (domainExtension Ω hΩ f) = ∑ i ∈ s, c i • u i ∧
+      (fourierL2Equiv d (domainExtension Ω hΩ f) : Euclidean d → ℂ) =ᵐ[volume] F := by
+  have hsupport : DistributionSupportedIn (∑ i ∈ s, c i • u i) S := by
+    intro φ hc hd
+    simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply]
+    exact Finset.sum_eq_zero fun i hi => by rw [hu i hi φ hc hd, smul_zero]
+  apply exists_domainL2_of_supported_fourier_decay hS hΩ hSΩ
+    (∑ i ∈ s, c i • u i) hsupport F hm hC hdecay
+  exact distributionFourier_resolvent_sum_integral s c u R hR htransform F hF
+
+/-- Simple physical inverse resolvents and their explicit scalar sum realize
+all bounded-degree polynomial numerators as actual supported domain vectors. -/
+theorem exists_domainL2_polynomial_resolvent_sum {ι : Type*}
+    (s : Finset ι) (c : ι → ℂ) {S Ω : Set (Euclidean d)}
+    (hS : IsClosed S) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hSΩ : S ≤ᵐ[volume] Ω) (u : ι → TemperedDistribution d)
+    (hu : ∀ i ∈ s, DistributionSupportedIn (u i) S) (R : ι → Euclidean d → ℂ)
+    (hR : ∀ i ∈ s, ∀ φ : 𝓢(Euclidean d, ℂ), Integrable (fun x => R i x * φ x))
+    (htransform : ∀ i ∈ s, ∀ φ : 𝓢(Euclidean d, ℂ),
+      distributionFourier (u i) φ = ∫ x, R i x * φ x)
+    (G : Euclidean d → ℂ) (hG : Continuous G)
+    (hGsum : G =ᵐ[volume] fun x => ∑ i ∈ s, c i * R i x) {M : ℕ} {C T : ℝ}
+    (hdecay : ∀ x, T ≤ ‖x‖ →
+      ‖G x‖ ≤ C * (1 + ‖x‖) ^ (-(M : ℝ) - ((d : ℝ) + 1) / 2))
+    (p : ComplexPolynomial d) (hp : p.totalDegree ≤ M) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f S ∧
+      l2Distribution (domainExtension Ω hΩ f) =
+        polynomialDifferentialOperator p (∑ i ∈ s, c i • u i) ∧
+      ∀ ξ, domainEntireFourier Ω hΩ f (realToComplex ξ) = polynomialEvaluation ξ p * G ξ := by
+  have hsupport : DistributionSupportedIn (∑ i ∈ s, c i • u i) S := by
+    intro φ hc hd
+    simp only [ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply]
+    exact Finset.sum_eq_zero fun i hi => by rw [hu i hi φ hc hd, smul_zero]
+  exact exists_domainL2_polynomial_numerator_tail hS hΩ hbounded hSΩ
+    (∑ i ∈ s, c i • u i) hsupport G hG hdecay
+    (distributionFourier_resolvent_sum_integral s c u R hR htransform G hGsum) p hp
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalRealUniqueness.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Uniqueness of entire extensions from real Euclidean space
+
+An affine complex line through the real and imaginary parts reduces uniqueness
+to the one-variable identity theorem.
+-/
+
+noncomputable section
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Entire functions on complex Euclidean space are determined by their real restriction. -/
+theorem entire_eq_of_eq_on_real {d : ℕ} {F G : ComplexEuclidean d → ℂ}
+    (hF : Differentiable ℂ F) (hG : Differentiable ℂ G)
+    (hreal : ∀ x : Euclidean d, F (realToComplex x) = G (realToComplex x)) : F = G := by
+  funext z
+  let x : Euclidean d := (WithLp.equiv 2 _).symm (fun i => (z i).re)
+  let y : Euclidean d := (WithLp.equiv 2 _).symm (fun i => (z i).im)
+  let L : ℂ → ComplexEuclidean d := fun w => realToComplex x + w • realToComplex y
+  have hL : Differentiable ℂ L :=
+    (differentiable_const _).add (differentiable_id.smul_const _)
+  have hdiff : Differentiable ℂ (fun w => F (L w) - G (L w)) :=
+    (hF.comp hL).sub (hG.comp hL)
+  have hzero : ∀ t : ℝ, F (L t) - G (L t) = 0 := by
+    intro t
+    have he : L t = realToComplex (x + t • y) := by
+      ext i
+      simp [L, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul]
+    rw [he, hreal, sub_self]
+  have hz : L Complex.I = z := by
+    ext i
+    simp only [L, PiLp.add_apply, PiLp.smul_apply, realToComplex_apply, x, y,
+      WithLp.equiv_symm_pi_apply, smul_eq_mul]
+    apply Complex.ext <;> simp
+  have h := entire_zero_of_real_zero _ hdiff hzero Complex.I
+  rw [hz] at h
+  exact sub_eq_zero.mp h
+
+/-- The zero-function specialization of uniqueness from the real locus. -/
+theorem entire_eq_zero_of_zero_on_real {d : ℕ} {F : ComplexEuclidean d → ℂ}
+    (hF : Differentiable ℂ F)
+    (hreal : ∀ x : Euclidean d, F (realToComplex x) = 0) : F = 0 :=
+  entire_eq_of_eq_on_real hF (differentiable_const _) hreal
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalBesselAsymptotic.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Oscillator asymptotics for the normalized radial ball transform
+
+The inverse-square perturbation of the harmonic oscillator has bounded energy
+and convergent rotating coefficients. All conclusions are derived from its
+actual differential equation.
+-/
+
+noncomputable section
+open Set Filter
+open scoped Topology
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Harmonic-oscillator energy. -/
+def oscillatorEnergy (h p : ℝ → ℝ) (s : ℝ) : ℝ := h s ^ 2 + p s ^ 2
+
+/-- The cosine coefficient obtained by rotating the oscillator state. -/
+def oscillatorCosCoefficient (h p : ℝ → ℝ) (s : ℝ) : ℝ :=
+  h s * Real.cos s - p s * Real.sin s
+
+/-- The sine coefficient obtained by rotating the oscillator state. -/
+def oscillatorSinCoefficient (h p : ℝ → ℝ) (s : ℝ) : ℝ :=
+  h s * Real.sin s + p s * Real.cos s
+
+/-- Rotation preserves the oscillator energy. -/
+theorem oscillator_coefficients_energy (h p : ℝ → ℝ) (s : ℝ) :
+    oscillatorCosCoefficient h p s ^ 2 + oscillatorSinCoefficient h p s ^ 2 =
+      oscillatorEnergy h p s := by
+  dsimp [oscillatorCosCoefficient, oscillatorSinCoefficient, oscillatorEnergy]
+  nlinarith [Real.sin_sq_add_cos_sq s]
+
+/-- Reconstruction of the first oscillator coordinate. -/
+theorem oscillator_reconstruct (h p : ℝ → ℝ) (s : ℝ) :
+    h s = oscillatorCosCoefficient h p s * Real.cos s +
+      oscillatorSinCoefficient h p s * Real.sin s ∧
+    p s = -oscillatorCosCoefficient h p s * Real.sin s +
+      oscillatorSinCoefficient h p s * Real.cos s := by
+  dsimp [oscillatorCosCoefficient, oscillatorSinCoefficient]
+  constructor
+  · nlinarith [congrArg (fun t : ℝ => h s * t) (Real.sin_sq_add_cos_sq s)]
+  · nlinarith [congrArg (fun t : ℝ => p s * t) (Real.sin_sq_add_cos_sq s)]
+
+/-- The derivative of the energy follows from the exact inverse-square ODE. -/
+theorem oscillatorEnergy_hasDerivAt {h p : ℝ → ℝ} {c s : ℝ}
+    (hh : HasDerivAt h (p s) s) (hp : HasDerivAt p ((c / s ^ 2 - 1) * h s) s) :
+    HasDerivAt (oscillatorEnergy h p) (2 * c / s ^ 2 * h s * p s) s := by
+  convert (hh.pow 2).add (hp.pow 2) using 1
+  dsimp [oscillatorEnergy]
+  ring
+
+/-- Variation of constants for the cosine coefficient. -/
+theorem oscillatorCosCoefficient_hasDerivAt {h p : ℝ → ℝ} {c s : ℝ}
+    (hh : HasDerivAt h (p s) s) (hp : HasDerivAt p ((c / s ^ 2 - 1) * h s) s) :
+    HasDerivAt (oscillatorCosCoefficient h p) (-c / s ^ 2 * h s * Real.sin s) s := by
+  convert (hh.mul (Real.hasDerivAt_cos s)).sub (hp.mul (Real.hasDerivAt_sin s)) using 1
+  dsimp [oscillatorCosCoefficient]
+  ring
+
+/-- Variation of constants for the sine coefficient. -/
+theorem oscillatorSinCoefficient_hasDerivAt {h p : ℝ → ℝ} {c s : ℝ}
+    (hh : HasDerivAt h (p s) s) (hp : HasDerivAt p ((c / s ^ 2 - 1) * h s) s) :
+    HasDerivAt (oscillatorSinCoefficient h p) (c / s ^ 2 * h s * Real.cos s) s := by
+  convert (hh.mul (Real.hasDerivAt_sin s)).add (hp.mul (Real.hasDerivAt_cos s)) using 1
+  dsimp [oscillatorSinCoefficient]
+  ring
+
+/-- The elementary reciprocal derivative used in the tail estimates. -/
+theorem tail_reciprocal_hasDerivAt (C : ℝ) {s : ℝ} (hs : s ≠ 0) :
+    HasDerivAt (fun t : ℝ => C / t) (-C / s ^ 2) s := by
+  convert (hasDerivAt_const s C).div (hasDerivAt_id s) hs using 1
+  simp
+
+/-- An upper energy weight whose derivative is nonpositive. -/
+theorem oscillator_upper_weight_hasDerivAt {h p : ℝ → ℝ} {c s : ℝ} (hs : s ≠ 0)
+    (hh : HasDerivAt h (p s) s) (hp : HasDerivAt p ((c / s ^ 2 - 1) * h s) s) :
+    HasDerivAt (fun t => oscillatorEnergy h p t * Real.exp (|c| / t))
+      (Real.exp (|c| / s) / s ^ 2 *
+        (2 * c * h s * p s - |c| * oscillatorEnergy h p s)) s := by
+  convert (oscillatorEnergy_hasDerivAt hh hp).mul
+    ((tail_reciprocal_hasDerivAt |c| hs).exp) using 1
+  ring
+
+/-- A lower energy weight whose derivative is nonnegative. -/
+theorem oscillator_lower_weight_hasDerivAt {h p : ℝ → ℝ} {c s : ℝ} (hs : s ≠ 0)
+    (hh : HasDerivAt h (p s) s) (hp : HasDerivAt p ((c / s ^ 2 - 1) * h s) s) :
+    HasDerivAt (fun t => oscillatorEnergy h p t * Real.exp (-|c| / t))
+      (Real.exp (-|c| / s) / s ^ 2 *
+        (2 * c * h s * p s + |c| * oscillatorEnergy h p s)) s := by
+  convert (oscillatorEnergy_hasDerivAt hh hp).mul
+    ((tail_reciprocal_hasDerivAt (-|c|) hs).exp) using 1
+  ring
+
+/-- The quadratic energy controls its mixed product for either sign of the potential. -/
+theorem oscillator_mixed_energy_bound (h p : ℝ → ℝ) (c s : ℝ) :
+    |2 * c * h s * p s| ≤ |c| * oscillatorEnergy h p s := by
+  rw [abs_mul, abs_mul, abs_mul, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]
+  have hh := sq_abs (h s)
+  have hp := sq_abs (p s)
+  dsimp [oscillatorEnergy]
+  nlinarith [abs_nonneg c, sq_nonneg (|h s| - |p s|)]
+
+/-- Positive-tail ODE hypotheses produce monotone upper and lower energy weights. -/
+theorem oscillator_weight_monotonicity {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s) :
+    AntitoneOn (fun s => oscillatorEnergy h p s * Real.exp (|c| / s)) (Ici a) ∧
+    MonotoneOn (fun s => oscillatorEnergy h p s * Real.exp (-|c| / s)) (Ici a) := by
+  have hupper := fun s (hs : s ∈ Ici a) =>
+    oscillator_upper_weight_hasDerivAt (ne_of_gt (ha.trans_le hs)) (hh s hs) (hp s hs)
+  have hlower := fun s (hs : s ∈ Ici a) =>
+    oscillator_lower_weight_hasDerivAt (ne_of_gt (ha.trans_le hs)) (hh s hs) (hp s hs)
+  constructor
+  · apply antitoneOn_of_hasDerivWithinAt_nonpos (convex_Ici a)
+      (fun s hs => (hupper s hs).continuousAt.continuousWithinAt)
+      (fun s hs => (hupper s (interior_subset hs)).hasDerivWithinAt)
+    intro s hs
+    apply mul_nonpos_of_nonneg_of_nonpos (by positivity)
+    exact sub_nonpos.mpr ((le_abs_self _).trans (oscillator_mixed_energy_bound h p c s))
+  · apply monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici a)
+      (fun s hs => (hlower s hs).continuousAt.continuousWithinAt)
+      (fun s hs => (hlower s (interior_subset hs)).hasDerivWithinAt)
+    intro s hs
+    apply mul_nonneg (by positivity)
+    have hbound := oscillator_mixed_energy_bound h p c s
+    have habs := neg_abs_le (2 * c * h s * p s)
+    linarith
+
+/-- Uniform upper energy and a strictly positive lower energy are consequences of the ODE. -/
+theorem oscillator_energy_bounds {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s) (s : ℝ) (hs : a ≤ s) :
+    oscillatorEnergy h p a * Real.exp (-|c| / a) ≤ oscillatorEnergy h p s ∧
+    oscillatorEnergy h p s ≤ oscillatorEnergy h p a * Real.exp (|c| / a) := by
+  obtain ⟨hu, hl⟩ := oscillator_weight_monotonicity ha hh hp
+  have hE : 0 ≤ oscillatorEnergy h p s := add_nonneg (sq_nonneg _) (sq_nonneg _)
+  constructor
+  · apply (hl (mem_Ici.mpr le_rfl) hs hs).trans
+    apply mul_le_of_le_one_right hE
+    exact Real.exp_le_one_iff.mpr (div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr (abs_nonneg c))
+      (ha.trans_le hs).le)
+  · apply le_trans ?_ (hu (mem_Ici.mpr le_rfl) hs hs)
+    apply le_mul_of_one_le_right hE
+    exact Real.one_le_exp_iff.mpr (div_nonneg (abs_nonneg c) (ha.trans_le hs).le)
+
+/-- A bounded scalar function with inverse-square derivative bound converges with
+an explicit inverse-linear error. The proof uses monotone reciprocal corrections. -/
+theorem inverse_square_derivative_asymptotic {f f' : ℝ → ℝ} {a C M : ℝ}
+    (ha : 0 < a) (hC : 0 ≤ C) (hf : ∀ s ∈ Ici a, HasDerivAt f (f' s) s)
+    (hbound : ∀ s ∈ Ici a, |f s| ≤ M)
+    (hderiv : ∀ s ∈ Ici a, |f' s| ≤ C / s ^ 2) :
+    ∃ L : ℝ, Tendsto f atTop (𝓝 L) ∧ ∀ s ∈ Ici a, |f s - L| ≤ C / s := by
+  have hminus := fun s (hs : s ∈ Ici a) =>
+    (hf s hs).sub (tail_reciprocal_hasDerivAt C (ne_of_gt (ha.trans_le hs)))
+  have hplus := fun s (hs : s ∈ Ici a) =>
+    (hf s hs).add (tail_reciprocal_hasDerivAt C (ne_of_gt (ha.trans_le hs)))
+  have hm : MonotoneOn (fun s => f s - C / s) (Ici a) := by
+    apply monotoneOn_of_hasDerivWithinAt_nonneg (convex_Ici a)
+      (fun s hs => (hminus s hs).continuousAt.continuousWithinAt)
+      (fun s hs => (hminus s (interior_subset hs)).hasDerivWithinAt)
+    intro s hs
+    have hd := (abs_le.mp (hderiv s (interior_subset hs))).1
+    simp only [neg_div] at *
+    linarith
+  have hp : AntitoneOn (fun s => f s + C / s) (Ici a) := by
+    apply antitoneOn_of_hasDerivWithinAt_nonpos (convex_Ici a)
+      (fun s hs => (hplus s hs).continuousAt.continuousWithinAt)
+      (fun s hs => (hplus s (interior_subset hs)).hasDerivWithinAt)
+    intro s hs
+    have hd := (abs_le.mp (hderiv s (interior_subset hs))).2
+    simp only [neg_div] at *
+    linarith
+  let g : ℝ → ℝ := fun s => f (max a s) - C / max a s
+  have hgmono : Monotone g := fun s t hst =>
+    hm (mem_Ici.mpr (le_max_left a s)) (mem_Ici.mpr (le_max_left a t))
+      (max_le_max le_rfl hst)
+  have hgbdd : BddAbove (range g) := by
+    refine ⟨M, ?_⟩
+    rintro _ ⟨s, rfl⟩
+    dsimp [g]
+    have hd : 0 ≤ C / max a s := div_nonneg hC (ha.trans_le (le_max_left _ _)).le
+    exact (sub_le_self _ hd).trans ((le_abs_self _).trans
+      (hbound _ (mem_Ici.mpr (le_max_left a s))))
+  let L : ℝ := ⨆ s, g s
+  have hglim : Tendsto g atTop (𝓝 L) := tendsto_atTop_ciSup hgmono hgbdd
+  have hmlim : Tendsto (fun s => f s - C / s) atTop (𝓝 L) := by
+    apply hglim.congr'
+    filter_upwards [eventually_ge_atTop a] with s hs
+    simp only [g, max_eq_right hs]
+  have hrecip : Tendsto (fun s : ℝ => C / s) atTop (𝓝 0) := tendsto_id.const_div_atTop C
+  have hflim : Tendsto f atTop (𝓝 L) := by
+    simpa only [sub_add_cancel, add_zero] using hmlim.add hrecip
+  refine ⟨L, hflim, ?_⟩
+  intro s hs
+  have hlower : f s - C / s ≤ L := by
+    apply ge_of_tendsto hmlim
+    filter_upwards [eventually_ge_atTop s] with t ht
+    exact hm hs (hs.trans ht) ht
+  have hupper : L ≤ f s + C / s := by
+    have hplim : Tendsto (fun t => f t + C / t) atTop (𝓝 L) := by
+      simpa only [add_zero] using hflim.add hrecip
+    apply le_of_tendsto hplim
+    filter_upwards [eventually_ge_atTop s] with t ht
+    exact hp hs (hs.trans ht) ht
+  exact abs_le.mpr ⟨by linarith, by linarith⟩
+
+/-- The exact ODE bounds both coordinates of the oscillator state on its positive tail. -/
+theorem oscillator_state_bounded {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ s ∈ Ici a, |h s| ≤ M ∧ |p s| ≤ M := by
+  let U := oscillatorEnergy h p a * Real.exp (|c| / a)
+  have hU : 0 ≤ U := mul_nonneg (add_nonneg (sq_nonneg _) (sq_nonneg _)) (Real.exp_pos _).le
+  refine ⟨U + 1, by positivity, ?_⟩
+  intro s hs
+  have hE := (oscillator_energy_bounds ha hh hp s hs).2
+  change h s ^ 2 + p s ^ 2 ≤ U at hE
+  constructor
+  · nlinarith [sq_abs (h s), abs_nonneg (h s), sq_nonneg (p s), sq_nonneg (|h s| - 1)]
+  · nlinarith [sq_abs (p s), abs_nonneg (p s), sq_nonneg (h s), sq_nonneg (|p s| - 1)]
+
+/-- Both rotating coefficients have limits with inverse-linear errors. These limits
+have nonzero energy whenever the original oscillator state is nonzero. -/
+theorem oscillator_coefficient_asymptotics {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s)
+    (hne : 0 < oscillatorEnergy h p a) :
+    ∃ A B C : ℝ, 0 ≤ C ∧ 0 < A ^ 2 + B ^ 2 ∧
+      Tendsto (oscillatorCosCoefficient h p) atTop (𝓝 A) ∧
+      Tendsto (oscillatorSinCoefficient h p) atTop (𝓝 B) ∧
+      ∀ s ∈ Ici a, |oscillatorCosCoefficient h p s - A| ≤ C / s ∧
+        |oscillatorSinCoefficient h p s - B| ≤ C / s := by
+  obtain ⟨M, hM, hstate⟩ := oscillator_state_bounded ha hh hp
+  let C := |c| * M
+  have hC : 0 ≤ C := mul_nonneg (abs_nonneg c) hM
+  have hcos : ∀ s ∈ Ici a, |oscillatorCosCoefficient h p s| ≤ 2 * M := by
+    intro s hs
+    calc
+      _ ≤ |h s * Real.cos s| + |p s * Real.sin s| := abs_sub _ _
+      _ = |h s| * |Real.cos s| + |p s| * |Real.sin s| := by rw [abs_mul, abs_mul]
+      _ ≤ M * 1 + M * 1 := by
+        gcongr
+        · exact (hstate s hs).1
+        · exact Real.abs_cos_le_one s
+        · exact (hstate s hs).2
+        · exact Real.abs_sin_le_one s
+      _ = _ := by ring
+  have hsin : ∀ s ∈ Ici a, |oscillatorSinCoefficient h p s| ≤ 2 * M := by
+    intro s hs
+    calc
+      _ ≤ |h s * Real.sin s| + |p s * Real.cos s| := abs_add _ _
+      _ = |h s| * |Real.sin s| + |p s| * |Real.cos s| := by rw [abs_mul, abs_mul]
+      _ ≤ M * 1 + M * 1 := by
+        gcongr
+        · exact (hstate s hs).1
+        · exact Real.abs_sin_le_one s
+        · exact (hstate s hs).2
+        · exact Real.abs_cos_le_one s
+      _ = _ := by ring
+  have hcosderiv : ∀ s ∈ Ici a, |-c / s ^ 2 * h s * Real.sin s| ≤ C / s ^ 2 := by
+    intro s hs
+    rw [abs_mul, abs_mul, abs_div, abs_neg, abs_of_nonneg (sq_nonneg s)]
+    calc
+      _ ≤ (|c| / s ^ 2) * M * 1 := by
+        gcongr
+        · exact (hstate s hs).1
+        · exact Real.abs_sin_le_one s
+      _ = _ := by dsimp [C]; ring
+  have hsinderiv : ∀ s ∈ Ici a, |c / s ^ 2 * h s * Real.cos s| ≤ C / s ^ 2 := by
+    intro s hs
+    rw [abs_mul, abs_mul, abs_div, abs_of_nonneg (sq_nonneg s)]
+    calc
+      _ ≤ (|c| / s ^ 2) * M * 1 := by
+        gcongr
+        · exact (hstate s hs).1
+        · exact Real.abs_cos_le_one s
+      _ = _ := by dsimp [C]; ring
+  obtain ⟨A, hA, hAbound⟩ := inverse_square_derivative_asymptotic ha hC
+    (fun s hs => oscillatorCosCoefficient_hasDerivAt (hh s hs) (hp s hs)) hcos hcosderiv
+  obtain ⟨B, hB, hBbound⟩ := inverse_square_derivative_asymptotic ha hC
+    (fun s hs => oscillatorSinCoefficient_hasDerivAt (hh s hs) (hp s hs)) hsin hsinderiv
+  have henergy : Tendsto (fun s => oscillatorEnergy h p s) atTop (𝓝 (A ^ 2 + B ^ 2)) := by
+    simpa only [oscillator_coefficients_energy] using (hA.pow 2).add (hB.pow 2)
+  have hlower : oscillatorEnergy h p a * Real.exp (-|c| / a) ≤ A ^ 2 + B ^ 2 := by
+    apply ge_of_tendsto henergy
+    filter_upwards [eventually_ge_atTop a] with s hs
+    exact (oscillator_energy_bounds ha hh hp s hs).1
+  refine ⟨A, B, C, hC, (mul_pos hne (Real.exp_pos _)).trans_le hlower, hA, hB, ?_⟩
+  intro s hs
+  exact ⟨hAbound s hs, hBbound s hs⟩
+
+/-- The nonzero solution of the inverse-square oscillator is asymptotic to a
+nonzero harmonic oscillation, with an explicit `O(1/s)` error for both coordinates. -/
+theorem inverse_square_oscillator_asymptotic {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s)
+    (hne : 0 < oscillatorEnergy h p a) :
+    ∃ A B C : ℝ, 0 < C ∧ 0 < A ^ 2 + B ^ 2 ∧ ∀ s ∈ Ici a,
+      |h s - (A * Real.cos s + B * Real.sin s)| ≤ C / s ∧
+      |p s - (-A * Real.sin s + B * Real.cos s)| ≤ C / s := by
+  obtain ⟨A, B, C, hC, hne, _, _, hbound⟩ := oscillator_coefficient_asymptotics ha hh hp hne
+  refine ⟨A, B, 2 * C + 1, by positivity, hne, ?_⟩
+  intro s hs
+  have hpos : 0 < s := ha.trans_le hs
+  obtain ⟨hb₁, hb₂⟩ := hbound s hs
+  obtain ⟨hr, pr⟩ := oscillator_reconstruct h p s
+  have hcos := Real.abs_cos_le_one s
+  have hsin := Real.abs_sin_le_one s
+  constructor
+  · calc
+      _ = |(oscillatorCosCoefficient h p s - A) * Real.cos s +
+          (oscillatorSinCoefficient h p s - B) * Real.sin s| := by rw [hr]; congr 1; ring
+      _ ≤ |(oscillatorCosCoefficient h p s - A) * Real.cos s| +
+          |(oscillatorSinCoefficient h p s - B) * Real.sin s| := abs_add _ _
+      _ ≤ C / s * 1 + C / s * 1 := by rw [abs_mul, abs_mul]; gcongr
+      _ ≤ (2 * C + 1) / s := by
+        have := div_pos (by norm_num : (0 : ℝ) < 1) hpos
+        linarith [show (2 * C + 1) / s = 2 * (C / s) + 1 / s by ring]
+  · calc
+      _ = |-(oscillatorCosCoefficient h p s - A) * Real.sin s +
+          (oscillatorSinCoefficient h p s - B) * Real.cos s| := by rw [pr]; congr 1; ring
+      _ ≤ |-(oscillatorCosCoefficient h p s - A) * Real.sin s| +
+          |(oscillatorSinCoefficient h p s - B) * Real.cos s| := abs_add _ _
+      _ ≤ C / s * 1 + C / s * 1 := by rw [abs_mul, abs_mul, abs_neg]; gcongr
+      _ ≤ (2 * C + 1) / s := by
+        have := div_pos (by norm_num : (0 : ℝ) < 1) hpos
+        linarith [show (2 * C + 1) / s = 2 * (C / s) + 1 / s by ring]
+
+/-- Every positive-tail zero is simple, with a uniform quantitative derivative lower bound. -/
+theorem oscillator_derivative_lower_at_zeros {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s)
+    (hne : 0 < oscillatorEnergy h p a) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ s ∈ Ici a, h s = 0 → δ ≤ |p s| := by
+  let L := oscillatorEnergy h p a * Real.exp (-|c| / a)
+  have hL : 0 < L := mul_pos hne (Real.exp_pos _)
+  refine ⟨Real.sqrt L, Real.sqrt_pos.mpr hL, ?_⟩
+  intro s hs hz
+  apply Real.sqrt_le_iff.mpr
+  refine ⟨abs_nonneg _, ?_⟩
+  have henergy := (oscillator_energy_bounds ha hh hp s hs).1
+  simpa only [oscillatorEnergy, hz, zero_pow (by norm_num : 2 ≠ 0), zero_add, sq_abs] using henergy
+
+/-- The second coordinate also has a uniform derivative bound, directly from the ODE. -/
+theorem oscillator_second_derivative_bounded {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s) :
+    ∃ K : ℝ, 0 < K ∧ ∀ s ∈ Ici a, |(c / s ^ 2 - 1) * h s| ≤ K := by
+  obtain ⟨M, hM, hstate⟩ := oscillator_state_bounded ha hh hp
+  let K := (|c| / a ^ 2 + 1) * M + 1
+  refine ⟨K, by dsimp [K]; positivity, ?_⟩
+  intro s hs
+  have hsq : a ^ 2 ≤ s ^ 2 := by
+    have hsa : a ≤ s := hs
+    nlinarith [ha.trans_le hsa]
+  have hcoef : |c / s ^ 2 - 1| ≤ |c| / a ^ 2 + 1 := by
+    calc
+      _ ≤ |c / s ^ 2| + |(1 : ℝ)| := abs_sub _ _
+      _ = |c| / s ^ 2 + 1 := by rw [abs_div, abs_of_nonneg (sq_nonneg s), abs_one]
+      _ ≤ _ := by gcongr
+  rw [abs_mul]
+  have h := mul_le_mul hcoef (hstate s hs).1 (abs_nonneg _) (by positivity)
+  dsimp [K]
+  linarith
+
+/-- Distinct zeros on the positive tail have a uniform positive separation. -/
+theorem oscillator_zeros_separated {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s)
+    (hne : 0 < oscillatorEnergy h p a) :
+    ∃ η : ℝ, 0 < η ∧ ∀ x y : ℝ, a ≤ x → x < y → h x = 0 → h y = 0 → η ≤ y - x := by
+  obtain ⟨δ, hδ, hlower⟩ := oscillator_derivative_lower_at_zeros ha hh hp hne
+  obtain ⟨K, hK, hupper⟩ := oscillator_second_derivative_bounded ha hh hp
+  refine ⟨δ / K, div_pos hδ hK, ?_⟩
+  intro x y hx hxy hzx hzy
+  have hcont : ContinuousOn h (Icc x y) := fun t ht =>
+    (hh t (hx.trans ht.1)).continuousAt.continuousWithinAt
+  obtain ⟨t, ht, hpt⟩ := exists_hasDerivAt_eq_zero hxy hcont (hzx.trans hzy.symm)
+    (fun t ht => hh t (hx.trans ht.1.le))
+  have hmean := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+    (fun s (hs : s ∈ Ici a) => (hp s hs).hasDerivWithinAt)
+    (fun s (hs : s ∈ Ici a) => by simpa only [Real.norm_eq_abs] using hupper s hs)
+    (convex_Ici a) hx (hx.trans ht.1.le)
+  rw [hpt, zero_sub, norm_neg, Real.norm_eq_abs, Real.norm_eq_abs,
+    abs_of_pos (sub_pos.mpr ht.1)] at hmean
+  apply (div_le_iff₀ hK).mpr
+  calc
+    δ ≤ |p x| := hlower x hx hzx
+    _ ≤ K * (t - x) := hmean
+    _ ≤ (y - x) * K := by nlinarith [ht.2]
+
+/-- A state nonzero at one positive point is nonzero at every positive point.
+The same weighted estimates propagate positivity backward as well as forward. -/
+theorem oscillator_energy_positive {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s : ℝ, 0 < s → HasDerivAt h (p s) s)
+    (hp : ∀ s : ℝ, 0 < s → HasDerivAt p ((c / s ^ 2 - 1) * h s) s)
+    (hne : 0 < oscillatorEnergy h p a) (s : ℝ) (hs : 0 < s) :
+    0 < oscillatorEnergy h p s := by
+  by_cases has : a ≤ s
+  · exact (mul_pos hne (Real.exp_pos _)).trans_le
+      (oscillator_energy_bounds ha (fun t ht => hh t (ha.trans_le ht))
+        (fun t ht => hp t (ha.trans_le ht)) s has).1
+  · have hsa : s ≤ a := (lt_of_not_ge has).le
+    have hbound := (oscillator_energy_bounds hs (fun t ht => hh t (hs.trans_le ht))
+      (fun t ht => hp t (hs.trans_le ht)) a hsa).2
+    by_contra hbad
+    have hE : 0 ≤ oscillatorEnergy h p s := add_nonneg (sq_nonneg _) (sq_nonneg _)
+    have hzero : oscillatorEnergy h p s = 0 := le_antisymm (le_of_not_gt hbad) hE
+    rw [hzero, zero_mul] at hbound
+    exact (not_le_of_gt hne) hbound
+
+/-- The actual weighted ball transform has strictly positive energy at every positive radius. -/
+theorem weightedRadialBallFourier_energy_pos (n : ℕ) {s : ℝ} (hs : 0 < s) :
+    0 < oscillatorEnergy (weightedRadialBallFourier n) (weightedRadialBallFourierDeriv n) s := by
+  obtain ⟨a, ha, hne⟩ := exists_pos_weightedRadialBallFourier_energy n
+  exact oscillator_energy_positive ha (fun _ ht => weightedRadialBallFourier_hasDerivAt n ht)
+    (fun _ ht => weightedRadialBallFourierDeriv_hasDerivAt n ht) hne s hs
+
+/-- The actual ball-transform ODE produces a nonzero harmonic asymptotic, including
+its differentiated weighted state, without any asymptotic assumption. -/
+theorem weightedRadialBallFourier_asymptotic (n : ℕ) :
+    ∃ a A B C : ℝ, 0 < a ∧ 0 < C ∧ 0 < A ^ 2 + B ^ 2 ∧ ∀ s : ℝ, a ≤ s →
+      |weightedRadialBallFourier n s - (A * Real.cos s + B * Real.sin s)| ≤ C / s ∧
+      |weightedRadialBallFourierDeriv n s - (-A * Real.sin s + B * Real.cos s)| ≤ C / s := by
+  obtain ⟨a, ha, hne⟩ := exists_pos_weightedRadialBallFourier_energy n
+  obtain ⟨A, B, C, hC, hAB, hbound⟩ := inverse_square_oscillator_asymptotic ha
+    (fun _ ht => weightedRadialBallFourier_hasDerivAt n (ha.trans_le ht))
+    (fun _ ht => weightedRadialBallFourierDeriv_hasDerivAt n (ha.trans_le ht)) hne
+  exact ⟨a, A, B, C, ha, hC, hAB, hbound⟩
+
+/-- Every positive real zero of the actual normalized ball transform is simple. -/
+theorem realRadialBallFourier_deriv_ne_zero_at_zero (n : ℕ) {s : ℝ} (hs : 0 < s)
+    (hz : realRadialBallFourier n s = 0) : deriv (realRadialBallFourier n) s ≠ 0 := by
+  intro hderiv
+  have henergy := weightedRadialBallFourier_energy_pos n hs
+  simp only [oscillatorEnergy, weightedRadialBallFourier, weightedRadialBallFourierDeriv,
+    hz, hderiv, mul_zero, zero_add, zero_pow (by norm_num : 2 ≠ 0)] at henergy
+  exact (lt_irrefl 0) henergy
+
+/-- The derivative at the actual positive ball-transform zeros has a uniform
+weighted lower bound on each positive tail. -/
+theorem realRadialBallFourier_derivative_lower_at_zeros (n : ℕ) {a : ℝ} (ha : 0 < a) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ s : ℝ, a ≤ s → realRadialBallFourier n s = 0 →
+      δ ≤ s ^ ((n + 2 : ℕ) / 2 : ℝ) * |deriv (realRadialBallFourier n) s| := by
+  obtain ⟨δ, hδ, hbound⟩ := oscillator_derivative_lower_at_zeros ha
+    (fun _ ht => weightedRadialBallFourier_hasDerivAt n (ha.trans_le ht))
+    (fun _ ht => weightedRadialBallFourierDeriv_hasDerivAt n (ha.trans_le ht))
+    (weightedRadialBallFourier_energy_pos n ha)
+  refine ⟨δ, hδ, ?_⟩
+  intro s hs hz
+  have h := hbound s hs (by simp only [weightedRadialBallFourier, hz, mul_zero])
+  simpa only [weightedRadialBallFourierDeriv, hz, mul_zero, zero_add, abs_mul,
+    abs_of_pos (Real.rpow_pos_of_pos (ha.trans_le hs) _)] using h
+
+/-- The actual positive real zeros have a uniform minimum separation on each tail. -/
+theorem realRadialBallFourier_zeros_separated (n : ℕ) {a : ℝ} (ha : 0 < a) :
+    ∃ η : ℝ, 0 < η ∧ ∀ x y : ℝ, a ≤ x → x < y →
+      realRadialBallFourier n x = 0 → realRadialBallFourier n y = 0 → η ≤ y - x := by
+  obtain ⟨η, hη, hgap⟩ := oscillator_zeros_separated ha
+    (fun _ ht => weightedRadialBallFourier_hasDerivAt n (ha.trans_le ht))
+    (fun _ ht => weightedRadialBallFourierDeriv_hasDerivAt n (ha.trans_le ht))
+    (weightedRadialBallFourier_energy_pos n ha)
+  refine ⟨η, hη, ?_⟩
+  intro x y hx hxy hzx hzy
+  exact hgap x y hx hxy (by simp only [weightedRadialBallFourier, hzx, mul_zero])
+    (by simp only [weightedRadialBallFourier, hzy, mul_zero])
+
+/-- The normalized ball transform has its true dimension-dependent polynomial decay. -/
+theorem realRadialBallFourier_decay (n : ℕ) {a : ℝ} (ha : 0 < a) :
+    ∃ M : ℝ, 0 ≤ M ∧ ∀ s : ℝ, a ≤ s →
+      |realRadialBallFourier n s| ≤ M * s ^ (-((n + 2 : ℕ) / 2 : ℝ)) := by
+  obtain ⟨M, hM, hstate⟩ := oscillator_state_bounded ha
+    (fun _ ht => weightedRadialBallFourier_hasDerivAt n (ha.trans_le ht))
+    (fun _ ht => weightedRadialBallFourierDeriv_hasDerivAt n (ha.trans_le ht))
+  refine ⟨M, hM, ?_⟩
+  intro s hs
+  have hpos := ha.trans_le hs
+  have hp := Real.rpow_pos_of_pos hpos ((n + 2 : ℕ) / 2 : ℝ)
+  have h := (hstate s hs).1
+  rw [weightedRadialBallFourier, abs_mul, abs_of_pos hp] at h
+  rw [Real.rpow_neg hpos.le]
+  calc
+    _ = (s ^ ((n + 2 : ℕ) / 2 : ℝ) * |realRadialBallFourier n s|) *
+        (s ^ ((n + 2 : ℕ) / 2 : ℝ))⁻¹ := by field_simp
+    _ ≤ M * (s ^ ((n + 2 : ℕ) / 2 : ℝ))⁻¹ := mul_le_mul_of_nonneg_right h (inv_nonneg.mpr hp.le)
+
+/-- A nonzero harmonic combination has periodically recurring positive and negative extrema. -/
+theorem harmonic_oscillation_phase {A B : ℝ} (hne : 0 < A ^ 2 + B ^ 2) :
+    ∃ θ D : ℝ, 0 < D ∧ ∀ n : ℕ,
+      A * Real.cos (θ + n * (2 * Real.pi)) + B * Real.sin (θ + n * (2 * Real.pi)) = D ∧
+      A * Real.cos (θ + n * (2 * Real.pi) + Real.pi) +
+        B * Real.sin (θ + n * (2 * Real.pi) + Real.pi) = -D := by
+  let z : ℂ := A + B * Complex.I
+  have hz : z ≠ 0 := by
+    intro hz
+    have hA := congrArg Complex.re hz
+    have hB := congrArg Complex.im hz
+    simp only [z, Complex.add_re, Complex.ofReal_re, Complex.mul_re, Complex.ofReal_im,
+      Complex.I_re, Complex.I_im, mul_zero, zero_mul, sub_zero, add_zero, Complex.zero_re,
+      Complex.add_im, Complex.mul_im, mul_one, zero_add, Complex.zero_im] at hA hB
+    nlinarith
+  let θ := z.arg
+  let D := ‖z‖
+  have hD : 0 < D := norm_pos_iff.mpr hz
+  have hcos : D * Real.cos θ = A := by simp [D, θ, Complex.norm_mul_cos_arg, z]
+  have hsin : D * Real.sin θ = B := by simp [D, θ, Complex.norm_mul_sin_arg, z]
+  have hvalue : A * Real.cos θ + B * Real.sin θ = D := by
+    rw [← hcos, ← hsin]
+    nlinarith [congrArg (fun t : ℝ => D * t) (Real.sin_sq_add_cos_sq θ)]
+  refine ⟨θ, D, hD, ?_⟩
+  intro n
+  constructor
+  · simpa only [Real.cos_add_nat_mul_two_pi, Real.sin_add_nat_mul_two_pi] using hvalue
+  · simp only [Real.cos_add_pi, Real.sin_add_pi, Real.cos_add_nat_mul_two_pi,
+      Real.sin_add_nat_mul_two_pi]
+    linarith
+
+/-- A nonzero inverse-square oscillator has zeros beyond every real threshold. -/
+theorem inverse_square_oscillator_zeros_unbounded {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s)
+    (hne : 0 < oscillatorEnergy h p a) (R : ℝ) :
+    ∃ s : ℝ, R < s ∧ a ≤ s ∧ h s = 0 := by
+  obtain ⟨A, B, C, hC, hAB, hbound⟩ := inverse_square_oscillator_asymptotic ha hh hp hne
+  obtain ⟨θ, D, hD, hphase⟩ := harmonic_oscillation_phase hAB
+  let T := max a (max R (C / D)) + 1
+  obtain ⟨n, hn⟩ := exists_nat_gt ((T - θ) / (2 * Real.pi))
+  let x := θ + n * (2 * Real.pi)
+  let y := x + Real.pi
+  have hxT : T < x := by
+    have hn := (div_lt_iff₀ (by positivity : 0 < 2 * Real.pi)).mp hn
+    dsimp [x]
+    linarith
+  have hmax : max a (max R (C / D)) < x := (lt_add_one _).trans hxT
+  have hxa : a ≤ x := (le_max_left a (max R (C / D))).trans hmax.le
+  have hxR : R < x :=
+    ((le_max_left R (C / D)).trans (le_max_right a (max R (C / D)))).trans_lt hmax
+  have hxCD : C / D < x :=
+    ((le_max_right R (C / D)).trans (le_max_right a (max R (C / D)))).trans_lt hmax
+  have hxy : x < y := by dsimp [y]; linarith [Real.pi_pos]
+  have hxpos := ha.trans_le hxa
+  have hypos := hxpos.trans hxy
+  have hcx : C / x < D := by
+    apply (div_lt_iff₀ hxpos).mpr
+    have h := (div_lt_iff₀ hD).mp hxCD
+    nlinarith
+  have hcy : C / y < D := by
+    apply (div_lt_iff₀ hypos).mpr
+    have h := (div_lt_iff₀ hD).mp (hxCD.trans hxy)
+    nlinarith
+  have hxerr := (hbound x hxa).1
+  have hyerr := (hbound y (hxa.trans hxy.le)).1
+  rw [(hphase n).1] at hxerr
+  change |h y - (A * Real.cos (θ + n * (2 * Real.pi) + Real.pi) +
+    B * Real.sin (θ + n * (2 * Real.pi) + Real.pi))| ≤ C / y at hyerr
+  rw [(hphase n).2] at hyerr
+  have hxsign : 0 < h x := by have := (abs_le.mp hxerr).1; linarith
+  have hysign : h y < 0 := by have := (abs_le.mp hyerr).2; linarith
+  have hcont : ContinuousOn h (Icc x y) := fun t ht =>
+    (hh t (hxa.trans ht.1)).continuousAt.continuousWithinAt
+  obtain ⟨s, hs, hz⟩ := intermediate_value_Icc' hxy.le hcont ⟨hysign.le, hxsign.le⟩
+  exact ⟨s, hxR.trans_le hs.1, hxa.trans hs.1, hz⟩
+
+/-- The actual normalized ball transform has positive real zeros arbitrarily far out. -/
+theorem realRadialBallFourier_zeros_unbounded (n : ℕ) (R : ℝ) :
+    ∃ s : ℝ, max 0 R < s ∧ realRadialBallFourier n s = 0 := by
+  obtain ⟨a, ha, hne⟩ := exists_pos_weightedRadialBallFourier_energy n
+  obtain ⟨s, hs, hsa, hz⟩ := inverse_square_oscillator_zeros_unbounded ha
+    (fun _ ht => weightedRadialBallFourier_hasDerivAt n (ha.trans_le ht))
+    (fun _ ht => weightedRadialBallFourierDeriv_hasDerivAt n (ha.trans_le ht)) hne (max 0 R)
+  have hpos : 0 < s := (le_max_left 0 R).trans_lt hs
+  refine ⟨s, hs, ?_⟩
+  exact (mul_eq_zero.mp hz).resolve_left (Real.rpow_pos_of_pos hpos _).ne'
+
+/-- Fixed-width recurring intervals on which the normalized oscillator is bounded away
+from zero. Both the width and the lower bound are uniform. -/
+theorem inverse_square_oscillator_recurring_intervals {h p : ℝ → ℝ} {c a : ℝ} (ha : 0 < a)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p ((c / s ^ 2 - 1) * h s) s)
+    (hne : 0 < oscillatorEnergy h p a) :
+    ∃ δ η : ℝ, ∃ q : ℕ → ℝ, 0 < δ ∧ 0 < η ∧
+      (∀ k, a ≤ q k) ∧ (∀ k, q k + δ ≤ q (k + 1)) ∧
+      (∀ R : ℝ, ∃ k, R ≤ q k) ∧
+      ∀ k t, t ∈ Ioc (q k) (q k + δ) → η ≤ |h t| := by
+  obtain ⟨A, B, C, hC, hAB, hbound⟩ := inverse_square_oscillator_asymptotic ha hh hp hne
+  obtain ⟨θ, D, hD, hphase⟩ := harmonic_oscillation_phase hAB
+  obtain ⟨M, hM, hstate⟩ := oscillator_state_bounded ha hh hp
+  let δ := min Real.pi (D / (4 * (M + 1)))
+  have hδ : 0 < δ := lt_min Real.pi_pos (div_pos hD (by positivity))
+  have hδpi : δ ≤ Real.pi := min_le_left _ _
+  have hδD : δ * (4 * (M + 1)) ≤ D :=
+    (le_div_iff₀ (by positivity : 0 < 4 * (M + 1))).mp (min_le_right _ _)
+  let T := max a (2 * C / D) + 1
+  obtain ⟨N, hN⟩ := exists_nat_gt ((T - θ) / (2 * Real.pi))
+  let q : ℕ → ℝ := fun k => θ + ((k + N : ℕ) : ℝ) * (2 * Real.pi)
+  have hbase : T < q 0 := by
+    have hN := (div_lt_iff₀ (by positivity : 0 < 2 * Real.pi)).mp hN
+    dsimp [q]
+    push_cast
+    linarith
+  have hqmono : Monotone q := by
+    intro k j hkj
+    dsimp [q]
+    gcongr
+  have hqT : ∀ k, T < q k := fun k => hbase.trans_le (hqmono (Nat.zero_le k))
+  have hqa : ∀ k, a ≤ q k := fun k =>
+    (le_max_left a (2 * C / D)).trans ((lt_add_one _).trans (hqT k)).le
+  have hqC : ∀ k, 2 * C / D < q k := fun k =>
+    (le_max_right a (2 * C / D)).trans_lt ((lt_add_one _).trans (hqT k))
+  refine ⟨δ, D / 4, q, hδ, by positivity, hqa, ?_, ?_, ?_⟩
+  · intro k
+    dsimp [q]
+    push_cast
+    nlinarith [Real.pi_pos]
+  · intro R
+    obtain ⟨k, hk⟩ := exists_nat_gt ((R - θ) / (2 * Real.pi))
+    refine ⟨k, ?_⟩
+    have hk := (div_lt_iff₀ (by positivity : 0 < 2 * Real.pi)).mp hk
+    dsimp [q]
+    push_cast
+    nlinarith [Real.pi_pos]
+  · intro k t ht
+    have hcenter := (hbound (q k) (hqa k)).1
+    rw [(hphase (k + N)).1] at hcenter
+    have hqpos := ha.trans_le (hqa k)
+    have hsmall : C / q k < D / 2 := by
+      have hc := (div_lt_iff₀ hD).mp (hqC k)
+      apply (div_lt_iff₀ hqpos).mpr
+      calc
+        C = (2 * C) / 2 := by ring
+        _ < (q k * D) / 2 := div_lt_div_of_pos_right hc (by norm_num)
+        _ = D / 2 * q k := by ring
+    have hcenterpos : D / 2 ≤ h (q k) := by
+      have := (abs_le.mp hcenter).1
+      linarith
+    have hmean := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+      (fun s (hs : s ∈ Ici a) => (hh s hs).hasDerivWithinAt)
+      (fun s (hs : s ∈ Ici a) => by simpa only [Real.norm_eq_abs] using (hstate s hs).2)
+      (convex_Ici a) (hqa k) ((hqa k).trans ht.1.le)
+    rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_pos (sub_pos.mpr ht.1)] at hmean
+    have hd : M * (t - q k) ≤ D / 4 := by
+      have htd : t - q k ≤ δ := by linarith only [ht.2]
+      have hmul := mul_le_mul_of_nonneg_left htd hM
+      calc
+        _ ≤ M * δ := hmul
+        _ ≤ M * δ + δ := le_add_of_nonneg_right hδ.le
+        _ = (δ * (4 * (M + 1))) / 4 := by ring
+        _ ≤ D / 4 := div_le_div_of_nonneg_right hδD (by norm_num)
+    have hdrop : h (q k) - h t ≤ D / 4 := by
+      apply (le_abs_self _).trans
+      simpa only [abs_sub_comm] using hmean.trans hd
+    have htpos : D / 4 ≤ h t := by
+      calc
+        _ = D / 2 - D / 4 := by ring
+        _ ≤ h (q k) - D / 4 := sub_le_sub_right hcenterpos _
+        _ ≤ h t := (sub_le_iff_le_add).mpr (by
+          simpa only [add_comm] using (sub_le_iff_le_add).mp hdrop)
+    exact htpos.trans (le_abs_self _)
+
+/-- Squaring the dimensional normalization recovers its integer decay exponent. -/
+theorem weightedRadialBallFourier_sq (n : ℕ) {s : ℝ} (hs : 0 < s) :
+    weightedRadialBallFourier n s ^ 2 = s ^ (n + 2) * realRadialBallFourier n s ^ 2 := by
+  rw [weightedRadialBallFourier, mul_pow]
+  congr 1
+  rw [← Real.rpow_natCast (s ^ ((n + 2 : ℕ) / 2 : ℝ)) 2,
+    ← Real.rpow_mul hs.le, ← Real.rpow_natCast s (n + 2)]
+  congr 1
+  push_cast
+  ring
+
+/-- The actual normalized ball Fourier transform supplies the recurring sharp
+square-decay lower bound required for the polynomial L² degree obstruction. -/
+theorem normalizedBallFourier_recurringSquareLowerBound (n : ℕ) :
+    RecurringRadialSquareLowerBound
+      (fun ξ : RealPoint (n + 1) => normalizedBallFourier (n + 1) (realToComplex ξ)) (n + 2) := by
+  obtain ⟨δ, η, q, hδ, hη, hqpos, hqgap, hqunbounded, hlower⟩ :=
+    inverse_square_oscillator_recurring_intervals (a := 1) (by norm_num)
+      (fun _ ht => weightedRadialBallFourier_hasDerivAt n (by linarith [show (1 : ℝ) ≤ _ from ht]))
+      (fun _ ht => weightedRadialBallFourierDeriv_hasDerivAt n (by linarith [show (1 : ℝ) ≤ _ from ht]))
+      (weightedRadialBallFourier_energy_pos n (by norm_num : (0 : ℝ) < 1))
+  have hπ : 0 < 2 * Real.pi := by positivity
+  let Q : ℕ → ℝ := fun k => q k / (2 * Real.pi)
+  let Δ := δ / (2 * Real.pi)
+  have hΔ : 0 < Δ := div_pos hδ hπ
+  apply recurringRadialSquareLowerBound_of_intervals _ _ (η ^ 2 / (2 * Real.pi) ^ (n + 2))
+    Δ (div_pos (sq_pos_of_pos hη) (pow_pos hπ _)) hΔ Q
+  · intro k
+    change q k / (2 * Real.pi) + δ / (2 * Real.pi) ≤ q (k + 1) / (2 * Real.pi)
+    rw [← add_div]
+    exact (div_le_div_iff_of_pos_right hπ).mpr (hqgap k)
+  · intro R
+    obtain ⟨k, hk⟩ := hqunbounded (R * (2 * Real.pi))
+    exact ⟨k, (le_div_iff₀ hπ).mpr hk⟩
+  · intro k θ r hr
+    have hqr : 0 < q k := lt_of_lt_of_le (by norm_num) (hqpos k)
+    have hrpos : 0 < r := (div_pos hqr hπ).trans hr.1
+    have hscaled : (2 * Real.pi) * r ∈ Ioc (q k) (q k + δ) := by
+      constructor
+      · have h := (div_lt_iff₀ hπ).mp hr.1
+        linarith
+      · have h := hr.2
+        change r ≤ q k / (2 * Real.pi) + δ / (2 * Real.pi) at h
+        rw [← add_div] at h
+        have h := (le_div_iff₀ hπ).mp h
+        linarith
+    have hh := hlower k ((2 * Real.pi) * r) hscaled
+    have hsq : η ^ 2 ≤ ((2 * Real.pi) * r) ^ (n + 2) *
+        |realRadialBallFourier n ((2 * Real.pi) * r)| ^ 2 := by
+      have h : η ^ 2 ≤ |weightedRadialBallFourier n ((2 * Real.pi) * r)| ^ 2 := by
+        nlinarith [abs_nonneg (weightedRadialBallFourier n ((2 * Real.pi) * r))]
+      simpa only [sq_abs, weightedRadialBallFourier_sq n (mul_pos hπ hrpos), sq_abs] using h
+    have hθ : ‖θ.val‖ = 1 := by
+      simpa only [Metric.mem_sphere, dist_zero_right] using θ.property
+    rw [normalizedBallFourier_real_radial, norm_smul, Real.norm_eq_abs, abs_of_pos hrpos,
+      hθ, mul_one, radialBallFourier_ofReal_eq, Complex.norm_real, Real.norm_eq_abs]
+    apply (div_le_iff₀ (pow_pos hπ (n + 2))).mpr
+    convert hsq using 1
+    ring
+
+/-- A positive derivative on a small interval locates an actual nearby zero whenever
+its central value is small. This is the quantitative inverse-function estimate used below. -/
+theorem exists_zero_near_of_derivative_lower {f f' : ℝ → ℝ} {s ρ d : ℝ}
+    (hρ : 0 < ρ) (hd : 0 < d)
+    (hf : ∀ t ∈ Icc (s - ρ) (s + ρ), HasDerivAt f (f' t) t)
+    (hlower : ∀ t ∈ Icc (s - ρ) (s + ρ), d ≤ f' t)
+    (hsmall : |f s| ≤ d * ρ) :
+    ∃ t : ℝ, f t = 0 ∧ |t - s| ≤ |f s| / d := by
+  let L := |f s| / d
+  have hL : 0 ≤ L := div_nonneg (abs_nonneg _) hd.le
+  have hLρ : L ≤ ρ := (div_le_iff₀ hd).mpr (by simpa only [mul_comm] using hsmall)
+  have hdL : d * L = |f s| := by dsimp [L]; field_simp
+  have hs : s ∈ Icc (s - ρ) (s + ρ) := ⟨by linarith, by linarith⟩
+  have hmon : MonotoneOn (fun t => f t - d * t) (Icc (s - ρ) (s + ρ)) := by
+    apply monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc _ _)
+      (fun t ht => ((hf t ht).sub ((hasDerivAt_id t).const_mul d)).continuousAt.continuousWithinAt)
+      (fun t ht => ((hf t (interior_subset ht)).sub
+        ((hasDerivAt_id t).const_mul d)).hasDerivWithinAt)
+    intro t ht
+    simpa only [mul_one] using sub_nonneg.mpr (hlower t (interior_subset ht))
+  by_cases hsign : 0 ≤ f s
+  · have hl : s - L ∈ Icc (s - ρ) (s + ρ) := ⟨by linarith, by linarith⟩
+    have hineq := hmon hl hs (by linarith : s - L ≤ s)
+    dsimp only at hineq
+    have hleft : f (s - L) ≤ 0 := by
+      have habs : |f s| = f s := abs_of_nonneg hsign
+      nlinarith only [hineq, hdL, habs]
+    have hcont : ContinuousOn f (Icc (s - L) s) := fun t ht =>
+      (hf t ⟨hl.1.trans ht.1, ht.2.trans hs.2⟩).continuousAt.continuousWithinAt
+    obtain ⟨t, ht, hz⟩ := intermediate_value_Icc (by linarith : s - L ≤ s) hcont ⟨hleft, hsign⟩
+    refine ⟨t, hz, abs_le.mpr ⟨?_, ?_⟩⟩ <;> linarith [ht.1, ht.2]
+  · have hr : s + L ∈ Icc (s - ρ) (s + ρ) := ⟨by linarith, by linarith⟩
+    have hineq := hmon hs hr (by linarith : s ≤ s + L)
+    dsimp only at hineq
+    have habs : |f s| = -f s := abs_of_neg (lt_of_not_ge hsign)
+    have hright : 0 ≤ f (s + L) := by nlinarith only [hineq, hdL, habs]
+    have hcont : ContinuousOn f (Icc s (s + L)) := fun t ht =>
+      (hf t ⟨hs.1.trans ht.1, ht.2.trans hr.2⟩).continuousAt.continuousWithinAt
+    obtain ⟨t, ht, hz⟩ := intermediate_value_Icc (by linarith : s ≤ s + L) hcont
+      ⟨(lt_of_not_ge hsign).le, hright⟩
+    refine ⟨t, hz, abs_le.mpr ⟨?_, ?_⟩⟩ <;> linarith [ht.1, ht.2]
+
+/-- Positive state energy and a bounded second derivative give the actual quantitative
+distance-to-zero lower bound, by locating a root near every sufficiently small value. -/
+theorem state_energy_distance_lower {h p p' : ℝ → ℝ} {a u K : ℝ} (hu : 0 < u) (hK : 0 < K)
+    (hh : ∀ s ∈ Ici a, HasDerivAt h (p s) s)
+    (hp : ∀ s ∈ Ici a, HasDerivAt p (p' s) s)
+    (henergy : ∀ s ∈ Ici a, u ^ 2 ≤ h s ^ 2 + p s ^ 2)
+    (hsecond : ∀ s ∈ Ici a, |p' s| ≤ K)
+    (Z : Set ℝ) (hzero : ∀ t, a ≤ t → h t = 0 → t ∈ Z) :
+    ∃ C : ℝ, 0 < C ∧ ∀ s : ℝ, a + 1 ≤ s →
+      C * min 1 (Metric.infDist s Z) ≤ |h s| := by
+  let ρ := min 1 (u / (8 * K))
+  have hρ : 0 < ρ := lt_min (by norm_num) (div_pos hu (by positivity))
+  have hρone : ρ ≤ 1 := min_le_left _ _
+  have hρK : K * ρ ≤ u / 8 := by
+    have hb := (le_div_iff₀ (by positivity : 0 < 8 * K)).mp
+      (min_le_right 1 (u / (8 * K)))
+    nlinarith only [hb]
+  let τ := u * ρ / 8
+  let C := min τ (u / 4)
+  have hτ : 0 < τ := by dsimp [τ]; positivity
+  have hC : 0 < C := lt_min hτ (by positivity)
+  refine ⟨C, hC, ?_⟩
+  intro s hs
+  by_cases hbig : τ ≤ |h s|
+  · exact (mul_le_of_le_one_right hC.le (min_le_left _ _)).trans
+      ((min_le_left _ _).trans hbig)
+  · have hsmall : |h s| < τ := lt_of_not_ge hbig
+    have hhs : |h s| < u / 2 := by
+      have hm := mul_le_mul_of_nonneg_left hρone hu.le
+      dsimp [τ] at hsmall
+      nlinarith only [hsmall, hm, hu]
+    have hps : u / 2 ≤ |p s| := by
+      have hE := henergy s (by linarith : a ≤ s)
+      nlinarith only [hE, hhs, abs_nonneg (h s), abs_nonneg (p s), sq_abs (h s), sq_abs (p s), hu]
+    have hlowWindow : a ≤ s - ρ := by linarith only [hs, hρone]
+    have hclose : ∀ t ∈ Icc (s - ρ) (s + ρ), |p t - p s| ≤ u / 8 := by
+      intro t ht
+      have hta : a ≤ t := hlowWindow.trans ht.1
+      have hmean := Convex.norm_image_sub_le_of_norm_hasDerivWithin_le
+        (fun t (ht : t ∈ Ici a) => (hp t ht).hasDerivWithinAt)
+        (fun t (ht : t ∈ Ici a) => by simpa only [Real.norm_eq_abs] using hsecond t ht)
+        (convex_Ici a) (by linarith : a ≤ s) hta
+      have hdist : |t - s| ≤ ρ := abs_le.mpr ⟨by linarith only [ht.1], by linarith only [ht.2]⟩
+      rw [Real.norm_eq_abs, Real.norm_eq_abs] at hmean
+      exact hmean.trans ((mul_le_mul_of_nonneg_left hdist hK.le).trans hρK)
+    have hsmall' : |h s| ≤ (u / 4) * ρ := by
+      dsimp [τ] at hsmall
+      nlinarith only [hsmall, hu, hρ]
+    have hnear : ∃ t : ℝ, h t = 0 ∧ |t - s| ≤ |h s| / (u / 4) := by
+      by_cases hsign : 0 ≤ p s
+      · apply exists_zero_near_of_derivative_lower hρ (by positivity)
+          (fun t ht => hh t (hlowWindow.trans ht.1)) ?_ hsmall'
+        intro t ht
+        have hdiff := (abs_le.mp (hclose t ht)).1
+        rw [abs_of_nonneg hsign] at hps
+        linarith only [hdiff, hps, hu]
+      · obtain ⟨t, hz, hdist⟩ := exists_zero_near_of_derivative_lower (f := fun t => -h t)
+          (f' := fun t => -p t) hρ (by positivity : 0 < u / 4)
+          (fun t ht => (hh t (hlowWindow.trans ht.1)).neg) (by
+            intro t ht
+            have hdiff := (abs_le.mp (hclose t ht)).2
+            rw [abs_of_neg (lt_of_not_ge hsign)] at hps
+            change u / 4 ≤ -p t
+            linarith only [hdiff, hps, hu]) (by simpa only [abs_neg] using hsmall')
+        exact ⟨t, neg_eq_zero.mp hz, by simpa only [abs_neg] using hdist⟩
+    obtain ⟨t, htzero, htdist⟩ := hnear
+    have hdistρ : |t - s| ≤ ρ := htdist.trans ((div_le_iff₀ (by positivity : 0 < u / 4)).mpr
+      (by simpa only [mul_comm] using hsmall'))
+    have hta : a ≤ t := by have := (abs_le.mp hdistρ).1; linarith only [this, hlowWindow]
+    have hinf : Metric.infDist s Z ≤ |h s| / (u / 4) := by
+      apply (Metric.infDist_le_dist_of_mem (hzero t hta htzero)).trans
+      simpa only [Real.dist_eq, abs_sub_comm] using htdist
+    calc
+      _ ≤ C * Metric.infDist s Z := mul_le_mul_of_nonneg_left (min_le_right _ _) hC.le
+      _ ≤ (u / 4) * Metric.infDist s Z := mul_le_mul_of_nonneg_right
+        (min_le_right _ _) Metric.infDist_nonneg
+      _ ≤ (u / 4) * (|h s| / (u / 4)) := mul_le_mul_of_nonneg_left hinf (by positivity)
+      _ = _ := by field_simp; ring
+
+/-- The actual radial ball transform, with any positive real scaling, has the
+quantitative distance factor needed for polynomial quotient cancellation. -/
+theorem realRadialBallFourier_scaled_distance_lower (n : ℕ) {scale : ℝ} (hscale : 0 < scale) :
+    ∃ C R : ℝ, 0 < C ∧ ∀ r : ℝ, R < r →
+      C / (1 + ‖r‖) ^ (n + 2) *
+        min 1 (Metric.infDist r {t : ℝ | realRadialBallFourier n (scale * t) = 0}) ≤
+          |realRadialBallFourier n (scale * r)| := by
+  let h := weightedRadialBallFourier n
+  let p := weightedRadialBallFourierDeriv n
+  let c : ℝ := (n : ℝ) * (n + 2) / 4
+  let p' := fun s : ℝ => (c / s ^ 2 - 1) * h s
+  have hh := fun s (hs : 0 < s) => weightedRadialBallFourier_hasDerivAt n hs
+  have hp := fun s (hs : 0 < s) => weightedRadialBallFourierDeriv_hasDerivAt n hs
+  obtain ⟨K, hK, hsecond⟩ := oscillator_second_derivative_bounded hscale
+    (fun s hs => hh s (hscale.trans_le hs)) (fun s hs => hp s (hscale.trans_le hs))
+  let L := oscillatorEnergy h p scale * Real.exp (-|c| / scale)
+  have hL : 0 < L := mul_pos (weightedRadialBallFourier_energy_pos n hscale) (Real.exp_pos _)
+  let D := min 1 (scale ^ 2)
+  have hD : 0 < D := lt_min (by norm_num) (sq_pos_of_pos hscale)
+  let u := Real.sqrt (L * D)
+  have hu : 0 < u := Real.sqrt_pos.mpr (mul_pos hL hD)
+  have hscaledh : ∀ r ∈ Ici (1 : ℝ),
+      HasDerivAt (fun t => h (scale * t)) (scale * p (scale * r)) r := by
+    intro r hr
+    have hrpos : 0 < r := lt_of_lt_of_le (by norm_num) hr
+    convert (hh (scale * r) (mul_pos hscale hrpos)).comp r ((hasDerivAt_id r).const_mul scale) using 1
+    ring
+  have hscaledp : ∀ r ∈ Ici (1 : ℝ),
+      HasDerivAt (fun t => scale * p (scale * t)) (scale ^ 2 * p' (scale * r)) r := by
+    intro r hr
+    have hrpos : 0 < r := lt_of_lt_of_le (by norm_num) hr
+    convert ((hp (scale * r) (mul_pos hscale hrpos)).comp r ((hasDerivAt_id r).const_mul scale)).const_mul scale using 1
+    dsimp [p', h, c]
+    ring
+  have hscaledE : ∀ r ∈ Ici (1 : ℝ), u ^ 2 ≤ h (scale * r) ^ 2 + (scale * p (scale * r)) ^ 2 := by
+    intro r hr
+    have hsr : scale ≤ scale * r := by nlinarith only [hscale, show (1 : ℝ) ≤ r from hr]
+    have hE := (oscillator_energy_bounds hscale (fun s hs => hh s (hscale.trans_le hs))
+      (fun s hs => hp s (hscale.trans_le hs)) (scale * r) hsr).1
+    change L ≤ h (scale * r) ^ 2 + p (scale * r) ^ 2 at hE
+    rw [Real.sq_sqrt (mul_pos hL hD).le]
+    calc
+      _ ≤ D * (h (scale * r) ^ 2 + p (scale * r) ^ 2) := by nlinarith only [hE, hD]
+      _ ≤ h (scale * r) ^ 2 + (scale * p (scale * r)) ^ 2 := by
+        have h1 := mul_le_mul_of_nonneg_right (min_le_left 1 (scale ^ 2)) (sq_nonneg (h (scale * r)))
+        have h2 := mul_le_mul_of_nonneg_right (min_le_right 1 (scale ^ 2)) (sq_nonneg (p (scale * r)))
+        dsimp [D]
+        nlinarith only [h1, h2]
+  have hscaledK : ∀ r ∈ Ici (1 : ℝ), |scale ^ 2 * p' (scale * r)| ≤ scale ^ 2 * K := by
+    intro r hr
+    rw [abs_mul, abs_of_nonneg (sq_nonneg scale)]
+    apply mul_le_mul_of_nonneg_left _ (sq_nonneg _)
+    exact hsecond (scale * r) (by
+      change scale ≤ scale * r
+      simpa only [mul_one] using mul_le_mul_of_nonneg_left hr hscale.le)
+  obtain ⟨C, hC, hdist⟩ := state_energy_distance_lower (a := 1) hu (mul_pos (sq_pos_of_pos hscale) hK)
+    hscaledh hscaledp hscaledE hscaledK
+    {t : ℝ | realRadialBallFourier n (scale * t) = 0} (by
+      intro t ht hz
+      have htpos : 0 < t := lt_of_lt_of_le (by norm_num) ht
+      exact (mul_eq_zero.mp hz).resolve_left (Real.rpow_pos_of_pos (mul_pos hscale htpos) _).ne')
+  refine ⟨C / scale ^ (n + 2), max 2 (1 / scale), div_pos hC (pow_pos hscale _), ?_⟩
+  intro r hr
+  have hr2 : 2 < r := (le_max_left _ _).trans_lt hr
+  have hrpos : 0 < r := by linarith only [hr2]
+  have hsr : 1 ≤ scale * r := by
+    have h := (div_lt_iff₀ hscale).mp ((le_max_right _ _).trans_lt hr)
+    linarith only [h]
+  have hweight : (scale * r) ^ ((n + 2 : ℕ) / 2 : ℝ) ≤ scale ^ (n + 2) * (1 + ‖r‖) ^ (n + 2) := by
+    calc
+      _ ≤ (scale * r) ^ ((n + 2 : ℕ) : ℝ) := Real.rpow_le_rpow_of_exponent_le hsr (by
+        push_cast
+        linarith [(Nat.cast_nonneg n : (0 : ℝ) ≤ (n : ℝ))])
+      _ = scale ^ (n + 2) * r ^ (n + 2) := by rw [Real.rpow_natCast, mul_pow]
+      _ ≤ _ := by
+        gcongr
+        rw [Real.norm_eq_abs, abs_of_pos hrpos]
+        linarith
+  have hdist := hdist r (by linarith only [hr2])
+  change C * min 1 (Metric.infDist r {t : ℝ | realRadialBallFourier n (scale * t) = 0}) ≤
+    |weightedRadialBallFourier n (scale * r)| at hdist
+  rw [weightedRadialBallFourier, abs_mul, abs_of_pos (Real.rpow_pos_of_pos (mul_pos hscale hrpos) _)] at hdist
+  have hbound := hdist.trans (mul_le_mul_of_nonneg_right hweight (abs_nonneg _))
+  rw [div_mul_eq_mul_div]
+  apply (div_le_iff₀ (by positivity : 0 < (1 + ‖r‖) ^ (n + 2))).mpr
+  rw [div_mul_eq_mul_div]
+  apply (div_le_iff₀ (pow_pos hscale (n + 2))).mpr
+  convert hbound using 1
+  ring
+
+/-- The physical `2π` radial profile of the actual ball Fourier transform has the
+integer polynomial distance lower bound used for division on real frequencies. -/
+theorem radialBallFourier_physical_distance_lower (n : ℕ) :
+    ∃ C R : ℝ, 0 < C ∧ ∀ r : ℝ, R < r →
+      C / (1 + ‖r‖) ^ (n + 2) * min 1
+        (Metric.infDist r {t : ℝ | radialBallFourier n ((2 * Real.pi * t : ℝ) : ℂ) = 0}) ≤
+          ‖radialBallFourier n ((2 * Real.pi * r : ℝ) : ℂ)‖ := by
+  simpa only [radialBallFourier_ofReal_eq, Complex.ofReal_eq_zero, Complex.norm_real,
+    Real.norm_eq_abs] using
+    realRadialBallFourier_scaled_distance_lower n (scale := 2 * Real.pi) (by positivity)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalWeakDerivatives.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+open MeasureTheory Measure Module Topology Filter Set
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The integral of an integrable derivative of an integrable continuous function
+vanishes even when the derivative has countably many exceptional points. -/
+theorem integral_eq_zero_of_hasDerivAt_off_countable
+    {f f' : ℝ → ℂ} {S : Set ℝ} (hS : S.Countable) (hf : Continuous f)
+    (hderiv : ∀ x ∉ S, HasDerivAt f (f' x) x)
+    (hf' : Integrable f') (hfi : Integrable f) : ∫ x, f' x = 0 := by
+  have hFTC (a b : ℝ) : ∫ x in a..b, f' x = f b - f a :=
+    integral_eq_of_hasDerivWithinAt_off_countable f f' hS hf.continuousOn
+      (fun x hx => hderiv x hx.2) hf'.intervalIntegrable
+  let T : ℂ := (∫ x in Ioi (0 : ℝ), f' x) + f 0
+  let B : ℂ := f 0 - (∫ x in Iic (0 : ℝ), f' x)
+  have htop : Tendsto f atTop (𝓝 T) := by
+    have h := (intervalIntegral_tendsto_integral_Ioi 0 hf'.integrableOn
+      (tendsto_id : Tendsto (id : ℝ → ℝ) atTop atTop)).add_const (f 0)
+    apply h.congr
+    intro x
+    rw [hFTC]
+    simp
+  have hbot : Tendsto f atBot (𝓝 B) := by
+    have h := (intervalIntegral_tendsto_integral_Iic 0 hf'.integrableOn
+      (tendsto_id : Tendsto (id : ℝ → ℝ) atBot atBot)).const_sub (f 0)
+    apply h.congr
+    intro x
+    rw [hFTC]
+    abel
+  have hT : T = 0 := by
+    apply IntegrableAtFilter.eq_zero_of_tendsto
+      (show IntegrableAtFilter f atTop volume from ⟨univ, univ_mem, hfi.integrableOn⟩) ?_ htop
+    intro s hs
+    obtain ⟨b, hb⟩ := mem_atTop_sets.mp hs
+    rw [← top_le_iff, ← Real.volume_Ici (a := b)]
+    exact measure_mono hb
+  have hB : B = 0 := by
+    apply IntegrableAtFilter.eq_zero_of_tendsto
+      (show IntegrableAtFilter f atBot volume from ⟨univ, univ_mem, hfi.integrableOn⟩) ?_ hbot
+    intro s hs
+    obtain ⟨b, hb⟩ := mem_atBot_sets.mp hs
+    rw [← top_le_iff, ← Real.volume_Iic (a := b)]
+    exact measure_mono hb
+  have hwhole := intervalIntegral_tendsto_integral hf'
+    (tendsto_neg_atTop_atBot : Tendsto (fun x : ℝ => -x) atTop atBot)
+    (tendsto_id : Tendsto (id : ℝ → ℝ) atTop atTop)
+  have hzero : Tendsto (fun x : ℝ => ∫ t in (-x)..x, f' t) atTop (𝓝 (0 : ℂ)) := by
+    have h := htop.sub (hbot.comp tendsto_neg_atTop_atBot)
+    rw [hT, hB, sub_zero] at h
+    exact h.congr (fun x => (hFTC (-x) x).symm)
+  exact tendsto_nhds_unique hwhole hzero
+
+/-- One-dimensional integration by parts with countably many exceptional derivative
+points. Continuity excludes jumps at those points. -/
+theorem integral_mul_hasDerivAt_off_countable_eq_neg_left
+    {f f' g g' : ℝ → ℂ} {S : Set ℝ} (hS : S.Countable)
+    (hf : Continuous f) (hg : Continuous g)
+    (hderiv : ∀ x ∉ S, HasDerivAt f (f' x) x)
+    (hgderiv : ∀ x, HasDerivAt g (g' x) x)
+    (hfg' : Integrable (fun x => f x * g' x))
+    (hf'g : Integrable (fun x => f' x * g x))
+    (hfg : Integrable (fun x => f x * g x)) :
+    ∫ x, f x * g' x = - ∫ x, f' x * g x := by
+  have hzero := integral_eq_zero_of_hasDerivAt_off_countable hS (hf.mul hg)
+    (fun x hx => (hderiv x hx).mul (hgderiv x)) (hf'g.add hfg') hfg
+  rw [integral_add hf'g hfg'] at hzero
+  exact eq_neg_of_add_eq_zero_right hzero
+
+/-- The product-space Fubini step for the exceptional-line integration by parts. -/
+theorem integral_mul_hasDerivAt_off_countable_prod
+    {E : Type*} [MeasurableSpace E] {μ : Measure E} [SigmaFinite μ]
+    {f f' g g' : E × ℝ → ℂ}
+    (hf'g : Integrable (fun x => f' x * g x) (μ.prod volume))
+    (hfg' : Integrable (fun x => f x * g' x) (μ.prod volume))
+    (hfg : Integrable (fun x => f x * g x) (μ.prod volume))
+    (hf : ∀ x, Continuous (fun t => f (x, t)))
+    (hg : ∀ x, Continuous (fun t => g (x, t)))
+    (hderiv : ∀ x, ∃ S : Set ℝ, S.Countable ∧
+      ∀ t ∉ S, HasDerivAt (fun t => f (x, t)) (f' (x, t)) t)
+    (hgderiv : ∀ x t, HasDerivAt (fun t => g (x, t)) (g' (x, t)) t) :
+    ∫ x, f x * g' x ∂μ.prod volume = - ∫ x, f' x * g x ∂μ.prod volume := by
+  rw [integral_prod _ hfg', integral_prod _ hf'g, ← integral_neg]
+  apply integral_congr_ae
+  filter_upwards [hf'g.prod_right_ae, hfg'.prod_right_ae, hfg.prod_right_ae]
+    with x hf'gx hfg'x hfgx
+  obtain ⟨S, hS, hderivx⟩ := hderiv x
+  exact integral_mul_hasDerivAt_off_countable_eq_neg_left hS (hf x) (hg x)
+    hderivx (hgderiv x) hfg'x hf'gx hfgx
+
+/-- Product-space integration by parts for an arbitrary Haar measure, allowing
+countable exceptional points on every vertical line. -/
+theorem integral_mul_hasLineDerivAt_off_countable_prod_haar
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
+    {μ : Measure (E × ℝ)} [IsAddHaarMeasure μ]
+    {f f' g g' : E × ℝ → ℂ} {S : Set (E × ℝ)}
+    (hf'g : Integrable (fun x => f' x * g x) μ)
+    (hfg' : Integrable (fun x => f x * g' x) μ)
+    (hfg : Integrable (fun x => f x * g x) μ)
+    (hf : Continuous f) (hg : Continuous g)
+    (hS : ∀ x : E × ℝ, {t : ℝ | x + t • (0, 1) ∈ S}.Countable)
+    (hderiv : ∀ x ∉ S, HasLineDerivAt ℝ f (f' x) x (0, 1))
+    (hgderiv : ∀ x, HasLineDerivAt ℝ g (g' x) x (0, 1)) :
+    ∫ x, f x * g' x ∂μ = - ∫ x, f' x * g x ∂μ := by
+  let ν : Measure E := addHaar
+  have A : ν.prod volume = (addHaarScalarFactor (ν.prod volume) μ) • μ :=
+    isAddLeftInvariant_eq_smul _ _
+  have Hf'g : Integrable (fun x => f' x * g x) (ν.prod volume) := by
+    rw [A]; exact hf'g.smul_measure_nnreal
+  have Hfg' : Integrable (fun x => f x * g' x) (ν.prod volume) := by
+    rw [A]; exact hfg'.smul_measure_nnreal
+  have Hfg : Integrable (fun x => f x * g x) (ν.prod volume) := by
+    rw [A]; exact hfg.smul_measure_nnreal
+  have H := integral_mul_hasDerivAt_off_countable_prod Hf'g Hfg' Hfg
+    (fun x => hf.comp (continuous_const.prodMk continuous_id))
+    (fun x => hg.comp (continuous_const.prodMk continuous_id))
+    (fun x => ?_) (fun x t => ?_)
+  · rw [isAddLeftInvariant_eq_smul μ (ν.prod volume)]
+    simp [H]
+  · refine ⟨{t : ℝ | (x, (0 : ℝ)) + t • (0, 1) ∈ S}, hS (x, 0), ?_⟩
+    intro t ht
+    have hnot : (x, t) ∉ S := by simpa using ht
+    convert (hderiv (x, t) hnot).scomp_of_eq t
+      ((hasDerivAt_id t).add (hasDerivAt_const t (-t))) (by simp) using 1 <;>
+      simp [Function.comp_def, add_comm, add_left_comm]
+  · convert (hgderiv (x, t)).scomp_of_eq t
+      ((hasDerivAt_id t).add (hasDerivAt_const t (-t))) (by simp) using 1 <;>
+      simp [Function.comp_def, add_comm, add_left_comm]
+
+/-- Integration by parts along a nonzero direction with countable exceptional points
+on each affine line. The differentiated function remains continuous across the
+exceptional set, so no boundary distribution is introduced. -/
+theorem integral_mul_hasLineDerivAt_off_countable_eq_neg_left
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
+    {μ : Measure E} [IsAddHaarMeasure μ]
+    {f f' g g' : E → ℂ} {S : Set E} {v : E} (hv : v ≠ 0)
+    (hf'g : Integrable (fun x => f' x * g x) μ)
+    (hfg' : Integrable (fun x => f x * g' x) μ)
+    (hfg : Integrable (fun x => f x * g x) μ)
+    (hf : Continuous f) (hg : Continuous g)
+    (hS : ∀ x : E, {t : ℝ | x + t • v ∈ S}.Countable)
+    (hderiv : ∀ x ∉ S, HasLineDerivAt ℝ f (f' x) x v)
+    (hgderiv : ∀ x, HasLineDerivAt ℝ g (g' x) x v) :
+    ∫ x, f x * g' x ∂μ = - ∫ x, f' x * g x ∂μ := by
+  haveI : Nontrivial E := nontrivial_iff.mpr ⟨v, 0, hv⟩
+  let n := finrank ℝ E
+  let E' := Fin (n - 1) → ℝ
+  obtain ⟨L, hLv⟩ : ∃ L : E ≃L[ℝ] (E' × ℝ), L v = (0, 1) := by
+    have hdim : finrank ℝ (E' × ℝ) = n := by
+      simpa [E'] using Nat.sub_add_cancel (finrank_pos (R := ℝ) (M := E))
+    let L₀ : E ≃L[ℝ] (E' × ℝ) := (ContinuousLinearEquiv.ofFinrankEq hdim).symm
+    obtain ⟨M, hM⟩ : ∃ M : (E' × ℝ) ≃L[ℝ] (E' × ℝ), M (L₀ v) = (0, 1) := by
+      apply SeparatingDual.exists_continuousLinearEquiv_apply_eq
+      · simpa using hv
+      · simp
+    exact ⟨L₀.trans M, by simp [hM]⟩
+  let ν := Measure.map L μ
+  suffices H : ∫ x : E' × ℝ, f (L.symm x) * g' (L.symm x) ∂ν =
+      - ∫ x : E' × ℝ, f' (L.symm x) * g (L.symm x) ∂ν by
+    have hmap : μ = Measure.map L.symm ν := by
+      simp [ν, Measure.map_map L.symm.continuous.measurable L.continuous.measurable]
+    have hemb : IsClosedEmbedding L.symm := L.symm.toHomeomorph.isClosedEmbedding
+    simpa [hmap, hemb.integral_map] using H
+  have Lemb : MeasurableEmbedding L := L.toHomeomorph.measurableEmbedding
+  apply integral_mul_hasLineDerivAt_off_countable_prod_haar
+    (S := L.symm ⁻¹' S)
+  · simpa [ν, Lemb.integrable_map_iff, Function.comp_def] using hf'g
+  · simpa [ν, Lemb.integrable_map_iff, Function.comp_def] using hfg'
+  · simpa [ν, Lemb.integrable_map_iff, Function.comp_def] using hfg
+  · exact hf.comp L.symm.continuous
+  · exact hg.comp L.symm.continuous
+  · intro x
+    have heq : {t : ℝ | x + t • (0, 1) ∈ L.symm ⁻¹' S} =
+        {t : ℝ | L.symm x + t • v ∈ S} := by
+      ext t
+      simp [← hLv]
+    rw [heq]
+    exact hS (L.symm x)
+  · intro x hx
+    have heq : f = (f ∘ L.symm) ∘ (L : E →ₗ[ℝ] (E' × ℝ)) := by ext y; simp
+    have h := hderiv (L.symm x) hx
+    rw [heq] at h
+    convert h.of_comp using 1
+    · simp
+    · simp [← hLv]
+  · intro x
+    have heq : g = (g ∘ L.symm) ∘ (L : E →ₗ[ℝ] (E' × ℝ)) := by ext y; simp
+    have h := hgderiv (L.symm x)
+    rw [heq] at h
+    convert h.of_comp using 1
+    · simp
+    · simp [← hLv]
+
+/-- A smooth test function against a continuous function whose directional derivative
+is defined off a set meeting every line in countably many points. -/
+theorem integral_mul_fderiv_off_countable_eq_neg_left
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E]
+    {μ : Measure E} [IsAddHaarMeasure μ]
+    {f f' ψ : E → ℂ} {S : Set E} {v : E} (hv : v ≠ 0)
+    (hf'ψ : Integrable (fun x => f' x * ψ x) μ)
+    (hfψ' : Integrable (fun x => f x * fderiv ℝ ψ x v) μ)
+    (hfψ : Integrable (fun x => f x * ψ x) μ)
+    (hf : Continuous f) (hψ : Differentiable ℝ ψ)
+    (hS : ∀ x : E, {t : ℝ | x + t • v ∈ S}.Countable)
+    (hderiv : ∀ x ∉ S, HasLineDerivAt ℝ f (f' x) x v) :
+    ∫ x, f x * fderiv ℝ ψ x v ∂μ = - ∫ x, f' x * ψ x ∂μ :=
+  integral_mul_hasLineDerivAt_off_countable_eq_neg_left hv hf'ψ hfψ' hfψ hf hψ.continuous
+    hS hderiv (fun x => (hψ x).hasFDerivAt.hasLineDerivAt v)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalResolvent.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# A genuine compactly supported ball Helmholtz resolvent
+
+The adjacent radial solution is constructed from the actual ball Fourier series.
+Its squared-radius formula is smooth at the origin and has zero value and first
+normal derivative at the chosen boundary zero. Off-countable-line integration
+by parts proves the zero-extended distributional equation. The Fourier quotient
+then follows from actual Fourier derivative symbols and test-function uniqueness.
+-/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap FourierTransform ENNReal Topology
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Zero extension preserves a zero derivative at a zero of the original
+function, independently of the geometry of the extension set. -/
+theorem hasFDerivAt_indicator_zero {E F : Type*} [NormedAddCommGroup E]
+    [NormedSpace ℝ E] [NormedAddCommGroup F] [NormedSpace ℝ F]
+    {S : Set E} {f : E → F} {x : E} (hf : HasFDerivAt f (0 : E →L[ℝ] F) x)
+    (hx : f x = 0) : HasFDerivAt (S.indicator f) (0 : E →L[ℝ] F) x := by
+  classical
+  rw [hasFDerivAt_iff_isLittleO_nhds_zero] at hf ⊢
+  have hix : S.indicator f x = 0 := by simp [Set.indicator_apply, hx]
+  simp only [hx, hix, ContinuousLinearMap.zero_apply, sub_zero] at hf ⊢
+  apply Asymptotics.IsLittleO.of_bound
+  intro ε hε
+  filter_upwards [hf.bound hε] with y hy
+  by_cases hxy : x + y ∈ S
+  · simpa only [Set.indicator_of_mem hxy] using hy
+  · simp only [Set.indicator_of_not_mem hxy, norm_zero]
+    exact mul_nonneg hε.le (norm_nonneg y)
+
+/-- The primitive spherical radial solution, in the squared variable. This
+representation is smooth at the spatial origin. -/
+def ballHelmholtzSquare (n : ℕ) (z : ℂ) : ℂ :=
+  ballSquareFunction n z + (2 / (n + 1 : ℕ) : ℂ) * z * deriv (ballSquareFunction n) z
+
+theorem ballHelmholtzSquare_analytic (n : ℕ) :
+    AnalyticOnNhd ℂ (ballHelmholtzSquare n) Set.univ := by
+  exact (ballSquareFunction_analytic n).add
+    ((analyticOnNhd_const.mul analyticOnNhd_id).mul (ballSquareFunction_analytic n).deriv)
+
+/-- The ball equation differentiates to the adjacent spherical solution. -/
+theorem ballHelmholtzSquare_hasDerivAt (n : ℕ) (z : ℂ) :
+    HasDerivAt (ballHelmholtzSquare n)
+      (-ballSquareFunction n z / (2 * (n + 1 : ℕ))) z := by
+  have hF := ((ballSquareFunction_analytic n) z (mem_univ _)).differentiableAt.hasDerivAt
+  have hF' := ((ballSquareFunction_analytic n).deriv z (mem_univ _)).differentiableAt.hasDerivAt
+  have h := hF.add (((hasDerivAt_id z).const_mul (2 / (n + 1 : ℕ) : ℂ)).mul hF')
+  convert h using 1
+  have hd : (n + 1 : ℂ) ≠ 0 := by exact_mod_cast (by omega : n + 1 ≠ 0)
+  have ho := ballSquareFunction_ode n z
+  dsimp only [id]
+  push_cast at ho ⊢
+  field_simp [hd]
+  linear_combination -(n + 1 : ℂ) * ho
+
+theorem ballHelmholtzSquare_deriv (n : ℕ) (z : ℂ) :
+    deriv (ballHelmholtzSquare n) z =
+      -ballSquareFunction n z / (2 * (n + 1 : ℕ)) :=
+  (ballHelmholtzSquare_hasDerivAt n z).deriv
+
+/-- The adjacent spherical solution satisfies its own squared radial equation. -/
+theorem ballHelmholtzSquare_ode (n : ℕ) (z : ℂ) :
+    4 * z * deriv (deriv (ballHelmholtzSquare n)) z +
+      2 * (n + 1 : ℕ) * deriv (ballHelmholtzSquare n) z +
+      ballHelmholtzSquare n z = 0 := by
+  have hF := ((ballSquareFunction_analytic n) z (mem_univ _)).differentiableAt.hasDerivAt
+  have hd : (n + 1 : ℂ) ≠ 0 := by exact_mod_cast (by omega : n + 1 ≠ 0)
+  have hsecond : deriv (deriv (ballHelmholtzSquare n)) z =
+      -deriv (ballSquareFunction n) z / (2 * (n + 1 : ℕ)) := by
+    have h := hF.neg.div_const (2 * (n + 1 : ℕ) : ℂ)
+    have he : deriv (ballHelmholtzSquare n) =
+        fun w => -ballSquareFunction n w / (2 * (n + 1 : ℕ)) :=
+      funext (ballHelmholtzSquare_deriv n)
+    rw [he]
+    exact h.deriv
+  rw [hsecond, ballHelmholtzSquare_deriv, ballHelmholtzSquare]
+  push_cast
+  field_simp [hd]
+  ring
+
+/-- The interior physical-space formula, expressed in a smooth squared radius. -/
+def ballResolventInterior (n : ℕ) (a : ℝ) (x : Euclidean (n + 1)) : ℂ :=
+  (ballHelmholtzSquare n ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ) /
+      ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) - 1) /
+    ((ballVolume (n + 1) : ℂ) * (a ^ 2 : ℝ))
+
+/-- The actual physical resolvent formula with zero extension outside the ball. -/
+def ballResolvent (n : ℕ) (a : ℝ) : Euclidean (n + 1) → ℂ :=
+  (physicalUnitBall (n + 1)).indicator (ballResolventInterior n a)
+
+theorem ballResolventInterior_contDiff (n : ℕ) (a : ℝ) :
+    ContDiff ℝ ⊤ (ballResolventInterior n a) := by
+  have hB : ContDiff ℝ ⊤ (ballHelmholtzSquare n) :=
+    (ballHelmholtzSquare_analytic n).restrictScalars.contDiff
+  have hr : ContDiff ℝ ⊤ (fun x : Euclidean (n + 1) =>
+      ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ)) :=
+    Complex.ofRealCLM.contDiff.comp (contDiff_const.mul (contDiff_norm_sq ℝ))
+  exact (((hB.comp hr).div_const _).sub contDiff_const).div_const _
+
+/-- The physical expression vanishes at the unit sphere. -/
+theorem ballResolventInterior_boundary (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0)
+    {x : Euclidean (n + 1)} (hx : ‖x‖ = 1) : ballResolventInterior n a x = 0 := by
+  unfold ballResolventInterior
+  simp only [hx, one_pow, mul_one, div_self hb, sub_self, zero_div]
+
+theorem ballResolvent_tsupport_subset (n : ℕ) (a : ℝ) :
+    tsupport (ballResolvent n a) ⊆ Metric.closedBall (0 : Euclidean (n + 1)) 1 := by
+  apply closure_minimal _ Metric.isClosed_closedBall
+  intro x hx
+  exact Metric.ball_subset_closedBall (Set.mem_of_indicator_ne_zero hx)
+
+theorem ballResolvent_hasCompactSupport (n : ℕ) (a : ℝ) :
+    HasCompactSupport (ballResolvent n a) :=
+  (isCompact_closedBall (0 : Euclidean (n + 1)) 1).of_isClosed_subset
+    isClosed_closure (ballResolvent_tsupport_subset n a)
+
+/-- The adjacent solution equals the original solution plus its radial derivative. -/
+theorem ballHelmholtzSquare_at_radius (n : ℕ) (s : ℂ) :
+    ballHelmholtzSquare n (s ^ 2) = radialBallFourier n s +
+      s / (n + 1 : ℕ) * deriv (radialBallFourier n) s := by
+  rw [radialBallFourier_deriv, radialBallFourier_eq_squareFunction]
+  unfold ballHelmholtzSquare
+  simp only [div_eq_mul_inv]
+  ring
+
+/-- A positive simple ball-transform zero has a nonzero adjacent solution. -/
+theorem ballHelmholtzSquare_ne_zero_of_simple_zero (n : ℕ) {a : ℝ} (ha : 0 < a)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hd : deriv (radialBallFourier n) (a : ℂ) ≠ 0) :
+    ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0 := by
+  rw [Complex.ofReal_pow, ballHelmholtzSquare_at_radius, hz, zero_add]
+  apply mul_ne_zero _ hd
+  exact div_ne_zero (Complex.ofReal_ne_zero.mpr ha.ne') (by exact_mod_cast (by omega : n + 1 ≠ 0))
+
+/-- At a ball-transform zero, the full interior derivative vanishes on the sphere. -/
+theorem ballResolventInterior_boundary_hasFDerivAt (n : ℕ) (a : ℝ)
+    (hz : radialBallFourier n (a : ℂ) = 0) {x : Euclidean (n + 1)} (hx : ‖x‖ = 1) :
+    HasFDerivAt (ballResolventInterior n a) (0 : Euclidean (n + 1) →L[ℝ] ℂ) x := by
+  have hF : ballSquareFunction n ((a ^ 2 : ℝ) : ℂ) = 0 := by
+    rw [radialBallFourier_eq_squareFunction] at hz
+    simpa only [Complex.ofReal_pow] using hz
+  have harg : ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ) = ((a ^ 2 : ℝ) : ℂ) := by
+    rw [hx]
+    simp
+  have hB := ballHelmholtzSquare_hasDerivAt n ((a ^ 2 : ℝ) : ℂ)
+  rw [hF, neg_zero, zero_div, ← harg] at hB
+  have hBR : HasFDerivAt (ballHelmholtzSquare n) (0 : ℂ →L[ℝ] ℂ)
+      ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ) := by
+    have he : (ContinuousLinearMap.smulRight (1 : ℂ →L[ℂ] ℂ) (0 : ℂ)) = 0 := by
+      ext
+      simp
+    simpa only [he, ContinuousLinearMap.restrictScalars_zero] using hB.hasFDerivAt.restrictScalars ℝ
+  have hr : ContDiff ℝ ⊤ (fun y : Euclidean (n + 1) =>
+      ((a ^ 2 * ‖y‖ ^ 2 : ℝ) : ℂ)) :=
+    Complex.ofRealCLM.contDiff.comp (contDiff_const.mul (contDiff_norm_sq ℝ))
+  have h := ((hBR.comp x (hr.differentiable (by simp) x).hasFDerivAt).mul_const
+    (ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ))⁻¹).sub_const 1
+  have hfinal := h.mul_const ((ballVolume (n + 1) : ℂ) * (a ^ 2 : ℝ))⁻¹
+  have he : ((ballVolume (n + 1) : ℂ) * (a ^ 2 : ℝ))⁻¹ •
+      (ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ))⁻¹ •
+      (0 : Euclidean (n + 1) →L[ℝ] ℂ) = 0 := by
+    ext
+    simp
+  simpa only [ballResolventInterior, div_eq_mul_inv, Function.comp_apply,
+    ContinuousLinearMap.zero_comp, he] using hfinal
+
+/-- The zero-extended physical formula is continuous because its boundary value is zero. -/
+theorem ballResolvent_continuous (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    Continuous (ballResolvent n a) := by
+  classical
+  change Continuous ((physicalUnitBall (n + 1)).piecewise
+    (ballResolventInterior n a) (fun _ => 0))
+  apply (ballResolventInterior_contDiff n a).continuous.piecewise _ continuous_const
+  intro x hx
+  apply ballResolventInterior_boundary n a hb
+  have hxs := Metric.frontier_ball_subset_sphere hx
+  simpa only [Metric.mem_sphere, dist_zero_right] using hxs
+
+theorem ballResolvent_integrable (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    Integrable (ballResolvent n a) volume :=
+  (ballResolvent_continuous n a hb).integrable_of_hasCompactSupport (ballResolvent_hasCompactSupport n a)
+
+theorem ballResolvent_memLp (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    MemLp (ballResolvent n a) 2 volume :=
+  (ballResolvent_continuous n a hb).memLp_of_hasCompactSupport (ballResolvent_hasCompactSupport n a)
+
+/-- The genuine physical-space L² resolvent vector. -/
+def ballResolventL2 (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) : FullL2 (n + 1) :=
+  (ballResolvent_memLp n a hb).toLp (ballResolvent n a)
+
+theorem ballResolventL2_ae (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    (ballResolventL2 n a hb : Euclidean (n + 1) → ℂ) =ᵐ[volume] ballResolvent n a :=
+  (ballResolvent_memLp n a hb).coeFn_toLp
+
+/-- The actual zero extension has zero full derivative at each boundary point. -/
+theorem ballResolvent_boundary_hasFDerivAt (n : ℕ) (a : ℝ)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0)
+    {x : Euclidean (n + 1)} (hx : ‖x‖ = 1) :
+    HasFDerivAt (ballResolvent n a) (0 : Euclidean (n + 1) →L[ℝ] ℂ) x :=
+  hasFDerivAt_indicator_zero (ballResolventInterior_boundary_hasFDerivAt n a hz hx)
+    (ballResolventInterior_boundary n a hb hx)
+
+/-- The zero-extended derivative is the indicator of the interior derivative. -/
+theorem ballResolvent_hasFDerivAt (n : ℕ) (a : ℝ)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0)
+    (x : Euclidean (n + 1)) :
+    HasFDerivAt (ballResolvent n a)
+      ((physicalUnitBall (n + 1)).indicator (fderiv ℝ (ballResolventInterior n a)) x) x := by
+  classical
+  by_cases hx : ‖x‖ = 1
+  · have hn : x ∉ physicalUnitBall (n + 1) := by simp [physicalUnitBall, Metric.mem_ball, hx]
+    rw [Set.indicator_of_not_mem hn]
+    exact ballResolvent_boundary_hasFDerivAt n a hz hb hx
+  · rcases lt_or_gt_of_ne hx with hxlt | hxgt
+    · have hmem : x ∈ physicalUnitBall (n + 1) := by
+        simpa only [physicalUnitBall, Metric.mem_ball, dist_zero_right] using hxlt
+      rw [Set.indicator_of_mem hmem]
+      apply ((ballResolventInterior_contDiff n a).differentiable (by simp) x).hasFDerivAt.congr_of_eventuallyEq
+      filter_upwards [Metric.isOpen_ball.mem_nhds hmem] with y hy
+      exact Set.indicator_of_mem hy _
+    · have hn : x ∉ physicalUnitBall (n + 1) := by
+        simp [physicalUnitBall, Metric.mem_ball, hxgt.not_lt]
+      rw [Set.indicator_of_not_mem hn]
+      apply (hasFDerivAt_const (𝕜 := ℝ) (0 : ℂ) x).congr_of_eventuallyEq
+      have hnh : {y : Euclidean (n + 1) | 1 < ‖y‖} ∈ 𝓝 x :=
+        (isOpen_lt continuous_const continuous_norm).mem_nhds hxgt
+      filter_upwards [hnh] with y hy
+      exact Set.indicator_of_not_mem (by
+        simpa only [physicalUnitBall, Metric.mem_ball, dist_zero_right] using hy.not_lt) _
+
+/-- There is no jump in the first derivative: the actual zero extension is C¹. -/
+theorem ballResolvent_contDiff_one (n : ℕ) (a : ℝ)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    ContDiff ℝ 1 (ballResolvent n a) := by
+  classical
+  apply contDiff_one_iff_hasFDerivAt.mpr
+  refine ⟨(physicalUnitBall (n + 1)).indicator (fderiv ℝ (ballResolventInterior n a)), ?_,
+    ballResolvent_hasFDerivAt n a hz hb⟩
+  change Continuous ((physicalUnitBall (n + 1)).piecewise
+    (fderiv ℝ (ballResolventInterior n a)) (fun _ => 0))
+  apply ((ballResolventInterior_contDiff n a).continuous_fderiv (by simp)).piecewise _ continuous_const
+  intro x hx
+  apply (ballResolventInterior_boundary_hasFDerivAt n a hz _).fderiv
+  have hxs := Metric.frontier_ball_subset_sphere hx
+  simpa only [Metric.mem_sphere, dist_zero_right] using hxs
+
+/-- Each affine line in a nonzero direction meets the exceptional boundary in
+finitely many points. This permits genuine integration by parts across it. -/
+theorem unitSphere_line_finite {d : ℕ} (x v : Euclidean d) (hv : v ≠ 0) :
+    {t : ℝ | x + t • v ∈ Metric.sphere (0 : Euclidean d) 1}.Finite := by
+  let p : Polynomial ℝ := Polynomial.C (‖v‖ ^ 2) * Polynomial.X ^ 2 +
+    Polynomial.C (2 * inner (𝕜 := ℝ) x v) * Polynomial.X + Polynomial.C (‖x‖ ^ 2 - 1)
+  have hp : p ≠ 0 := by
+    intro h
+    have hc := congrArg (fun q : Polynomial ℝ => q.coeff 2) h
+    have hnorm : ‖v‖ ^ 2 ≠ 0 := pow_ne_zero 2 (norm_ne_zero_iff.mpr hv)
+    norm_num only [p, Polynomial.coeff_add, Polynomial.coeff_C_mul_X_pow,
+      Polynomial.coeff_C_mul_X, Polynomial.coeff_C, Polynomial.coeff_zero] at hc
+    exact hnorm (by simpa only [ite_true, ite_false, add_zero] using hc)
+  apply (Polynomial.finite_setOf_isRoot hp).subset
+  intro t ht
+  have hn : ‖x + t • v‖ = 1 := by
+    simpa only [Metric.mem_sphere, dist_zero_right] using ht
+  change Polynomial.eval t p = 0
+  have he : Polynomial.eval t p = ‖x + t • v‖ ^ 2 - 1 := by
+    simp only [p, Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C,
+      Polynomial.eval_pow, Polynomial.eval_X, norm_add_sq_real, real_inner_smul_right,
+      norm_smul, Real.norm_eq_abs, mul_pow, sq_abs]
+    ring
+  rw [he, hn]
+  norm_num
+
+/-- Chain rule for an entire function of the squared physical radius. -/
+theorem hasLineDerivAt_squared_radius {d : ℕ} {F : ℂ → ℂ} {F' : ℂ}
+    (a : ℝ) (x v : Euclidean d)
+    (hF : HasDerivAt F F' ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ)) :
+    HasLineDerivAt ℝ (fun y : Euclidean d => F ((a ^ 2 * ‖y‖ ^ 2 : ℝ) : ℂ))
+      (F' * ((2 * a ^ 2 * inner (𝕜 := ℝ) x v : ℝ) : ℂ)) x v := by
+  have hr := (((hasDerivAt_const (0 : ℝ) x).add
+    ((hasDerivAt_id (0 : ℝ)).smul_const v)).norm_sq).const_mul (a ^ 2)
+  have hc := Complex.ofRealCLM.hasFDerivAt.comp_hasDerivAt (0 : ℝ) hr
+  have h := (hF.hasFDerivAt.restrictScalars ℝ).comp_hasDerivAt_of_eq (0 : ℝ) hc (by simp)
+  change HasDerivAt (fun t : ℝ => F ((a ^ 2 * ‖x + t • v‖ ^ 2 : ℝ) : ℂ)) _ 0
+  convert h using 1
+  simp
+  ring
+
+/-- The actual first directional derivative in the interior. -/
+def ballResolventFirstInterior (n : ℕ) (a : ℝ) (v x : Euclidean (n + 1)) : ℂ :=
+  (deriv (ballHelmholtzSquare n) ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ) *
+    ((2 * a ^ 2 * inner (𝕜 := ℝ) x v : ℝ) : ℂ) /
+      ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ)) /
+    ((ballVolume (n + 1) : ℂ) * (a ^ 2 : ℝ))
+
+theorem ballResolventInterior_hasLineDerivAt (n : ℕ) (a : ℝ) (x v : Euclidean (n + 1)) :
+    HasLineDerivAt ℝ (ballResolventInterior n a) (ballResolventFirstInterior n a v x) x v := by
+  have hF := ((ballHelmholtzSquare_analytic n) ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ)
+    (mem_univ _)).differentiableAt.hasDerivAt
+  have h := hasLineDerivAt_squared_radius a x v hF
+  change HasDerivAt (fun t : ℝ => ballResolventInterior n a (x + t • v)) _ 0
+  change HasDerivAt (fun t : ℝ => ballHelmholtzSquare n
+    ((a ^ 2 * ‖x + t • v‖ ^ 2 : ℝ) : ℂ)) _ 0 at h
+  exact ((h.div_const _).sub_const 1).div_const _
+
+/-- The smooth first derivative in the interior is continuous even at the origin. -/
+theorem ballResolventFirstInterior_continuous (n : ℕ) (a : ℝ) (v : Euclidean (n + 1)) :
+    Continuous (ballResolventFirstInterior n a v) := by
+  have hB := (ballHelmholtzSquare_analytic n).deriv.contDiff (n := 0) |>.continuous
+  have hr : Continuous (fun x : Euclidean (n + 1) => ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ)) := by
+    fun_prop
+  have hi : Continuous (fun x : Euclidean (n + 1) => ((2 * a ^ 2 * inner (𝕜 := ℝ) x v : ℝ) : ℂ)) := by
+    fun_prop
+  exact (((hB.comp hr).mul hi).div_const _).div_const _
+
+/-- The first interior derivative has zero trace at a selected ball-transform zero. -/
+theorem ballResolventFirstInterior_boundary (n : ℕ) (a : ℝ)
+    (hz : radialBallFourier n (a : ℂ) = 0) (v : Euclidean (n + 1))
+    {x : Euclidean (n + 1)} (hx : ‖x‖ = 1) : ballResolventFirstInterior n a v x = 0 := by
+  have h := (ballResolventInterior_hasLineDerivAt n a x v).lineDeriv
+  rw [((ballResolventInterior_boundary_hasFDerivAt n a hz hx).hasLineDerivAt v).lineDeriv] at h
+  simpa using h.symm
+
+/-- Simplified interior first derivative, with the nonzero spectral radius cancelled. -/
+theorem ballResolventFirstInterior_eq (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (v x : Euclidean (n + 1)) :
+    ballResolventFirstInterior n a v x =
+      (2 / ((ballVolume (n + 1) : ℂ) * ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ))) *
+      deriv (ballHelmholtzSquare n) ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ) *
+      (inner (𝕜 := ℝ) x v : ℂ) := by
+  have hV : (ballVolume (n + 1) : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ballVolume_pos _).ne'
+  have hA : (a : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr ha
+  unfold ballResolventFirstInterior
+  push_cast at hb ⊢
+  field_simp [hV, hA, hb]
+  ring
+
+/-- The actual second directional derivative in the interior. -/
+def ballResolventSecondInterior (n : ℕ) (a : ℝ) (v x : Euclidean (n + 1)) : ℂ :=
+  (2 / ((ballVolume (n + 1) : ℂ) * ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ))) *
+    (deriv (deriv (ballHelmholtzSquare n)) ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ) *
+      ((2 * a ^ 2 * inner (𝕜 := ℝ) x v : ℝ) : ℂ) * (inner (𝕜 := ℝ) x v : ℂ) +
+      deriv (ballHelmholtzSquare n) ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ) * (‖v‖ ^ 2 : ℝ))
+
+theorem ballResolventFirstInterior_hasLineDerivAt (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (x v : Euclidean (n + 1)) :
+    HasLineDerivAt ℝ (ballResolventFirstInterior n a v)
+      (ballResolventSecondInterior n a v x) x v := by
+  have hG := hasLineDerivAt_squared_radius a x v
+    (((ballHelmholtzSquare_analytic n).deriv ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ)
+      (mem_univ _)).differentiableAt.hasDerivAt)
+  change HasDerivAt (fun t : ℝ => deriv (ballHelmholtzSquare n)
+    ((a ^ 2 * ‖x + t • v‖ ^ 2 : ℝ) : ℂ)) _ 0 at hG
+  have hr := ((hasDerivAt_const (0 : ℝ) x).add
+    ((hasDerivAt_id (0 : ℝ)).smul_const v)).inner ℝ (hasDerivAt_const (0 : ℝ) v)
+  have hL := Complex.ofRealCLM.hasFDerivAt.comp_hasDerivAt (0 : ℝ) hr
+  have h := (hG.mul hL).const_mul
+    (2 / ((ballVolume (n + 1) : ℂ) * ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ)))
+  change HasDerivAt (fun t : ℝ => ballResolventFirstInterior n a v (x + t • v)) _ 0
+  convert h using 1
+  · funext t
+    simpa only [Function.comp_apply, id_eq, Complex.ofRealCLM_apply, mul_assoc] using
+      ballResolventFirstInterior_eq n ha hb v (x + t • v)
+  · simp only [ballResolventSecondInterior, Function.comp_apply, Complex.ofRealCLM_apply,
+      zero_smul, add_zero, id_eq, one_smul, zero_add, inner_zero_right, zero_add,
+      real_inner_self_eq_norm_sq]
+
+theorem ballResolventSecondInterior_continuous (n : ℕ) (a : ℝ) (v : Euclidean (n + 1)) :
+    Continuous (ballResolventSecondInterior n a v) := by
+  have hB : Continuous (deriv (ballHelmholtzSquare n)) :=
+    (ballHelmholtzSquare_analytic n).deriv.contDiff (n := 0) |>.continuous
+  have hB2 : Continuous (deriv (deriv (ballHelmholtzSquare n))) :=
+    (ballHelmholtzSquare_analytic n).deriv.deriv.contDiff (n := 0) |>.continuous
+  unfold ballResolventSecondInterior
+  fun_prop
+
+/-- The classical interior Laplace identity is an actual sum of directional second derivatives. -/
+theorem ballResolventInterior_helmholtz (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (x : Euclidean (n + 1)) :
+    -(∑ j : Fin (n + 1), ballResolventSecondInterior n a
+      (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) x) -
+      (a ^ 2 : ℝ) * ballResolventInterior n a x = (ballVolume (n + 1) : ℂ)⁻¹ := by
+  let C : ℂ := 2 / ((ballVolume (n + 1) : ℂ) * ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ))
+  let z : ℂ := ((a ^ 2 * ‖x‖ ^ 2 : ℝ) : ℂ)
+  have hs : (∑ j : Fin (n + 1), (x j : ℂ) ^ 2) = ((‖x‖ ^ 2 : ℝ) : ℂ) := by
+    have hr : (∑ j : Fin (n + 1), (x j) ^ 2) = ‖x‖ ^ 2 := by
+      simpa only [Real.norm_eq_abs, sq_abs] using
+        (PiLp.norm_sq_eq_of_L2 (fun _ : Fin (n + 1) => ℝ) x).symm
+    exact_mod_cast hr
+  have hsum : (∑ j : Fin (n + 1), ballResolventSecondInterior n a
+      (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) x) =
+      C * (2 * (a ^ 2 : ℝ) * deriv (deriv (ballHelmholtzSquare n)) z * ((‖x‖ ^ 2 : ℝ) : ℂ) +
+        (n + 1 : ℕ) * deriv (ballHelmholtzSquare n) z) := by
+    have ht (j : Fin (n + 1)) : ballResolventSecondInterior n a
+        (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) x =
+        C * (2 * (a ^ 2 : ℝ) * deriv (deriv (ballHelmholtzSquare n)) z * (x j : ℂ) ^ 2 +
+          deriv (ballHelmholtzSquare n) z) := by
+      simp only [ballResolventSecondInterior, EuclideanSpace.basisFun_apply,
+        EuclideanSpace.inner_single_right, conj_trivial, one_mul, EuclideanSpace.norm_single,
+        norm_one, one_pow, Complex.ofReal_one, mul_one, Complex.ofReal_mul, Complex.ofReal_ofNat]
+      dsimp only [C, z]
+      push_cast
+      ring
+    simp_rw [ht]
+    rw [← Finset.mul_sum, Finset.sum_add_distrib, ← Finset.mul_sum, hs]
+    simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+  rw [hsum]
+  have hode := ballHelmholtzSquare_ode n z
+  have hV : (ballVolume (n + 1) : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr (ballVolume_pos _).ne'
+  have hA : (a : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr ha
+  dsimp only [C, z] at hode ⊢
+  unfold ballResolventInterior
+  push_cast at hb hode ⊢
+  field_simp [hV, hA, hb]
+  linear_combination -(a : ℂ) ^ 2 * ballHelmholtzSquare n ((a : ℂ) ^ 2) *
+    (ballVolume (n + 1) : ℂ) ^ 2 * hode
+
+/-- Compact support for any indicator of the physical unit ball. -/
+theorem physicalUnitBall_indicator_hasCompactSupport {d : ℕ} (f : Euclidean d → ℂ) :
+    HasCompactSupport ((physicalUnitBall d).indicator f) := by
+  apply (isCompact_closedBall (0 : Euclidean d) 1).of_isClosed_subset isClosed_closure
+  apply closure_minimal _ Metric.isClosed_closedBall
+  intro x hx
+  exact Metric.ball_subset_closedBall (Set.mem_of_indicator_ne_zero hx)
+
+theorem integrable_physicalUnitBall_indicator {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : Continuous f) : Integrable ((physicalUnitBall d).indicator f) volume :=
+  ((hf.locallyIntegrable.integrableOn_isCompact (isCompact_closedBall (0 : Euclidean d) 1)).mono_set
+    Metric.ball_subset_closedBall).integrable_indicator (physicalUnitBall_measurable d)
+
+/-- The actual zero extension of the resolvent's first directional derivative. -/
+def ballResolventFirst (n : ℕ) (a : ℝ) (v : Euclidean (n + 1)) : Euclidean (n + 1) → ℂ :=
+  (physicalUnitBall (n + 1)).indicator (ballResolventFirstInterior n a v)
+
+/-- The actual zero extension of the classical interior second directional derivative. -/
+def ballResolventSecond (n : ℕ) (a : ℝ) (v : Euclidean (n + 1)) : Euclidean (n + 1) → ℂ :=
+  (physicalUnitBall (n + 1)).indicator (ballResolventSecondInterior n a v)
+
+theorem ballResolventFirst_continuous (n : ℕ) (a : ℝ)
+    (hz : radialBallFourier n (a : ℂ) = 0) (v : Euclidean (n + 1)) :
+    Continuous (ballResolventFirst n a v) := by
+  classical
+  change Continuous ((physicalUnitBall (n + 1)).piecewise
+    (ballResolventFirstInterior n a v) (fun _ => 0))
+  apply (ballResolventFirstInterior_continuous n a v).piecewise _ continuous_const
+  intro x hx
+  apply ballResolventFirstInterior_boundary n a hz v
+  have hxs := Metric.frontier_ball_subset_sphere hx
+  simpa only [Metric.mem_sphere, dist_zero_right] using hxs
+
+theorem ballResolvent_hasLineDerivAt (n : ℕ) (a : ℝ)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (x v : Euclidean (n + 1)) :
+    HasLineDerivAt ℝ (ballResolvent n a) (ballResolventFirst n a v x) x v := by
+  have h := (ballResolvent_hasFDerivAt n a hz hb x).hasLineDerivAt v
+  have he : ballResolventFirstInterior n a v x = fderiv ℝ (ballResolventInterior n a) x v :=
+    (ballResolventInterior_hasLineDerivAt n a x v).lineDeriv.symm.trans
+      (((ballResolventInterior_contDiff n a).differentiable (by simp) x).lineDeriv_eq_fderiv)
+  classical
+  by_cases hx : x ∈ physicalUnitBall (n + 1)
+  · simpa only [ballResolventFirst, Set.indicator_of_mem hx, he] using h
+  · simpa only [ballResolventFirst, Set.indicator_of_not_mem hx,
+      ContinuousLinearMap.zero_apply] using h
+
+/-- Away from the boundary, the indicator has its classical interior derivative. -/
+theorem hasLineDerivAt_physicalUnitBall_indicator_off_sphere {d : ℕ} {f g : Euclidean d → ℂ}
+    (v : Euclidean d) (h : ∀ x, HasLineDerivAt ℝ f (g x) x v)
+    {x : Euclidean d} (hx : x ∉ Metric.sphere (0 : Euclidean d) 1) :
+    HasLineDerivAt ℝ ((physicalUnitBall d).indicator f) ((physicalUnitBall d).indicator g x) x v := by
+  classical
+  have hn : ‖x‖ ≠ 1 := by simpa only [Metric.mem_sphere, dist_zero_right] using hx
+  rcases lt_or_gt_of_ne hn with hxlt | hxgt
+  · have hmem : x ∈ physicalUnitBall d := by
+      simpa only [physicalUnitBall, Metric.mem_ball, dist_zero_right] using hxlt
+    rw [Set.indicator_of_mem hmem]
+    have he : (physicalUnitBall d).indicator f =ᶠ[𝓝 x] f := by
+      filter_upwards [Metric.isOpen_ball.mem_nhds hmem] with y hy
+      exact Set.indicator_of_mem hy _
+    exact he.hasLineDerivAt_iff.mpr (h x)
+  · have hnot : x ∉ physicalUnitBall d := by
+      simpa only [physicalUnitBall, Metric.mem_ball, dist_zero_right] using hxgt.not_lt
+    rw [Set.indicator_of_not_mem hnot]
+    have he : (physicalUnitBall d).indicator f =ᶠ[𝓝 x] (fun _ => 0) := by
+      have hnh : {y : Euclidean d | 1 < ‖y‖} ∈ 𝓝 x :=
+        (isOpen_lt continuous_const continuous_norm).mem_nhds hxgt
+      filter_upwards [hnh] with y hy
+      exact Set.indicator_of_not_mem (by
+        simpa only [physicalUnitBall, Metric.mem_ball, dist_zero_right] using hy.not_lt) _
+    exact he.hasLineDerivAt_iff.mpr ((hasFDerivAt_const (𝕜 := ℝ) (0 : ℂ) x).hasLineDerivAt v)
+
+theorem ballResolventFirst_hasLineDerivAt_off_sphere (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (v : Euclidean (n + 1))
+    {x : Euclidean (n + 1)} (hx : x ∉ Metric.sphere (0 : Euclidean (n + 1)) 1) :
+    HasLineDerivAt ℝ (ballResolventFirst n a v) (ballResolventSecond n a v x) x v :=
+  hasLineDerivAt_physicalUnitBall_indicator_off_sphere v
+    (fun y => ballResolventFirstInterior_hasLineDerivAt n ha hb y v) hx
+
+theorem ballResolventSecond_mul_schwartz_integrable (n : ℕ) (a : ℝ)
+    (v : Euclidean (n + 1)) (ψ : 𝓢(Euclidean (n + 1), ℂ)) :
+    Integrable (fun x => ballResolventSecond n a v x * ψ x) volume := by
+  have h := integrable_physicalUnitBall_indicator
+    ((ballResolventSecondInterior_continuous n a v).mul ψ.continuous)
+  change Integrable (fun x => (physicalUnitBall (n + 1)).indicator
+    (fun y => ballResolventSecondInterior n a v y * ψ y) x) volume at h
+  simpa only [ballResolventSecond, Set.indicator_mul_left] using h
+
+/-- The two actual integrations by parts produce no boundary functional. -/
+theorem ballResolvent_weak_second_derivative (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0)
+    (v : Euclidean (n + 1)) (hv : v ≠ 0) (ψ : 𝓢(Euclidean (n + 1), ℂ)) :
+    (∫ x, ballResolvent n a x *
+      (SchwartzMap.pderivCLM ℂ v (SchwartzMap.pderivCLM ℂ v ψ)) x) =
+      ∫ x, ballResolventSecond n a v x * ψ x := by
+  have hc := ballResolventFirst_continuous n a hz v
+  have hs := physicalUnitBall_indicator_hasCompactSupport (ballResolventFirstInterior n a v)
+  have hint (θ : 𝓢(Euclidean (n + 1), ℂ)) :
+      Integrable (fun x => ballResolventFirst n a v x * θ x) volume :=
+    (hc.mul θ.continuous).integrable_of_hasCompactSupport hs.mul_right
+  have h2 := integral_mul_fderiv_off_countable_eq_neg_left hv
+    (ballResolventSecond_mul_schwartz_integrable n a v ψ)
+    (by simpa only [SchwartzMap.pderivCLM_apply] using hint (SchwartzMap.pderivCLM ℂ v ψ))
+    (hint ψ) hc ψ.differentiable
+    (fun x => (unitSphere_line_finite x v hv).countable)
+    (fun x hx => ballResolventFirst_hasLineDerivAt_off_sphere n ha hb v hx)
+  have hφ := ballResolvent_continuous n a hb
+  have hsφ := ballResolvent_hasCompactSupport n a
+  have hintφ (θ : 𝓢(Euclidean (n + 1), ℂ)) :
+      Integrable (fun x => ballResolvent n a x * θ x) volume :=
+    (hφ.mul θ.continuous).integrable_of_hasCompactSupport hsφ.mul_right
+  have h1 := integral_mul_fderiv_off_countable_eq_neg_left (S := Metric.sphere (0 : Euclidean (n + 1)) 1) hv
+    (hint (SchwartzMap.pderivCLM ℂ v ψ))
+    (by simpa only [SchwartzMap.pderivCLM_apply] using
+      (hintφ (SchwartzMap.pderivCLM ℂ v (SchwartzMap.pderivCLM ℂ v ψ))))
+    (hintφ (SchwartzMap.pderivCLM ℂ v ψ)) hφ (SchwartzMap.pderivCLM ℂ v ψ).differentiable
+    (fun x => (unitSphere_line_finite x v hv).countable)
+    (fun x _ => ballResolvent_hasLineDerivAt n a hz hb x v)
+  simp only [SchwartzMap.pderivCLM_apply] at h1 h2 ⊢
+  rw [h1, h2, neg_neg]
+
+/-- The genuine tempered distribution of the physical resolvent. -/
+def ballResolventDistribution (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) : TemperedDistribution (n + 1) :=
+  l2Distribution (ballResolventL2 n a hb)
+
+theorem ballResolventDistribution_apply (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (ψ : 𝓢(Euclidean (n + 1), ℂ)) :
+    ballResolventDistribution n a hb ψ = ∫ x, ballResolvent n a x * ψ x := by
+  rw [ballResolventDistribution, l2Distribution_apply]
+  apply integral_congr_ae
+  filter_upwards [ballResolventL2_ae n a hb] with x hx
+  rw [hx]
+
+theorem ballResolventDistribution_supported (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    DistributionSupportedIn (ballResolventDistribution n a hb)
+      (Metric.closedBall (0 : Euclidean (n + 1)) 1) := by
+  apply l2Distribution_supported
+  filter_upwards [ballResolventL2_ae n a hb] with x hx
+  intro hn
+  rw [hx]
+  exact Set.indicator_of_not_mem (fun hm => hn (Metric.ball_subset_closedBall hm)) _
+
+/-- The actual physical constant-coefficient operator, using ordinary directional derivatives. -/
+def ballHelmholtzOperator (n : ℕ) (a : ℝ) (u : TemperedDistribution (n + 1)) :
+    TemperedDistribution (n + 1) :=
+  -(∑ j : Fin (n + 1), distributionDerivative (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j)
+      (distributionDerivative (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) u)) -
+    ((a ^ 2 : ℝ) : ℂ) • u
+
+/-- The actual distributional Helmholtz identity, including the zero extension.
+Its proof uses two real integrations by parts, so no boundary distributions are assumed away. -/
+theorem ballResolventDistribution_helmholtz (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    ballHelmholtzOperator n a (ballResolventDistribution n a hb) = normalizedBallDistribution (n + 1) := by
+  have hD (v : Euclidean (n + 1)) (hv : v ≠ 0) (ψ : 𝓢(Euclidean (n + 1), ℂ)) :
+      distributionDerivative v (distributionDerivative v (ballResolventDistribution n a hb)) ψ =
+        ∫ x, ballResolventSecond n a v x * ψ x := by
+    simp only [distributionDerivative_apply, neg_neg]
+    rw [ballResolventDistribution_apply]
+    exact ballResolvent_weak_second_derivative n ha hz hb v hv ψ
+  ext ψ
+  have hv (j : Fin (n + 1)) : EuclideanSpace.basisFun (Fin (n + 1)) ℝ j ≠ 0 := by
+    apply norm_ne_zero_iff.mp
+    simp
+  simp only [ballHelmholtzOperator, ContinuousLinearMap.sub_apply, ContinuousLinearMap.neg_apply,
+    ContinuousLinearMap.sum_apply, ContinuousLinearMap.smul_apply, smul_eq_mul]
+  simp_rw [hD _ (hv _), ballResolventDistribution_apply]
+  have hi (j : Fin (n + 1)) : Integrable (fun x => ballResolventSecond n a
+      (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) x * ψ x) volume :=
+    ballResolventSecond_mul_schwartz_integrable n a _ ψ
+  have hsum := integrable_finset_sum Finset.univ (fun j _ => hi j)
+  have hφ : Integrable (fun x => ballResolvent n a x * ψ x) volume :=
+    ((ballResolvent_continuous n a hb).mul ψ.continuous).integrable_of_hasCompactSupport
+      (ballResolvent_hasCompactSupport n a).mul_right
+  have hpoint (x : Euclidean (n + 1)) :
+      -(∑ j : Fin (n + 1), ballResolventSecond n a
+        (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) x * ψ x) -
+        ((a ^ 2 : ℝ) : ℂ) * (ballResolvent n a x * ψ x) = normalizedBallIndicator (n + 1) x * ψ x := by
+    by_cases hx : x ∈ physicalUnitBall (n + 1)
+    · simp only [ballResolventSecond, ballResolvent, normalizedBallIndicator, ballIndicator,
+        Set.indicator_of_mem hx, Pi.smul_apply, smul_eq_mul, mul_one]
+      have h := congrArg (fun z : ℂ => z * ψ x) (ballResolventInterior_helmholtz n ha hb x)
+      simpa only [sub_mul, neg_mul, Finset.sum_mul, mul_assoc] using h
+    · simp [ballResolventSecond, ballResolvent, normalizedBallIndicator, ballIndicator, hx]
+  calc
+    _ = ∫ x, -(∑ j : Fin (n + 1), ballResolventSecond n a
+        (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) x * ψ x) -
+        ((a ^ 2 : ℝ) : ℂ) * (ballResolvent n a x * ψ x) := by
+      rw [integral_sub (by exact hsum.neg) (by exact hφ.const_mul (((a ^ 2 : ℝ) : ℂ))), integral_neg,
+        integral_finset_sum _ (fun j _ => hi j), integral_const_mul]
+    _ = ∫ x, normalizedBallIndicator (n + 1) x * ψ x :=
+      integral_congr_ae (Filter.Eventually.of_forall hpoint)
+    _ = normalizedBallDistribution (n + 1) ψ := by
+      rw [normalizedBallDistribution, l2Distribution_apply]
+      apply integral_congr_ae
+      filter_upwards [normalizedBallL2_ae (n + 1)] with x hx
+      rw [hx]
+
+/-- The Fourier transform of the physical resolvent is its actual Fourier integral. -/
+theorem distributionFourier_ballResolventDistribution_apply (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (ψ : 𝓢(Euclidean (n + 1), ℂ)) :
+    distributionFourier (ballResolventDistribution n a hb) ψ =
+      ∫ ξ, 𝓕 (ballResolvent n a) ξ * ψ ξ := by
+  rw [distributionFourier_apply, ballResolventDistribution_apply]
+  exact (integral_fourier_mul (ballResolvent_integrable n a hb) ψ.integrable).symm
+
+theorem ballResolvent_fourier_hasTemperateGrowth (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    Function.HasTemperateGrowth (𝓕 (ballResolvent n a)) := by
+  apply fourier_hasTemperateGrowth_of_compact_support (ballResolvent_integrable n a hb)
+    (isCompact_closedBall (0 : Euclidean (n + 1)) 1)
+  filter_upwards with x
+  intro hn
+  exact Set.indicator_of_not_mem (fun hm => hn (Metric.ball_subset_closedBall hm)) _
+
+/-- Ordinary physical second derivatives have their actual squared Fourier symbols. -/
+theorem distributionFourier_second_derivative_integral {d : ℕ}
+    (v : Euclidean d) (u : TemperedDistribution d) (F : Euclidean d → ℂ)
+    (hF : ∀ θ : 𝓢(Euclidean d, ℂ), distributionFourier u θ = ∫ ξ, F ξ * θ ξ)
+    (ψ : 𝓢(Euclidean d, ℂ)) :
+    distributionFourier (distributionDerivative v (distributionDerivative v u)) ψ =
+      ∫ ξ, (derivativeSymbolCLM v ξ) ^ 2 * F ξ * ψ ξ := by
+  rw [distributionFourier_derivative, distributionMultiply_apply,
+    distributionFourier_derivative, distributionMultiply_apply, hF]
+  apply integral_congr_ae
+  filter_upwards with ξ
+  simp only [schwartzMultiplierCLM_apply]
+  ring
+
+theorem sum_derivativeSymbol_sq (d : ℕ) (ξ : Euclidean d) :
+    -(∑ j : Fin d, (derivativeSymbolCLM (EuclideanSpace.basisFun (Fin d) ℝ j) ξ) ^ 2) =
+      ballQuadraticForm d (realToComplex ξ) := by
+  have ht (j : Fin d) : (derivativeSymbolCLM (EuclideanSpace.basisFun (Fin d) ℝ j) ξ) ^ 2 =
+      -((2 * Real.pi : ℂ) ^ 2) * (ξ j : ℂ) ^ 2 := by
+    simp only [derivativeSymbolCLM_apply, EuclideanSpace.basisFun_apply,
+      EuclideanSpace.inner_single_left, conj_trivial, one_mul, mul_pow,
+      Complex.I_sq, Complex.ofReal_mul, Complex.ofReal_ofNat]
+    ring
+  simp_rw [ht]
+  rw [← Finset.mul_sum]
+  simp only [ballQuadraticForm, realToComplex_apply]
+  ring
+
+/-- Fourier transformation of the proved physical equation gives the actual
+regular-distribution divisor identity, including frequencies on its zero set. -/
+theorem ballResolvent_fourier_divisor_integral (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (ψ : 𝓢(Euclidean (n + 1), ℂ)) :
+    (∫ ξ, (ballQuadraticForm (n + 1) (realToComplex ξ) - ((a ^ 2 : ℝ) : ℂ)) *
+      𝓕 (ballResolvent n a) ξ * ψ ξ) =
+      ∫ ξ, normalizedBallFourier (n + 1) (realToComplex ξ) * ψ ξ := by
+  let F : Euclidean (n + 1) → ℂ := 𝓕 (ballResolvent n a)
+  let u := ballResolventDistribution n a hb
+  have hF : ∀ θ : 𝓢(Euclidean (n + 1), ℂ), distributionFourier u θ = ∫ ξ, F ξ * θ ξ :=
+    distributionFourier_ballResolventDistribution_apply n a hb
+  have hFi (θ : 𝓢(Euclidean (n + 1), ℂ)) : Integrable (fun ξ => F ξ * θ ξ) volume := by
+    have h : Integrable (schwartzMultiplierCLM F (ballResolvent_fourier_hasTemperateGrowth n a hb) θ :
+        Euclidean (n + 1) → ℂ) volume :=
+      (schwartzMultiplierCLM F (ballResolvent_fourier_hasTemperateGrowth n a hb) θ).integrable
+    change Integrable (fun ξ => θ ξ * F ξ) volume at h
+    simpa only [mul_comm] using h
+  have hi (j : Fin (n + 1)) : Integrable (fun ξ =>
+      (derivativeSymbolCLM (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) ξ) ^ 2 * F ξ * ψ ξ) volume := by
+    have h := hFi (derivativeMultiplierCLM (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j)
+      (derivativeMultiplierCLM (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) ψ))
+    simpa only [derivativeMultiplierCLM, schwartzMultiplierCLM_apply, pow_two,
+      mul_assoc, mul_comm, mul_left_comm] using h
+  have hsum := integrable_finset_sum Finset.univ (fun j _ => hi j)
+  have hpde := congrArg (fun w : TemperedDistribution (n + 1) => distributionFourier w ψ)
+    (ballResolventDistribution_helmholtz n ha hz hb)
+  have hlinear : distributionFourier (ballHelmholtzOperator n a u) ψ =
+      -(∑ j : Fin (n + 1), distributionFourier
+        (distributionDerivative (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j)
+          (distributionDerivative (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) u)) ψ) -
+        ((a ^ 2 : ℝ) : ℂ) * distributionFourier u ψ := by
+    simp [ballHelmholtzOperator, distributionFourier, map_sum]
+  change distributionFourier (ballHelmholtzOperator n a u) ψ =
+    distributionFourier (normalizedBallDistribution (n + 1)) ψ at hpde
+  rw [hlinear] at hpde
+  simp_rw [distributionFourier_second_derivative_integral _ u F hF, hF] at hpde
+  rw [distributionFourier_normalizedBallDistribution, polynomialDistribution_apply] at hpde
+  calc
+    _ = ∫ ξ, -(∑ j : Fin (n + 1),
+        (derivativeSymbolCLM (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) ξ) ^ 2 * F ξ * ψ ξ) -
+        ((a ^ 2 : ℝ) : ℂ) * (F ξ * ψ ξ) := by
+      apply integral_congr_ae
+      filter_upwards with ξ
+      rw [← sum_derivativeSymbol_sq]
+      dsimp only [F]
+      simp only [sub_mul, neg_mul, Finset.sum_mul, mul_assoc]
+    _ = -(∑ j : Fin (n + 1), ∫ ξ,
+        (derivativeSymbolCLM (EuclideanSpace.basisFun (Fin (n + 1)) ℝ j) ξ) ^ 2 * F ξ * ψ ξ) -
+        ((a ^ 2 : ℝ) : ℂ) * (∫ ξ, F ξ * ψ ξ) := by
+      rw [integral_sub (by exact hsum.neg) (by exact (hFi ψ).const_mul (((a ^ 2 : ℝ) : ℂ))),
+        integral_neg, integral_finset_sum _ (fun j _ => hi j), integral_const_mul]
+    _ = _ := hpde
+
+/-- The physical resolvent solves the divisor identity at every real frequency,
+including the removable sphere. -/
+theorem fourier_ballResolvent_divisor (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (ξ : Euclidean (n + 1)) :
+    (ballQuadraticForm (n + 1) (realToComplex ξ) - ((a ^ 2 : ℝ) : ℂ)) *
+      𝓕 (ballResolvent n a) ξ = normalizedBallFourier (n + 1) (realToComplex ξ) := by
+  let F : Euclidean (n + 1) → ℂ := fun ξ =>
+    (ballQuadraticForm (n + 1) (realToComplex ξ) - ((a ^ 2 : ℝ) : ℂ)) * 𝓕 (ballResolvent n a) ξ
+  let G : Euclidean (n + 1) → ℂ := fun ξ => normalizedBallFourier (n + 1) (realToComplex ξ)
+  have hF : Continuous F := by
+    have hf := (ballResolvent_fourier_hasTemperateGrowth n a hb).1.continuous
+    have hq : Continuous (fun ξ : Euclidean (n + 1) =>
+        ballQuadraticForm (n + 1) (realToComplex ξ)) := by
+      simp_rw [ballQuadraticForm_realToComplex]
+      fun_prop
+    exact (hq.sub continuous_const).mul hf
+  have hG : Continuous G := (normalizedBallFourier_real_hasTemperateGrowth (n + 1)).1.continuous
+  have hae : F =ᵐ[volume] G := by
+    apply ae_eq_of_integral_contDiff_smul_eq hF.locallyIntegrable hG.locallyIntegrable
+    intro g hg hc
+    let θ := compactSchwartz (fun x => (g x : ℂ))
+      (Complex.ofRealCLM.contDiff.comp hg) (hc.comp_left Complex.ofReal_zero)
+    have h := ballResolvent_fourier_divisor_integral n ha hz hb θ
+    change (∫ x, F x * (g x : ℂ)) = ∫ x, G x * (g x : ℂ) at h
+    simpa only [Complex.real_smul, mul_comm] using h
+  exact congrFun ((hF.ae_eq_iff_eq volume hG).mp hae) ξ
+
+theorem ballResolventDistribution_compactlySupported (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    CompactlySupportedDistribution (ballResolventDistribution n a hb) :=
+  ⟨Metric.closedBall (0 : Euclidean (n + 1)) 1, isCompact_closedBall _ _,
+    ballResolventDistribution_supported n a hb⟩
+
+theorem ballResolventDistribution_ne_zero (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    ballResolventDistribution n a hb ≠ 0 := by
+  intro hu
+  have h := ballResolventDistribution_helmholtz n ha hz hb
+  rw [hu] at h
+  have hop : ballHelmholtzOperator n a 0 = 0 := by
+    ext ψ
+    simp only [ballHelmholtzOperator, ContinuousLinearMap.sub_apply,
+      ContinuousLinearMap.neg_apply, ContinuousLinearMap.sum_apply,
+      ContinuousLinearMap.smul_apply, smul_eq_mul, distributionDerivative_apply,
+      ContinuousLinearMap.zero_apply, neg_zero, Finset.sum_const_zero, mul_zero, sub_self]
+  rw [hop] at h
+  exact normalizedBallDistribution_ne_zero (n + 1) h.symm
+
+theorem entireFourier_ballResolvent_differentiable (n : ℕ) (a : ℝ)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    Differentiable ℂ (entireFourier (ballResolvent n a)) := by
+  apply entireFourier_differentiable (ballResolvent_integrable n a hb) (R := 1) zero_le_one
+  filter_upwards with x
+  intro hx
+  have hm : x ∈ physicalUnitBall (n + 1) := Set.mem_of_indicator_ne_zero hx
+  exact (mem_ball_zero_iff.mp hm).le
+
+/-- The compact physical inverse has the entire Fourier divisor identity everywhere. -/
+theorem entireFourier_ballResolvent_divisor (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (z : ComplexEuclidean (n + 1)) :
+    (ballQuadraticForm (n + 1) z - ((a ^ 2 : ℝ) : ℂ)) * entireFourier (ballResolvent n a) z =
+      normalizedBallFourier (n + 1) z := by
+  have he : (fun z : ComplexEuclidean (n + 1) =>
+      (ballQuadraticForm (n + 1) z - ((a ^ 2 : ℝ) : ℂ)) * entireFourier (ballResolvent n a) z) =
+      normalizedBallFourier (n + 1) := by
+    apply entire_eq_of_eq_on_real
+      (((ballQuadraticForm_differentiable (n + 1)).sub (differentiable_const _)).mul
+        (entireFourier_ballResolvent_differentiable n a hb))
+      (normalizedBallFourier_differentiable (n + 1))
+    intro ξ
+    rw [entireFourier_realToComplex]
+    exact fourier_ballResolvent_divisor n ha hz hb ξ
+  exact congrFun he z
+
+/-- Away from the characteristic quadric this actual entire Fourier transform
+is the paper's resolvent quotient; on the quadric the same transform supplies its removable values. -/
+theorem entireFourier_ballResolvent_eq_quotient (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (z : ComplexEuclidean (n + 1))
+    (hq : ballQuadraticForm (n + 1) z - ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    entireFourier (ballResolvent n a) z =
+      normalizedBallFourier (n + 1) z / (ballQuadraticForm (n + 1) z - ((a ^ 2 : ℝ) : ℂ)) := by
+  apply (eq_div_iff hq).mpr
+  rw [mul_comm]
+  exact entireFourier_ballResolvent_divisor n ha hz hb z
+
+theorem fourier_ballResolvent_eq_quotient (n : ℕ) {a : ℝ} (ha : a ≠ 0)
+    (hz : radialBallFourier n (a : ℂ) = 0)
+    (hb : ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0) (ξ : Euclidean (n + 1))
+    (hq : ballQuadraticForm (n + 1) (realToComplex ξ) - ((a ^ 2 : ℝ) : ℂ) ≠ 0) :
+    𝓕 (ballResolvent n a) ξ = normalizedBallFourier (n + 1) (realToComplex ξ) /
+      (ballQuadraticForm (n + 1) (realToComplex ξ) - ((a ^ 2 : ℝ) : ℂ)) := by
+  rw [← entireFourier_realToComplex]
+  exact entireFourier_ballResolvent_eq_quotient n ha hz hb (realToComplex ξ) hq
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalSphereMembership.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Decay and actual supported synthesis of spherical quotients
+
+The denominator estimates are algebraic. The numerator decay is proved for
+the actual normalized ball transform, using its real radial ODE estimate.
+-/
+
+noncomputable section
+open MeasureTheory Set Filter
+open scoped BigOperators SchwartzMap FourierTransform
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Every positive real ball-transform zero has the nonzero adjacent Bessel
+normalization required by its actual physical resolvent. -/
+theorem ballHelmholtzSquare_ne_zero_of_positive_zero (n : ℕ) {a : ℝ} (ha : 0 < a)
+    (hz : radialBallFourier n (a : ℂ) = 0) :
+    ballHelmholtzSquare n ((a ^ 2 : ℝ) : ℂ) ≠ 0 := by
+  apply ballHelmholtzSquare_ne_zero_of_simple_zero n ha hz
+  intro hd
+  have hreal : realRadialBallFourier n a = 0 := by
+    simp only [realRadialBallFourier, hz, Complex.zero_re]
+  apply realRadialBallFourier_deriv_ne_zero_at_zero n ha hreal
+  rw [realRadialBallFourier_deriv, hd, Complex.zero_re]
+
+/-- Evaluation of the manuscript denominator is the product of its actual
+Helmholtz Fourier symbols. -/
+theorem sourceSphereDenominator_eval_quadratic {d : ℕ} (radius : ℕ → ℝ) (N : ℕ)
+    (z : ComplexEuclidean d) :
+    MvPolynomial.eval (fun j => z j) (sourceSphereDenominator d radius N) =
+      ∏ j ∈ Finset.range N,
+        (ballQuadraticForm d z - (((2 * Real.pi * radius (j + 1)) ^ 2 : ℝ) : ℂ)) := by
+  simp only [sourceSphereDenominator, map_prod, sourceSphereFactor_eval]
+  apply Finset.prod_congr rfl
+  intro j _
+  rw [ballQuadraticForm]
+  push_cast
+  ring
+
+/-- The physical finite resolvent kernel in the canonical frequency-radius
+normalization. Its zero-stage seed is the normalized ball L² function. -/
+def sphereKernelPhysical (n : ℕ) (radius : ℕ → ℝ) (N : ℕ) : Euclidean (n + 1) → ℂ :=
+  if N = 0 then normalizedBallL2 (n + 1) else fun x =>
+    (((4 * Real.pi ^ 2) ^ N : ℝ) : ℂ) *
+      ∑ j ∈ Finset.range N,
+        resolventWeight (Finset.range N)
+          (fun i => (((2 * Real.pi * radius (i + 1)) ^ 2 : ℝ) : ℂ)) j *
+            ballResolvent n (2 * Real.pi * radius (j + 1)) x
+
+/-- The canonical entire spherical multiplier is the actual Fourier integral
+of its physical finite resolvent kernel. -/
+def sphereKernelMultiplier (n : ℕ) (radius : ℕ → ℝ) (N : ℕ) :
+    ComplexEuclidean (n + 1) → ℂ := entireFourier (sphereKernelPhysical n radius N)
+
+@[simp] theorem sphereKernelMultiplier_zero (n : ℕ) (radius : ℕ → ℝ) :
+    sphereKernelMultiplier n radius 0 = normalizedBallFourier (n + 1) := by
+  simp only [sphereKernelMultiplier, sphereKernelPhysical, if_pos rfl]
+  exact entireFourier_normalizedBallL2 (n + 1)
+
+/-- The physical resolvent sum is integrable whenever each actual radial
+resolvent has its nonzero boundary normalization. -/
+theorem sphereKernelPhysical_integrable (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0) :
+    Integrable (sphereKernelPhysical n radius N) := by
+  classical
+  by_cases hN : N = 0
+  · simpa only [sphereKernelPhysical, if_pos hN] using normalizedBallL2_integrable (n + 1)
+  · simp only [sphereKernelPhysical, if_neg hN]
+    apply Integrable.const_mul
+    apply integrable_finset_sum
+    intro j hj
+    exact (ballResolvent_integrable n _ (hb (j + 1) (by omega)
+      (by simpa using Finset.mem_range.mp hj))).const_mul _
+
+/-- The actual physical finite sum vanishes almost everywhere off the closed
+unit ball, independently of its Fourier quotient identity. -/
+theorem sphereKernelPhysical_supported (n : ℕ) (radius : ℕ → ℝ) (N : ℕ) :
+    ∀ᵐ x, x ∉ Metric.closedBall (0 : Euclidean (n + 1)) 1 →
+      sphereKernelPhysical n radius N x = 0 := by
+  classical
+  by_cases hN : N = 0
+  · simpa only [sphereKernelPhysical, if_pos hN] using normalizedBallL2_supported (n + 1)
+  · apply Filter.Eventually.of_forall
+    intro x hx
+    simp only [sphereKernelPhysical, if_neg hN]
+    have hzero : ∀ j, ballResolvent n (2 * Real.pi * radius (j + 1)) x = 0 := by
+      intro j
+      exact image_eq_zero_of_nmem_tsupport
+        (fun h => hx (ballResolvent_tsupport_subset n _ h))
+    simp only [hzero, mul_zero, Finset.sum_const_zero]
+
+/-- The Fourier integral of the actual finite physical resolvent sum is entire. -/
+theorem sphereKernelMultiplier_differentiable (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0) :
+    Differentiable ℂ (sphereKernelMultiplier n radius N) := by
+  apply entireFourier_differentiable (sphereKernelPhysical_integrable n radius N hb) zero_le_one
+  filter_upwards [sphereKernelPhysical_supported n radius N] with x hx
+  intro hne
+  by_contra hn
+  apply hne
+  apply hx
+  simpa only [Metric.mem_closedBall, dist_zero_right] using hn
+
+/-- The concrete finite physical kernel is square integrable. -/
+theorem sphereKernelPhysical_memLp (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0) :
+    MemLp (sphereKernelPhysical n radius N) 2 volume := by
+  classical
+  by_cases hN : N = 0
+  · simpa only [sphereKernelPhysical, if_pos hN] using Lp.memLp (normalizedBallL2 (n + 1))
+  · simp only [sphereKernelPhysical, if_neg hN]
+    apply MemLp.const_mul
+    apply memLp_finset_sum
+    intro j hj
+    exact (ballResolvent_memLp n _ (hb (j + 1) (by omega)
+      (by simpa using Finset.mem_range.mp hj))).const_mul _
+
+/-- The actual L² inverse of the spherical multiplier. -/
+def sphereKernelL2 (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0) : FullL2 (n + 1) :=
+  (sphereKernelPhysical_memLp n radius N hb).toLp (sphereKernelPhysical n radius N)
+
+/-- The concrete L² inverse has the explicit physical kernel as representative. -/
+theorem sphereKernelL2_ae (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0) :
+    (sphereKernelL2 n radius N hb : Euclidean (n + 1) → ℂ) =ᵐ[volume]
+      sphereKernelPhysical n radius N :=
+  (sphereKernelPhysical_memLp n radius N hb).coeFn_toLp
+
+/-- The actual distribution inverse of the spherical multiplier. -/
+def sphereKernelDistribution (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0) :
+    TemperedDistribution (n + 1) := l2Distribution (sphereKernelL2 n radius N hb)
+
+/-- The physical inverse distribution is supported in the closed unit ball. -/
+theorem sphereKernelDistribution_supported (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0) :
+    DistributionSupportedIn (sphereKernelDistribution n radius N hb)
+      (Metric.closedBall (0 : Euclidean (n + 1)) 1) := by
+  apply l2Distribution_supported
+  filter_upwards [sphereKernelL2_ae n radius N hb, sphereKernelPhysical_supported n radius N]
+    with x hx hs
+  intro hn
+  exact hx.trans (hs hn)
+
+/-- The canonical entire multiplier is the actual Fourier distribution of its
+supported physical inverse, expressed on arbitrary Schwartz tests. -/
+theorem sphereKernelDistribution_fourier_integral (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0)
+    (φ : 𝓢(Euclidean (n + 1), ℂ)) :
+    distributionFourier (sphereKernelDistribution n radius N hb) φ =
+      ∫ x, sphereKernelMultiplier n radius N (realToComplex x) * φ x := by
+  have hint : Integrable (sphereKernelL2 n radius N hb : Euclidean (n + 1) → ℂ) :=
+    (sphereKernelPhysical_integrable n radius N hb).congr (sphereKernelL2_ae n radius N hb).symm
+  rw [sphereKernelDistribution, distributionFourier_l2_integral _ hint]
+  have heq : 𝓕 (sphereKernelL2 n radius N hb : Euclidean (n + 1) → ℂ) =
+      fun x => sphereKernelMultiplier n radius N (realToComplex x) := by
+    funext x
+    rw [sphereKernelMultiplier, ← entireFourier_realToComplex]
+    rw [entireFourier_congr (sphereKernelL2_ae n radius N hb)]
+  rw [heq]
+
+/-- The canonical multiplier is the explicit finite sum of entire physical
+resolvent transforms at every nonzero stage. -/
+theorem sphereKernelMultiplier_sum (n : ℕ) (radius : ℕ → ℝ) {N : ℕ} (hN : N ≠ 0)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0)
+    (z : ComplexEuclidean (n + 1)) :
+    sphereKernelMultiplier n radius N z = (((4 * Real.pi ^ 2) ^ N : ℝ) : ℂ) *
+      ∑ j ∈ Finset.range N,
+        resolventWeight (Finset.range N)
+          (fun i => (((2 * Real.pi * radius (i + 1)) ^ 2 : ℝ) : ℂ)) j *
+            entireFourier (ballResolvent n (2 * Real.pi * radius (j + 1))) z := by
+  have hint : ∀ j ∈ Finset.range N, Integrable (fun x : Euclidean (n + 1) =>
+      ballResolvent n (2 * Real.pi * radius (j + 1)) x * complexFourierKernel x z) := by
+    intro j hj
+    apply entireFourier_integrable (ballResolvent_integrable n _
+      (hb (j + 1) (by omega) (by simpa using Finset.mem_range.mp hj)))
+    apply Filter.Eventually.of_forall
+    intro x hx
+    have hs : x ∈ Metric.closedBall (0 : Euclidean (n + 1)) 1 :=
+      ballResolvent_tsupport_subset n _ (subset_closure hx)
+    simpa only [Metric.mem_closedBall, dist_zero_right] using hs
+  simp only [sphereKernelMultiplier, sphereKernelPhysical, if_neg hN, entireFourier]
+  let c : ℂ := (((4 * Real.pi ^ 2) ^ N : ℝ) : ℂ)
+  let w : ℕ → ℂ := resolventWeight (Finset.range N)
+    (fun i => (((2 * Real.pi * radius (i + 1)) ^ 2 : ℝ) : ℂ))
+  let f : ℕ → Euclidean (n + 1) → ℂ := fun j => ballResolvent n (2 * Real.pi * radius (j + 1))
+  change (∫ x, c * (∑ j ∈ Finset.range N, w j * f j x) * complexFourierKernel x z) =
+    c * ∑ j ∈ Finset.range N, w j * ∫ x, f j x * complexFourierKernel x z
+  have heq : (fun x => c * (∑ j ∈ Finset.range N, w j * f j x) * complexFourierKernel x z) =
+      fun x => c * ∑ j ∈ Finset.range N, w j * (f j x * complexFourierKernel x z) := by
+    funext x
+    rw [mul_assoc, Finset.sum_mul]
+    congr 1
+    exact Finset.sum_congr rfl fun j _ => mul_assoc _ _ _
+  rw [heq, integral_const_mul, integral_finset_sum (Finset.range N)
+    (fun j hj => (hint j hj).const_mul (w j))]
+  simp only [integral_const_mul]
+  rfl
+
+/-- The Lagrange partial-fraction coefficients multiply actual resolvent
+identities into their finite denominator identity, including at the poles. -/
+theorem resolvent_sum_product_identity {ι : Type*} [DecidableEq ι]
+    (s : Finset ι) (a : ι → ℂ) (ha : Set.InjOn a s) (hs : s.Nonempty)
+    (q k : ℂ) (F : ι → ℂ) (hF : ∀ i ∈ s, (q - a i) * F i = k) :
+    (∏ i ∈ s, (q - a i)) * (∑ i ∈ s, resolventWeight s a i * F i) = k := by
+  rw [Finset.mul_sum]
+  calc
+    _ = ∑ i ∈ s, k * (resolventWeight s a i * ∏ j ∈ s.erase i, (q - a j)) := by
+      apply Finset.sum_congr rfl
+      intro i hi
+      rw [← Finset.mul_prod_erase s (fun j => q - a j) hi]
+      calc
+        _ = ((q - a i) * F i) * (resolventWeight s a i * ∏ j ∈ s.erase i, (q - a j)) := by ring
+        _ = _ := by rw [hF i hi]
+    _ = k * (∑ i ∈ s, resolventWeight s a i * ∏ j ∈ s.erase i, (q - a j)) :=
+      (Finset.mul_sum _ _ _).symm
+    _ = k := by rw [resolventWeight_identity s a ha hs q, mul_one]
+
+/-- Replacing a positive radial power by the Japanese-bracket power loses only
+the explicit factor `2^s` outside the unit ball. -/
+theorem radial_rpow_le_bracket {r s : ℝ} (hr : 1 ≤ r) (hs : 0 ≤ s) :
+    r ^ (-s) ≤ 2 ^ s * (1 + r) ^ (-s) := by
+  have hp : 0 < (1 + r) / 2 := by linarith
+  have hle := Real.rpow_le_rpow_of_nonpos hp (by linarith : (1 + r) / 2 ≤ r)
+    (neg_nonpos.mpr hs)
+  calc
+    _ ≤ ((1 + r) / 2) ^ (-s) := hle
+    _ = _ := by
+      rw [Real.div_rpow (by linarith) (by norm_num),
+        Real.rpow_neg (x := 2) (by norm_num)]
+      simp only [div_inv_eq_mul, mul_comm]
+
+/-- The actual normalized unit-ball transform has the required radial decay
+in the physical frequency variable, including its `2π` normalization. -/
+theorem normalizedBallFourier_ball_decay (n : ℕ) :
+    ∃ C R : ℝ, 0 ≤ C ∧ ∀ x : Euclidean (n + 1), R ≤ ‖x‖ →
+      ‖normalizedBallFourier (n + 1) (realToComplex x)‖ ≤
+        C * (1 + ‖x‖) ^ (-((n + 1 : ℕ) + 1 : ℝ) / 2) := by
+  let b : ℝ := ((n + 2 : ℕ) : ℝ) / 2
+  obtain ⟨M, hM, hb⟩ := realRadialBallFourier_decay n (a := 1) zero_lt_one
+  refine ⟨M * (2 * Real.pi) ^ (-b) * 2 ^ b, max 1 ((2 * Real.pi)⁻¹), by positivity, ?_⟩
+  intro x hx
+  have hunit : 1 ≤ ‖x‖ := (le_max_left _ _).trans hx
+  have hscale : 1 ≤ 2 * Real.pi * ‖x‖ := by
+    have h := (le_max_right 1 ((2 * Real.pi)⁻¹)).trans hx
+    have h' : 1 / (2 * Real.pi) ≤ ‖x‖ := by simpa only [one_div] using h
+    simpa only [mul_comm] using (div_le_iff₀ (by positivity : 0 < 2 * Real.pi)).mp h'
+  rw [normalizedBallFourier_real_radial, radialBallFourier_ofReal_eq, Complex.norm_real,
+    Real.norm_eq_abs]
+  have hbracket := radial_rpow_le_bracket hunit (show 0 ≤ b by dsimp [b]; positivity)
+  calc
+    _ ≤ M * (2 * Real.pi * ‖x‖) ^ (-b) := hb _ hscale
+    _ = (M * (2 * Real.pi) ^ (-b)) * ‖x‖ ^ (-b) := by
+      rw [Real.mul_rpow (by positivity) (norm_nonneg _)]; ring
+    _ ≤ (M * (2 * Real.pi) ^ (-b)) * (2 ^ b * (1 + ‖x‖) ^ (-b)) :=
+      mul_le_mul_of_nonneg_left hbracket (by positivity)
+    _ = _ := by dsimp [b]; push_cast; ring
+
+/-- Every finite spherical denominator is uniformly bounded below by its full
+degree power outside an explicitly bounded frequency region. -/
+theorem sphereDenominator_norm_lower_bound {d : ℕ} (radius : ℕ → ℝ) (N : ℕ) :
+    ∃ R : ℝ, 1 ≤ R ∧ ∀ x : Euclidean d, R ≤ ‖x‖ →
+      (1 + ‖x‖) ^ (2 * N) / 8 ^ N ≤
+        ‖MvPolynomial.eval (fun j => (x j : ℂ)) (sphereDenominator d radius N)‖ := by
+  let A : ℝ := ∑ j ∈ Finset.range N, |radius (j + 1)|
+  have hA : 0 ≤ A := Finset.sum_nonneg fun _ _ => abs_nonneg _
+  refine ⟨1 + 2 * A, by linarith, fun x hx => ?_⟩
+  have hr : 1 ≤ ‖x‖ := by linarith
+  have hfactor : ∀ j ∈ Finset.range N,
+      (1 + ‖x‖) ^ 2 / 8 ≤ ‖((‖x‖ ^ 2 - radius (j + 1) ^ 2 : ℝ) : ℂ)‖ := by
+    intro j hj
+    have hjA : |radius (j + 1)| ≤ A :=
+      Finset.single_le_sum (fun k _ => abs_nonneg (radius (k + 1))) hj
+    have hhalf : 2 * |radius (j + 1)| ≤ ‖x‖ := by linarith
+    have hsq := sq_le_sq₀ (by positivity : 0 ≤ 2 * |radius (j + 1)|) (norm_nonneg x)
+    have hrad : 4 * radius (j + 1) ^ 2 ≤ ‖x‖ ^ 2 := by
+      have h := hsq.mpr hhalf
+      rw [mul_pow, sq_abs] at h
+      norm_num at h ⊢
+      exact h
+    have hpos : 0 ≤ ‖x‖ ^ 2 - radius (j + 1) ^ 2 := by nlinarith [sq_nonneg (radius (j + 1))]
+    rw [Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hpos]
+    nlinarith [sq_nonneg (‖x‖ - 1)]
+  rw [sphereDenominator_eval_real, norm_prod]
+  have hprod := Finset.prod_le_prod (s := Finset.range N)
+    (fun _ _ => by positivity : ∀ j ∈ Finset.range N, 0 ≤ (1 + ‖x‖) ^ 2 / 8) hfactor
+  simpa only [Finset.prod_const, Finset.card_range, div_pow, ← pow_mul] using hprod
+
+/-- Every actual spherical quotient of the ball transform has the sharp
+denominator decay. The estimate is derived from its product identity. -/
+theorem sphere_quotient_ball_decay (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (χ : ComplexEuclidean (n + 1) → ℂ)
+    (hχ : ∀ x : Euclidean (n + 1), normalizedBallFourier (n + 1) (realToComplex x) =
+      MvPolynomial.eval (fun j => (x j : ℂ)) (sphereDenominator (n + 1) radius N) *
+        χ (realToComplex x)) :
+    ∃ C R : ℝ, 0 ≤ C ∧ ∀ x : Euclidean (n + 1), R ≤ ‖x‖ →
+      ‖χ (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^
+        (-(2 * N : ℕ) - ((n + 1 : ℕ) + 1 : ℝ) / 2) := by
+  obtain ⟨C, R, hC, hk⟩ := normalizedBallFourier_ball_decay n
+  obtain ⟨T, _, hQ⟩ := sphereDenominator_norm_lower_bound (d := n + 1) radius N
+  refine ⟨C * 8 ^ N, max R T, by positivity, fun x hx => ?_⟩
+  have ht := (le_max_right R T).trans hx
+  have hr : 0 < 1 + ‖x‖ := by positivity
+  have hlo : 0 < (1 + ‖x‖) ^ (2 * N) / 8 ^ N := by positivity
+  have hid : ‖MvPolynomial.eval (fun j => (x j : ℂ))
+      (sphereDenominator (n + 1) radius N)‖ * ‖χ (realToComplex x)‖ =
+      ‖normalizedBallFourier (n + 1) (realToComplex x)‖ := by
+    rw [← norm_mul, ← hχ]
+  have hdiv : ‖χ (realToComplex x)‖ ≤
+      ‖normalizedBallFourier (n + 1) (realToComplex x)‖ /
+        ((1 + ‖x‖) ^ (2 * N) / 8 ^ N) := by
+    apply (le_div_iff₀ hlo).mpr
+    calc
+      _ ≤ ‖χ (realToComplex x)‖ *
+          ‖MvPolynomial.eval (fun j => (x j : ℂ)) (sphereDenominator (n + 1) radius N)‖ :=
+        mul_le_mul_of_nonneg_left (hQ x ht) (norm_nonneg _)
+      _ = _ := by rw [mul_comm, hid]
+  calc
+    _ ≤ ‖normalizedBallFourier (n + 1) (realToComplex x)‖ /
+        ((1 + ‖x‖) ^ (2 * N) / 8 ^ N) := hdiv
+    _ ≤ (C * (1 + ‖x‖) ^ (-((n + 1 : ℕ) + 1 : ℝ) / 2)) /
+        ((1 + ‖x‖) ^ (2 * N) / 8 ^ N) :=
+      div_le_div_of_nonneg_right (hk x ((le_max_left R T).trans hx)) hlo.le
+    _ = _ := by
+      rw [div_div_eq_mul_div, div_eq_mul_inv]
+      calc
+        _ = (C * 8 ^ N) * ((1 + ‖x‖) ^ (-((n + 1 : ℕ) + 1 : ℝ) / 2) *
+            (1 + ‖x‖) ^ (-((2 * N : ℕ) : ℝ))) := by
+          rw [Real.rpow_neg hr.le, Real.rpow_natCast]; ring
+        _ = _ := by rw [← Real.rpow_add hr]; congr 2; ring
+
+/-- Polynomial evaluation on complex Euclidean space is complex differentiable. -/
+theorem complexPolynomialEvaluation_differentiable {d : ℕ} (p : ComplexPolynomial d) :
+    Differentiable ℂ (fun z : ComplexEuclidean d => MvPolynomial.eval (fun j => z j) p) := by
+  induction p using MvPolynomial.induction_on with
+  | C c => simpa only [MvPolynomial.eval_C] using differentiable_const c
+  | add p q hp hq => simpa only [map_add] using hp.add hq
+  | mul_X p i hp =>
+    have hi : Differentiable ℂ (fun z : ComplexEuclidean d => z i) :=
+      (PiLp.proj (𝕜 := ℂ) 2 (fun _ : Fin d => ℂ) i).differentiable
+    simpa only [map_mul, MvPolynomial.eval_X] using hp.mul hi
+
+/-- The physical finite sum satisfies the entire denominator identity when
+its individual actual resolvents satisfy the real divisor identities. -/
+theorem sphereKernelMultiplier_product_of_resolvent_identities (n : ℕ) (radius : ℕ → ℝ)
+    (N : ℕ) (hstrict : StrictMono radius) (hpositive : ∀ j, 0 < j → 0 < radius j)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0)
+    (hdivisor : ∀ j, 0 < j → j ≤ N → ∀ x : Euclidean (n + 1),
+      (ballQuadraticForm (n + 1) (realToComplex x) -
+          (((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) *
+        entireFourier (ballResolvent n (2 * Real.pi * radius j)) (realToComplex x) =
+          normalizedBallFourier (n + 1) (realToComplex x)) :
+    ∀ z, normalizedBallFourier (n + 1) z =
+      MvPolynomial.eval (fun j => z j) (sphereDenominator (n + 1) radius N) *
+        sphereKernelMultiplier n radius N z := by
+  by_cases hN : N = 0
+  · subst N
+    simp only [sphereDenominator_zero, map_one, sphereKernelMultiplier_zero, one_mul, implies_true]
+  · have ha : Set.InjOn (fun i => (((2 * Real.pi * radius (i + 1)) ^ 2 : ℝ) : ℂ))
+        (Finset.range N) := by
+      intro i _ j _ hij
+      have hi : 0 < 2 * Real.pi * radius (i + 1) := mul_pos (by positivity) (hpositive _ (by omega))
+      have hj : 0 < 2 * Real.pi * radius (j + 1) := mul_pos (by positivity) (hpositive _ (by omega))
+      have hr := (sq_eq_sq₀ hi.le hj.le).mp (Complex.ofReal_injective hij)
+      have hri := mul_left_cancel₀ (show 2 * Real.pi ≠ 0 by positivity) hr
+      exact Nat.add_right_cancel (hstrict.injective hri)
+    have hreal : ∀ x : Euclidean (n + 1), normalizedBallFourier (n + 1) (realToComplex x) =
+        MvPolynomial.eval (fun j => (x j : ℂ)) (sphereDenominator (n + 1) radius N) *
+          sphereKernelMultiplier n radius N (realToComplex x) := by
+      intro x
+      have hraw := resolvent_sum_product_identity (Finset.range N)
+        (fun i => (((2 * Real.pi * radius (i + 1)) ^ 2 : ℝ) : ℂ)) ha
+        (Finset.nonempty_range_iff.mpr hN) (ballQuadraticForm (n + 1) (realToComplex x))
+        (normalizedBallFourier (n + 1) (realToComplex x))
+        (fun j => entireFourier (ballResolvent n (2 * Real.pi * radius (j + 1))) (realToComplex x))
+        (fun j hj => hdivisor (j + 1) (by omega) (by simpa using Finset.mem_range.mp hj) x)
+      have hscale : (((4 * Real.pi ^ 2) ^ N : ℝ) : ℂ) *
+          MvPolynomial.eval (fun j => (x j : ℂ)) (sphereDenominator (n + 1) radius N) =
+          ∏ j ∈ Finset.range N, (ballQuadraticForm (n + 1) (realToComplex x) -
+            (((2 * Real.pi * radius (j + 1)) ^ 2 : ℝ) : ℂ)) := by
+        rw [← sourceSphereDenominator_eval_quadratic radius N (realToComplex x),
+          sourceSphereDenominator_eq]
+        simp only [map_mul, MvPolynomial.eval_C, realToComplex_apply]
+      rw [sphereKernelMultiplier_sum n radius hN hb]
+      rw [← hscale] at hraw
+      calc
+        _ = _ := hraw.symm
+        _ = _ := by ring
+    have hEq := entire_eq_of_eq_on_real (normalizedBallFourier_differentiable (n + 1))
+      ((complexPolynomialEvaluation_differentiable (sphereDenominator (n + 1) radius N)).mul
+        (sphereKernelMultiplier_differentiable n radius N hb)) hreal
+    exact fun z => congrFun hEq z
+
+/-- A spherical quotient with an actual supported inverse distribution
+realizes all allowed polynomial numerators on every complex frequency. -/
+theorem sphere_quotient_synthesize (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (χ : ComplexEuclidean (n + 1) → ℂ) (hdiff : Differentiable ℂ χ)
+    (hproduct : ∀ z, normalizedBallFourier (n + 1) z =
+      MvPolynomial.eval (fun j => z j) (sphereDenominator (n + 1) radius N) * χ z)
+    (u : TemperedDistribution (n + 1))
+    (hu : DistributionSupportedIn u (Metric.closedBall (0 : Euclidean (n + 1)) 1))
+    (htransform : ∀ φ : 𝓢(Euclidean (n + 1), ℂ),
+      distributionFourier u φ = ∫ x, χ (realToComplex x) * φ x)
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hBΩ : Metric.closedBall (0 : Euclidean (n + 1)) 1 ≤ᵐ[volume] Ω)
+    (p : ComplexPolynomial (n + 1)) (hp : p.totalDegree ≤ 2 * N) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f (Metric.closedBall (0 : Euclidean (n + 1)) 1) ∧
+      domainEntireFourier Ω hΩ f = fun z => χ z * MvPolynomial.eval (fun j => z j) p := by
+  have hemb : Continuous (realToComplex : Euclidean (n + 1) → ComplexEuclidean (n + 1)) :=
+    (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+      change Continuous (fun x : Euclidean (n + 1) => (x j : ℂ))
+      fun_prop)
+  have hcont : Continuous (fun x : Euclidean (n + 1) => χ (realToComplex x)) :=
+    hdiff.continuous.comp hemb
+  obtain ⟨C, R, _, hdecay⟩ := sphere_quotient_ball_decay n radius N χ
+    (fun x => hproduct (realToComplex x))
+  obtain ⟨f, hs, _, heq⟩ := exists_domainL2_polynomial_numerator_tail
+    Metric.isClosed_closedBall hΩ hbounded hBΩ u hu (fun x => χ (realToComplex x))
+    hcont hdecay htransform p hp
+  refine ⟨f, hs, entire_eq_of_eq_on_real (domainEntireFourier_differentiable hΩ hbounded f)
+    (hdiff.mul (complexPolynomialEvaluation_differentiable p)) fun x => ?_⟩
+  simpa only [polynomialEvaluation_apply, mul_comm] using heq x
+
+/-- The canonical multiplier's actual physical inverse supplies numerator
+synthesis as soon as its explicit denominator product identity is established. -/
+theorem sphereKernelMultiplier_synthesize (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0)
+    (hproduct : ∀ z, normalizedBallFourier (n + 1) z =
+      MvPolynomial.eval (fun j => z j) (sphereDenominator (n + 1) radius N) *
+        sphereKernelMultiplier n radius N z)
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hBΩ : Metric.closedBall (0 : Euclidean (n + 1)) 1 ≤ᵐ[volume] Ω)
+    (p : ComplexPolynomial (n + 1)) (hp : p.totalDegree ≤ 2 * N) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f (Metric.closedBall (0 : Euclidean (n + 1)) 1) ∧
+      domainEntireFourier Ω hΩ f = fun z =>
+        sphereKernelMultiplier n radius N z * MvPolynomial.eval (fun j => z j) p :=
+  sphere_quotient_synthesize n radius N (sphereKernelMultiplier n radius N)
+    (sphereKernelMultiplier_differentiable n radius N hb) hproduct
+    (sphereKernelDistribution n radius N hb) (sphereKernelDistribution_supported n radius N hb)
+    (sphereKernelDistribution_fourier_integral n radius N hb) Ω hΩ hbounded hBΩ p hp
+
+/-- At genuine positive ball-transform zero radii, the canonical physical
+multiplier is an entire quotient of the ball transform by the finite denominator. -/
+theorem sphereKernelMultiplier_product (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hstrict : StrictMono radius) (hpositive : ∀ j, 0 < j → 0 < radius j)
+    (hzero : ∀ j, 0 < j → j ≤ N → radialBallFourier n (2 * Real.pi * radius j : ℝ) = 0) :
+    ∀ z, normalizedBallFourier (n + 1) z =
+      MvPolynomial.eval (fun j => z j) (sphereDenominator (n + 1) radius N) *
+        sphereKernelMultiplier n radius N z := by
+  have hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0 := by
+    intro j hj hJ
+    exact ballHelmholtzSquare_ne_zero_of_positive_zero n
+      (mul_pos (by positivity) (hpositive j hj)) (hzero j hj hJ)
+  apply sphereKernelMultiplier_product_of_resolvent_identities n radius N hstrict hpositive hb
+  intro j hj hJ x
+  rw [entireFourier_realToComplex]
+  exact fourier_ballResolvent_divisor n
+    (ne_of_gt (mul_pos (by positivity) (hpositive j hj))) (hzero j hj hJ) (hb j hj hJ) x
+
+/-- Every allowed polynomial numerator over the canonical spherical quotient
+is the entire Fourier transform of an actual ball-supported domain-L² vector.
+Only actual positive ball-transform zero radii are required. -/
+theorem sphereKernelMultiplier_synthesize_of_zeros (n : ℕ) (radius : ℕ → ℝ) (N : ℕ)
+    (hstrict : StrictMono radius) (hpositive : ∀ j, 0 < j → 0 < radius j)
+    (hzero : ∀ j, 0 < j → j ≤ N → radialBallFourier n (2 * Real.pi * radius j : ℝ) = 0)
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hBΩ : Metric.closedBall (0 : Euclidean (n + 1)) 1 ≤ᵐ[volume] Ω)
+    (p : ComplexPolynomial (n + 1)) (hp : p.totalDegree ≤ 2 * N) :
+    ∃ f : DomainL2 Ω, SupportedOn Ω f (Metric.closedBall (0 : Euclidean (n + 1)) 1) ∧
+      domainEntireFourier Ω hΩ f = fun z =>
+        sphereKernelMultiplier n radius N z * MvPolynomial.eval (fun j => z j) p := by
+  have hb : ∀ j, 0 < j → j ≤ N →
+      ballHelmholtzSquare n ((((2 * Real.pi * radius j) ^ 2 : ℝ) : ℂ)) ≠ 0 := by
+    intro j hj hJ
+    exact ballHelmholtzSquare_ne_zero_of_positive_zero n
+      (mul_pos (by positivity) (hpositive j hj)) (hzero j hj hJ)
+  exact sphereKernelMultiplier_synthesize n radius N hb
+    (sphereKernelMultiplier_product n radius N hstrict hpositive hzero) Ω hΩ hbounded hBΩ p hp
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalBesselComplexZeros.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Complex zeros of the ball-transform square function
+
+The self-adjoint radial equation identifies a complex zero with a positive
+real Rayleigh quotient. No infinite product representation is assumed.
+-/
+
+noncomputable section
+open MeasureTheory Metric Filter Topology
+open scoped Interval
+
+namespace RieszEuclidean.CompleteMinimal
+
+private theorem squareFunction_differentiable (n : ℕ) :
+    Differentiable ℂ (ballSquareFunction n) :=
+  (Complex.analyticOnNhd_univ_iff_differentiable).mp (ballSquareFunction_analytic n)
+
+private theorem squareFunction_deriv_differentiable (n : ℕ) :
+    Differentiable ℂ (deriv (ballSquareFunction n)) := by
+  intro z
+  have h := (hasFPowerSeriesOnBall_deriv (ballSquareFunction_hasFPowerSeries n)).analyticOnNhd
+  exact (h z (by simp)).differentiableAt
+
+private def spectralProfile (n : ℕ) (v : ℂ) (z : ℂ) := ballSquareFunction n (v * z ^ 2)
+private def spectralSlope (n : ℕ) (v : ℂ) (z : ℂ) :=
+  2 * v * z * deriv (ballSquareFunction n) (v * z ^ 2)
+private def spectralFlux (n : ℕ) (v : ℂ) (z : ℂ) :=
+  2 * v * z ^ (n + 3) * deriv (ballSquareFunction n) (v * z ^ 2)
+
+private theorem spectralProfile_hasDerivAt (n : ℕ) (v z : ℂ) :
+    HasDerivAt (spectralProfile n v) (spectralSlope n v z) z := by
+  have h := ((squareFunction_differentiable n) (v * z ^ 2)).hasDerivAt.comp z
+    (((hasDerivAt_id z).pow 2).const_mul v)
+  convert h using 1
+  simp only [spectralSlope, Nat.cast_ofNat, pow_one, id_eq, mul_one]
+  ring
+
+private theorem spectralFlux_eq (n : ℕ) (v z : ℂ) :
+    spectralFlux n v z = z ^ (n + 2) * spectralSlope n v z := by
+  simp only [spectralFlux, spectralSlope]
+  rw [show n + 3 = (n + 2) + 1 by omega, pow_succ]
+  ring
+
+private theorem spectralFlux_hasDerivAt (n : ℕ) (v z : ℂ) :
+    HasDerivAt (spectralFlux n v) (-v * z ^ (n + 2) * spectralProfile n v z) z := by
+  have h := (((hasDerivAt_id z).pow (n + 3)).const_mul (2 * v)).mul
+    (((squareFunction_deriv_differentiable n) (v * z ^ 2)).hasDerivAt.comp z
+      (((hasDerivAt_id z).pow 2).const_mul v))
+  convert h using 1
+  have ho := ballSquareFunction_ode n (v * z ^ 2)
+  simp only [spectralProfile, id_eq, Nat.cast_ofNat, pow_one, mul_one,
+    Function.comp_apply, show n + 3 - 1 = n + 2 by omega]
+  push_cast at ho ⊢
+  rw [show n + 3 = (n + 2) + 1 by omega, pow_succ]
+  linear_combination -v * z ^ (n + 2) * ho
+
+private theorem spectral_conj_hasDerivAt (n : ℕ) (v : ℂ) (t : ℝ) :
+    HasDerivAt (fun s : ℝ => starRingEnd ℂ (spectralProfile n v s))
+      (starRingEnd ℂ (spectralSlope n v t)) t := by
+  have h := (Complex.conjCLE.toContinuousLinearMap.hasFDerivAt.comp t
+    (spectralProfile_hasDerivAt n v (t : ℂ)).comp_ofReal.hasFDerivAt).hasDerivAt
+  simpa only [Function.comp_def, ContinuousLinearMap.comp_apply,
+    ContinuousLinearMap.smulRight_apply, ContinuousLinearMap.one_apply, one_smul, ContinuousLinearEquiv.coe_coe,
+    Complex.conjCLE_apply] using h
+
+private theorem spectral_mass_pos (n : ℕ) (v : ℂ) :
+    0 < ∫ t in (0 : ℝ)..1, t ^ (n + 2) * ‖spectralProfile n v t‖ ^ 2 := by
+  have hu : Continuous (fun t : ℝ => spectralProfile n v t) :=
+    ((squareFunction_differentiable n).continuous.comp
+      (continuous_const.mul (Complex.continuous_ofReal.pow 2)))
+  have hu0 : spectralProfile n v 0 ≠ 0 := by
+    simp only [spectralProfile, zero_pow (by norm_num : 2 ≠ 0), mul_zero]
+    have h := radialBallFourier_eq_squareFunction n 0
+    have hF : ballSquareFunction n 0 = 1 := by simpa using h.symm
+    rw [hF]
+    exact one_ne_zero
+  obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp (hu.continuousAt.eventually_ne hu0)
+  let c : ℝ := min ε 1 / 2
+  have hcpos : 0 < c := by dsimp only [c]; positivity
+  have hcle : c ≤ 1 := by dsimp only [c]; linarith [min_le_right ε 1]
+  have hce : c < ε := by dsimp only [c]; linarith [min_le_left ε 1]
+  have huc : spectralProfile n v c ≠ 0 := hball
+    (by simpa only [mem_ball, dist_zero_right, Real.norm_eq_abs, abs_of_pos hcpos] using hce)
+  apply intervalIntegral.integral_pos zero_lt_one
+    ((continuous_id.pow (n + 2)).mul (hu.norm.pow 2)).continuousOn
+  · intro t ht
+    exact mul_nonneg (pow_nonneg ht.1.le _) (sq_nonneg _)
+  · exact ⟨c, ⟨hcpos.le, hcle⟩, mul_pos (pow_pos hcpos _) (sq_pos_of_pos (norm_pos_iff.mpr huc))⟩
+
+private theorem spectral_energy_identity (n : ℕ) {v : ℂ}
+    (hv : ballSquareFunction n v = 0) :
+    v * ((∫ t in (0 : ℝ)..1, t ^ (n + 2) * ‖spectralProfile n v t‖ ^ 2) : ℝ) =
+      ((∫ t in (0 : ℝ)..1, t ^ (n + 2) * ‖spectralSlope n v t‖ ^ 2) : ℝ) := by
+  have hu : Continuous (fun t : ℝ => spectralProfile n v t) :=
+    (continuous_iff_continuousAt.mpr (fun z => (spectralProfile_hasDerivAt n v z).continuousAt)).comp
+      Complex.continuous_ofReal
+  have hs : Continuous (fun t : ℝ => spectralSlope n v t) := by
+    unfold spectralSlope
+    exact (continuous_const.mul Complex.continuous_ofReal).mul
+      ((squareFunction_deriv_differentiable n).continuous.comp
+        (continuous_const.mul (Complex.continuous_ofReal.pow 2)))
+  have hp : Continuous (fun t : ℝ => spectralFlux n v t) :=
+    (continuous_iff_continuousAt.mpr (fun z => (spectralFlux_hasDerivAt n v z).continuousAt)).comp
+      Complex.continuous_ofReal
+  have hm : Continuous (fun t : ℝ => t ^ (n + 2) * ‖spectralProfile n v t‖ ^ 2) :=
+    (continuous_id.pow (n + 2)).mul (hu.norm.pow 2)
+  have he : Continuous (fun t : ℝ => t ^ (n + 2) * ‖spectralSlope n v t‖ ^ 2) :=
+    (continuous_id.pow (n + 2)).mul (hs.norm.pow 2)
+  have hleft : Continuous (fun t : ℝ => -v * (t : ℂ) ^ (n + 2) * spectralProfile n v t) :=
+    (continuous_const.mul (Complex.continuous_ofReal.pow (n + 2))).mul hu
+  have hright : Continuous (fun t : ℝ => starRingEnd ℂ (spectralSlope n v t)) :=
+    Complex.continuous_conj.comp hs
+  have h := intervalIntegral.integral_deriv_mul_eq_sub_of_hasDerivAt
+    hp.continuousOn (Complex.continuous_conj.comp hu).continuousOn
+    (fun t _ => (spectralFlux_hasDerivAt n v (t : ℂ)).comp_ofReal)
+    (fun t _ => spectral_conj_hasDerivAt n v t)
+    (hleft.intervalIntegrable (μ := volume) 0 1)
+    (hright.intervalIntegrable (μ := volume) 0 1)
+  have hend : spectralFlux n v 1 * starRingEnd ℂ (spectralProfile n v 1) -
+      spectralFlux n v 0 * starRingEnd ℂ (spectralProfile n v 0) = 0 := by
+    simp [spectralProfile, spectralFlux, hv]
+  simp only [Function.comp_apply, Complex.ofReal_one, Complex.ofReal_zero, hend] at h
+  have heq (t : ℝ) :
+      (-v * (t : ℂ) ^ (n + 2) * spectralProfile n v t) *
+          starRingEnd ℂ (spectralProfile n v t) +
+        spectralFlux n v t * starRingEnd ℂ (spectralSlope n v t) =
+      -v * ((t ^ (n + 2) * ‖spectralProfile n v t‖ ^ 2 : ℝ) : ℂ) +
+        ((t ^ (n + 2) * ‖spectralSlope n v t‖ ^ 2 : ℝ) : ℂ) := by
+    rw [spectralFlux_eq]
+    have hprod (a : ℂ) : a * starRingEnd ℂ a = (‖a‖ ^ 2 : ℝ) := by
+      rw [Complex.mul_conj, Complex.normSq_eq_norm_sq]
+    simp only [Complex.ofReal_mul, Complex.ofReal_pow]
+    calc
+      _ = -v * (t : ℂ) ^ (n + 2) *
+          (spectralProfile n v t * starRingEnd ℂ (spectralProfile n v t)) +
+          (t : ℂ) ^ (n + 2) *
+          (spectralSlope n v t * starRingEnd ℂ (spectralSlope n v t)) := by ring
+      _ = _ := by rw [hprod, hprod]; push_cast; ring
+  have hint : (∫ t in (0 : ℝ)..1,
+      -v * ((t ^ (n + 2) * ‖spectralProfile n v t‖ ^ 2 : ℝ) : ℂ) +
+        ((t ^ (n + 2) * ‖spectralSlope n v t‖ ^ 2 : ℝ) : ℂ)) = 0 := by
+    exact (intervalIntegral.integral_congr (fun t _ => (heq t).symm)).trans h
+  have hmi : IntervalIntegrable (fun t : ℝ =>
+      -v * ((t ^ (n + 2) * ‖spectralProfile n v t‖ ^ 2 : ℝ) : ℂ)) volume 0 1 := by
+    simpa only [Function.comp_def] using
+      ((continuous_const.mul (Complex.continuous_ofReal.comp hm)).intervalIntegrable (μ := volume) 0 1)
+  have hei : IntervalIntegrable (fun t : ℝ =>
+      ((t ^ (n + 2) * ‖spectralSlope n v t‖ ^ 2 : ℝ) : ℂ)) volume 0 1 := by
+    simpa only [Function.comp_def] using
+      ((Complex.continuous_ofReal.comp he).intervalIntegrable (μ := volume) 0 1)
+  rw [intervalIntegral.integral_add hmi hei,
+    intervalIntegral.integral_const_mul, intervalIntegral.integral_ofReal,
+    intervalIntegral.integral_ofReal] at hint
+  linear_combination -hint
+
+/-- Every complex zero of the ball-transform square function is positive real.
+This follows from the radial self-adjoint equation, without a product formula. -/
+theorem ballSquareFunction_zero_positive_real (n : ℕ) {v : ℂ}
+    (hv : ballSquareFunction n v = 0) : ∃ a : ℝ, 0 < a ∧ v = (a : ℂ) := by
+  let M : ℝ := ∫ t in (0 : ℝ)..1, t ^ (n + 2) * ‖spectralProfile n v t‖ ^ 2
+  let T : ℝ := ∫ t in (0 : ℝ)..1, t ^ (n + 2) * ‖spectralSlope n v t‖ ^ 2
+  have hM : 0 < M := spectral_mass_pos n v
+  have hT : 0 ≤ T := by
+    apply intervalIntegral.integral_nonneg zero_le_one
+    intro t ht
+    exact mul_nonneg (pow_nonneg ht.1 _) (sq_nonneg _)
+  have hid : v * (M : ℂ) = (T : ℂ) := spectral_energy_identity n hv
+  have him : v.im * M = 0 := by
+    simpa only [Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im, mul_zero, zero_add] using
+      congrArg Complex.im hid
+  have hvim : v.im = 0 := (mul_eq_zero.mp him).resolve_right hM.ne'
+  have hre : v.re * M = T := by
+    simpa only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero] using
+      congrArg Complex.re hid
+  have hvr : 0 ≤ v.re := by nlinarith
+  have hvne : v ≠ 0 := by
+    intro heq
+    have h := radialBallFourier_eq_squareFunction n 0
+    have hF : ballSquareFunction n 0 = 1 := by simpa using h.symm
+    rw [heq, hF] at hv
+    exact one_ne_zero hv
+  have hvrne : v.re ≠ 0 := by
+    intro heq
+    apply hvne
+    exact Complex.ext (by simpa using heq) (by simpa using hvim)
+  refine ⟨v.re, lt_of_le_of_ne hvr hvrne.symm, ?_⟩
+  exact Complex.ext (by simp) (by simpa using hvim)
+
+/-- All zeros of the square function are simple, including as complex zeros. -/
+theorem ballSquareFunction_deriv_ne_zero_at_zero (n : ℕ) {v : ℂ}
+    (hv : ballSquareFunction n v = 0) : deriv (ballSquareFunction n) v ≠ 0 := by
+  obtain ⟨a, ha, rfl⟩ := ballSquareFunction_zero_positive_real n hv
+  let s : ℝ := Real.sqrt a
+  have hs : 0 < s := Real.sqrt_pos.mpr ha
+  have hsq : (s : ℂ) ^ 2 = (a : ℂ) := by exact_mod_cast Real.sq_sqrt ha.le
+  have hz : realRadialBallFourier n s = 0 := by
+    rw [realRadialBallFourier, radialBallFourier_eq_squareFunction, hsq, hv]
+    rfl
+  intro hderiv
+  apply realRadialBallFourier_deriv_ne_zero_at_zero n hs hz
+  rw [realRadialBallFourier_deriv, radialBallFourier_deriv, hsq, hderiv]
+  simp
+
+/-- The analytic unit remaining after removal of a square-function zero. -/
+theorem ballSquareFunction_simple_factor (n : ℕ) {v : ℂ}
+    (hv : ballSquareFunction n v = 0) :
+    ∃ h : ℂ → ℂ, AnalyticAt ℂ h v ∧ h v ≠ 0 ∧
+      ∀ z, ballSquareFunction n z = (z - v) * h z := by
+  obtain ⟨p, hp⟩ := (ballSquareFunction_analytic n) v (Set.mem_univ _)
+  refine ⟨dslope (ballSquareFunction n) v, ⟨p.fslope, hp.has_fpower_series_dslope_fslope⟩, ?_, ?_⟩
+  · rw [dslope_same]
+    exact ballSquareFunction_deriv_ne_zero_at_zero n hv
+  · intro z
+    have h := sub_smul_dslope (ballSquareFunction n) v z
+    simpa only [smul_eq_mul, hv, sub_zero] using h.symm
+
+/-- Analyticity of the normalized squared-frequency polynomial. -/
+theorem ballQuadraticForm_analyticAt (d : ℕ) (z : ComplexEuclidean d) :
+    AnalyticAt ℂ (ballQuadraticForm d) z := by
+  exact analyticAt_const.mul (Finset.analyticAt_sum _ (fun i _ =>
+    ((PiLp.proj (𝕜 := ℂ) 2 (fun _ : Fin d => ℂ) i).analyticAt z).pow 2))
+
+/-- Every complex ball-transform zero belongs to a positive radial quadric
+and admits its equation times an actual analytic unit. -/
+theorem normalizedBallFourier_zero_local_factor (n : ℕ)
+    {z₀ : ComplexEuclidean (n + 1)} (hz : normalizedBallFourier (n + 1) z₀ = 0) :
+    ∃ s : ℝ, 0 < s ∧ realRadialBallFourier n s = 0 ∧
+      ballQuadraticForm (n + 1) z₀ = (s : ℂ) ^ 2 ∧
+      ∃ u : ComplexEuclidean (n + 1) → ℂ, AnalyticAt ℂ u z₀ ∧ u z₀ ≠ 0 ∧
+        ∀ᶠ z in 𝓝 z₀, normalizedBallFourier (n + 1) z =
+          (squareSum (fun j => z j) - (s / (2 * Real.pi) : ℂ) ^ 2) * u z := by
+  have hF : ballSquareFunction n (ballQuadraticForm (n + 1) z₀) = 0 := by
+    rwa [normalizedBallFourier_eq_squareFunction] at hz
+  obtain ⟨a, ha, hqa⟩ := ballSquareFunction_zero_positive_real n hF
+  let s : ℝ := Real.sqrt a
+  have hs : 0 < s := Real.sqrt_pos.mpr ha
+  have hsq : (s : ℂ) ^ 2 = (a : ℂ) := by exact_mod_cast Real.sq_sqrt ha.le
+  have hq : ballQuadraticForm (n + 1) z₀ = (s : ℂ) ^ 2 := hqa.trans hsq.symm
+  have hsroot : realRadialBallFourier n s = 0 := by
+    rw [realRadialBallFourier, radialBallFourier_eq_squareFunction, ← hq, hF]
+    rfl
+  obtain ⟨h, hh, hhne, hfactor⟩ := ballSquareFunction_simple_factor n hF
+  let u : ComplexEuclidean (n + 1) → ℂ := fun z =>
+    (2 * Real.pi : ℂ) ^ 2 * h (ballQuadraticForm (n + 1) z)
+  have hp : (2 * Real.pi : ℂ) ≠ 0 := by
+    exact_mod_cast (mul_ne_zero (by norm_num : (2 : ℝ) ≠ 0) Real.pi_ne_zero)
+  refine ⟨s, hs, hsroot, hq, u,
+    analyticAt_const.mul (hh.comp (ballQuadraticForm_analyticAt (n + 1) z₀)), ?_, ?_⟩
+  · exact mul_ne_zero (pow_ne_zero 2 hp) hhne
+  · apply Filter.Eventually.of_forall
+    intro z
+    rw [normalizedBallFourier_eq_squareFunction, hfactor]
+    dsimp only [u]
+    rw [hq]
+    unfold ballQuadraticForm squareSum
+    push_cast
+    field_simp
+    ring
+
+/-- Global multivariable analyticity follows from the entire scalar square
+function composed with the squared-frequency polynomial. -/
+theorem normalizedBallFourier_analytic (n : ℕ) :
+    AnalyticOnNhd ℂ (normalizedBallFourier (n + 1)) Set.univ := by
+  intro z _
+  have h := ((ballSquareFunction_analytic n) (ballQuadraticForm (n + 1) z)
+    (Set.mem_univ _)).comp (ballQuadraticForm_analyticAt (n + 1) z)
+  convert h using 1
+  funext w
+  exact normalizedBallFourier_eq_squareFunction n w
+
+/-- Any enumeration covering all positive radial roots gives the genuine
+simple-quadric geometry used in global analytic division. -/
+theorem normalizedBallFourier_hasSimpleQuadricZeros_of_cover (n : ℕ) {ι : Type*}
+    (radius : ι → ℝ)
+    (hcover : ∀ s : ℝ, 0 < s → realRadialBallFourier n s = 0 →
+      ∃ i, s = 2 * Real.pi * radius i) :
+    HasSimpleQuadricZeros (normalizedBallFourier (n + 1)) radius := by
+  intro z₀ hz
+  obtain ⟨s, hs, hsroot, hq, u, hu, hune, hfactor⟩ :=
+    normalizedBallFourier_zero_local_factor n hz
+  obtain ⟨i, hi⟩ := hcover s hs hsroot
+  have hp : (2 * Real.pi : ℂ) ≠ 0 := by
+    exact_mod_cast (mul_ne_zero (by norm_num : (2 : ℝ) ≠ 0) Real.pi_ne_zero)
+  have hquad : squareSum (fun j => z₀ j) = (radius i : ℂ) ^ 2 := by
+    have hscale : (2 * Real.pi : ℂ) ^ 2 *
+        (squareSum (fun j => z₀ j) - (radius i : ℂ) ^ 2) = 0 := by
+      rw [hi] at hq
+      unfold ballQuadraticForm at hq
+      unfold squareSum
+      push_cast at hq
+      linear_combination hq
+    exact sub_eq_zero.mp ((mul_eq_zero.mp hscale).resolve_left (pow_ne_zero 2 hp))
+  have hsr : (s / (2 * Real.pi) : ℂ) = (radius i : ℂ) := by
+    rw [hi]
+    push_cast
+    field_simp
+  refine ⟨i, hquad, u, hu, hune, ?_⟩
+  simpa only [hsr] using hfactor
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalBesselZeros.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! # The ordered positive zeros of the actual ball Fourier transform -/
+
+noncomputable section
+open Set Filter Topology
+open scoped BigOperators
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The positive real zeros before physical Fourier-frequency scaling. -/
+def positiveBallZeros (n : ℕ) : Set ℝ :=
+  {s | 0 < s ∧ realRadialBallFourier n s = 0}
+
+theorem compact_inter_finite_of_locallyFinite {X : Type*} [TopologicalSpace X]
+    (s : Set X) (hlocal : ∀ x, ∃ U ∈ 𝓝 x, (U ∩ s).Finite)
+    {K : Set X} (hK : IsCompact K) : (K ∩ s).Finite := by
+  classical
+  choose U hU hf using hlocal
+  obtain ⟨t, _, hcover⟩ := hK.elim_nhds_subcover U (fun x _ => hU x)
+  apply (t.finite_toSet.biUnion (fun x _ => hf x)).subset
+  rintro x ⟨hxK, hxs⟩
+  obtain ⟨a, hat, hxa⟩ := mem_iUnion₂.mp (hcover hxK)
+  exact mem_biUnion hat ⟨hxa, hxs⟩
+
+theorem positiveBallZeros_locallyFinite (n : ℕ) (s : ℝ) :
+    ∃ U ∈ 𝓝 s, (U ∩ positiveBallZeros n).Finite := by
+  obtain ⟨U, hU, hf⟩ := radialBallFourier_zeros_locallyFinite n (s : ℂ)
+  refine ⟨Complex.ofReal ⁻¹' U, Complex.continuous_ofReal.continuousAt.preimage_mem_nhds hU, ?_⟩
+  apply (hf.preimage Complex.ofReal_injective.injOn).subset
+  rintro t ⟨htU, ht⟩
+  refine ⟨htU, ?_⟩
+  change radialBallFourier n (t : ℂ) = 0
+  rw [radialBallFourier_ofReal_eq, ht.2]
+  rfl
+
+theorem positiveBallZeros_finite_below (n : ℕ) (b : ℝ) :
+    (positiveBallZeros n ∩ Iic b).Finite := by
+  apply (compact_inter_finite_of_locallyFinite (positiveBallZeros n)
+    (positiveBallZeros_locallyFinite n) (isCompact_Icc : IsCompact (Icc (0 : ℝ) b))).subset
+  rintro t ⟨ht, htb⟩
+  exact ⟨⟨ht.1.le, htb⟩, ht⟩
+
+theorem positiveBallZeros_unbounded (n : ℕ) : ¬ BddAbove (positiveBallZeros n) := by
+  rintro ⟨b, hb⟩
+  obtain ⟨s, hs, hz⟩ := realRadialBallFourier_zeros_unbounded n b
+  exact (lt_of_le_of_lt (le_max_right 0 b) hs).not_le (hb ⟨lt_of_le_of_lt (le_max_left 0 b) hs, hz⟩)
+
+theorem positiveBallZeros_infinite (n : ℕ) : (positiveBallZeros n).Infinite := by
+  intro hf
+  exact positiveBallZeros_unbounded n hf.bddAbove
+
+/-- The finite number of positive zeros up to a given zero. -/
+def positiveBallZeroRank (n : ℕ) (s : positiveBallZeros n) : ℕ :=
+  (positiveBallZeros n ∩ Iic (s : ℝ)).ncard
+
+theorem positiveBallZeroRank_strictMono (n : ℕ) : StrictMono (positiveBallZeroRank n) := by
+  intro a b hab
+  change (a : ℝ) < (b : ℝ) at hab
+  apply Set.ncard_lt_ncard _ (positiveBallZeros_finite_below n b)
+  refine ⟨?_, ?_⟩
+  · rintro t ⟨ht, hta⟩
+    exact ⟨ht, (show t ≤ (a : ℝ) from hta).trans hab.le⟩
+  · intro hsub
+    have h := hsub ⟨b.prop, show (b : ℝ) ≤ (b : ℝ) from le_rfl⟩
+    exact hab.not_le h.2
+
+/-- The exact increasing enumeration of all positive zeros. -/
+def positiveBallZeroOrderIso (n : ℕ) : ℕ ≃o positiveBallZeros n := by
+  haveI : Infinite (positiveBallZeros n) := infinite_coe_iff.mpr (positiveBallZeros_infinite n)
+  haveI : Infinite (Set.range (positiveBallZeroRank n)) := infinite_coe_iff.mpr
+    (Set.infinite_range_of_injective (positiveBallZeroRank_strictMono n).injective)
+  exact (Nat.Subtype.orderIsoOfNat (Set.range (positiveBallZeroRank n))).trans
+    ((positiveBallZeroRank_strictMono n).orderIso (positiveBallZeroRank n)).symm
+
+/-- The `j`th positive zero, starting at index zero. -/
+def positiveBallZero (n j : ℕ) : ℝ := positiveBallZeroOrderIso n j
+
+theorem positiveBallZero_pos (n j : ℕ) : 0 < positiveBallZero n j :=
+  (positiveBallZeroOrderIso n j).prop.1
+
+theorem positiveBallZero_isZero (n j : ℕ) : realRadialBallFourier n (positiveBallZero n j) = 0 :=
+  (positiveBallZeroOrderIso n j).prop.2
+
+theorem positiveBallZero_strictMono (n : ℕ) : StrictMono (positiveBallZero n) := by
+  intro a b hab
+  exact (positiveBallZeroOrderIso n).strictMono hab
+
+theorem positiveBallZero_range (n : ℕ) : range (positiveBallZero n) = positiveBallZeros n := by
+  ext s
+  constructor
+  · rintro ⟨j, rfl⟩
+    exact (positiveBallZeroOrderIso n j).prop
+  · intro hs
+    obtain ⟨j, hj⟩ := (positiveBallZeroOrderIso n).surjective ⟨s, hs⟩
+    exact ⟨j, congrArg Subtype.val hj⟩
+
+theorem positiveBallZero_tendsto (n : ℕ) : Tendsto (positiveBallZero n) atTop atTop := by
+  apply (positiveBallZero_strictMono n).monotone.tendsto_atTop_atTop
+  intro b
+  obtain ⟨s, hs, hz⟩ := realRadialBallFourier_zeros_unbounded n b
+  obtain ⟨j, rfl⟩ := (positiveBallZero_range n).symm ▸
+    (show s ∈ positiveBallZeros n from ⟨lt_of_le_of_lt (le_max_left 0 b) hs, hz⟩)
+  exact ⟨j, (lt_of_le_of_lt (le_max_right 0 b) hs).le⟩
+
+/-- The manuscript's physical Fourier radii, with the zero index reserved for the origin. -/
+def ballZeroRadius (n : ℕ) : ℕ → ℝ
+  | 0 => 0
+  | j + 1 => positiveBallZero n j / (2 * Real.pi)
+
+@[simp]
+theorem ballZeroRadius_zero (n : ℕ) : ballZeroRadius n 0 = 0 := rfl
+
+theorem ballZeroRadius_pos (n : ℕ) {j : ℕ} (hj : 0 < j) : 0 < ballZeroRadius n j := by
+  cases j with
+  | zero => omega
+  | succ j => exact div_pos (positiveBallZero_pos n j) (mul_pos (by norm_num) Real.pi_pos)
+
+theorem ballZeroRadius_strictMono (n : ℕ) : StrictMono (ballZeroRadius n) := by
+  apply strictMono_nat_of_lt_succ
+  intro j
+  cases j with
+  | zero => simpa only [ballZeroRadius_zero] using ballZeroRadius_pos n (by omega : 0 < 1)
+  | succ j =>
+    exact (div_lt_div_iff_of_pos_right (mul_pos (by norm_num) Real.pi_pos)).mpr
+      (positiveBallZero_strictMono n (Nat.lt_succ_self j))
+
+theorem ballZeroRadius_tendsto (n : ℕ) : Tendsto (ballZeroRadius n) atTop atTop := by
+  apply (ballZeroRadius_strictMono n).monotone.tendsto_atTop_atTop
+  intro b
+  obtain ⟨s, hs, hz⟩ := realRadialBallFourier_zeros_unbounded n (b * (2 * Real.pi))
+  obtain ⟨j, rfl⟩ := (positiveBallZero_range n).symm ▸
+    (show s ∈ positiveBallZeros n from ⟨lt_of_le_of_lt (le_max_left 0 _) hs, hz⟩)
+  refine ⟨j + 1, (le_div_iff₀ (mul_pos (by norm_num) Real.pi_pos)).mpr ?_⟩
+  exact (lt_of_le_of_lt (le_max_right 0 _) hs).le
+
+theorem ballZeroRadius_isZero (n : ℕ) {j : ℕ} (hj : 0 < j) :
+    realRadialBallFourier n (2 * Real.pi * ballZeroRadius n j) = 0 := by
+  cases j with
+  | zero => omega
+  | succ j =>
+    rw [ballZeroRadius, mul_div_cancel₀ _ (mul_ne_zero (by norm_num) Real.pi_ne_zero)]
+    exact positiveBallZero_isZero n j
+
+theorem exists_ballZeroRadius_of_real_zero (n : ℕ) {s : ℝ} (hs : 0 < s)
+    (hz : realRadialBallFourier n s = 0) :
+    ∃ j : ℕ, 0 < j ∧ s = 2 * Real.pi * ballZeroRadius n j := by
+  obtain ⟨j, rfl⟩ := (positiveBallZero_range n).symm ▸
+    (show s ∈ positiveBallZeros n from ⟨hs, hz⟩)
+  refine ⟨j + 1, by omega, ?_⟩
+  rw [ballZeroRadius, mul_div_cancel₀ _ (mul_ne_zero (by norm_num) Real.pi_ne_zero)]
+
+/-- All real Fourier zeros are precisely the enumerated positive-radius spheres. -/
+theorem normalizedBallFourier_real_zero_iff (n : ℕ) (ξ : Euclidean (n + 1)) :
+    normalizedBallFourier (n + 1) (realToComplex ξ) = 0 ↔
+      ∃ j : ℕ, 0 < j ∧ ‖ξ‖ = ballZeroRadius n j := by
+  have hπ : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+  rw [normalizedBallFourier_real_radial, radialBallFourier_ofReal_eq, Complex.ofReal_eq_zero]
+  constructor
+  · intro hz
+    have hx : 0 < ‖ξ‖ := by
+      by_contra h
+      have hn : ‖ξ‖ = 0 := le_antisymm (le_of_not_gt h) (norm_nonneg _)
+      rw [hn, mul_zero, realRadialBallFourier_zero] at hz
+      norm_num at hz
+    obtain ⟨j, hj, he⟩ := exists_ballZeroRadius_of_real_zero n (mul_pos hπ hx) hz
+    exact ⟨j, hj, (mul_left_cancel₀ hπ.ne' he)⟩
+  · rintro ⟨j, hj, hnorm⟩
+    rw [hnorm]
+    exact ballZeroRadius_isZero n hj
+
+theorem ballZeroRadius_gap (n : ℕ) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ j : ℕ, δ ≤ ballZeroRadius n (j + 1) - ballZeroRadius n j := by
+  have hπ : 0 < 2 * Real.pi := mul_pos (by norm_num) Real.pi_pos
+  obtain ⟨η, hη, hgap⟩ := realRadialBallFourier_zeros_separated n (positiveBallZero_pos n 0)
+  let δ : ℝ := min (ballZeroRadius n 1) (η / (2 * Real.pi))
+  refine ⟨δ, lt_min (ballZeroRadius_pos n (by omega : 0 < 1)) (div_pos hη hπ), ?_⟩
+  intro j
+  cases j with
+  | zero =>
+    simpa only [Nat.zero_add, ballZeroRadius_zero, sub_zero] using
+      min_le_left (ballZeroRadius n 1) (η / (2 * Real.pi))
+  | succ j =>
+    apply (min_le_right (ballZeroRadius n 1) (η / (2 * Real.pi))).trans
+    change η / (2 * Real.pi) ≤ positiveBallZero n (j + 1) / (2 * Real.pi) -
+      positiveBallZero n j / (2 * Real.pi)
+    rw [← sub_div]
+    apply (div_le_div_iff_of_pos_right hπ).mpr
+    exact hgap _ _ ((positiveBallZero_strictMono n).monotone (Nat.zero_le j))
+      (positiveBallZero_strictMono n (Nat.lt_succ_self _))
+      (positiveBallZero_isZero n j) (positiveBallZero_isZero n (j + 1))
+
+theorem ballZeroRadius_linear_lower (n : ℕ) :
+    ∃ δ : ℝ, 0 < δ ∧ ∀ j : ℕ, (j : ℝ) * δ ≤ ballZeroRadius n j := by
+  obtain ⟨δ, hδ, hgap⟩ := ballZeroRadius_gap n
+  refine ⟨δ, hδ, ?_⟩
+  intro j
+  induction j with
+  | zero => simp
+  | succ j ih =>
+    rw [Nat.cast_succ]
+    have h := hgap j
+    nlinarith
+
+theorem ballZeroRadius_reciprocal_sq_summable (n : ℕ) :
+    Summable (fun j : ℕ => 1 / (ballZeroRadius n (j + 1)) ^ (2 : ℕ)) := by
+  obtain ⟨δ, hδ, hlinear⟩ := ballZeroRadius_linear_lower n
+  have hs : Summable (fun j : ℕ => 1 / ((j + 1 : ℕ) : ℝ) ^ (2 : ℕ)) :=
+    (summable_nat_add_iff 1).mpr (Real.summable_one_div_nat_pow.mpr (by norm_num : 1 < 2))
+  apply Summable.of_nonneg_of_le (fun _ => by positivity) _ (hs.mul_left (1 / δ ^ (2 : ℕ)))
+  intro j
+  calc
+    1 / ballZeroRadius n (j + 1) ^ (2 : ℕ) ≤ 1 / (((j + 1 : ℕ) : ℝ) * δ) ^ (2 : ℕ) :=
+      one_div_le_one_div_of_le (by positivity)
+        (pow_le_pow_left₀ (by positivity) (hlinear (j + 1)) 2)
+    _ = (1 / δ ^ (2 : ℕ)) * (1 / ((j + 1 : ℕ) : ℝ) ^ (2 : ℕ)) := by
+      rw [mul_pow, one_div_mul_one_div, mul_comm]
+
+/-- The full physical radius sequence covers the actual simple complex quadrics. -/
+theorem normalizedBallFourier_hasSimpleQuadricZeros (n : ℕ) :
+    HasSimpleQuadricZeros (normalizedBallFourier (n + 1)) (ballZeroRadius n) := by
+  apply normalizedBallFourier_hasSimpleQuadricZeros_of_cover
+  intro s hs hz
+  obtain ⟨j, _, hj⟩ := exists_ballZeroRadius_of_real_zero n hs hz
+  exact ⟨j, hj⟩
+
+/-- Using only positive indices gives the geometry and positivity inputs of analytic division. -/
+theorem normalizedBallFourier_hasSimpleQuadricZeros_positive (n : ℕ) :
+    HasSimpleQuadricZeros (normalizedBallFourier (n + 1))
+      (fun j => ballZeroRadius n (j + 1)) := by
+  apply normalizedBallFourier_hasSimpleQuadricZeros_of_cover
+  intro s hs hz
+  obtain ⟨j, hj, he⟩ := exists_ballZeroRadius_of_real_zero n hs hz
+  cases j with
+  | zero => omega
+  | succ j => exact ⟨j, he⟩
+
+theorem ballZeroRadius_positive_indices (n j : ℕ) : 0 < ballZeroRadius n (j + 1) :=
+  ballZeroRadius_pos n (Nat.succ_pos _)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalFourierGrowth.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! # Exponential growth of the actual Fourier quotients' factors -/
+
+noncomputable section
+
+open MeasureTheory
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {E : Type*} [NormedAddCommGroup E]
+
+/-- Constant functions have finite exponential type. -/
+theorem finiteExponentialType_const (c : ℂ) :
+    FiniteExponentialType (fun _ : E => c) := by
+  apply finiteExponentialType_of_nonnegative_bound (norm_nonneg c) (le_refl (0 : ℝ))
+  intro z
+  simp
+
+/-- Sums preserve a global finite exponential growth bound. -/
+theorem FiniteExponentialType.add {f g : E → ℂ}
+    (hf : FiniteExponentialType f) (hg : FiniteExponentialType g) :
+    FiniteExponentialType (fun z => f z + g z) := by
+  obtain ⟨C, R, hC, hR, hfb⟩ := hf
+  obtain ⟨D, S, hD, hS, hgb⟩ := hg
+  refine ⟨C + D, max R S, add_pos hC hD, hR.trans (le_max_left _ _), ?_⟩
+  intro z
+  calc
+    ‖f z + g z‖ ≤ ‖f z‖ + ‖g z‖ := norm_add_le _ _
+    _ ≤ C * Real.exp (R * ‖z‖) + D * Real.exp (S * ‖z‖) := add_le_add (hfb z) (hgb z)
+    _ ≤ C * Real.exp (max R S * ‖z‖) + D * Real.exp (max R S * ‖z‖) := by
+      apply add_le_add
+      · exact mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr
+          (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg _))) hC.le
+      · exact mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr
+          (mul_le_mul_of_nonneg_right (le_max_right _ _) (norm_nonneg _))) hD.le
+    _ = (C + D) * Real.exp (max R S * ‖z‖) := by ring
+
+/-- Every complex coordinate is dominated by a global exponential bound. -/
+theorem finiteExponentialType_coordinate {d : ℕ} (i : Fin d) :
+    FiniteExponentialType (fun z : ComplexEuclidean d => z i) := by
+  refine ⟨1, 1, zero_lt_one, zero_le_one, ?_⟩
+  intro z
+  simp only [one_mul]
+  exact (PiLp.norm_apply_le z i).trans
+    ((le_add_of_nonneg_right zero_le_one).trans (Real.add_one_le_exp ‖z‖))
+
+/-- Evaluation of a complex multivariate polynomial has finite exponential type. -/
+theorem finiteExponentialType_polynomial {d : ℕ} (p : ComplexPolynomial d) :
+    FiniteExponentialType (fun z : ComplexEuclidean d => MvPolynomial.eval (fun i => z i) p) := by
+  induction p using MvPolynomial.induction_on with
+  | C c => simpa using (finiteExponentialType_const (E := ComplexEuclidean d) c)
+  | add p q hp hq => simpa only [map_add] using hp.add hq
+  | mul_X p i hp =>
+    simpa only [map_mul, MvPolynomial.eval_X] using
+      hp.mul (finiteExponentialType_coordinate i)
+
+/-- The normalized indicator of the unit ball has an actual entire transform of finite type. -/
+theorem finiteExponentialType_normalizedBallFourier (d : ℕ) :
+    FiniteExponentialType (normalizedBallFourier d) := by
+  have h : FiniteExponentialType (entireFourier (ballIndicator d)) :=
+    finiteExponentialType_of_nonnegative_bound (integral_nonneg (fun x => norm_nonneg _))
+      (by positivity) (entireFourier_norm_le (ballIndicator_integrable d)
+        (ballIndicator_support_bound d))
+  exact h.div_const (Complex.ofReal_ne_zero.mpr (ballVolume_pos d).ne')
+
+/-- Polynomial multiples of bounded-domain Fourier transforms have finite type. -/
+theorem finiteExponentialType_polynomial_mul_domainEntireFourier {d : ℕ}
+    {Ω : Set (Euclidean d)} (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (p : ComplexPolynomial d) (f : DomainL2 Ω) :
+    FiniteExponentialType (fun z => MvPolynomial.eval (fun i => z i) p *
+      domainEntireFourier Ω hΩ f z) :=
+  (finiteExponentialType_polynomial p).mul
+    (finiteExponentialType_domainEntireFourier hΩ hbounded f)
+
+/-- Polynomial bounds for a function and its first complex derivative on the real locus. -/
+def RealPolynomialFirstDerivativeBound {d : ℕ} (F : ComplexEuclidean d → ℂ) : Prop :=
+  ∃ m : ℕ, ∃ C : ℝ, 0 ≤ C ∧ ∀ x : Euclidean d,
+    ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ m ∧
+      ‖fderiv ℂ F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ m
+
+theorem norm_complex_smul_clm_le {V : Type*} [NormedAddCommGroup V] [NormedSpace ℂ V]
+    (c : ℂ) (L : V →L[ℂ] ℂ) : ‖c • L‖ ≤ ‖c‖ * ‖L‖ := by
+  apply ContinuousLinearMap.opNorm_le_bound _ (mul_nonneg (norm_nonneg _) (norm_nonneg _))
+  intro v
+  change ‖c * L v‖ ≤ _
+  rw [norm_mul, mul_assoc]
+  exact mul_le_mul_of_nonneg_left (L.le_opNorm v) (norm_nonneg _)
+
+theorem RealPolynomialFirstDerivativeBound.add {d : ℕ} {F G : ComplexEuclidean d → ℂ}
+    (hF : Differentiable ℂ F) (hG : Differentiable ℂ G)
+    (hf : RealPolynomialFirstDerivativeBound F) (hg : RealPolynomialFirstDerivativeBound G) :
+    RealPolynomialFirstDerivativeBound (fun z => F z + G z) := by
+  obtain ⟨m, C, hC, hf⟩ := hf
+  obtain ⟨n, D, hD, hg⟩ := hg
+  refine ⟨m + n, C + D, add_nonneg hC hD, fun x => ?_⟩
+  have hr : 1 ≤ 1 + ‖x‖ := le_add_of_nonneg_right (norm_nonneg _)
+  have hm : C * (1 + ‖x‖) ^ m ≤ C * (1 + ‖x‖) ^ (m + n) :=
+    mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hr (Nat.le_add_right _ _)) hC
+  have hn : D * (1 + ‖x‖) ^ n ≤ D * (1 + ‖x‖) ^ (m + n) :=
+    mul_le_mul_of_nonneg_left (pow_le_pow_right₀ hr (Nat.le_add_left _ _)) hD
+  constructor
+  · exact (norm_add_le _ _).trans ((add_le_add ((hf x).1.trans hm) ((hg x).1.trans hn)).trans_eq
+      (add_mul C D _).symm)
+  · rw [fderiv_add (hF _) (hG _)]
+    exact (norm_add_le _ _).trans ((add_le_add ((hf x).2.trans hm) ((hg x).2.trans hn)).trans_eq
+      (add_mul C D _).symm)
+
+theorem RealPolynomialFirstDerivativeBound.mul {d : ℕ} {F G : ComplexEuclidean d → ℂ}
+    (hF : Differentiable ℂ F) (hG : Differentiable ℂ G)
+    (hf : RealPolynomialFirstDerivativeBound F) (hg : RealPolynomialFirstDerivativeBound G) :
+    RealPolynomialFirstDerivativeBound (fun z => F z * G z) := by
+  obtain ⟨m, C, hC, hf⟩ := hf
+  obtain ⟨n, D, hD, hg⟩ := hg
+  refine ⟨m + n, 2 * C * D, by positivity, fun x => ?_⟩
+  have hfm := hf x
+  have hgm := hg x
+  have hprod : (C * (1 + ‖x‖) ^ m) * (D * (1 + ‖x‖) ^ n) =
+      C * D * (1 + ‖x‖) ^ (m + n) := by rw [pow_add]; ring
+  constructor
+  · rw [norm_mul]
+    apply (mul_le_mul hfm.1 hgm.1 (norm_nonneg _) (by positivity)).trans
+    rw [hprod]
+    nlinarith [mul_nonneg (mul_nonneg hC hD) (pow_nonneg (by positivity : 0 ≤ 1 + ‖x‖) (m+n))]
+  · rw [fderiv_mul (hF _) (hG _)]
+    apply (norm_add_le _ _).trans
+    have h₁ := mul_le_mul hfm.1 hgm.2 (norm_nonneg _) (by positivity)
+    have h₂ := mul_le_mul hgm.1 hfm.2 (norm_nonneg _) (by positivity)
+    rw [hprod] at h₁
+    have hprod' : (D * (1 + ‖x‖) ^ n) * (C * (1 + ‖x‖) ^ m) =
+        C * D * (1 + ‖x‖) ^ (m + n) := by rw [mul_comm, hprod]
+    rw [hprod'] at h₂
+    exact ((add_le_add (norm_complex_smul_clm_le _ _) (norm_complex_smul_clm_le _ _)).trans
+      (add_le_add h₁ h₂)).trans_eq (by ring)
+
+/-- Complex polynomial evaluation and its derivative have polynomial real-axis bounds. -/
+theorem polynomial_differentiable_and_real_derivative_bound {d : ℕ} (p : ComplexPolynomial d) :
+    Differentiable ℂ (fun z : ComplexEuclidean d => MvPolynomial.eval (fun i => z i) p) ∧
+      RealPolynomialFirstDerivativeBound
+        (fun z : ComplexEuclidean d => MvPolynomial.eval (fun i => z i) p) := by
+  induction p using MvPolynomial.induction_on with
+  | C c =>
+    simp only [MvPolynomial.eval_C]
+    refine ⟨differentiable_const _, 0, ‖c‖, norm_nonneg _, fun x => ?_⟩
+    simp
+  | add p q hp hq =>
+    simp only [map_add]
+    exact ⟨hp.1.add hq.1, hp.2.add hp.1 hq.1 hq.2⟩
+  | mul_X p i hp =>
+    simp only [map_mul, MvPolynomial.eval_X]
+    let L : ComplexEuclidean d →L[ℂ] ℂ := PiLp.proj 2 (fun _ : Fin d => ℂ) i
+    have hL : Differentiable ℂ (fun z : ComplexEuclidean d => z i) := L.differentiable
+    have hLb : RealPolynomialFirstDerivativeBound (fun z : ComplexEuclidean d => z i) := by
+      refine ⟨1, 1, zero_le_one, fun x => ?_⟩
+      simp only [one_mul, pow_one]
+      constructor
+      · exact (PiLp.norm_apply_le (realToComplex x) i).trans
+          (by rw [realToComplex_norm]; exact le_add_of_nonneg_left zero_le_one)
+      · change ‖fderiv ℂ L (realToComplex x)‖ ≤ _
+        rw [L.fderiv]
+        apply (ContinuousLinearMap.opNorm_le_bound L zero_le_one (fun z => ?_)).trans
+          (le_add_of_nonneg_right (norm_nonneg _) : (1 : ℝ) ≤ 1 + ‖x‖)
+        simpa only [one_mul] using PiLp.norm_apply_le z i
+    exact ⟨hp.1.mul hL, hp.2.mul hp.1 hL hLb⟩
+
+/-- Both a polynomial Fourier numerator and its derivative grow polynomially on real frequencies. -/
+theorem polynomial_mul_domainEntireFourier_real_derivative_bound {d : ℕ}
+    {Ω : Set (Euclidean d)} (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (p : ComplexPolynomial d) (f : DomainL2 Ω) :
+    RealPolynomialFirstDerivativeBound (fun z => MvPolynomial.eval (fun i => z i) p *
+      domainEntireFourier Ω hΩ f z) := by
+  have hp := polynomial_differentiable_and_real_derivative_bound p
+  have hf := domainEntireFourier_differentiable hΩ hbounded f
+  obtain ⟨C, hC⟩ := domainEntireFourier_real_bounds hΩ hbounded f
+  have hC0 : 0 ≤ C := (norm_nonneg _).trans (hC 0).1
+  apply hp.2.mul hp.1 hf
+  refine ⟨0, C, hC0, fun x => ?_⟩
+  simpa only [pow_zero, mul_one] using hC x
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalFourierAnalytic.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Multivariate analytic power series for bounded-support Fourier integrals. -/
+
+noncomputable section
+open MeasureTheory Filter Topology
+open scoped BigOperators ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The multilinear product of `n` copies of the Fourier phase. -/
+def fourierPhasePower {d : ℕ} (n : ℕ) (x : Euclidean d) :
+    ContinuousMultilinearMap ℂ (fun _ : Fin n => ComplexEuclidean d) ℂ :=
+  (ContinuousMultilinearMap.mkPiAlgebra ℂ (Fin n) ℂ).compContinuousLinearMap
+    (fun _ => fourierPhaseCLM x)
+
+@[simp] theorem fourierPhasePower_apply {d n : ℕ} (x : Euclidean d)
+    (v : Fin n → ComplexEuclidean d) :
+    fourierPhasePower n x v = ∏ j, fourierPhaseCLM x (v j) := rfl
+
+theorem fourierPhasePower_norm_le {d : ℕ} (n : ℕ) (x : Euclidean d) :
+    ‖fourierPhasePower n x‖ ≤ (2 * Real.pi * d * ‖x‖) ^ n := by
+  calc
+    ‖fourierPhasePower n x‖ ≤
+        ‖ContinuousMultilinearMap.mkPiAlgebra ℂ (Fin n) ℂ‖ *
+          ∏ _j : Fin n, ‖fourierPhaseCLM x‖ :=
+      ContinuousMultilinearMap.norm_compContinuousLinearMap_le _ _
+    _ = ‖fourierPhaseCLM x‖ ^ n := by simp
+    _ ≤ _ := pow_le_pow_left₀ (norm_nonneg _) (fourierPhaseCLM_norm_le x) n
+
+theorem fourierPhasePower_continuous {d : ℕ} (n : ℕ) :
+    Continuous (fourierPhasePower (d := d) n) := by
+  let C := ContinuousMultilinearMap.compContinuousLinearMapContinuousMultilinear ℂ
+    (fun _ : Fin n => ComplexEuclidean d) (fun _ : Fin n => ℂ) ℂ
+  have h : Continuous (fun x : Euclidean d => C (fun _ => fourierPhaseCLM x)) :=
+    C.cont.comp (continuous_pi (fun _ => fourierPhaseCLM_continuous))
+  exact h.clm_apply continuous_const
+
+/-- The integrand defining a Taylor coefficient of the Fourier transform at zero. -/
+def fourierTaylorIntegrand {d : ℕ} (f : Euclidean d → ℂ) (n : ℕ) (x : Euclidean d) :
+    ContinuousMultilinearMap ℂ (fun _ : Fin n => ComplexEuclidean d) ℂ :=
+  ((n.factorial : ℂ)⁻¹ * f x) • fourierPhasePower n x
+
+theorem fourierTaylorIntegrand_bound {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (n : ℕ) :
+    ∀ᵐ x, ‖fourierTaylorIntegrand f n x‖ ≤
+      ‖f x‖ * ((2 * Real.pi * d * R) ^ n / n.factorial) := by
+  classical
+  filter_upwards [hsupp] with x hx
+  by_cases hfx : f x = 0
+  · rw [fourierTaylorIntegrand, hfx, mul_zero, zero_smul ℂ (fourierPhasePower n x),
+      norm_zero, norm_zero, zero_mul]
+  · have hpow : (2 * Real.pi * d * ‖x‖) ^ n ≤ (2 * Real.pi * d * R) ^ n := by
+      gcongr
+      exact hx hfx
+    have hnorm := (fourierPhasePower_norm_le n x).trans hpow
+    rw [fourierTaylorIntegrand,
+      norm_smul ((n.factorial : ℂ)⁻¹ * f x) (fourierPhasePower n x),
+      norm_mul, norm_inv, Complex.norm_natCast]
+    calc
+      (↑n.factorial)⁻¹ * ‖f x‖ * ‖fourierPhasePower n x‖ ≤
+          (↑n.factorial)⁻¹ * ‖f x‖ * (2 * Real.pi * d * R) ^ n := by gcongr
+      _ = _ := by ring
+
+private theorem integrable_smul_of_dominated {α E : Type*} [MeasurableSpace α]
+    [TopologicalSpace α] [OpensMeasurableSpace α] [SecondCountableTopology α]
+    [NormedAddCommGroup E] [SMul ℂ E] [ContinuousSMul ℂ E] {μ : Measure α}
+    {a : α → ℂ} {p : α → E} {b : α → ℝ}
+    (ha : AEStronglyMeasurable a μ) (hp : Continuous p)
+    (hb : Integrable b μ) (hbound : ∀ᵐ x ∂μ, ‖a x • p x‖ ≤ b x) :
+    Integrable (fun x => a x • p x) μ :=
+  hb.mono' (ha.smul hp.aestronglyMeasurable) hbound
+
+theorem fourierTaylorIntegrand_integrable {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (n : ℕ) :
+    Integrable (fourierTaylorIntegrand f n) := by
+  exact integrable_smul_of_dominated
+    (a := fun x => (n.factorial : ℂ)⁻¹ * f x)
+    (p := fourierPhasePower (d := d) n)
+    (b := fun x => ‖f x‖ * ((2 * Real.pi * d * R) ^ n / n.factorial))
+    (aestronglyMeasurable_const.mul hf.aestronglyMeasurable)
+    (fourierPhasePower_continuous n)
+    (hf.norm.mul_const ((2 * Real.pi * d * R) ^ n / n.factorial))
+    (fourierTaylorIntegrand_bound hsupp n)
+
+/-- Actual integral coefficients of the Fourier power series at zero. -/
+def fourierTaylorSeries {d : ℕ} (f : Euclidean d → ℂ) :
+    FormalMultilinearSeries ℂ (ComplexEuclidean d) ℂ :=
+  fun n => ∫ x, fourierTaylorIntegrand f n x
+
+theorem fourierTaylorSeries_norm_le {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (n : ℕ) :
+    ‖fourierTaylorSeries f n‖ ≤
+      (∫ x, ‖f x‖) * ((2 * Real.pi * d * R) ^ n / n.factorial) := by
+  apply (norm_integral_le_integral_norm _).trans
+  calc
+    (∫ x, ‖fourierTaylorIntegrand f n x‖) ≤
+        ∫ x, ‖f x‖ * ((2 * Real.pi * d * R) ^ n / n.factorial) :=
+      integral_mono_ae (fourierTaylorIntegrand_integrable hf hsupp n).norm
+        (hf.norm.mul_const _) (fourierTaylorIntegrand_bound hsupp n)
+    _ = _ := integral_mul_const _ _
+
+theorem fourierTaylorSeries_radius_pos {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hR : 0 ≤ R)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) :
+    (1 : ℝ≥0∞) ≤ (fourierTaylorSeries f).radius := by
+  apply (fourierTaylorSeries f).le_radius_of_bound
+    ((∫ x, ‖f x‖) * Real.exp (2 * Real.pi * d * R)) (r := 1)
+  intro n
+  simp only [NNReal.coe_one, one_pow, mul_one]
+  apply (fourierTaylorSeries_norm_le hf hsupp n).trans
+  exact mul_le_mul_of_nonneg_left (Real.pow_div_factorial_le_exp _ (by positivity) n)
+    (integral_nonneg (fun x => norm_nonneg _))
+
+theorem fourierTaylorSeries_diagonal {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R)
+    (n : ℕ) (y : ComplexEuclidean d) :
+    fourierTaylorSeries f n (fun _ => y) =
+      ∫ x, f x * (fourierPhaseCLM x y) ^ n / (n.factorial : ℂ) := by
+  rw [fourierTaylorSeries, ContinuousMultilinearMap.integral_apply
+    (fourierTaylorIntegrand_integrable hf hsupp n)]
+  apply integral_congr_ae
+  filter_upwards with x
+  simp only [fourierTaylorIntegrand, ContinuousMultilinearMap.smul_apply,
+    fourierPhasePower_apply, Finset.prod_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul]
+  ring
+
+theorem fourierTaylorSeries_hasSum {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (y : ComplexEuclidean d) :
+    HasSum (fun n => fourierTaylorSeries f n (fun _ => y)) (entireFourier f y) := by
+  let T := 2 * Real.pi * d * R * ‖y‖
+  let F := fun (n : ℕ) (x : Euclidean d) =>
+    f x * (fourierPhaseCLM x y) ^ n / (n.factorial : ℂ)
+  let B := fun (n : ℕ) (x : Euclidean d) => ‖f x‖ * (T ^ n / n.factorial)
+  have hmeas : ∀ n, AEStronglyMeasurable (F n) volume := by
+    intro n
+    have hm : AEStronglyMeasurable
+        (fun x => (f x * (fourierPhaseCLM x y) ^ n) * (n.factorial : ℂ)⁻¹) volume :=
+      (hf.aestronglyMeasurable.mul
+        ((fourierPhaseCLM_continuous.clm_apply continuous_const).pow n).aestronglyMeasurable).mul
+          aestronglyMeasurable_const
+    simpa only [F, div_eq_mul_inv] using hm
+  have hbound : ∀ n, ∀ᵐ x, ‖F n x‖ ≤ B n x := by
+    intro n
+    filter_upwards [hsupp] with x hx
+    by_cases hfx : f x = 0
+    · simp [F, B, hfx]
+    · have hphase : ‖fourierPhaseCLM x y‖ ≤ T := by
+        apply (ContinuousLinearMap.le_opNorm _ _).trans
+        apply mul_le_mul_of_nonneg_right _ (norm_nonneg y)
+        apply (fourierPhaseCLM_norm_le x).trans
+        exact mul_le_mul_of_nonneg_left (hx hfx) (by positivity)
+      dsimp [F, B]
+      simp only [norm_div, norm_mul, norm_pow, Complex.norm_natCast]
+      rw [mul_div_assoc]
+      exact mul_le_mul_of_nonneg_left
+        (div_le_div_of_nonneg_right (pow_le_pow_left₀ (norm_nonneg _) hphase n)
+          (by positivity)) (norm_nonneg _)
+  have hsumB (x : Euclidean d) : HasSum (fun n => B n x) (‖f x‖ * Real.exp T) := by
+    simpa only [B, ← Real.exp_eq_exp_ℝ] using
+      (NormedSpace.expSeries_div_hasSum_exp ℝ T).mul_left ‖f x‖
+  have hint : Integrable (fun x => ∑' n, B n x) := by
+    have he : (fun x => ∑' n, B n x) = fun x => ‖f x‖ * Real.exp T :=
+      funext (fun x => (hsumB x).tsum_eq)
+    rw [he]
+    exact hf.norm.mul_const _
+  have hlim : ∀ᵐ x, HasSum (fun n => F n x) (f x * complexFourierKernel x y) := by
+    filter_upwards with x
+    simpa only [F, mul_div_assoc, complexFourierKernel, ← Complex.exp_eq_exp_ℂ] using
+      (NormedSpace.expSeries_div_hasSum_exp ℂ (fourierPhaseCLM x y)).mul_left (f x)
+  have h := hasSum_integral_of_dominated_convergence B hmeas hbound
+    (Filter.Eventually.of_forall (fun x => (hsumB x).summable)) hint hlim
+  simpa only [fourierTaylorSeries_diagonal hf hsupp, entireFourier, F] using h
+
+/-- The Fourier integral has a genuine multivariate analytic expansion at zero. -/
+theorem entireFourier_hasFPowerSeries_zero {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hR : 0 ≤ R) (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) :
+    HasFPowerSeriesOnBall (entireFourier f) (fourierTaylorSeries f) 0 1 := by
+  refine ⟨fourierTaylorSeries_radius_pos hf hR hsupp, zero_lt_one, ?_⟩
+  intro y _
+  simpa only [zero_add] using fourierTaylorSeries_hasSum hf hsupp y
+
+/-- Compact support gives multivariate analyticity, with no holomorphy-to-analyticity assumption. -/
+theorem entireFourier_analyticAt {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hR : 0 ≤ R) (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R)
+    (z : ComplexEuclidean d) : AnalyticAt ℂ (entireFourier f) z := by
+  let g := fun x => f x * complexFourierKernel x z
+  have hg : Integrable g := entireFourier_integrable hf hsupp z
+  have hgSupp : ∀ᵐ x, g x ≠ 0 → ‖x‖ ≤ R := by
+    filter_upwards [hsupp] with x hx hgx
+    apply hx
+    intro hfx
+    exact hgx (by simp [g, hfx])
+  refine ⟨fourierTaylorSeries g, 1, fourierTaylorSeries_radius_pos hg hR hgSupp,
+    zero_lt_one, ?_⟩
+  intro y _
+  have h := fourierTaylorSeries_hasSum hg hgSupp y
+  convert h using 1
+  unfold entireFourier
+  apply integral_congr_ae
+  filter_upwards with x
+  simp [g, complexFourierKernel, map_add, Complex.exp_add, mul_assoc]
+
+theorem entireFourier_analyticOnNhd {d : ℕ} {f : Euclidean d → ℂ} {R : ℝ}
+    (hf : Integrable f) (hR : 0 ≤ R) (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) :
+    AnalyticOnNhd ℂ (entireFourier f) Set.univ :=
+  fun z _ => entireFourier_analyticAt hf hR hsupp z
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalPaleyWiener.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+The Paley–Wiener–Schwartz support direction for entire functions of finite exponential
+type with polynomial real-axis growth. The proof uses Phragmén–Lindelöf growth reduction,
+Gaussian regularization, actual contour shifts, and convergence on Schwartz tests.
+-/
+
+noncomputable section
+open MeasureTheory Filter Topology Set Complex
+open scoped BigOperators ComplexOrder NNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- A bound on the real axis controls a function of exponential type throughout
+the upper half-plane. The coefficient in the global type estimate disappears. -/
+theorem exponential_type_upper_half_plane_bound {f : ℂ → ℂ} {A C R : ℝ}
+    (hf : DiffContOnCl ℂ f {z : ℂ | 0 < z.im}) (hR : 0 ≤ R)
+    (htype : ∀ z : ℂ, 0 ≤ z.im → ‖f z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ t : ℝ, ‖f t‖ ≤ C) {z : ℂ} (hz : 0 ≤ z.im) :
+    ‖f z‖ ≤ C * Real.exp (R * z.im) := by
+  let g : ℂ → ℂ := fun w => Complex.exp ((R : ℂ) * Complex.I * w) * f w
+  have hg : DiffContOnCl ℂ g {z : ℂ | 0 < z.im} := by
+    simpa only [g, smul_eq_mul] using
+      ((differentiable_id.const_mul ((R : ℂ) * Complex.I)).cexp.diffContOnCl.smul hf)
+  have hgnorm (w : ℂ) : ‖g w‖ = Real.exp (-R * w.im) * ‖f w‖ := by
+    simp [g, norm_mul, Complex.norm_exp, Complex.mul_re, Complex.mul_im]
+  have hgreal (t : ℝ) : ‖g t‖ ≤ C := by
+    simpa only [hgnorm, Complex.ofReal_im, mul_zero, Real.exp_zero, one_mul] using hreal t
+  have hgtype (w : ℂ) (hw : 0 ≤ w.im) :
+      ‖g w‖ ≤ A * Real.exp (R * ‖w‖) := by
+    rw [hgnorm]
+    have hexp : Real.exp (-R * w.im) ≤ 1 := by
+      rw [← Real.exp_zero]
+      apply Real.exp_le_exp.mpr
+      exact mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr hR) hw
+    exact (mul_le_mul_of_nonneg_right hexp (norm_nonneg _)).trans
+      (by simpa only [one_mul] using htype w hw)
+  have hgimag (t : ℝ) (ht : 0 ≤ t) : ‖g (t * Complex.I)‖ ≤ A := by
+    rw [hgnorm]
+    have him : ((t : ℂ) * Complex.I).im = t := by simp
+    rw [him]
+    calc
+      Real.exp (-R * t) * ‖f (t * Complex.I)‖ ≤
+          Real.exp (-R * t) * (A * Real.exp (R * t)) :=
+        mul_le_mul_of_nonneg_left
+          (by simpa [him, abs_of_nonneg ht] using
+            (htype (t * Complex.I) (by simpa using ht)))
+          (Real.exp_pos _).le
+      _ = A := by rw [← mul_assoc, mul_comm _ A, mul_assoc, ← Real.exp_add]; simp
+  have hquadI : ∀ w : ℂ, 0 ≤ w.re → 0 ≤ w.im → ‖g w‖ ≤ max C A := by
+    intro w hwre hwim
+    apply PhragmenLindelof.quadrant_I
+      (hg.mono (fun w hw => hw.2)) ?_
+      (fun t _ => (hgreal t).trans (le_max_left _ _))
+      (fun t ht => (hgimag t ht).trans (le_max_right _ _)) hwre hwim
+    refine ⟨1, by norm_num, R, Asymptotics.IsBigO.of_bound A ?_⟩
+    apply Filter.Eventually.filter_mono (f₂ := 𝓟 (Ioi 0 ×ℂ Ioi 0)) inf_le_right
+    rw [Filter.eventually_principal]
+    intro w hw
+    simpa only [Real.rpow_one, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)] using
+      hgtype w hw.2.le
+  have hquadII : ∀ w : ℂ, w.re ≤ 0 → 0 ≤ w.im → ‖g w‖ ≤ max C A := by
+    intro w hwre hwim
+    apply PhragmenLindelof.quadrant_II
+      (hg.mono (fun w hw => hw.2)) ?_
+      (fun t _ => (hgreal t).trans (le_max_left _ _))
+      (fun t ht => (hgimag t ht).trans (le_max_right _ _)) hwre hwim
+    refine ⟨1, by norm_num, R, Asymptotics.IsBigO.of_bound A ?_⟩
+    apply Filter.Eventually.filter_mono (f₂ := 𝓟 (Iio 0 ×ℂ Ioi 0)) inf_le_right
+    rw [Filter.eventually_principal]
+    intro w hw
+    simpa only [Real.rpow_one, Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)] using
+      hgtype w hw.2.le
+  have hgbound (w : ℂ) (hw : 0 ≤ w.im) : ‖g w‖ ≤ max C A := by
+    rcases le_total 0 w.re with h | h
+    · exact hquadI w h hw
+    · exact hquadII w h hw
+  let h : ℂ → ℂ := fun w => g (w * Complex.I)
+  have hd : DiffContOnCl ℂ h {w : ℂ | 0 < w.re} := by
+    apply hg.comp (differentiable_id.mul_const Complex.I).diffContOnCl
+    intro w hw
+    simpa only [Set.mem_setOf_eq, id_eq, Complex.mul_I_im] using hw
+  have hbound (w : ℂ) (hw : 0 ≤ w.re) : ‖h w‖ ≤ max C A := by
+    apply hgbound
+    simpa only [Complex.mul_I_im] using hw
+  have hsmall : ∀ w : ℂ, 0 ≤ w.re → ‖h w‖ ≤ C := by
+    intro w hw
+    apply PhragmenLindelof.right_half_plane_of_bounded_on_real hd ?_ ?_ ?_ hw
+    · refine ⟨0, by norm_num, 0, Asymptotics.IsBigO.of_bound (max C A) ?_⟩
+      apply Filter.Eventually.filter_mono (f₂ := 𝓟 {w : ℂ | 0 < w.re}) inf_le_right
+      rw [Filter.eventually_principal]
+      intro v hv
+      simpa using hbound v hv.le
+    · refine ⟨max C A, ?_⟩
+      change ∀ᶠ t : ℝ in atTop, ‖h t‖ ≤ max C A
+      filter_upwards [eventually_ge_atTop (0 : ℝ)] with t ht
+      exact hbound t (by simpa using ht)
+    · intro t
+      simpa [h, mul_assoc] using hgreal (-t)
+  have hgC : ‖g z‖ ≤ C := by
+    have hrot : (z * -Complex.I) * Complex.I = z := by simp [mul_assoc]
+    have hpos : 0 ≤ (z * -Complex.I).re := by simpa using hz
+    simpa only [h, hrot] using hsmall (z * -Complex.I) hpos
+  rw [hgnorm] at hgC
+  calc
+    ‖f z‖ = Real.exp (R * z.im) * (Real.exp (-R * z.im) * ‖f z‖) := by
+      rw [← mul_assoc, ← Real.exp_add]
+      simp
+    _ ≤ Real.exp (R * z.im) * C :=
+      mul_le_mul_of_nonneg_left hgC (Real.exp_pos _).le
+    _ = _ := mul_comm _ _
+
+/-- Entire functions of finite exponential type bounded on the real axis obey
+the standard bound depending only on the imaginary part. -/
+theorem exponential_type_imaginary_bound {f : ℂ → ℂ} {A C R : ℝ}
+    (hf : Differentiable ℂ f) (hR : 0 ≤ R)
+    (htype : ∀ z : ℂ, ‖f z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ t : ℝ, ‖f t‖ ≤ C) (z : ℂ) :
+    ‖f z‖ ≤ C * Real.exp (R * |z.im|) := by
+  rcases le_total 0 z.im with hz | hz
+  · simpa only [abs_of_nonneg hz] using exponential_type_upper_half_plane_bound
+      hf.diffContOnCl hR (fun w _ => htype w) hreal hz
+  · have hn : 0 ≤ (-z).im := by simpa using hz
+    have hfn : Differentiable ℂ (fun w => f (-w)) := hf.comp differentiable_neg
+    have hb := exponential_type_upper_half_plane_bound hfn.diffContOnCl hR
+      (fun w _ => by simpa only [norm_neg] using htype (-w))
+      (fun t => by simpa using hreal (-t)) hn
+    simpa only [neg_neg, Complex.neg_im, abs_of_nonpos hz] using hb
+
+theorem imaginary_shift_norm_ge {z : ℂ} {b : ℝ} (hz : 0 ≤ z.im) :
+    b ≤ ‖z + (b : ℂ) * Complex.I‖ := by
+  calc
+    b ≤ z.im + b := by linarith
+    _ = (z + (b : ℂ) * Complex.I).im := by simp
+    _ ≤ ‖z + (b : ℂ) * Complex.I‖ := Complex.im_le_norm _
+
+/-- Polynomial real-axis growth is upgraded to the usual polynomial times
+imaginary exponential estimate. The shift parameter permits uniform use on
+affine real lines whose origins vary. -/
+theorem polynomial_exponential_type_upper_bound {f : ℂ → ℂ} {A C R b : ℝ} {N : ℕ}
+    (hf : DiffContOnCl ℂ f {z : ℂ | 0 < z.im}) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (hb : 1 ≤ b)
+    (htype : ∀ z : ℂ, 0 ≤ z.im → ‖f z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ t : ℝ, ‖f t‖ ≤ C * (b + |t|) ^ N)
+    {z : ℂ} (hz : 0 ≤ z.im) :
+    ‖f z‖ ≤ C * 2 ^ N * (b + ‖z‖) ^ N * Real.exp (R * z.im) := by
+  let p : ℂ → ℂ := fun w => (w + (b : ℂ) * Complex.I) ^ N
+  let g : ℂ → ℂ := fun w => f w / p w
+  have hbpos : 0 < b := lt_of_lt_of_le zero_lt_one hb
+  have hp : DiffContOnCl ℂ p {z : ℂ | 0 < z.im} :=
+    ((differentiable_id.add_const ((b : ℂ) * Complex.I)).pow N).diffContOnCl
+  have hpne (w : ℂ) (hw : 0 ≤ w.im) : p w ≠ 0 := by
+    apply pow_ne_zero
+    intro hzero
+    have heq := congrArg Complex.im hzero
+    simp only [Complex.add_im, Complex.mul_I_im, Complex.ofReal_re, Complex.zero_im] at heq
+    linarith
+  have hg : DiffContOnCl ℂ g {z : ℂ | 0 < z.im} := by
+    have hi : DiffContOnCl ℂ (fun w => (p w)⁻¹) {z : ℂ | 0 < z.im} :=
+      hp.inv (fun w hw => hpne w (by simpa only [Complex.closure_setOf_lt_im,
+        Set.mem_setOf_eq] using hw))
+    simpa only [g, div_eq_mul_inv, smul_eq_mul] using hf.smul hi
+  have hpnorm (w : ℂ) : ‖p w‖ = ‖w + (b : ℂ) * Complex.I‖ ^ N := by
+    simp only [p, norm_pow]
+  have hplower (w : ℂ) (hw : 0 ≤ w.im) : 1 ≤ ‖p w‖ := by
+    rw [hpnorm]
+    exact one_le_pow₀ (hb.trans (imaginary_shift_norm_ge hw))
+  have hgtype (w : ℂ) (hw : 0 ≤ w.im) :
+      ‖g w‖ ≤ A * Real.exp (R * ‖w‖) := by
+    calc
+      ‖g w‖ = ‖f w‖ / ‖p w‖ := norm_div _ _
+      _ ≤ ‖f w‖ := div_le_self (norm_nonneg _) (hplower w hw)
+      _ ≤ _ := htype w hw
+  have hgreal (t : ℝ) : ‖g t‖ ≤ C * 2 ^ N := by
+    have htN : |t| ≤ ‖(t : ℂ) + (b : ℂ) * Complex.I‖ := by
+      simpa using Complex.abs_re_le_norm ((t : ℂ) + (b : ℂ) * Complex.I)
+    have hbN : b ≤ ‖(t : ℂ) + (b : ℂ) * Complex.I‖ := imaginary_shift_norm_ge (by simp)
+    have hsum : b + |t| ≤ 2 * ‖(t : ℂ) + (b : ℂ) * Complex.I‖ := by linarith
+    have hnum : ‖f t‖ ≤ C * (2 * ‖(t : ℂ) + (b : ℂ) * Complex.I‖) ^ N := by
+      apply (hreal t).trans
+      gcongr
+    have hpzero : ‖p t‖ ≠ 0 := norm_ne_zero_iff.mpr (hpne t (by simp))
+    calc
+      ‖g t‖ = ‖f t‖ / ‖p t‖ := norm_div _ _
+      _ ≤ (C * (2 * ‖(t : ℂ) + (b : ℂ) * Complex.I‖) ^ N) / ‖p t‖ :=
+        div_le_div_of_nonneg_right hnum (norm_nonneg _)
+      _ = (C * 2 ^ N * ‖p t‖) / ‖p t‖ := by rw [mul_pow, hpnorm]; ring
+      _ = C * 2 ^ N := mul_div_cancel_right₀ _ hpzero
+  have hgBound := exponential_type_upper_half_plane_bound hg hR hgtype hgreal hz
+  have hpupper : ‖p z‖ ≤ (b + ‖z‖) ^ N := by
+    rw [hpnorm]
+    have hn : ‖z + (b : ℂ) * Complex.I‖ ≤ b + ‖z‖ := by
+      calc
+        _ ≤ ‖z‖ + ‖(b : ℂ) * Complex.I‖ := norm_add_le _ _
+        _ = b + ‖z‖ := by simp [norm_mul, abs_of_nonneg hbpos.le, add_comm]
+    gcongr
+  have hpzero : ‖p z‖ ≠ 0 := norm_ne_zero_iff.mpr (hpne z hz)
+  calc
+    ‖f z‖ = (‖f z‖ / ‖p z‖) * ‖p z‖ := (div_mul_cancel₀ _ hpzero).symm
+    _ = ‖g z‖ * ‖p z‖ := by rw [show ‖g z‖ = ‖f z‖ / ‖p z‖ from norm_div _ _]
+    _ ≤ (C * 2 ^ N * Real.exp (R * z.im)) * (b + ‖z‖) ^ N :=
+      mul_le_mul hgBound hpupper (norm_nonneg _) (by positivity)
+    _ = _ := by ring
+
+theorem polynomial_exponential_type_imaginary_bound {f : ℂ → ℂ} {A C R b : ℝ} {N : ℕ}
+    (hf : Differentiable ℂ f) (hC : 0 ≤ C) (hR : 0 ≤ R) (hb : 1 ≤ b)
+    (htype : ∀ z : ℂ, ‖f z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ t : ℝ, ‖f t‖ ≤ C * (b + |t|) ^ N) (z : ℂ) :
+    ‖f z‖ ≤ C * 2 ^ N * (b + ‖z‖) ^ N * Real.exp (R * |z.im|) := by
+  rcases le_total 0 z.im with hz | hz
+  · simpa only [abs_of_nonneg hz] using polynomial_exponential_type_upper_bound
+      hf.diffContOnCl hC hR hb (fun w _ => htype w) hreal hz
+  · have hn : 0 ≤ (-z).im := by simpa using hz
+    have hfn : Differentiable ℂ (fun w => f (-w)) := hf.comp differentiable_neg
+    have hbound := polynomial_exponential_type_upper_bound hfn.diffContOnCl hC hR hb
+      (fun w _ => by simpa only [norm_neg] using htype (-w))
+      (fun t => by simpa only [Complex.ofReal_neg, abs_neg] using hreal (-t)) hn
+    simpa only [neg_neg, Complex.neg_im, norm_neg, abs_of_nonpos hz] using hbound
+
+@[simp] theorem realToComplex_add {d : ℕ} (x y : Euclidean d) :
+    realToComplex (x + y) = realToComplex x + realToComplex y := by
+  ext j
+  simp
+
+@[simp] theorem realToComplex_real_smul {d : ℕ} (t : ℝ) (x : Euclidean d) :
+    realToComplex (t • x) = (t : ℂ) • realToComplex x := by
+  ext j
+  simp [smul_eq_mul]
+
+/-- The one-variable principle applied uniformly to affine real lines gives
+the multivariate polynomial times imaginary exponential bound. -/
+theorem multivariate_polynomial_imaginary_bound {d N : ℕ}
+    {F : ComplexEuclidean d → ℂ} {A C R : ℝ}
+    (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x : Euclidean d, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    (x y : Euclidean d) :
+    ‖F (realToComplex x + Complex.I • realToComplex y)‖ ≤
+      C * 2 ^ N * (1 + ‖x‖ + ‖y‖) ^ N * Real.exp (R * ‖y‖) := by
+  by_cases hy : y = 0
+  · simpa only [hy, norm_zero, add_zero, mul_zero, Real.exp_zero, mul_one,
+      realToComplex, PiLp.zero_apply, Complex.ofReal_zero, smul_zero,
+      show (WithLp.equiv 2 (Fin d → ℂ)).symm (fun _ => 0) = (0 : ComplexEuclidean d) from rfl]
+      using (hreal x).trans (by
+        have hpow : (1 : ℝ) ≤ 2 ^ N := one_le_pow₀ (by norm_num)
+        calc
+          C * (1 + ‖x‖) ^ N ≤ (C * (1 + ‖x‖) ^ N) * 2 ^ N :=
+            le_mul_of_one_le_right (by positivity) hpow
+          _ = C * 2 ^ N * (1 + ‖x‖) ^ N := by ring)
+  let u : Euclidean d := (‖y‖⁻¹ : ℝ) • y
+  have hynorm : ‖y‖ ≠ 0 := norm_ne_zero_iff.mpr hy
+  have hunorm : ‖u‖ = 1 := by
+    simp [u, norm_smul, abs_of_nonneg (inv_nonneg.mpr (norm_nonneg y)), hynorm]
+  let f : ℂ → ℂ := fun w => F (realToComplex x + w • realToComplex u)
+  have hf : Differentiable ℂ f :=
+    hF.comp ((differentiable_const (realToComplex x)).add
+      (differentiable_id.smul_const (realToComplex u)))
+  have hfType (w : ℂ) : ‖f w‖ ≤ (A * Real.exp (R * ‖x‖)) * Real.exp (R * ‖w‖) := by
+    have hline : ‖realToComplex x + w • realToComplex u‖ ≤ ‖x‖ + ‖w‖ := by
+      calc
+        _ ≤ ‖realToComplex x‖ + ‖w • realToComplex u‖ := norm_add_le _ _
+        _ = _ := by rw [norm_smul w (realToComplex u), realToComplex_norm,
+          realToComplex_norm, hunorm, mul_one]
+    calc
+      ‖f w‖ ≤ A * Real.exp (R * ‖realToComplex x + w • realToComplex u‖) := htype _
+      _ ≤ A * Real.exp (R * (‖x‖ + ‖w‖)) := by gcongr
+      _ = _ := by rw [mul_add, Real.exp_add]; ring
+  have hfReal (t : ℝ) : ‖f t‖ ≤ C * ((1 + ‖x‖) + |t|) ^ N := by
+    have hline : ‖x + t • u‖ ≤ ‖x‖ + |t| := by
+      calc
+        _ ≤ ‖x‖ + ‖t • u‖ := norm_add_le _ _
+        _ = _ := by rw [norm_smul, Real.norm_eq_abs, hunorm, mul_one]
+    have heq : realToComplex (x + t • u) = realToComplex x + (t : ℂ) • realToComplex u := by simp
+    calc
+      ‖f t‖ = ‖F (realToComplex (x + t • u))‖ := by rw [heq]
+      _ ≤ C * (1 + ‖x + t • u‖) ^ N := hreal _
+      _ ≤ _ := by
+        apply mul_le_mul_of_nonneg_left _ hC
+        apply pow_le_pow_left₀ (by positivity)
+        linarith
+  have hBound := polynomial_exponential_type_imaginary_bound hf hC hR
+    (le_add_of_nonneg_right (norm_nonneg x)) hfType hfReal ((‖y‖ : ℂ) * Complex.I)
+  have hwNorm : ‖(‖y‖ : ℂ) * Complex.I‖ = ‖y‖ := by simp [norm_mul]
+  have hwIm : |((‖y‖ : ℂ) * Complex.I).im| = ‖y‖ := by simp
+  have heq : ((‖y‖ : ℂ) * Complex.I) • realToComplex u =
+      Complex.I • realToComplex y := by
+    rw [show realToComplex u = (‖y‖⁻¹ : ℂ) • realToComplex y by
+      simp only [u, realToComplex_real_smul, Complex.ofReal_inv]]
+    rw [smul_smul]
+    congr 1
+    have hne : (‖y‖ : ℂ) ≠ 0 := by exact_mod_cast hynorm
+    field_simp
+  simpa only [f, heq, hwNorm, hwIm, add_assoc] using hBound
+
+/-- The real coordinates of a complex Euclidean vector. -/
+def complexRealPart {d : ℕ} (z : ComplexEuclidean d) : Euclidean d :=
+  (WithLp.equiv 2 (Fin d → ℝ)).symm (fun j => (z j).re)
+
+/-- The imaginary coordinates of a complex Euclidean vector. -/
+def complexImagPart {d : ℕ} (z : ComplexEuclidean d) : Euclidean d :=
+  (WithLp.equiv 2 (Fin d → ℝ)).symm (fun j => (z j).im)
+
+@[simp] theorem complexRealPart_apply {d : ℕ} (z : ComplexEuclidean d) (j : Fin d) :
+    complexRealPart z j = (z j).re := rfl
+
+@[simp] theorem complexImagPart_apply {d : ℕ} (z : ComplexEuclidean d) (j : Fin d) :
+    complexImagPart z j = (z j).im := rfl
+
+theorem complexRealPart_norm_le {d : ℕ} (z : ComplexEuclidean d) :
+    ‖complexRealPart z‖ ≤ ‖z‖ := by
+  have hs : ‖complexRealPart z‖ ^ 2 ≤ ‖z‖ ^ 2 := by
+    rw [PiLp.norm_sq_eq_of_L2, PiLp.norm_sq_eq_of_L2]
+    apply Finset.sum_le_sum
+    intro j _
+    apply pow_le_pow_left₀ (norm_nonneg _)
+    simpa only [complexRealPart_apply, Real.norm_eq_abs] using Complex.abs_re_le_norm (z j)
+  nlinarith [norm_nonneg (complexRealPart z), norm_nonneg z]
+
+theorem complexImagPart_norm_le {d : ℕ} (z : ComplexEuclidean d) :
+    ‖complexImagPart z‖ ≤ ‖z‖ := by
+  have hs : ‖complexImagPart z‖ ^ 2 ≤ ‖z‖ ^ 2 := by
+    rw [PiLp.norm_sq_eq_of_L2, PiLp.norm_sq_eq_of_L2]
+    apply Finset.sum_le_sum
+    intro j _
+    apply pow_le_pow_left₀ (norm_nonneg _)
+    simpa only [complexImagPart_apply, Real.norm_eq_abs] using Complex.abs_im_le_norm (z j)
+  nlinarith [norm_nonneg (complexImagPart z), norm_nonneg z]
+
+theorem complex_real_imag_decomposition {d : ℕ} (z : ComplexEuclidean d) :
+    realToComplex (complexRealPart z) + Complex.I • realToComplex (complexImagPart z) = z := by
+  ext j
+  change ((z j).re : ℂ) + Complex.I * ((z j).im : ℂ) = z j
+  rw [mul_comm]
+  exact Complex.re_add_im (z j)
+
+/-- Finite total exponential type and polynomial real-axis growth imply the
+standard Paley–Wiener growth estimate in all complex dimensions. -/
+theorem standard_paley_wiener_growth {d N : ℕ}
+    {F : ComplexEuclidean d → ℂ} {A C R : ℝ}
+    (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x : Euclidean d, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    (z : ComplexEuclidean d) :
+    ‖F z‖ ≤ C * 4 ^ N * (1 + ‖z‖) ^ N * Real.exp (R * ‖complexImagPart z‖) := by
+  have hbound := multivariate_polynomial_imaginary_bound hF hA hC hR htype hreal
+    (complexRealPart z) (complexImagPart z)
+  rw [complex_real_imag_decomposition] at hbound
+  have hs : 1 + ‖complexRealPart z‖ + ‖complexImagPart z‖ ≤ 2 * (1 + ‖z‖) := by
+    linarith [complexRealPart_norm_le z, complexImagPart_norm_le z]
+  calc
+    ‖F z‖ ≤ C * 2 ^ N * (1 + ‖complexRealPart z‖ + ‖complexImagPart z‖) ^ N *
+        Real.exp (R * ‖complexImagPart z‖) := hbound
+    _ ≤ C * 2 ^ N * (2 * (1 + ‖z‖)) ^ N *
+        Real.exp (R * ‖complexImagPart z‖) := by
+      apply mul_le_mul_of_nonneg_right _ (Real.exp_pos _).le
+      apply mul_le_mul_of_nonneg_left _ (by positivity)
+      exact pow_le_pow_left₀ (by positivity) hs N
+    _ = _ := by
+      rw [mul_pow]
+      have hp : (2 : ℝ) ^ N * 2 ^ N = 4 ^ N := by rw [← mul_pow]; norm_num
+      calc
+        _ = C * ((2 : ℝ) ^ N * 2 ^ N) * (1 + ‖z‖) ^ N *
+            Real.exp (R * ‖complexImagPart z‖) := by ring
+        _ = _ := by rw [hp]
+
+/-- A quantitative bound for the vertical edges used when shifting a real
+Fourier integral into a horizontal complex contour. -/
+theorem vertical_contour_norm_le {f : ℂ → ℂ} {C T : ℝ} (hT : 0 ≤ T)
+    (hdecay : ∀ x : ℝ, ∀ y ∈ Set.Icc 0 T,
+      ‖f ((x : ℂ) + (y : ℂ) * Complex.I)‖ ≤ C / (1 + x ^ 2)) (x : ℝ) :
+    ‖∫ y : ℝ in (0 : ℝ)..T, f ((x : ℂ) + (y : ℂ) * Complex.I)‖ ≤
+      C / (1 + x ^ 2) * T := by
+  have hbound := intervalIntegral.norm_integral_le_of_norm_le_const
+    (f := fun y : ℝ => f ((x : ℂ) + (y : ℂ) * Complex.I))
+    (a := 0) (b := T) (C := C / (1 + x ^ 2)) (by
+      intro y hy
+      rw [Set.uIoc_of_le hT] at hy
+      exact hdecay x y ⟨hy.1.le, hy.2⟩)
+  simpa only [sub_zero, abs_of_nonneg hT] using hbound
+
+/-- Entire integrands with uniform quadratic decay on a closed horizontal
+strip have the same integral on its two boundary lines. -/
+theorem horizontal_contour_shift {f : ℂ → ℂ} {C T : ℝ}
+    (hf : Differentiable ℂ f) (hT : 0 ≤ T)
+    (hdecay : ∀ x : ℝ, ∀ y ∈ Set.Icc 0 T,
+      ‖f ((x : ℂ) + (y : ℂ) * Complex.I)‖ ≤ C / (1 + x ^ 2)) :
+    (∫ x : ℝ, f x) = ∫ x : ℝ, f ((x : ℂ) + (T : ℂ) * Complex.I) := by
+  have hInt (y : ℝ) (hy : y ∈ Set.Icc 0 T) :
+      Integrable (fun x : ℝ => f ((x : ℂ) + (y : ℂ) * Complex.I)) := by
+    apply (integrable_inv_one_add_sq.const_mul C).mono'
+      (hf.continuous.comp (Complex.continuous_ofReal.add continuous_const)).aestronglyMeasurable
+    filter_upwards with x
+    simpa only [div_eq_mul_inv] using hdecay x y hy
+  have hInt0 : Integrable (fun x : ℝ => f x) := by
+    simpa using hInt 0 ⟨le_rfl, hT⟩
+  have hIntT := hInt T ⟨hT, le_rfl⟩
+  let V : ℝ → ℂ := fun x => ∫ y : ℝ in (0 : ℝ)..T, f ((x : ℂ) + (y : ℂ) * Complex.I)
+  have hVnorm (x : ℝ) : ‖V x‖ ≤ C / (1 + x ^ 2) * T :=
+    vertical_contour_norm_le hT hdecay x
+  have hdecaylim : Tendsto (fun x : ℝ => C / (1 + x ^ 2) * T) atTop (𝓝 0) := by
+    have hpow : Tendsto (fun x : ℝ => x ^ 2) atTop atTop := tendsto_pow_atTop (by norm_num)
+    have hden : Tendsto (fun x : ℝ => 1 + x ^ 2) atTop atTop :=
+      tendsto_atTop_mono (fun x => le_add_of_nonneg_left (by norm_num)) hpow
+    have hinv := (tendsto_const_nhds : Tendsto (fun _ : ℝ => C) atTop (𝓝 C)).div_atTop hden
+    simpa only [zero_mul] using hinv.mul_const T
+  have hVlim : Tendsto V atTop (𝓝 0) := by
+    rw [tendsto_zero_iff_norm_tendsto_zero]
+    exact squeeze_zero (fun x => norm_nonneg _) hVnorm hdecaylim
+  have hVneglim : Tendsto (fun x : ℝ => V (-x)) atTop (𝓝 0) := by
+    rw [tendsto_zero_iff_norm_tendsto_zero]
+    apply squeeze_zero (fun x => norm_nonneg _) _ hdecaylim
+    intro x
+    simpa only [neg_sq] using hVnorm (-x)
+  have hrect (m : ℝ) :
+      (∫ x : ℝ in -m..m, f x) -
+        (∫ x : ℝ in -m..m, f ((x : ℂ) + (T : ℂ) * Complex.I)) =
+      Complex.I * V (-m) - Complex.I * V m := by
+    have hboundary := Complex.integral_boundary_rect_eq_zero_of_differentiableOn f
+      ((-m : ℝ) : ℂ) ((m : ℂ) + (T : ℂ) * Complex.I) hf.differentiableOn
+    simp only [Complex.ofReal_re, Complex.ofReal_im, Complex.add_re, Complex.add_im,
+      Complex.mul_I_re, Complex.mul_I_im, neg_zero, add_zero, zero_add, zero_mul,
+      smul_eq_mul, Complex.ofReal_zero, V] at hboundary
+    dsimp [V]
+    linear_combination hboundary
+  have hleft := (intervalIntegral_tendsto_integral hInt0 tendsto_neg_atTop_atBot
+    (tendsto_id : Tendsto (fun m : ℝ => m) atTop atTop)).sub
+      (intervalIntegral_tendsto_integral hIntT tendsto_neg_atTop_atBot
+        (tendsto_id : Tendsto (fun m : ℝ => m) atTop atTop))
+  have hright := (hVneglim.const_mul Complex.I).sub (hVlim.const_mul Complex.I)
+  have heq : (∫ x : ℝ, f x) - (∫ x : ℝ, f ((x : ℂ) + (T : ℂ) * Complex.I)) = 0 := by
+    apply tendsto_nhds_unique hleft
+    simpa only [mul_zero, sub_zero] using hright.congr (fun m => (hrect m).symm)
+  exact sub_eq_zero.mp heq
+
+/-- Gaussian damping on the real frequency space, parametrized by a nonnegative width. -/
+def gaussianFrequencyDamping {d : ℕ} (ε : ℝ≥0) (x : Euclidean d) : ℂ :=
+  (Real.exp (-(ε : ℝ) * ‖x‖ ^ 2) : ℂ)
+
+/-- Damping never increases the absolute value of a real-frequency integrand. -/
+theorem gaussianFrequencyDamping_norm_le_one {d : ℕ} (ε : ℝ≥0) (x : Euclidean d) :
+    ‖gaussianFrequencyDamping ε x‖ ≤ 1 := by
+  simp only [gaussianFrequencyDamping, Complex.norm_real, Real.norm_eq_abs,
+    abs_of_pos (Real.exp_pos _)]
+  rw [← Real.exp_zero]
+  apply Real.exp_le_exp.mpr
+  exact mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr ε.coe_nonneg) (sq_nonneg _)
+
+/-- The damping is continuous in the frequency variable. -/
+theorem gaussianFrequencyDamping_continuous {d : ℕ} (ε : ℝ≥0) :
+    Continuous (gaussianFrequencyDamping (d := d) ε) := by
+  unfold gaussianFrequencyDamping
+  fun_prop
+
+/-- A damped polynomially bounded function retains its original polynomial bound. -/
+theorem gaussian_damped_polynomial_bound {d N : ℕ} {f : Euclidean d → ℂ} {C : ℝ}
+    (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N) (ε : ℝ≥0) (x : Euclidean d) :
+    ‖f x * gaussianFrequencyDamping ε x‖ ≤ C * (1 + ‖x‖) ^ N := by
+  rw [norm_mul]
+  exact (mul_le_of_le_one_right (norm_nonneg _) (gaussianFrequencyDamping_norm_le_one ε x)).trans
+    (hf x)
+
+/-- Gaussian regularization as an actual continuous functional on Schwartz space. -/
+def gaussianRegularizedDistribution {d N : ℕ} (f : Euclidean d → ℂ) {C : ℝ}
+    (hC : 0 ≤ C) (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable f volume) (ε : ℝ≥0) : TemperedDistribution d :=
+  polynomialDistribution (fun x => f x * gaussianFrequencyDamping ε x) hC
+    (gaussian_damped_polynomial_bound hf ε)
+    (hm.mul (gaussianFrequencyDamping_continuous ε).aestronglyMeasurable)
+
+/-- Removing Gaussian damping recovers the polynomial distribution on every test. -/
+theorem gaussianRegularizedDistribution_tendsto {d N : ℕ} {f : Euclidean d → ℂ} {C : ℝ}
+    (hC : 0 ≤ C) (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable f volume) (φ : SchwartzMap (Euclidean d) ℂ) :
+    Tendsto (fun ε : ℝ≥0 => gaussianRegularizedDistribution f hC hf hm ε φ) (𝓝 0)
+      (𝓝 (polynomialDistribution f hC hf hm φ)) := by
+  change Tendsto (fun ε : ℝ≥0 => ∫ x, (f x * gaussianFrequencyDamping ε x) * φ x)
+    (𝓝 0) (𝓝 (∫ x, f x * φ x))
+  apply tendsto_integral_filter_of_dominated_convergence (fun x => ‖f x * φ x‖)
+  · exact Eventually.of_forall fun ε =>
+      (hm.mul (gaussianFrequencyDamping_continuous ε).aestronglyMeasurable).mul
+        φ.continuous.aestronglyMeasurable
+  · exact Eventually.of_forall fun ε => Eventually.of_forall fun x => by
+      rw [norm_mul, norm_mul, norm_mul]
+      calc
+        (‖f x‖ * ‖gaussianFrequencyDamping ε x‖) * ‖φ x‖ ≤ ‖f x‖ * ‖φ x‖ :=
+          mul_le_mul_of_nonneg_right
+            (mul_le_of_le_one_right (norm_nonneg _) (gaussianFrequencyDamping_norm_le_one ε x))
+            (norm_nonneg _)
+        _ = _ := rfl
+  · exact (polynomial_schwartz_integrable hC hf hm φ).norm
+  · exact Eventually.of_forall fun x => by
+      have hcont : Continuous (fun ε : ℝ≥0 => (f x * gaussianFrequencyDamping ε x) * φ x) := by
+        unfold gaussianFrequencyDamping
+        fun_prop
+      simpa [gaussianFrequencyDamping] using hcont.tendsto 0
+
+/-- The inverse transforms of the Gaussian regularizations converge on every
+Schwartz test to the inverse transform of the polynomial distribution. -/
+theorem inverseGaussianRegularizedDistribution_tendsto {d N : ℕ}
+    {f : Euclidean d → ℂ} {C : ℝ}
+    (hC : 0 ≤ C) (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable f volume) (φ : SchwartzMap (Euclidean d) ℂ) :
+    Tendsto (fun ε : ℝ≥0 =>
+      distributionInverseFourier (gaussianRegularizedDistribution f hC hf hm ε) φ) (𝓝 0)
+      (𝓝 (distributionInverseFourier (polynomialDistribution f hC hf hm) φ)) := by
+  simpa only [distributionInverseFourier_apply] using
+    gaussianRegularizedDistribution_tendsto hC hf hm ((SchwartzMap.fourierTransformCLE ℂ).symm φ)
+
+/-- The holomorphic quadratic form used to extend real Gaussian damping. -/
+def gaussianQuadratic {d : ℕ} (z : ComplexEuclidean d) : ℂ := ∑ j, z j ^ 2
+
+/-- The real coordinate sum of squares equals the Euclidean squared norm. -/
+theorem real_coordinate_square_sum {d : ℕ} (x : Euclidean d) :
+    (∑ j, x j ^ 2) = ‖x‖ ^ 2 := by
+  rw [PiLp.norm_sq_eq_of_L2]
+  simp only [Real.norm_eq_abs, sq_abs]
+
+/-- The quadratic form gains precisely the negative squared imaginary norm on a shift. -/
+theorem gaussianQuadratic_shift_re {d : ℕ} (x y : Euclidean d) :
+    (gaussianQuadratic (realToComplex x + Complex.I • realToComplex y)).re =
+      ‖x‖ ^ 2 - ‖y‖ ^ 2 := by
+  simp only [gaussianQuadratic, Complex.re_sum, PiLp.add_apply, PiLp.smul_apply,
+    realToComplex_apply, smul_eq_mul, pow_two, Complex.mul_re, Complex.add_re,
+    Complex.add_im, Complex.mul_im, Complex.I_re, Complex.I_im,
+    Complex.ofReal_re, Complex.ofReal_im]
+  simp only [zero_mul, mul_zero, zero_sub, zero_add, one_mul, add_zero, neg_zero]
+  rw [Finset.sum_sub_distrib]
+  simp only [← pow_two, real_coordinate_square_sum]
+
+/-- Holomorphic Gaussian damping in the complex frequency space. -/
+def complexGaussianDamping {d : ℕ} (ε : ℝ) (z : ComplexEuclidean d) : ℂ :=
+  Complex.exp (-(ε : ℂ) * gaussianQuadratic z)
+
+/-- Exact growth of Gaussian damping under an imaginary contour shift. -/
+theorem complexGaussianDamping_shift_norm {d : ℕ} (ε : ℝ) (x y : Euclidean d) :
+    ‖complexGaussianDamping ε (realToComplex x + Complex.I • realToComplex y)‖ =
+      Real.exp (-ε * ‖x‖ ^ 2 + ε * ‖y‖ ^ 2) := by
+  rw [complexGaussianDamping, Complex.norm_exp]
+  simp only [Complex.mul_re, Complex.neg_re, Complex.neg_im, Complex.ofReal_re,
+    Complex.ofReal_im, neg_zero, zero_mul, sub_zero, gaussianQuadratic_shift_re]
+  congr 1
+  ring
+
+/-- The inverse Fourier kernel at complex frequencies. -/
+def complexInverseFourierKernel {d : ℕ} (p : Euclidean d) (z : ComplexEuclidean d) : ℂ :=
+  Complex.exp (-fourierPhaseCLM p z)
+
+/-- The physical frequency supplies exponential decay along a positive imaginary shift. -/
+theorem complexInverseFourierKernel_shift_norm {d : ℕ} (p x y : Euclidean d) :
+    ‖complexInverseFourierKernel p (realToComplex x + Complex.I • realToComplex y)‖ =
+      Real.exp (-2 * Real.pi * inner (𝕜 := ℝ) p y) := by
+  rw [complexInverseFourierKernel, Complex.norm_exp, map_add, map_smul]
+  simp only [fourierPhaseCLM, ContinuousLinearMap.smul_apply, smul_eq_mul,
+    complexPairingCLM_apply, complexPairing_realToComplex]
+  simp only [Complex.neg_re, Complex.add_re, Complex.mul_re, Complex.mul_im,
+    Complex.I_re, Complex.I_im, Complex.ofReal_re, Complex.ofReal_im,
+    Complex.neg_im]
+  congr 1
+  norm_num
+
+/-- A polynomial times a Gaussian is bounded by a slower Gaussian, with an explicit constant. -/
+theorem polynomial_gaussian_bound (N : ℕ) {ε r : ℝ} (hε : 0 < ε) (hr : 0 ≤ r) :
+    (1 + r) ^ N * Real.exp (-ε * r ^ 2) ≤
+      ((2 + 2 / ε) ^ N * (N.factorial : ℝ) * Real.exp 1) *
+        Real.exp (-(ε / 2) * r ^ 2) := by
+  have ht : 0 ≤ 1 + (ε / 2) * r ^ 2 := by positivity
+  have hscalar : 1 + r ≤ (2 + 2 / ε) * (1 + (ε / 2) * r ^ 2) := by
+    have hinv : 0 < 2 / ε := div_pos (by norm_num) hε
+    have hprod : (2 + 2 / ε) * (1 + (ε / 2) * r ^ 2) =
+        2 + 2 / ε + (ε + 1) * r ^ 2 := by field_simp; ring
+    rw [hprod]
+    nlinarith [sq_nonneg (r - 1 / 2), mul_nonneg hε.le (sq_nonneg r)]
+  have hfactorial : 0 < (N.factorial : ℝ) := by exact_mod_cast N.factorial_pos
+  have hpow := (div_le_iff₀ hfactorial).mp
+    (Real.pow_div_factorial_le_exp (1 + (ε / 2) * r ^ 2) ht N)
+  calc
+    (1 + r) ^ N * Real.exp (-ε * r ^ 2) ≤
+        ((2 + 2 / ε) * (1 + (ε / 2) * r ^ 2)) ^ N * Real.exp (-ε * r ^ 2) :=
+      mul_le_mul_of_nonneg_right (pow_le_pow_left₀ (by positivity) hscalar N)
+        (Real.exp_nonneg _)
+    _ = (2 + 2 / ε) ^ N * (1 + (ε / 2) * r ^ 2) ^ N *
+        Real.exp (-ε * r ^ 2) := by rw [mul_pow]
+    _ ≤ (2 + 2 / ε) ^ N *
+        (Real.exp (1 + (ε / 2) * r ^ 2) * (N.factorial : ℝ)) *
+          Real.exp (-ε * r ^ 2) := by gcongr
+    _ = _ := by
+      have hexp : Real.exp (1 + (ε / 2) * r ^ 2) * Real.exp (-ε * r ^ 2) =
+          Real.exp 1 * Real.exp (-(ε / 2) * r ^ 2) := by
+        rw [← Real.exp_add, ← Real.exp_add]
+        congr 1
+        ring
+      calc
+        _ = (2 + 2 / ε) ^ N * (N.factorial : ℝ) *
+            (Real.exp (1 + (ε / 2) * r ^ 2) * Real.exp (-ε * r ^ 2)) := by ring
+        _ = _ := by rw [hexp]; ring
+
+/-- Polynomial Gaussian weights are integrable in any real Euclidean dimension. -/
+theorem polynomial_gaussian_integrable {d : ℕ} (N : ℕ) {ε : ℝ} (hε : 0 < ε) :
+    Integrable (fun x : Euclidean d => (1 + ‖x‖) ^ N * Real.exp (-ε * ‖x‖ ^ 2)) := by
+  have hg : Integrable (fun x : Euclidean d => Real.exp (-(ε / 2) * ‖x‖ ^ 2)) := by
+    have hc := GaussianFourier.integrable_cexp_neg_mul_sq_norm_add (V := Euclidean d)
+      (b := (ε / 2 : ℝ)) (by simpa using (half_pos hε)) (0 : ℂ) (0 : Euclidean d)
+    simpa only [zero_mul, add_zero, ← Complex.ofReal_mul, ← Complex.ofReal_neg,
+      ← Complex.ofReal_pow, ← Complex.ofReal_exp, Complex.norm_real,
+      Real.norm_eq_abs, abs_of_pos (Real.exp_pos _)] using hc.norm
+  apply (hg.const_mul ((2 + 2 / ε) ^ N * (N.factorial : ℝ) * Real.exp 1)).mono'
+    ((by fun_prop : Continuous (fun x : Euclidean d =>
+      (1 + ‖x‖) ^ N * Real.exp (-ε * ‖x‖ ^ 2))).aestronglyMeasurable)
+  exact Eventually.of_forall fun x => by
+    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
+    exact polynomial_gaussian_bound N hε (norm_nonneg x)
+
+/-- Gaussian damping makes every measurable polynomially bounded function integrable. -/
+theorem gaussian_damped_polynomial_integrable {d N : ℕ} {f : Euclidean d → ℂ} {C : ℝ}
+    (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable f volume) {ε : ℝ≥0} (hε : 0 < ε) :
+    Integrable (fun x => f x * gaussianFrequencyDamping ε x) := by
+  apply ((polynomial_gaussian_integrable (d := d) N (show 0 < (ε : ℝ) from hε)).const_mul C).mono'
+    (hm.mul (gaussianFrequencyDamping_continuous ε).aestronglyMeasurable)
+  exact Eventually.of_forall fun x => by
+    change ‖f x * gaussianFrequencyDamping ε x‖ ≤
+      C * ((1 + ‖x‖) ^ N * Real.exp (-(ε : ℝ) * ‖x‖ ^ 2))
+    simp only [norm_mul, gaussianFrequencyDamping, Complex.norm_real, Real.norm_eq_abs,
+      abs_of_pos (Real.exp_pos _)]
+    simpa only [mul_assoc] using mul_le_mul_of_nonneg_right (hf x) (Real.exp_nonneg _)
+
+/-- The inverse Fourier kernel has modulus one on real frequencies. -/
+theorem complexInverseFourierKernel_real_norm {d : ℕ} (p x : Euclidean d) :
+    ‖complexInverseFourierKernel p (realToComplex x)‖ = 1 := by
+  have hzero : realToComplex (0 : Euclidean d) = 0 := by ext j; simp
+  simpa only [hzero, smul_zero, add_zero, inner_zero_right, mul_zero, Real.exp_zero]
+    using complexInverseFourierKernel_shift_norm p x (0 : Euclidean d)
+
+/-- The entire function, damping, and inverse kernel form an actual integrable real-frequency
+integrand, whenever the entire function has polynomial growth on the real axis. -/
+theorem gaussian_inverse_integrand_integrable {d N : ℕ} {F : ComplexEuclidean d → ℂ} {C : ℝ}
+    (hF : Continuous F)
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    {ε : ℝ≥0} (hε : 0 < ε) (p : Euclidean d) :
+    Integrable (fun x => (F (realToComplex x) * gaussianFrequencyDamping ε x) *
+      complexInverseFourierKernel p (realToComplex x)) := by
+  have hemb : Continuous (realToComplex : Euclidean d → ComplexEuclidean d) := by
+    exact (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+      change Continuous (fun x : Euclidean d => (x j : ℂ))
+      fun_prop)
+  apply (gaussian_damped_polynomial_integrable hreal
+    (hF.comp hemb).aestronglyMeasurable hε).mono
+  · apply Continuous.aestronglyMeasurable
+    apply ((hF.comp hemb).mul (gaussianFrequencyDamping_continuous ε)).mul
+    unfold complexInverseFourierKernel
+    exact (fourierPhaseCLM p |>.continuous.comp hemb).neg.cexp
+  · exact Eventually.of_forall fun x => by
+      rw [norm_mul, complexInverseFourierKernel_real_norm, mul_one]
+
+/-- Contour-shift estimate for the Gaussian regularized inverse Fourier integrand. -/
+theorem gaussian_inverse_shift_norm_le {d N : ℕ} {F : ComplexEuclidean d → ℂ}
+    {A C R : ℝ} (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    (ε : ℝ) (p x y : Euclidean d) :
+    ‖(F (realToComplex x + Complex.I • realToComplex y) *
+        complexGaussianDamping ε (realToComplex x + Complex.I • realToComplex y)) *
+      complexInverseFourierKernel p (realToComplex x + Complex.I • realToComplex y)‖ ≤
+      C * 2 ^ N * (1 + ‖x‖ + ‖y‖) ^ N *
+        Real.exp (-ε * ‖x‖ ^ 2 + ε * ‖y‖ ^ 2 + R * ‖y‖ -
+          2 * Real.pi * inner (𝕜 := ℝ) p y) := by
+  rw [norm_mul, norm_mul, complexGaussianDamping_shift_norm,
+    complexInverseFourierKernel_shift_norm]
+  calc
+    _ ≤ (C * 2 ^ N * (1 + ‖x‖ + ‖y‖) ^ N * Real.exp (R * ‖y‖)) *
+        Real.exp (-ε * ‖x‖ ^ 2 + ε * ‖y‖ ^ 2) *
+          Real.exp (-2 * Real.pi * inner (𝕜 := ℝ) p y) := by
+      gcongr
+      exact multivariate_polynomial_imaginary_bound hF hA hC hR htype hreal x y
+    _ = _ := by
+      have hexp : Real.exp (R * ‖y‖) * Real.exp (-ε * ‖x‖ ^ 2 + ε * ‖y‖ ^ 2) *
+          Real.exp (-2 * Real.pi * inner (𝕜 := ℝ) p y) =
+          Real.exp (-ε * ‖x‖ ^ 2 + ε * ‖y‖ ^ 2 + R * ‖y‖ -
+            2 * Real.pi * inner (𝕜 := ℝ) p y) := by
+        rw [← Real.exp_add, ← Real.exp_add]
+        congr 1
+        ring
+      rw [mul_assoc, mul_assoc, ← mul_assoc (Real.exp (R * ‖y‖)), hexp]
+
+/-- The real-frequency inverse kernel has the conventional positive Fourier sign. -/
+theorem complexInverseFourierKernel_real {d : ℕ} (p x : Euclidean d) :
+    complexInverseFourierKernel p (realToComplex x) =
+      Complex.exp (((2 * Real.pi * inner (𝕜 := ℝ) x p : ℝ) : ℂ) * Complex.I) := by
+  unfold complexInverseFourierKernel fourierPhaseCLM
+  simp only [ContinuousLinearMap.smul_apply, smul_eq_mul, complexPairingCLM_apply,
+    complexPairing_realToComplex, Complex.ofReal_mul, Complex.ofReal_ofNat,
+    real_inner_comm p x]
+  congr 1
+  ring
+
+/-- An integral representation of the inverse Fourier transform with the complex kernel. -/
+theorem inverseFourier_kernel_integral {d : ℕ} (f : Euclidean d → ℂ) (p : Euclidean d) :
+    Real.fourierIntegralInv f p =
+      ∫ x, f x * complexInverseFourierKernel p (realToComplex x) := by
+  rw [Real.fourierIntegralInv_eq']
+  simp only [complexInverseFourierKernel_real, smul_eq_mul, mul_comm]
+
+/-- Fourier inversion can be moved between the two factors of an integrable pairing. -/
+theorem integral_inverseFourier_mul {d : ℕ} {f g : Euclidean d → ℂ}
+    (hf : Integrable f) (hg : Integrable g) :
+    (∫ p, Real.fourierIntegralInv f p * g p) =
+      ∫ x, f x * Real.fourierIntegralInv g x := by
+  have hflip : (-innerₗ (Euclidean d)).flip = -innerₗ (Euclidean d) := by
+    ext x y
+    change -inner (𝕜 := ℝ) y x = -inner (𝕜 := ℝ) x y
+    rw [real_inner_comm]
+  simpa only [Real.fourierIntegralInv, hflip, smul_eq_mul] using
+    VectorFourier.integral_fourierIntegral_smul_eq_flip (L := -innerₗ (Euclidean d))
+      Real.continuous_fourierChar continuous_inner.neg hf hg
+
+/-- The inverse Gaussian-regularized distribution is represented by its genuine inverse
+Fourier integral when evaluated against any Schwartz test. -/
+theorem inverseGaussianRegularizedDistribution_apply {d N : ℕ}
+    {f : Euclidean d → ℂ} {C : ℝ} (hC : 0 ≤ C)
+    (hf : ∀ x, ‖f x‖ ≤ C * (1 + ‖x‖) ^ N) (hm : AEStronglyMeasurable f volume)
+    {ε : ℝ≥0} (hε : 0 < ε) (φ : SchwartzMap (Euclidean d) ℂ) :
+    distributionInverseFourier (gaussianRegularizedDistribution f hC hf hm ε) φ =
+      ∫ p, Real.fourierIntegralInv (fun x => f x * gaussianFrequencyDamping ε x) p * φ p := by
+  rw [distributionInverseFourier_apply]
+  change (∫ x, (f x * gaussianFrequencyDamping ε x) *
+    ((SchwartzMap.fourierTransformCLE ℂ).symm φ) x) = _
+  simp only [SchwartzMap.fourierTransformCLE_symm_apply]
+  exact (integral_inverseFourier_mul (gaussian_damped_polynomial_integrable hf hm hε)
+    φ.integrable).symm
+
+/-- Imaginary contour shifts also hold in the negative direction. -/
+theorem horizontal_contour_shift_nonpositive {f : ℂ → ℂ} (hf : Differentiable ℂ f)
+    {T C : ℝ} (hT : T ≤ 0)
+    (hdecay : ∀ x y : ℝ, y ∈ Icc T 0 → ‖f ((x : ℂ) + (y : ℂ) * Complex.I)‖ ≤
+      C / (1 + x ^ 2)) :
+    (∫ x : ℝ, f x) = ∫ x : ℝ, f ((x : ℂ) + (T : ℂ) * Complex.I) := by
+  let g : ℂ → ℂ := fun z => f (-z)
+  have hg : Differentiable ℂ g := hf.comp differentiable_id.neg
+  have hbound : ∀ x y : ℝ, y ∈ Icc 0 (-T) → ‖g ((x : ℂ) + (y : ℂ) * Complex.I)‖ ≤
+      C / (1 + x ^ 2) := by
+    intro x y hy
+    have heq : -((x : ℂ) + (y : ℂ) * Complex.I) =
+        ((-x : ℝ) : ℂ) + ((-y : ℝ) : ℂ) * Complex.I := by push_cast; ring
+    simpa only [g, heq, neg_sq] using hdecay (-x) (-y) ⟨by linarith [hy.2], by linarith [hy.1]⟩
+  have h := horizontal_contour_shift hg (neg_nonneg.mpr hT) hbound
+  have heq (x : ℝ) : g ((x : ℂ) + ((-T : ℝ) : ℂ) * Complex.I) =
+      f (((-x : ℝ) : ℂ) + (T : ℂ) * Complex.I) := by
+    unfold g
+    congr 1
+    push_cast
+    ring
+  simp only [heq] at h
+  have hleft : (∫ x : ℝ, g x) = ∫ x : ℝ, f x := by
+    simpa only [g, Complex.ofReal_neg] using integral_neg_eq_self (fun x : ℝ => f x) volume
+  have hright : (∫ x : ℝ, f (((-x : ℝ) : ℂ) + (T : ℂ) * Complex.I)) =
+      ∫ x : ℝ, f ((x : ℂ) + (T : ℂ) * Complex.I) :=
+    integral_neg_eq_self (fun x : ℝ => f ((x : ℂ) + (T : ℂ) * Complex.I)) volume
+  rwa [hleft, hright] at h
+
+/-- A single contour shift in either imaginary direction, under uniform strip decay. -/
+theorem horizontal_contour_shift_any {f : ℂ → ℂ} (hf : Differentiable ℂ f) (T C : ℝ)
+    (hdecay : ∀ x y : ℝ, y ∈ uIcc 0 T → ‖f ((x : ℂ) + (y : ℂ) * Complex.I)‖ ≤
+      C / (1 + x ^ 2)) :
+    (∫ x : ℝ, f x) = ∫ x : ℝ, f ((x : ℂ) + (T : ℂ) * Complex.I) := by
+  rcases le_total 0 T with hT | hT
+  · exact horizontal_contour_shift hf hT (by simpa only [uIcc_of_le hT] using hdecay)
+  · exact horizontal_contour_shift_nonpositive hf hT
+      (by simpa only [uIcc_of_ge hT] using hdecay)
+
+/-- Exponential suppression dominates every fixed inverse power of the damping width. -/
+theorem gaussian_suppression_tendsto (M : ℕ) {a : ℝ} (ha : 0 < a) :
+    Tendsto (fun ε : ℝ => (ε⁻¹) ^ M * Real.exp (-a / ε)) (𝓝[>] 0) (𝓝 0) := by
+  simpa only [Function.comp_def, Real.rpow_natCast, div_eq_mul_inv] using
+    (tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero (M : ℝ) a ha).comp
+      (tendsto_inv_nhdsGT_zero : Tendsto (fun ε : ℝ => ε⁻¹) (𝓝[>] 0) atTop)
+
+/-- The radial imaginary shift optimizes the Gaussian localization exponent. -/
+theorem gaussian_radial_shift_exponent {d : ℕ} (p : Euclidean d) {ε R : ℝ}
+    (hε : 0 < ε) (hp : 0 < ‖p‖) (hδ : 0 ≤ 2 * Real.pi * ‖p‖ - R) :
+    let y := ((2 * Real.pi * ‖p‖ - R) / (2 * ε) / ‖p‖) • p
+    ε * ‖y‖ ^ 2 + R * ‖y‖ - 2 * Real.pi * inner (𝕜 := ℝ) p y =
+      -(2 * Real.pi * ‖p‖ - R) ^ 2 / (4 * ε) := by
+  dsimp only
+  have ht : 0 ≤ (2 * Real.pi * ‖p‖ - R) / (2 * ε) / ‖p‖ :=
+    div_nonneg (div_nonneg hδ (by positivity)) hp.le
+  rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg ht, inner_smul_right,
+    real_inner_self_eq_norm_sq]
+  field_simp
+  ring
+
+/-- A one-dimensional contour shift can be integrated over arbitrary remaining coordinates. -/
+theorem parameterized_contour_shift {X : Type*} [MeasurableSpace X] (μ : Measure X)
+    [SigmaFinite μ] (f : X → ℂ → ℂ) (T : ℝ)
+    (hf : ∀ x, Differentiable ℂ (f x))
+    (hdecay : ∀ x, ∃ C : ℝ, ∀ s t : ℝ, t ∈ uIcc 0 T →
+      ‖f x ((s : ℂ) + (t : ℂ) * Complex.I)‖ ≤ C / (1 + s ^ 2))
+    (h0 : Integrable (fun p : X × ℝ => f p.1 p.2) (μ.prod volume))
+    (hT : Integrable (fun p : X × ℝ => f p.1 ((p.2 : ℂ) + (T : ℂ) * Complex.I))
+      (μ.prod volume)) :
+    (∫ p : X × ℝ, f p.1 p.2 ∂μ.prod volume) =
+      ∫ p : X × ℝ, f p.1 ((p.2 : ℂ) + (T : ℂ) * Complex.I) ∂μ.prod volume := by
+  rw [integral_prod _ h0, integral_prod _ hT]
+  apply integral_congr_ae
+  exact Eventually.of_forall fun x => by
+    obtain ⟨C, hC⟩ := hdecay x
+    exact horizontal_contour_shift_any (hf x) T C hC
+
+/-- Fubini transports a contour shift through any chosen coordinate of a finite-dimensional
+real frequency integral. -/
+theorem fin_coordinate_contour_shift {n : ℕ} (j : Fin (n + 1))
+    (f : (Fin n → ℝ) → ℂ → ℂ) (T : ℝ)
+    (hf : ∀ v, Differentiable ℂ (f v))
+    (hdecay : ∀ v, ∃ C : ℝ, ∀ s t : ℝ, t ∈ uIcc 0 T →
+      ‖f v ((s : ℂ) + (t : ℂ) * Complex.I)‖ ≤ C / (1 + s ^ 2))
+    (h0 : Integrable (fun x : Fin (n + 1) → ℝ => f (fun k => x (j.succAbove k)) (x j)))
+    (hT : Integrable (fun x : Fin (n + 1) → ℝ =>
+      f (fun k => x (j.succAbove k)) ((x j : ℂ) + (T : ℂ) * Complex.I))) :
+    (∫ x : Fin (n + 1) → ℝ, f (fun k => x (j.succAbove k)) (x j)) =
+      ∫ x : Fin (n + 1) → ℝ,
+        f (fun k => x (j.succAbove k)) ((x j : ℂ) + (T : ℂ) * Complex.I) := by
+  let e := (MeasurableEquiv.piFinSuccAbove (fun _ : Fin (n + 1) => ℝ) j).symm
+  have he : MeasurePreserving e :=
+    (volume_preserving_piFinSuccAbove (fun _ : Fin (n + 1) => ℝ) j).symm
+  have h0p : Integrable (fun p : ℝ × (Fin n → ℝ) => f p.2 p.1) := by
+    simpa only [e, Function.comp_def, MeasurableEquiv.piFinSuccAbove_symm_apply,
+      Fin.insertNthEquiv, Equiv.coe_fn_mk, Fin.insertNth_apply_same,
+      Fin.insertNth_apply_succAbove] using
+      (he.integrable_comp_emb e.measurableEmbedding).mpr h0
+  have hTp : Integrable (fun p : ℝ × (Fin n → ℝ) =>
+      f p.2 ((p.1 : ℂ) + (T : ℂ) * Complex.I)) := by
+    simpa only [e, Function.comp_def, MeasurableEquiv.piFinSuccAbove_symm_apply,
+      Fin.insertNthEquiv, Equiv.coe_fn_mk, Fin.insertNth_apply_same,
+      Fin.insertNth_apply_succAbove] using
+      (he.integrable_comp_emb e.measurableEmbedding).mpr hT
+  rw [← he.integral_comp' (fun x : Fin (n + 1) → ℝ =>
+    f (fun k => x (j.succAbove k)) (x j)),
+    ← he.integral_comp' (fun x : Fin (n + 1) → ℝ =>
+      f (fun k => x (j.succAbove k)) ((x j : ℂ) + (T : ℂ) * Complex.I))]
+  simp only [e, MeasurableEquiv.piFinSuccAbove_symm_apply,
+    Fin.insertNthEquiv, Equiv.coe_fn_mk, Fin.insertNth_apply_same,
+    Fin.insertNth_apply_succAbove, Measure.volume_eq_prod]
+  rw [integral_prod_symm _ h0p, integral_prod_symm _ hTp]
+  apply integral_congr_ae
+  exact Eventually.of_forall fun v => by
+    obtain ⟨C, hC⟩ := hdecay v
+    exact horizontal_contour_shift_any (hf v) T C hC
+
+/-- The shifted inverse integrand separates into an integrable real Gaussian weight and a
+factor depending only on the imaginary displacement. -/
+theorem gaussian_inverse_shift_norm_le_product {d N : ℕ} {F : ComplexEuclidean d → ℂ}
+    {A C R : ℝ} (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    (ε : ℝ) (p x y : Euclidean d) :
+    ‖(F (realToComplex x + Complex.I • realToComplex y) *
+        complexGaussianDamping ε (realToComplex x + Complex.I • realToComplex y)) *
+      complexInverseFourierKernel p (realToComplex x + Complex.I • realToComplex y)‖ ≤
+      (C * 2 ^ N * (1 + ‖y‖) ^ N *
+        Real.exp (ε * ‖y‖ ^ 2 + R * ‖y‖ - 2 * Real.pi * inner (𝕜 := ℝ) p y)) *
+          ((1 + ‖x‖) ^ N * Real.exp (-ε * ‖x‖ ^ 2)) := by
+  apply (gaussian_inverse_shift_norm_le hF hA hC hR htype hreal ε p x y).trans
+  have hp : (1 + ‖x‖ + ‖y‖) ^ N ≤ ((1 + ‖x‖) * (1 + ‖y‖)) ^ N := by
+    apply pow_le_pow_left₀ (by positivity)
+    nlinarith [mul_nonneg (norm_nonneg x) (norm_nonneg y)]
+  calc
+    _ ≤ C * 2 ^ N * ((1 + ‖x‖) * (1 + ‖y‖)) ^ N *
+        Real.exp (-ε * ‖x‖ ^ 2 + ε * ‖y‖ ^ 2 + R * ‖y‖ -
+          2 * Real.pi * inner (𝕜 := ℝ) p y) := by gcongr
+    _ = _ := by
+      rw [mul_pow]
+      have hexp : Real.exp (-ε * ‖x‖ ^ 2 + ε * ‖y‖ ^ 2 + R * ‖y‖ -
+          2 * Real.pi * inner (𝕜 := ℝ) p y) =
+          Real.exp (ε * ‖y‖ ^ 2 + R * ‖y‖ - 2 * Real.pi * inner (𝕜 := ℝ) p y) *
+            Real.exp (-ε * ‖x‖ ^ 2) := by
+        rw [← Real.exp_add]
+        congr 1
+        ring
+      rw [hexp]
+      ring
+
+/-- Every imaginary shift of the Gaussian regularized inverse integrand is absolutely integrable. -/
+theorem gaussian_inverse_shift_integrable {d N : ℕ} {F : ComplexEuclidean d → ℂ}
+    {A C R : ℝ} (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    {ε : ℝ} (hε : 0 < ε) (p y : Euclidean d) :
+    Integrable (fun x =>
+      (F (realToComplex x + Complex.I • realToComplex y) *
+        complexGaussianDamping ε (realToComplex x + Complex.I • realToComplex y)) *
+      complexInverseFourierKernel p (realToComplex x + Complex.I • realToComplex y)) := by
+  apply ((polynomial_gaussian_integrable (d := d) N hε).const_mul
+    (C * 2 ^ N * (1 + ‖y‖) ^ N *
+      Real.exp (ε * ‖y‖ ^ 2 + R * ‖y‖ - 2 * Real.pi * inner (𝕜 := ℝ) p y))).mono'
+  · have hemb : Continuous (realToComplex : Euclidean d → ComplexEuclidean d) :=
+      (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+        change Continuous (fun x : Euclidean d => (x j : ℂ))
+        fun_prop)
+    have hshift : Continuous (fun x : Euclidean d =>
+        realToComplex x + Complex.I • realToComplex y) := hemb.add continuous_const
+    apply Continuous.aestronglyMeasurable
+    apply ((hF.continuous.comp hshift).mul ?_).mul ?_
+    · unfold complexGaussianDamping gaussianQuadratic
+      fun_prop
+    · unfold complexInverseFourierKernel
+      exact ((fourierPhaseCLM p).continuous.comp hshift).neg.cexp
+  · exact Eventually.of_forall fun x =>
+      gaussian_inverse_shift_norm_le_product hF hA hC hR htype hreal ε p x y
+
+/-- A positive Gaussian dominates a linear exponential, with half its decay rate left over. -/
+theorem linear_exponential_gaussian_bound {ε L r : ℝ} (hε : 0 < ε) :
+    Real.exp (L * r - ε * r ^ 2) ≤
+      Real.exp (L ^ 2 / (2 * ε)) * Real.exp (-(ε / 2) * r ^ 2) := by
+  rw [← Real.exp_add]
+  apply Real.exp_le_exp.mpr
+  have hden : 0 < 2 * ε := by positivity
+  have hgoal : 2 * ε * (L * r - ε * r ^ 2) ≤
+      2 * ε * (L ^ 2 / (2 * ε) + -(ε / 2) * r ^ 2) := by
+    have hcancel : 2 * ε * (L ^ 2 / (2 * ε)) = L ^ 2 := by field_simp
+    rw [mul_add, hcancel]
+    nlinarith [sq_nonneg (ε * r - L)]
+  exact (mul_le_mul_left hden).mp hgoal
+
+/-- A uniform Gaussian bound across a strip supplies the quadratic decay required by the
+rectangle-contour argument. -/
+theorem gaussian_strip_quadratic_decay {f : ℂ → ℂ} {ε K T : ℝ}
+    (hε : 0 < ε) (hK : 0 ≤ K)
+    (hbound : ∀ s t : ℝ, t ∈ uIcc 0 T →
+      ‖f ((s : ℂ) + (t : ℂ) * Complex.I)‖ ≤ K * Real.exp (-ε * s ^ 2)) :
+    ∃ C : ℝ, ∀ s t : ℝ, t ∈ uIcc 0 T →
+      ‖f ((s : ℂ) + (t : ℂ) * Complex.I)‖ ≤ C / (1 + s ^ 2) := by
+  let B : ℝ := (2 + 2 / ε) ^ 2 * ((2 : ℕ).factorial : ℝ) * Real.exp 1
+  refine ⟨K * B, fun s t ht => ?_⟩
+  apply (hbound s t ht).trans
+  apply (le_div_iff₀ (by positivity : 0 < 1 + s ^ 2)).mpr
+  have hpoly := polynomial_gaussian_bound 2 hε (abs_nonneg s)
+  have hexp : Real.exp (-(ε / 2) * |s| ^ 2) ≤ 1 := by
+    rw [← Real.exp_zero]
+    apply Real.exp_le_exp.mpr
+    exact mul_nonpos_of_nonpos_of_nonneg (by linarith) (sq_nonneg _)
+  have hB : 0 ≤ B := by dsimp [B]; positivity
+  have hp : (1 + s ^ 2) * Real.exp (-ε * s ^ 2) ≤ B := by
+    calc
+      _ ≤ (1 + |s|) ^ 2 * Real.exp (-ε * |s| ^ 2) := by
+        rw [sq_abs]
+        gcongr
+        nlinarith [abs_nonneg s, sq_abs s]
+      _ ≤ B * Real.exp (-(ε / 2) * |s| ^ 2) := hpoly
+      _ ≤ B := mul_le_of_le_one_right hB hexp
+  nlinarith [mul_le_mul_of_nonneg_left hp hK]
+
+/-- The holomorphic integrand whose real integral regularizes the inverse Fourier transform. -/
+def gaussianInverseEntireIntegrand {d : ℕ} (F : ComplexEuclidean d → ℂ)
+    (ε : ℝ) (p : Euclidean d) (z : ComplexEuclidean d) : ℂ :=
+  (F z * complexGaussianDamping ε z) * complexInverseFourierKernel p z
+
+/-- Gaussian regularization preserves complex differentiability. -/
+theorem gaussianInverseEntireIntegrand_differentiable {d : ℕ} {F : ComplexEuclidean d → ℂ}
+    (hF : Differentiable ℂ F) (ε : ℝ) (p : Euclidean d) :
+    Differentiable ℂ (gaussianInverseEntireIntegrand F ε p) := by
+  have hquad : Differentiable ℂ (gaussianQuadratic (d := d)) := by
+    unfold gaussianQuadratic
+    have hp (j : Fin d) : Differentiable ℂ (fun z : ComplexEuclidean d => z j ^ 2) := by
+      have hproj : Differentiable ℂ (fun z : ComplexEuclidean d => z j) :=
+        (PiLp.proj (𝕜 := ℂ) 2 (fun _ : Fin d => ℂ) j).differentiable
+      exact hproj.pow 2
+    exact Differentiable.sum (u := Finset.univ) (fun j _ => hp j)
+  have hgauss : Differentiable ℂ (complexGaussianDamping (d := d) ε) :=
+    (hquad.const_mul (-(ε : ℂ))).cexp
+  exact (hF.mul hgauss).mul ((fourierPhaseCLM p).differentiable.neg.cexp)
+
+/-- Total exponential type gives uniform Gaussian decay on each coordinate strip. -/
+theorem gaussian_inverse_slice_bound {d : ℕ} {F : ComplexEuclidean d → ℂ}
+    {A R ε b M s : ℝ} (hA : 0 ≤ A) (hR : 0 ≤ R) (hε : 0 < ε)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖)) (p x y : Euclidean d)
+    (hx : ‖x‖ ≤ |s| + b) (hxsq : s ^ 2 ≤ ‖x‖ ^ 2) (hy : ‖y‖ ≤ M) :
+    ‖gaussianInverseEntireIntegrand F ε p (realToComplex x + Complex.I • realToComplex y)‖ ≤
+      (A * Real.exp (R * (b + M) + ε * M ^ 2 + 2 * Real.pi * ‖p‖ * M + R ^ 2 / (2 * ε))) *
+        Real.exp (-(ε / 2) * s ^ 2) := by
+  have hn : ‖realToComplex x + Complex.I • realToComplex y‖ ≤ |s| + b + M := by
+    calc
+      _ ≤ ‖realToComplex x‖ + ‖Complex.I • realToComplex y‖ := norm_add_le _ _
+      _ = ‖x‖ + ‖y‖ := by simp [norm_smul]
+      _ ≤ _ := add_le_add hx hy
+  have hFnorm : ‖F (realToComplex x + Complex.I • realToComplex y)‖ ≤
+      A * Real.exp (R * (|s| + b + M)) :=
+    (htype _).trans (mul_le_mul_of_nonneg_left
+      (Real.exp_le_exp.mpr (mul_le_mul_of_nonneg_left hn hR)) hA)
+  have hgauss : Real.exp (-ε * ‖x‖ ^ 2 + ε * ‖y‖ ^ 2) ≤
+      Real.exp (-ε * s ^ 2 + ε * M ^ 2) := by
+    apply Real.exp_le_exp.mpr
+    have hy2 := pow_le_pow_left₀ (norm_nonneg y) hy 2
+    nlinarith [mul_le_mul_of_nonneg_left hxsq hε.le,
+      mul_le_mul_of_nonneg_left hy2 hε.le]
+  have hinner : -inner (𝕜 := ℝ) p y ≤ ‖p‖ * M := by
+    exact ((neg_le_abs _).trans (abs_real_inner_le_norm p y)).trans
+      (mul_le_mul_of_nonneg_left hy (norm_nonneg p))
+  have hkernel : Real.exp (-2 * Real.pi * inner (𝕜 := ℝ) p y) ≤
+      Real.exp (2 * Real.pi * ‖p‖ * M) := by
+    apply Real.exp_le_exp.mpr
+    nlinarith [mul_le_mul_of_nonneg_left hinner (show 0 ≤ 2 * Real.pi by positivity)]
+  unfold gaussianInverseEntireIntegrand
+  rw [norm_mul, norm_mul, complexGaussianDamping_shift_norm,
+    complexInverseFourierKernel_shift_norm]
+  calc
+    _ ≤ (A * Real.exp (R * (|s| + b + M))) *
+        Real.exp (-ε * s ^ 2 + ε * M ^ 2) * Real.exp (2 * Real.pi * ‖p‖ * M) := by gcongr
+    _ = (A * Real.exp (R * (b + M) + ε * M ^ 2 + 2 * Real.pi * ‖p‖ * M)) *
+        Real.exp (R * |s| - ε * |s| ^ 2) := by
+      rw [sq_abs]
+      have hexp : Real.exp (R * (|s| + b + M)) * Real.exp (-ε * s ^ 2 + ε * M ^ 2) *
+          Real.exp (2 * Real.pi * ‖p‖ * M) =
+          Real.exp (R * (b + M) + ε * M ^ 2 + 2 * Real.pi * ‖p‖ * M) *
+            Real.exp (R * |s| - ε * s ^ 2) := by
+        rw [← Real.exp_add, ← Real.exp_add, ← Real.exp_add]
+        congr 1
+        ring
+      rw [mul_assoc, mul_assoc, ← mul_assoc (Real.exp (R * (|s| + b + M))), hexp, mul_assoc]
+      ring
+    _ ≤ (A * Real.exp (R * (b + M) + ε * M ^ 2 + 2 * Real.pi * ‖p‖ * M)) *
+        (Real.exp (R ^ 2 / (2 * ε)) * Real.exp (-(ε / 2) * |s| ^ 2)) := by
+      gcongr
+      exact linear_exponential_gaussian_bound hε
+    _ = _ := by
+      rw [sq_abs, ← mul_assoc, mul_assoc A, ← Real.exp_add]
+
+/-- A complex affine line varying a single frequency coordinate. -/
+def coordinateContourPoint {d : ℕ} (j : Fin d) (x y : Euclidean d) (z : ℂ) :
+    ComplexEuclidean d :=
+  realToComplex x + Complex.I • realToComplex y + z • EuclideanSpace.single j (1 : ℂ)
+
+/-- Real and imaginary parts of a coordinate line are real coordinate displacements. -/
+theorem coordinateContourPoint_real_imag {d : ℕ} (j : Fin d) (x y : Euclidean d) (s t : ℝ) :
+    coordinateContourPoint j x y ((s : ℂ) + (t : ℂ) * Complex.I) =
+      realToComplex (x + EuclideanSpace.single j s) +
+        Complex.I • realToComplex (y + EuclideanSpace.single j t) := by
+  ext k
+  simp only [coordinateContourPoint, PiLp.add_apply, PiLp.smul_apply, smul_eq_mul,
+    realToComplex_apply, EuclideanSpace.single_apply, Complex.ofReal_add]
+  split_ifs <;> simp
+  ring
+
+/-- The coordinate affine line is complex differentiable. -/
+theorem coordinateContourPoint_differentiable {d : ℕ} (j : Fin d) (x y : Euclidean d) :
+    Differentiable ℂ (coordinateContourPoint j x y) := by
+  have hid : Differentiable ℂ (fun z : ℂ => z) := differentiable_id
+  have hc : Differentiable ℂ (fun _ : ℂ => realToComplex x + Complex.I • realToComplex y) :=
+    differentiable_const _
+  exact hc.add (hid.smul_const (EuclideanSpace.single j (1 : ℂ)))
+
+/-- The actual regularized inverse integrand satisfies the uniform coordinate-strip decay
+required by the Cauchy rectangle theorem. -/
+theorem gaussian_inverse_coordinate_strip_decay {d : ℕ} {F : ComplexEuclidean d → ℂ}
+    {A R ε : ℝ} (hA : 0 ≤ A) (hR : 0 ≤ R) (hε : 0 < ε)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖)) (p : Euclidean d)
+    (j : Fin d) (x y : Euclidean d) (hx : x j = 0) (T : ℝ) :
+    ∃ C : ℝ, ∀ s t : ℝ, t ∈ uIcc 0 T →
+      ‖gaussianInverseEntireIntegrand F ε p (coordinateContourPoint j x y
+        ((s : ℂ) + (t : ℂ) * Complex.I))‖ ≤ C / (1 + s ^ 2) := by
+  let M := ‖y‖ + |T|
+  let K := A * Real.exp (R * (‖x‖ + M) + ε * M ^ 2 + 2 * Real.pi * ‖p‖ * M + R ^ 2 / (2 * ε))
+  apply gaussian_strip_quadratic_decay
+    (f := fun z => gaussianInverseEntireIntegrand F ε p (coordinateContourPoint j x y z))
+    (K := K) (show 0 < ε / 2 by positivity) (show 0 ≤ K by positivity)
+  intro s t ht
+  rw [coordinateContourPoint_real_imag]
+  have hxs : ‖x + EuclideanSpace.single j s‖ ≤ |s| + ‖x‖ := by
+    simpa only [EuclideanSpace.norm_single, Real.norm_eq_abs, add_comm] using
+      norm_add_le x (EuclideanSpace.single j s)
+  have hsq : s ^ 2 ≤ ‖x + EuclideanSpace.single j s‖ ^ 2 := by
+    have hn := PiLp.norm_apply_le (x + EuclideanSpace.single j s) j
+    simp only [PiLp.add_apply, EuclideanSpace.single_apply, if_pos rfl, hx, zero_add,
+      Real.norm_eq_abs] at hn
+    simpa only [sq_abs] using pow_le_pow_left₀ (abs_nonneg s) hn 2
+  have hyt : ‖y + EuclideanSpace.single j t‖ ≤ M := by
+    have habs : |t| ≤ |T| := by simpa only [sub_zero] using abs_sub_left_of_mem_uIcc ht
+    calc
+      _ ≤ ‖y‖ + ‖EuclideanSpace.single j t‖ := norm_add_le _ _
+      _ = ‖y‖ + |t| := by simp [Real.norm_eq_abs]
+      _ ≤ M := add_le_add_left habs _
+  exact gaussian_inverse_slice_bound hA hR hε htype p
+    (x + EuclideanSpace.single j s) (y + EuclideanSpace.single j t) hxs hsq hyt
+
+/-- Insert the zero coordinate needed to parameterize a coordinate contour. -/
+def coordinateZeroInsert {n : ℕ} (j : Fin (n + 1)) (v : Fin n → ℝ) : Euclidean (n + 1) :=
+  (WithLp.equiv 2 (Fin (n + 1) → ℝ)).symm (j.insertNth 0 v)
+
+@[simp] theorem coordinateZeroInsert_same {n : ℕ} (j : Fin (n + 1)) (v : Fin n → ℝ) :
+    coordinateZeroInsert j v j = 0 := by simp [coordinateZeroInsert]
+
+@[simp] theorem coordinateZeroInsert_succAbove {n : ℕ} (j : Fin (n + 1))
+    (v : Fin n → ℝ) (k : Fin n) :
+    coordinateZeroInsert j v (j.succAbove k) = v k := by simp [coordinateZeroInsert]
+
+/-- Reconstruct the full real frequency vector from its contour coordinate and remaining coordinates. -/
+theorem coordinateContourPoint_reconstruct {n : ℕ} (j : Fin (n + 1))
+    (x : Fin (n + 1) → ℝ) (y : Euclidean (n + 1)) (T : ℝ) :
+    coordinateContourPoint j (coordinateZeroInsert j (fun k => x (j.succAbove k))) y
+        ((x j : ℂ) + (T : ℂ) * Complex.I) =
+      realToComplex ((WithLp.equiv 2 (Fin (n + 1) → ℝ)).symm x) +
+        Complex.I • realToComplex (y + EuclideanSpace.single j T) := by
+  rw [coordinateContourPoint_real_imag]
+  congr 1
+  apply congrArg realToComplex
+  apply PiLp.ext
+  exact j.forall_iff_succAbove.mpr ⟨by simp, fun k => by
+    simp only [PiLp.add_apply, coordinateZeroInsert_succAbove, EuclideanSpace.single_apply,
+      Fin.succAbove_ne, if_false, add_zero, WithLp.equiv_symm_pi_apply]⟩
+
+/-- The Gaussian regularized inverse integral can be shifted through one actual frequency
+coordinate, with all integrability and strip-decay hypotheses discharged. -/
+theorem gaussian_inverse_coordinate_shift {n N : ℕ} {F : ComplexEuclidean (n + 1) → ℂ}
+    {A C R ε : ℝ} (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hε : 0 < ε) (p y : Euclidean (n + 1)) (j : Fin (n + 1)) (T : ℝ) :
+    (∫ x, gaussianInverseEntireIntegrand F ε p (realToComplex x + Complex.I • realToComplex y)) =
+      ∫ x, gaussianInverseEntireIntegrand F ε p
+        (realToComplex x + Complex.I • realToComplex (y + EuclideanSpace.single j T)) := by
+  let e := EuclideanSpace.measurableEquiv (Fin (n + 1))
+  have he := (EuclideanSpace.volume_preserving_measurableEquiv (Fin (n + 1))).symm
+  let f : (Fin n → ℝ) → ℂ → ℂ := fun v z =>
+    gaussianInverseEntireIntegrand F ε p (coordinateContourPoint j (coordinateZeroInsert j v) y z)
+  have hslice (v : Fin n → ℝ) : Differentiable ℂ (f v) :=
+    (gaussianInverseEntireIntegrand_differentiable hF ε p).comp
+      (coordinateContourPoint_differentiable j (coordinateZeroInsert j v) y)
+  have hstrip (v : Fin n → ℝ) : ∃ B : ℝ, ∀ s t : ℝ, t ∈ uIcc 0 T →
+      ‖f v ((s : ℂ) + (t : ℂ) * Complex.I)‖ ≤ B / (1 + s ^ 2) :=
+    gaussian_inverse_coordinate_strip_decay hA hR hε htype p j (coordinateZeroInsert j v) y
+      (coordinateZeroInsert_same j v) T
+  have hpoint (x : Fin (n + 1) → ℝ) (t : ℝ) :
+      f (fun k => x (j.succAbove k)) ((x j : ℂ) + (t : ℂ) * Complex.I) =
+        gaussianInverseEntireIntegrand F ε p
+          (realToComplex (e.symm x) + Complex.I • realToComplex (y + EuclideanSpace.single j t)) := by
+    dsimp only [f]
+    rw [coordinateContourPoint_reconstruct]
+    rfl
+  have hzero : EuclideanSpace.single j (0 : ℝ) = 0 := by ext k; simp [EuclideanSpace.single_apply]
+  have hpoint0 (x : Fin (n + 1) → ℝ) :
+      f (fun k => x (j.succAbove k)) (x j) =
+        gaussianInverseEntireIntegrand F ε p (realToComplex (e.symm x) + Complex.I • realToComplex y) := by
+    simpa only [Complex.ofReal_zero, zero_mul, add_zero, hzero] using hpoint x 0
+  have hInt (v : Euclidean (n + 1)) : Integrable (fun x : Fin (n + 1) → ℝ =>
+      gaussianInverseEntireIntegrand F ε p (realToComplex (e.symm x) + Complex.I • realToComplex v)) := by
+    exact (he.integrable_comp_emb e.symm.measurableEmbedding).mpr
+      (gaussian_inverse_shift_integrable hF hA hC hR htype hreal hε p v)
+  have h0 : Integrable (fun x : Fin (n + 1) → ℝ => f (fun k => x (j.succAbove k)) (x j)) := by
+    simp only [hpoint0]
+    exact hInt y
+  have hT : Integrable (fun x : Fin (n + 1) → ℝ =>
+      f (fun k => x (j.succAbove k)) ((x j : ℂ) + (T : ℂ) * Complex.I)) := by
+    simp only [hpoint]
+    exact hInt (y + EuclideanSpace.single j T)
+  have hshift := fin_coordinate_contour_shift j f T hslice hstrip h0 hT
+  simp only [hpoint0, hpoint] at hshift
+  have htransport (v : Euclidean (n + 1)) :
+      (∫ x : Fin (n + 1) → ℝ, gaussianInverseEntireIntegrand F ε p
+        (realToComplex (e.symm x) + Complex.I • realToComplex v)) =
+      ∫ x : Euclidean (n + 1), gaussianInverseEntireIntegrand F ε p
+        (realToComplex x + Complex.I • realToComplex v) := by
+    simpa only [e] using he.integral_comp' (fun x : Euclidean (n + 1) =>
+      gaussianInverseEntireIntegrand F ε p (realToComplex x + Complex.I • realToComplex v))
+  rwa [htransport y, htransport (y + EuclideanSpace.single j T)] at hshift
+
+/-- Iterating actual coordinate shifts gives a contour shift by an arbitrary imaginary
+Euclidean vector for the Gaussian regularized inverse Fourier integral. -/
+theorem gaussian_inverse_contour_shift {d N : ℕ} {F : ComplexEuclidean d → ℂ}
+    {A C R ε : ℝ} (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hε : 0 < ε) (p y : Euclidean d) :
+    (∫ x, gaussianInverseEntireIntegrand F ε p (realToComplex x)) =
+      ∫ x, gaussianInverseEntireIntegrand F ε p (realToComplex x + Complex.I • realToComplex y) := by
+  let J : Euclidean d → ℂ := fun v => ∫ x, gaussianInverseEntireIntegrand F ε p
+    (realToComplex x + Complex.I • realToComplex v)
+  have hstep (v : Euclidean d) (j : Fin d) : J v = J (v + EuclideanSpace.single j (y j)) := by
+    cases d with
+    | zero => exact Fin.elim0 j
+    | succ n => exact gaussian_inverse_coordinate_shift hF hA hC hR htype hreal hε p v j (y j)
+  have hsum (S : Finset (Fin d)) : J 0 = J (∑ j ∈ S, EuclideanSpace.single j (y j)) := by
+    induction S using Finset.induction_on with
+    | empty => simp
+    | @insert j S hj ih =>
+      rw [Finset.sum_insert hj]
+      simpa only [add_comm] using ih.trans (hstep (∑ k ∈ S, EuclideanSpace.single k (y k)) j)
+  have hy : (∑ j : Fin d, EuclideanSpace.single j (y j)) = y := by
+    ext k
+    change (PiLp.proj (𝕜 := ℝ) 2 (fun _ : Fin d => ℝ) k)
+      (∑ j : Fin d, EuclideanSpace.single j (y j)) = y k
+    rw [map_sum]
+    simp [EuclideanSpace.single_apply]
+  have hzero : realToComplex (0 : Euclidean d) = 0 := by ext j; simp
+  simpa only [hy, J, hzero, smul_zero, add_zero] using hsum Finset.univ
+
+/-- The holomorphic Gaussian extends the real damping factor exactly. -/
+theorem complexGaussianDamping_real {d : ℕ} (ε : ℝ≥0) (x : Euclidean d) :
+    complexGaussianDamping ε (realToComplex x) = gaussianFrequencyDamping ε x := by
+  have hquad : gaussianQuadratic (realToComplex x) = (‖x‖ ^ 2 : ℝ) := by
+    simp only [gaussianQuadratic, realToComplex_apply, ← Complex.ofReal_pow,
+      ← Complex.ofReal_sum, real_coordinate_square_sum]
+  rw [complexGaussianDamping, hquad, gaussianFrequencyDamping]
+  norm_cast
+
+/-- The regularized inverse Fourier transform equals any of its imaginary-shifted
+Gaussian integrals. -/
+theorem gaussian_inverseFourier_eq_shifted_integral {d N : ℕ} {F : ComplexEuclidean d → ℂ}
+    {A C R : ℝ} (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    {ε : ℝ≥0} (hε : 0 < ε) (p y : Euclidean d) :
+    Real.fourierIntegralInv (fun x => F (realToComplex x) * gaussianFrequencyDamping ε x) p =
+      ∫ x, gaussianInverseEntireIntegrand F ε p (realToComplex x + Complex.I • realToComplex y) := by
+  rw [inverseFourier_kernel_integral]
+  simp_rw [← complexGaussianDamping_real]
+  exact gaussian_inverse_contour_shift hF hA hC hR htype hreal hε p y
+
+/-- An explicit bound on the total polynomial Gaussian mass. -/
+theorem polynomial_gaussian_integral_le {d : ℕ} (N : ℕ) {ε : ℝ} (hε : 0 < ε) :
+    (∫ x : Euclidean d, (1 + ‖x‖) ^ N * Real.exp (-ε * ‖x‖ ^ 2)) ≤
+      ((2 + 2 / ε) ^ N * (N.factorial : ℝ) * Real.exp 1) *
+        (2 * Real.pi / ε) ^ ((d : ℝ) / 2) := by
+  have hg : Integrable (fun x : Euclidean d => Real.exp (-(ε / 2) * ‖x‖ ^ 2)) := by
+    simpa only [pow_zero, one_mul] using polynomial_gaussian_integrable (d := d) 0 (half_pos hε)
+  have hbound := integral_mono (polynomial_gaussian_integrable (d := d) N hε)
+    (hg.const_mul ((2 + 2 / ε) ^ N * (N.factorial : ℝ) * Real.exp 1))
+    (fun x => polynomial_gaussian_bound N hε (norm_nonneg x))
+  rw [integral_const_mul, GaussianFourier.integral_rexp_neg_mul_sq_norm (half_pos hε)] at hbound
+  simpa only [finrank_euclideanSpace_fin, show Real.pi / (ε / 2) = 2 * Real.pi / ε by ring] using hbound
+
+/-- For small damping widths, the polynomial Gaussian mass is bounded by a fixed inverse
+integer power of the width. -/
+theorem polynomial_gaussian_integral_le_inverse_power {d : ℕ} (N : ℕ) {ε : ℝ}
+    (hε : 0 < ε) (hε1 : ε ≤ 1) :
+    (∫ x : Euclidean d, (1 + ‖x‖) ^ N * Real.exp (-ε * ‖x‖ ^ 2)) ≤
+      (4 ^ N * (N.factorial : ℝ) * Real.exp 1 * (2 * Real.pi) ^ d) * (ε⁻¹) ^ (N + d) := by
+  apply (polynomial_gaussian_integral_le (d := d) N hε).trans
+  have hK : 2 + 2 / ε ≤ 4 * ε⁻¹ := by
+    have h : 2 + 2 / ε ≤ 4 / ε := by
+      apply (le_div_iff₀ hε).mpr
+      have heq : (2 + 2 / ε) * ε = 2 * ε + 2 := by field_simp
+      rw [heq]
+      linarith
+    simpa only [div_eq_mul_inv] using h
+  have hbase : 1 ≤ 2 * Real.pi / ε := by
+    apply (le_div_iff₀ hε).mpr
+    nlinarith [Real.two_le_pi]
+  have hGauss : (2 * Real.pi / ε) ^ ((d : ℝ) / 2) ≤ (2 * Real.pi / ε) ^ d := by
+    simpa only [Real.rpow_natCast] using Real.rpow_le_rpow_of_exponent_le hbase
+      (show (d : ℝ) / 2 ≤ (d : ℝ) by linarith)
+  calc
+    _ ≤ ((4 * ε⁻¹) ^ N * (N.factorial : ℝ) * Real.exp 1) * (2 * Real.pi / ε) ^ d := by
+      gcongr
+    _ = _ := by rw [mul_pow, div_eq_mul_inv, mul_pow, pow_add]; ring
+
+/-- Norm bound for a Gaussian inverse transform after any imaginary contour shift. -/
+theorem gaussian_inverseFourier_shift_bound {d N : ℕ} {F : ComplexEuclidean d → ℂ}
+    {A C R : ℝ} (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    {ε : ℝ≥0} (hε : 0 < ε) (p y : Euclidean d) :
+    ‖Real.fourierIntegralInv (fun x => F (realToComplex x) * gaussianFrequencyDamping ε x) p‖ ≤
+      (C * 2 ^ N * (1 + ‖y‖) ^ N *
+        Real.exp ((ε : ℝ) * ‖y‖ ^ 2 + R * ‖y‖ - 2 * Real.pi * inner (𝕜 := ℝ) p y)) *
+          (∫ x : Euclidean d, (1 + ‖x‖) ^ N * Real.exp (-(ε : ℝ) * ‖x‖ ^ 2)) := by
+  rw [gaussian_inverseFourier_eq_shifted_integral hF hA hC hR htype hreal hε p y]
+  have hweight := (polynomial_gaussian_integrable (d := d) N (show 0 < (ε : ℝ) from hε)).const_mul
+    (C * 2 ^ N * (1 + ‖y‖) ^ N *
+      Real.exp ((ε : ℝ) * ‖y‖ ^ 2 + R * ‖y‖ - 2 * Real.pi * inner (𝕜 := ℝ) p y))
+  have hbound := norm_integral_le_of_norm_le hweight (Eventually.of_forall fun x =>
+    gaussian_inverse_shift_norm_le_product hF hA hC hR htype hreal ε p x y)
+  rwa [integral_const_mul] at hbound
+
+/-- Norm of the imaginary vector optimizing Gaussian localization. -/
+theorem gaussian_radial_shift_norm {d : ℕ} (p : Euclidean d) {ε R : ℝ}
+    (hε : 0 < ε) (hp : 0 < ‖p‖) (hδ : 0 ≤ 2 * Real.pi * ‖p‖ - R) :
+    ‖((2 * Real.pi * ‖p‖ - R) / (2 * ε) / ‖p‖) • p‖ =
+      (2 * Real.pi * ‖p‖ - R) / (2 * ε) := by
+  have ht : 0 ≤ (2 * Real.pi * ‖p‖ - R) / (2 * ε) / ‖p‖ := by positivity
+  rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg ht, div_mul_cancel₀ _ hp.ne']
+
+/-- The regularized inverse Fourier transform is exponentially small uniformly on each
+bounded set separated from the Paley–Wiener support ball. -/
+theorem gaussian_inverseFourier_uniform_localization_bound {d N : ℕ}
+    {F : ComplexEuclidean d → ℂ} {A C R L a : ℝ}
+    (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R) (hL : 0 ≤ L) (ha : 0 < a)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    {ε : ℝ≥0} (hε : 0 < ε) (hε1 : (ε : ℝ) ≤ 1) (p : Euclidean d)
+    (hpL : ‖p‖ ≤ L) (hgap : a ≤ 2 * Real.pi * ‖p‖ - R) :
+    ‖Real.fourierIntegralInv (fun x => F (realToComplex x) * gaussianFrequencyDamping ε x) p‖ ≤
+      (C * 2 ^ N * (1 + Real.pi * L) ^ N *
+        (4 ^ N * (N.factorial : ℝ) * Real.exp 1 * (2 * Real.pi) ^ d)) *
+          ((ε : ℝ)⁻¹) ^ (2 * N + d) * Real.exp (-(a ^ 2 / 4) / (ε : ℝ)) := by
+  have hεr : 0 < (ε : ℝ) := hε
+  have hδ : 0 ≤ 2 * Real.pi * ‖p‖ - R := ha.le.trans hgap
+  have hp : 0 < ‖p‖ := by nlinarith [Real.pi_pos]
+  let δ := 2 * Real.pi * ‖p‖ - R
+  let y := (δ / (2 * (ε : ℝ)) / ‖p‖) • p
+  have hynorm : ‖y‖ = δ / (2 * (ε : ℝ)) := gaussian_radial_shift_norm p hεr hp hδ
+  have hexponent : (ε : ℝ) * ‖y‖ ^ 2 + R * ‖y‖ - 2 * Real.pi * inner (𝕜 := ℝ) p y =
+      -δ ^ 2 / (4 * (ε : ℝ)) := gaussian_radial_shift_exponent p hεr hp hδ
+  have hybound : 1 + ‖y‖ ≤ (1 + Real.pi * L) * (ε : ℝ)⁻¹ := by
+    rw [hynorm]
+    apply (mul_le_mul_right hεr).mp
+    have heq : (1 + δ / (2 * (ε : ℝ))) * (ε : ℝ) = (ε : ℝ) + δ / 2 := by field_simp; ring
+    rw [heq, mul_assoc, inv_mul_cancel₀ hεr.ne', mul_one]
+    dsimp [δ]
+    nlinarith [mul_le_mul_of_nonneg_left hpL Real.pi_pos.le]
+  have hgap2 : a ^ 2 ≤ δ ^ 2 := pow_le_pow_left₀ ha.le hgap 2
+  have hexp : Real.exp (-δ ^ 2 / (4 * (ε : ℝ))) ≤ Real.exp (-(a ^ 2 / 4) / (ε : ℝ)) := by
+    apply Real.exp_le_exp.mpr
+    have heq : -(a ^ 2 / 4) / (ε : ℝ) = -a ^ 2 / (4 * (ε : ℝ)) := by ring
+    rw [heq]
+    exact div_le_div_of_nonneg_right (neg_le_neg hgap2) (by positivity)
+  have hbound := gaussian_inverseFourier_shift_bound hF hA hC hR htype hreal hε p y
+  rw [hexponent] at hbound
+  apply hbound.trans
+  have hmass := polynomial_gaussian_integral_le_inverse_power (d := d) N hεr hε1
+  have hpoly : (1 + ‖y‖) ^ N ≤ ((1 + Real.pi * L) * (ε : ℝ)⁻¹) ^ N :=
+    pow_le_pow_left₀ (by positivity) hybound N
+  have hlead : C * 2 ^ N * (1 + ‖y‖) ^ N * Real.exp (-δ ^ 2 / (4 * (ε : ℝ))) ≤
+      C * 2 ^ N * ((1 + Real.pi * L) * (ε : ℝ)⁻¹) ^ N *
+        Real.exp (-(a ^ 2 / 4) / (ε : ℝ)) :=
+    mul_le_mul (mul_le_mul_of_nonneg_left hpoly (by positivity)) hexp
+      (Real.exp_nonneg _) (by positivity)
+  have hmass0 : 0 ≤ ∫ x : Euclidean d, (1 + ‖x‖) ^ N * Real.exp (-(ε : ℝ) * ‖x‖ ^ 2) :=
+    integral_nonneg fun x => by positivity
+  calc
+    _ ≤ (C * 2 ^ N * ((1 + Real.pi * L) * (ε : ℝ)⁻¹) ^ N *
+        Real.exp (-(a ^ 2 / 4) / (ε : ℝ))) *
+        ((4 ^ N * (N.factorial : ℝ) * Real.exp 1 * (2 * Real.pi) ^ d) *
+          ((ε : ℝ)⁻¹) ^ (N + d)) :=
+      mul_le_mul hlead hmass hmass0 (by positivity)
+    _ = _ := by
+      rw [mul_pow, show 2 * N + d = N + (N + d) by omega, pow_add]
+      ring
+
+/-- The Paley–Wiener–Schwartz support direction: an entire function of finite total
+exponential type and polynomial real-axis growth is the Fourier transform of an actual
+tempered distribution supported in the corresponding Euclidean ball. -/
+theorem paleyWiener_inverse_polynomialDistribution_supported {d N : ℕ}
+    {F : ComplexEuclidean d → ℂ} {A C R : ℝ}
+    (hF : Differentiable ℂ F) (hA : 0 ≤ A) (hC : 0 ≤ C) (hR : 0 ≤ R)
+    (htype : ∀ z, ‖F z‖ ≤ A * Real.exp (R * ‖z‖))
+    (hreal : ∀ x, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N)
+    (hm : AEStronglyMeasurable (fun x => F (realToComplex x)) volume) :
+    DistributionSupportedIn
+      (distributionInverseFourier (polynomialDistribution (fun x => F (realToComplex x)) hC hreal hm))
+      (Metric.closedBall (0 : Euclidean d) (R / (2 * Real.pi))) := by
+  intro φ hφ hdisj
+  change IsCompact (tsupport (φ : Euclidean d → ℂ)) at hφ
+  have hgap (p : Euclidean d) (hp : p ∈ tsupport (φ : Euclidean d → ℂ)) :
+      0 < 2 * Real.pi * ‖p‖ - R := by
+    have hout : p ∉ Metric.closedBall (0 : Euclidean d) (R / (2 * Real.pi)) :=
+      fun h => Set.disjoint_left.mp hdisj hp h
+    have hn : R / (2 * Real.pi) < ‖p‖ := by
+      simpa only [Metric.mem_closedBall, dist_zero_right, not_le] using hout
+    have h := (div_lt_iff₀ (show 0 < 2 * Real.pi by positivity)).mp hn
+    linarith
+  obtain ⟨a, ha, hgapUniform⟩ := hφ.exists_forall_le'
+    (by fun_prop : ContinuousOn (fun p : Euclidean d => 2 * Real.pi * ‖p‖ - R)
+      (tsupport (φ : Euclidean d → ℂ))) hgap
+  obtain ⟨L, hL, hnorm⟩ := hφ.isBounded.exists_pos_norm_le
+  let B : ℝ := C * 2 ^ N * (1 + Real.pi * L) ^ N *
+    (4 ^ N * (N.factorial : ℝ) * Real.exp 1 * (2 * Real.pi) ^ d)
+  let J : ℝ := ∫ p : Euclidean d, ‖φ p‖
+  let u : ℝ≥0 → TemperedDistribution d := fun ε =>
+    distributionInverseFourier
+      (gaussianRegularizedDistribution (fun x => F (realToComplex x)) hC hreal hm ε)
+  have hpair (ε : ℝ≥0) (hε : 0 < ε) (hε1 : (ε : ℝ) ≤ 1) :
+      ‖u ε φ‖ ≤ B * ((ε : ℝ)⁻¹) ^ (2 * N + d) * Real.exp (-(a ^ 2 / 4) / (ε : ℝ)) * J := by
+    dsimp only [u]
+    rw [inverseGaussianRegularizedDistribution_apply hC hreal hm hε]
+    have hb := norm_integral_le_of_norm_le
+      (μ := (volume : Measure (Euclidean d)))
+      (f := fun p : Euclidean d =>
+        Real.fourierIntegralInv (fun x => F (realToComplex x) * gaussianFrequencyDamping ε x) p * φ p)
+      (φ.integrable.norm.const_mul
+        (B * ((ε : ℝ)⁻¹) ^ (2 * N + d) * Real.exp (-(a ^ 2 / 4) / (ε : ℝ))))
+      (Eventually.of_forall fun p => by
+        rw [norm_mul]
+        by_cases hp : φ p = 0
+        · simp only [hp, norm_zero, mul_zero, le_refl]
+        · have hpK : p ∈ tsupport (φ : Euclidean d → ℂ) := subset_tsupport _ hp
+          exact mul_le_mul_of_nonneg_right
+            (gaussian_inverseFourier_uniform_localization_bound hF hA hC hR hL.le ha
+              htype hreal hε hε1 p (hnorm p hpK) (hgapUniform p hpK)) (norm_nonneg _))
+    rwa [integral_const_mul] at hb
+  have hnn : Tendsto (fun ε : ℝ => ε.toNNReal) (𝓝[>] 0) (𝓝 (0 : ℝ≥0)) := by
+    simpa only [Real.toNNReal_zero] using
+      (continuous_real_toNNReal.tendsto (0 : ℝ)).mono_left inf_le_left
+  have hlimit := (inverseGaussianRegularizedDistribution_tendsto hC hreal hm φ).comp hnn
+  have hzero : Tendsto (fun ε : ℝ => u ε.toNNReal φ) (𝓝[>] 0) (𝓝 0) := by
+    apply squeeze_zero_norm'
+    · filter_upwards [self_mem_nhdsWithin,
+        (eventually_le_nhds (show (0 : ℝ) < 1 by norm_num)).filter_mono inf_le_left] with ε hε hε1
+      have hεnn : 0 < ε.toNNReal := Real.toNNReal_pos.mpr hε
+      have hεcoe := Real.coe_toNNReal ε hε.le
+      simpa only [hεcoe] using hpair ε.toNNReal hεnn (by simpa only [hεcoe] using hε1)
+    · have hsup := (gaussian_suppression_tendsto (2 * N + d)
+        (show 0 < a ^ 2 / 4 by positivity)).const_mul B
+      simpa only [mul_assoc, mul_zero, zero_mul] using hsup.mul_const J
+  exact tendsto_nhds_unique hlimit hzero
+
+/-- The finite-type Paley–Wiener–Schwartz existence theorem, in the interface used by
+the complete-minimal analytic assembly. Every distribution and Fourier pairing is constructed. -/
+theorem paleyWienerSchwartz {d : ℕ} {F : ComplexEuclidean d → ℂ}
+    (hF : Differentiable ℂ F) (htype : FiniteExponentialType F)
+    (hreal : ∃ N : ℕ, ∃ C : ℝ, 0 ≤ C ∧
+      ∀ x : Euclidean d, ‖F (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N) :
+    ∃ u : TemperedDistribution d, CompactlySupportedDistribution u ∧
+      ∀ φ : SchwartzMap (Euclidean d) ℂ,
+        distributionFourier u φ = ∫ x, F (realToComplex x) * φ x := by
+  obtain ⟨A, R, hA, hR, htype⟩ := htype
+  obtain ⟨N, C, hC, hreal⟩ := hreal
+  have hemb : Continuous (realToComplex : Euclidean d → ComplexEuclidean d) :=
+    (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+      change Continuous (fun x : Euclidean d => (x j : ℂ))
+      fun_prop)
+  have hm : AEStronglyMeasurable (fun x => F (realToComplex x)) volume :=
+    (hF.continuous.comp hemb).aestronglyMeasurable
+  let u := distributionInverseFourier
+    (polynomialDistribution (fun x => F (realToComplex x)) hC hreal hm)
+  refine ⟨u, ⟨Metric.closedBall (0 : Euclidean d) (R / (2 * Real.pi)),
+    isCompact_closedBall _ _, ?_⟩, ?_⟩
+  · exact paleyWiener_inverse_polynomialDistribution_supported hF hA.le hC hR htype hreal hm
+  · intro φ
+    simp only [u, distributionFourier_inverseFourier, polynomialDistribution_apply]
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalFourierDivision.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+Analytic division of a domain Fourier transform by the normalized spherical denominator,
+followed by construction of its compactly supported inverse Fourier distribution.
+-/
+
+noncomputable section
+open MeasureTheory Set Filter Topology
+open scoped BigOperators
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The real-frequency restriction of an entire function to a unit radial line. -/
+def realRadialRestriction {d : ℕ} (A : ComplexEuclidean d → ℂ) (θ : Euclidean d) (s : ℝ) : ℂ :=
+  A (realToComplex (s • θ))
+
+/-- The actual derivative of the restriction, expressed through the complex Fréchet derivative. -/
+theorem realRadialRestriction_hasDerivAt {d : ℕ} {A : ComplexEuclidean d → ℂ}
+    (hA : Differentiable ℂ A) (θ : Euclidean d) (s : ℝ) :
+    HasDerivAt (realRadialRestriction A θ)
+      ((fderiv ℂ A (realToComplex (s • θ))) (realToComplex θ)) s := by
+  unfold realRadialRestriction
+  have hline := (hA ((s : ℂ) • realToComplex θ)).hasFDerivAt.comp_hasDerivAt (s : ℂ)
+    ((hasDerivAt_id (s : ℂ)).smul_const (realToComplex θ))
+  simpa only [realRadialRestriction, realToComplex_real_smul, one_smul,
+    Function.comp_def, id_eq] using hline.comp_ofReal
+
+/-- A polynomial bound outside a bounded real-frequency region extends to a global
+polynomial bound by continuity on the compact remainder. -/
+theorem real_polynomial_bound_of_tail {d : ℕ} {G : ComplexEuclidean d → ℂ}
+    (hG : Continuous G) {C R : ℝ} (hC : 0 ≤ C) (m : ℕ)
+    (hbound : ∀ x : Euclidean d, R < ‖x‖ →
+      ‖G (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ m) :
+    ∃ D : ℝ, 0 ≤ D ∧ ∀ x : Euclidean d,
+      ‖G (realToComplex x)‖ ≤ D * (1 + ‖x‖) ^ m := by
+  have hemb : Continuous (realToComplex : Euclidean d → ComplexEuclidean d) :=
+    (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+      change Continuous (fun x : Euclidean d => (x j : ℂ))
+      fun_prop)
+  obtain ⟨M, hM⟩ := (isCompact_closedBall (0 : Euclidean d) (max R 1)).bddAbove_image
+    (hG.comp hemb).norm.continuousOn
+  refine ⟨max C (max M 0), le_trans hC (le_max_left _ _), fun x => ?_⟩
+  by_cases hx : R < ‖x‖
+  · exact (hbound x hx).trans
+      (mul_le_mul_of_nonneg_right (le_max_left _ _) (by positivity))
+  · have hxball : x ∈ Metric.closedBall (0 : Euclidean d) (max R 1) := by
+      simp only [Metric.mem_closedBall, dist_zero_right]
+      exact (le_of_not_gt hx).trans (le_max_left _ _)
+    calc
+      _ ≤ M := hM ⟨x, hxball, rfl⟩
+      _ ≤ max C (max M 0) := (le_max_left M 0).trans (le_max_right _ _)
+      _ ≤ max C (max M 0) * (1 + ‖x‖) ^ m :=
+        le_mul_of_one_le_right (by positivity) (one_le_pow₀ (by linarith [norm_nonneg x]))
+
+/-- The scalar distance-to-zero estimate and the actual numerator derivative bound imply
+a real polynomial growth bound for the multivariate entire quotient. -/
+theorem entire_quotient_real_polynomial_bound {d : ℕ}
+    {A κ G : ComplexEuclidean d → ℂ} (hA : Differentiable ℂ A) (hG : Continuous G)
+    (hprod : ∀ z, A z = κ z * G z) (k : ℝ → ℂ) (Z : Set ℝ)
+    (hZ : IsClosed Z) (hZne : Z.Nonempty) (hdense : Dense Zᶜ)
+    (hradial : ∀ θ : Euclidean d, ‖θ‖ = 1 → ∀ s : ℝ,
+      κ (realToComplex (s • θ)) = k s) (hzero : ∀ s ∈ Z, k s = 0)
+    {C c R : ℝ} (hC : 0 ≤ C) (hc : 0 < c) (m b : ℕ)
+    (hAnorm : ∀ x : Euclidean d, ‖A (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ m)
+    (hAderiv : ∀ x : Euclidean d, ‖fderiv ℂ A (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ m)
+    (hlower : ∀ s : ℝ, R < s →
+      c / (1 + ‖s‖) ^ b * min 1 (Metric.infDist s Z) ≤ ‖k s‖) :
+    ∃ D : ℝ, 0 ≤ D ∧ ∀ x : Euclidean d,
+      ‖G (realToComplex x)‖ ≤ D * (1 + ‖x‖) ^ (m + b) := by
+  apply real_polynomial_bound_of_tail hG (C := C * 2 ^ m / c) (R := max R 0) (by positivity) (m + b)
+  intro x hx
+  have hxpos : 0 < ‖x‖ := lt_of_le_of_lt (le_max_right R 0) hx
+  let θ : Euclidean d := ‖x‖⁻¹ • x
+  have hθ : ‖θ‖ = 1 := by simp [θ, norm_smul, Real.norm_eq_abs, abs_of_pos hxpos, hxpos.ne']
+  have hnorm (s : ℝ) : ‖s • θ‖ = ‖s‖ := by rw [norm_smul, hθ, mul_one]
+  let H := realRadialRestriction A θ
+  let H' := fun s : ℝ => (fderiv ℂ A (realToComplex (s • θ))) (realToComplex θ)
+  let K := realRadialRestriction G θ
+  have hH (s : ℝ) : ‖H s‖ ≤ C * (1 + ‖s‖) ^ m := by
+    simpa only [H, realRadialRestriction, hnorm] using hAnorm (s • θ)
+  have hH' (s : ℝ) : ‖H' s‖ ≤ C * (1 + ‖s‖) ^ m := by
+    calc
+      _ ≤ ‖fderiv ℂ A (realToComplex (s • θ))‖ * ‖realToComplex θ‖ :=
+        ContinuousLinearMap.le_opNorm _ _
+      _ = ‖fderiv ℂ A (realToComplex (s • θ))‖ := by rw [realToComplex_norm, hθ, mul_one]
+      _ ≤ _ := by simpa only [hnorm] using hAderiv (s • θ)
+  have hHK (s : ℝ) : H s = k s * K s := by
+    dsimp only [H, K, realRadialRestriction]
+    rw [hprod, hradial θ hθ s]
+  have hHzero (s : ℝ) (hs : s ∈ Z) : H s = 0 := by rw [hHK s, hzero s hs, zero_mul]
+  have hK : Continuous K := by
+    have hemb : Continuous (realToComplex : Euclidean d → ComplexEuclidean d) :=
+      (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+        change Continuous (fun x : Euclidean d => (x j : ℂ))
+        fun_prop)
+    exact hG.comp (hemb.comp (continuous_id.smul continuous_const))
+  have hbound := radial_quotient_polynomial_bound H H' k K Z hZ hZne hdense C c R hC hc m b
+    hH (realRadialRestriction_hasDerivAt hA θ) hH' hHzero hHK hK hlower ‖x‖
+    (lt_of_le_of_lt (le_max_left R 0) hx)
+  have hrad : ‖x‖ • θ = x := by
+    dsimp only [θ]
+    rw [smul_smul, mul_inv_cancel₀ hxpos.ne', one_smul]
+  simpa only [K, realRadialRestriction, hrad, norm_norm] using hbound
+
+/-- Simple quadric division, quotient exponential type, radial cancellation, and
+Paley–Wiener–Schwartz combine to construct the compact inverse of an actual numerator. -/
+theorem simple_quadric_division_compact_inverse {d : ℕ} {ι : Type*}
+    (A κ : ComplexEuclidean d → ℂ) (radius : ι → ℝ)
+    (hA : AnalyticOnNhd ℂ A univ) (hκ : AnalyticOnNhd ℂ κ univ) (hκ0 : κ 0 ≠ 0)
+    (hradius : ∀ j, 0 < radius j) (hgeometry : HasSimpleQuadricZeros κ radius)
+    (hAzero : ∀ j z, squareSum (fun k => z k) = (radius j : ℂ) ^ 2 → A z = 0)
+    (hAtype : FiniteExponentialType A) (hκtype : FiniteExponentialType κ)
+    (k : ℝ → ℂ) (Z : Set ℝ) (hZ : IsClosed Z) (hZne : Z.Nonempty) (hdense : Dense Zᶜ)
+    (hradial : ∀ θ : Euclidean d, ‖θ‖ = 1 → ∀ s : ℝ,
+      κ (realToComplex (s • θ)) = k s) (hkzero : ∀ s ∈ Z, k s = 0)
+    {C c R : ℝ} (hC : 0 ≤ C) (hc : 0 < c) (m b : ℕ)
+    (hAnorm : ∀ x : Euclidean d, ‖A (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ m)
+    (hAderiv : ∀ x : Euclidean d, ‖fderiv ℂ A (realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ m)
+    (hlower : ∀ s : ℝ, R < s →
+      c / (1 + ‖s‖) ^ b * min 1 (Metric.infDist s Z) ≤ ‖k s‖) :
+    ∃ G : ComplexEuclidean d → ℂ, ∃ u : TemperedDistribution d,
+      AnalyticOnNhd ℂ G univ ∧ (∀ z, A z = κ z * G z) ∧
+      FiniteExponentialType G ∧
+      (∃ D : ℝ, 0 ≤ D ∧ ∀ x : Euclidean d,
+        ‖G (realToComplex x)‖ ≤ D * (1 + ‖x‖) ^ (m + b)) ∧
+      CompactlySupportedDistribution u ∧
+      ∀ φ : SchwartzMap (Euclidean d) ℂ,
+        distributionFourier u φ = ∫ x, G (realToComplex x) * φ x := by
+  obtain ⟨G, hG, hprod, _⟩ := global_analytic_division_of_simple_quadric_zeros A κ radius
+    hA hκ hκ0 hradius hgeometry hAzero
+  have hAdiff : Differentiable ℂ A := fun z => (hA z (mem_univ z)).differentiableAt
+  have hκdiff : Differentiable ℂ κ := fun z => (hκ z (mem_univ z)).differentiableAt
+  have hGdiff : Differentiable ℂ G := fun z => (hG z (mem_univ z)).differentiableAt
+  have hGtype := finiteExponentialType_entire_quotient hAdiff hκdiff hGdiff hprod hκ0 hAtype hκtype
+  obtain ⟨D, hD, hGreal⟩ := entire_quotient_real_polynomial_bound hAdiff hGdiff.continuous
+    hprod k Z hZ hZne hdense hradial hkzero hC hc m b hAnorm hAderiv hlower
+  obtain ⟨u, hu, hFourier⟩ := paleyWienerSchwartz hGdiff hGtype ⟨m + b, D, hD, hGreal⟩
+  exact ⟨G, u, hG, hprod, hGtype, ⟨D, hD, hGreal⟩, hu, hFourier⟩
+
+/-- The finite spherical polynomial evaluated at a complex frequency. -/
+theorem sphereDenominator_eval_complex {d : ℕ} (radius : ℕ → ℝ) (N : ℕ) (z : ComplexEuclidean d) :
+    MvPolynomial.eval (fun k => z k) (sphereDenominator d radius N) =
+      ∏ j ∈ Finset.range N, (squareSum (fun k => z k) - (radius (j + 1) : ℂ) ^ 2) := by
+  simp [sphereDenominator, spherePolynomial, squareSum]
+
+/-- Any one of the first positive-radius quadrics is a zero of the finite numerator polynomial. -/
+theorem sphereDenominator_eval_complex_zero {d : ℕ} (radius : ℕ → ℝ) (N j : ℕ)
+    (hj : 0 < j) (hjN : j ≤ N) (z : ComplexEuclidean d)
+    (hz : squareSum (fun k => z k) = (radius j : ℂ) ^ 2) :
+    MvPolynomial.eval (fun k => z k) (sphereDenominator d radius N) = 0 := by
+  rw [sphereDenominator_eval_complex]
+  apply Finset.prod_eq_zero_iff.mpr
+  refine ⟨j - 1, Finset.mem_range.mpr (by omega), ?_⟩
+  rw [show j - 1 + 1 = j by omega, hz, sub_self]
+
+/-- Vanishing on the later real spheres cancels all remaining complex quadric factors
+of the denominator, by analytic continuation along the complex sphere. -/
+theorem polynomial_domainFourier_zero_on_all_quadrics {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hfinite : volume Ω ≠ ⊤) (hbounded : Bornology.IsBounded Ω)
+    (radius : ℕ → ℝ) (hradius : ∀ j, 0 < j → 0 < radius j) (N : ℕ) (f : DomainL2 Ω)
+    (hvanish : ∀ ξ : Euclidean d, ξ ∈ laterSpheres radius N →
+      inner (𝕜 := ℂ) (exponentialL2 Ω hfinite ξ) f = 0) (j : ℕ) (hj : 0 < j)
+    (z : ComplexEuclidean d) (hz : squareSum (fun k => z k) = (radius j : ℂ) ^ 2) :
+    MvPolynomial.eval (fun k => z k) (sphereDenominator d radius N) *
+      domainEntireFourier Ω hΩ f z = 0 := by
+  by_cases hjN : j ≤ N
+  · rw [sphereDenominator_eval_complex_zero radius N j hj hjN z hz, zero_mul]
+  · have hFzero := entire_zero_on_quadric (domainEntireFourier Ω hΩ f)
+      (domainEntireFourier_differentiable hΩ hbounded f) (radius j) (hradius j hj)
+      (fun ξ hξ => by
+        rw [domainEntireFourier_real_inner hΩ hfinite f ξ]
+        exact hvanish ξ ⟨j, by omega, hξ⟩) z hz
+    rw [hFzero, mul_zero]
+
+/-- The scalar radial denominator in physical Fourier-frequency normalization. -/
+def physicalRadialBallFourier (n : ℕ) (s : ℝ) : ℂ :=
+  radialBallFourier n ((2 * Real.pi * s : ℝ) : ℂ)
+
+/-- Its actual real zero set, including the negative radii. -/
+def physicalBallZeroSet (n : ℕ) : Set ℝ := {s | physicalRadialBallFourier n s = 0}
+
+/-- The scalar denominator agrees with the actual ball transform along every real unit direction. -/
+theorem physicalRadialBallFourier_eq (n : ℕ) (θ : Euclidean (n + 1)) (hθ : ‖θ‖ = 1) (s : ℝ) :
+    normalizedBallFourier (n + 1) (realToComplex (s • θ)) = physicalRadialBallFourier n s := by
+  rw [normalizedBallFourier_real_radial, norm_smul, hθ, mul_one, Real.norm_eq_abs]
+  by_cases hs : 0 ≤ s
+  · simp only [abs_of_nonneg hs, physicalRadialBallFourier]
+  · rw [abs_of_neg (lt_of_not_ge hs)]
+    have heq : ((2 * Real.pi * -s : ℝ) : ℂ) = -((2 * Real.pi * s : ℝ) : ℂ) := by push_cast; ring
+    rw [heq, radialBallFourier_even]
+    rfl
+
+/-- The physical radial zeros form a closed real set. -/
+theorem physicalBallZeroSet_isClosed (n : ℕ) : IsClosed (physicalBallZeroSet n) := by
+  apply isClosed_eq _ continuous_const
+  have hr := (radialBallFourier_analytic n).continuous
+  exact hr.comp (Complex.continuous_ofReal.comp (continuous_const.mul continuous_id))
+
+/-- Positive Bessel zeros provide an actual point of the physical radial zero set. -/
+theorem physicalBallZeroSet_nonempty (n : ℕ) : (physicalBallZeroSet n).Nonempty := by
+  refine ⟨positiveBallZero n 0 / (2 * Real.pi), ?_⟩
+  change radialBallFourier n ((2 * Real.pi * (positiveBallZero n 0 / (2 * Real.pi)) : ℝ) : ℂ) = 0
+  rw [mul_div_cancel₀ _ (show 2 * Real.pi ≠ 0 by positivity), radialBallFourier_ofReal_eq,
+    positiveBallZero_isZero, Complex.ofReal_zero]
+
+/-- Local finiteness of entire radial zeros survives physical-frequency scaling. -/
+theorem physicalBallZeroSet_locallyFinite (n : ℕ) (s : ℝ) :
+    ∃ U ∈ 𝓝 s, (U ∩ physicalBallZeroSet n).Finite := by
+  let e : ℝ → ℂ := fun t => ((2 * Real.pi * t : ℝ) : ℂ)
+  have he : Continuous e := Complex.continuous_ofReal.comp (continuous_const.mul continuous_id)
+  have hinj : Function.Injective e := by
+    intro t u h
+    have hr : 2 * Real.pi * t = 2 * Real.pi * u := Complex.ofReal_injective h
+    nlinarith [Real.pi_pos]
+  obtain ⟨U, hU, hfinite⟩ := radialBallFourier_zeros_locallyFinite n (e s)
+  refine ⟨e ⁻¹' U, he.continuousAt.preimage_mem_nhds hU, ?_⟩
+  simpa only [preimage_inter, e, physicalBallZeroSet, physicalRadialBallFourier] using
+    hfinite.preimage hinj.injOn
+
+/-- A locally finite real set has dense complement. -/
+theorem dense_complement_of_real_locallyFinite (Z : Set ℝ)
+    (hZ : ∀ s : ℝ, ∃ U ∈ 𝓝 s, (U ∩ Z).Finite) : Dense Zᶜ := by
+  intro s
+  obtain ⟨U, hU, hfinite⟩ := hZ s
+  have hdense : Dense (U ∩ Z)ᶜ := by
+    simpa only [Set.diff_eq, univ_inter] using dense_univ.diff_finite hfinite
+  have hfreq := mem_closure_iff_frequently.mp (hdense s)
+  apply mem_closure_iff_frequently.mpr
+  exact (hfreq.and_eventually hU).mono fun t ht => by
+    exact fun htZ => ht.1 ⟨ht.2, htZ⟩
+
+/-- No interval of real frequencies consists of physical radial zeros. -/
+theorem physicalBallZeroSet_dense_complement (n : ℕ) : Dense (physicalBallZeroSet n)ᶜ :=
+  dense_complement_of_real_locallyFinite _ (physicalBallZeroSet_locallyFinite n)
+
+/-- The bounded-domain transform is analytic on the whole complex frequency space. -/
+theorem domainEntireFourier_analyticOnNhd {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω) (f : DomainL2 Ω) :
+    AnalyticOnNhd ℂ (domainEntireFourier Ω hΩ f) univ := by
+  obtain ⟨R, hR, hbound⟩ := hbounded.exists_pos_norm_le
+  exact entireFourier_analyticOnNhd (domainExtension_integrable hΩ hbounded f) hR.le
+    (domainExtension_supported_in_radius hΩ f hbound)
+
+/-- Later-sphere annihilation gives an actual entire quotient by the normalized ball
+transform and a compactly supported inverse distribution, without analytic hypotheses. -/
+theorem normalized_ball_tail_compact_inverse (n : ℕ) {Ω : Set (Euclidean (n + 1))}
+    (hΩ : MeasurableSet Ω) (hfinite : volume Ω ≠ ⊤) (hbounded : Bornology.IsBounded Ω)
+    (N : ℕ) (f : DomainL2 Ω)
+    (hvanish : ∀ ξ ∈ laterSpheres (ballZeroRadius n) N,
+      inner (𝕜 := ℂ) f (exponentialL2 Ω hfinite ξ) = 0) :
+    ∃ G : ComplexEuclidean (n + 1) → ℂ, ∃ u : TemperedDistribution (n + 1),
+      AnalyticOnNhd ℂ G univ ∧
+      (∀ z, MvPolynomial.eval (fun k => z k)
+        (sphereDenominator (n + 1) (ballZeroRadius n) N) * domainEntireFourier Ω hΩ f z =
+          normalizedBallFourier (n + 1) z * G z) ∧
+      CompactlySupportedDistribution u ∧
+      ∀ φ : SchwartzMap (Euclidean (n + 1)) ℂ,
+        distributionFourier u φ = ∫ x, G (realToComplex x) * φ x := by
+  let p := sphereDenominator (n + 1) (ballZeroRadius n) N
+  let A : ComplexEuclidean (n + 1) → ℂ := fun z =>
+    MvPolynomial.eval (fun k => z k) p * domainEntireFourier Ω hΩ f z
+  have hp : AnalyticOnNhd ℂ (fun z : ComplexEuclidean (n + 1) =>
+      MvPolynomial.eval (fun k => z k) p) univ :=
+    AnalyticOnNhd.eval_continuousLinearMap'
+      (fun k => PiLp.proj (𝕜 := ℂ) 2 (fun _ : Fin (n + 1) => ℂ) k) p
+  have hA : AnalyticOnNhd ℂ A univ := hp.mul (domainEntireFourier_analyticOnNhd hΩ hbounded f)
+  have hAzero : ∀ j z, squareSum (fun k => z k) = (ballZeroRadius n (j + 1) : ℂ) ^ 2 →
+      A z = 0 := by
+    intro j z hz
+    apply polynomial_domainFourier_zero_on_all_quadrics hΩ hfinite hbounded
+      (ballZeroRadius n) (fun j hj => ballZeroRadius_pos n hj) N f _ (j + 1) (by omega) z hz
+    intro ξ hξ
+    rw [← inner_conj_symm, hvanish ξ hξ, map_zero]
+  obtain ⟨m, C, hC, hAbound⟩ :=
+    polynomial_mul_domainEntireFourier_real_derivative_bound hΩ hbounded p f
+  obtain ⟨c, R, hc, hlower⟩ := radialBallFourier_physical_distance_lower n
+  obtain ⟨G, u, hG, hproduct, _htype, _hreal, hu, hFourier⟩ :=
+    simple_quadric_division_compact_inverse A (normalizedBallFourier (n + 1))
+      (fun j => ballZeroRadius n (j + 1)) hA (normalizedBallFourier_analytic n)
+      (by rw [normalizedBallFourier_zero]; exact one_ne_zero)
+      (ballZeroRadius_positive_indices n) (normalizedBallFourier_hasSimpleQuadricZeros_positive n)
+      hAzero (finiteExponentialType_polynomial_mul_domainEntireFourier hΩ hbounded p f)
+      (finiteExponentialType_normalizedBallFourier (n + 1))
+      (physicalRadialBallFourier n) (physicalBallZeroSet n)
+      (physicalBallZeroSet_isClosed n) (physicalBallZeroSet_nonempty n)
+      (physicalBallZeroSet_dense_complement n) (physicalRadialBallFourier_eq n)
+      (fun _ hs => hs) hC hc m (n + 2)
+      (fun x => (hAbound x).1) (fun x => (hAbound x).2) hlower
+  exact ⟨G, u, hG, hproduct, hu, hFourier⟩
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalAnalyticAssembly.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Analytic integration for the normalized spherical construction. -/
+noncomputable section
+open MeasureTheory Set SchwartzMap Filter Topology
+open scoped SchwartzMap FourierTransform BigOperators
+namespace RieszEuclidean.CompleteMinimal
+variable {d : ℕ}
+
+/-- Evaluation of an actual complex multivariate polynomial on complex Euclidean space. -/
+def complexPolynomialValue (p : ComplexPolynomial d) (z : ComplexEuclidean d) : ℂ :=
+  MvPolynomial.eval (fun j => z j) p
+
+theorem complexPolynomialValue_analytic (p : ComplexPolynomial d) :
+    AnalyticOnNhd ℂ (complexPolynomialValue p) univ :=
+  AnalyticOnNhd.eval_continuousLinearMap'
+    (fun j => PiLp.proj (𝕜 := ℂ) 2 (fun _ : Fin d => ℂ) j) p
+
+/-- The finite sphere denominator as an actual entire function. -/
+def sphereDenominatorFunction (radius : ℕ → ℝ) (N : ℕ) : ComplexEuclidean d → ℂ :=
+  complexPolynomialValue (sphereDenominator d radius N)
+
+theorem sphereDenominatorFunction_eq_prod (radius : ℕ → ℝ) (N : ℕ) (z : ComplexEuclidean d) :
+    sphereDenominatorFunction radius N z =
+      ∏ j ∈ Finset.range N, (squareSum (fun k => z k) - (radius (j + 1) : ℂ) ^ 2) := by
+  simp [sphereDenominatorFunction, complexPolynomialValue, sphereDenominator, spherePolynomial,
+    squareSum]
+
+theorem sphereDenominatorFunction_zero_ne_zero (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) (N : ℕ) :
+    sphereDenominatorFunction (d := d) radius N 0 ≠ 0 := by
+  change MvPolynomial.eval (fun j => (0 : ComplexEuclidean d) j) _ ≠ 0
+  simpa using sphereDenominator_eval_zero_ne_zero (d := d) (N := N) radius hr
+
+/-- Distinct positive-radius factors make the finite denominator's zeros simple. -/
+theorem sphereDenominatorFunction_simple_quadric_zeros (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius) (N : ℕ) :
+    HasSimpleQuadricZeros (sphereDenominatorFunction (d := d) radius N)
+      (fun j : Fin N => radius (j.val + 1)) := by
+  classical
+  intro z hz
+  rw [sphereDenominatorFunction_eq_prod] at hz
+  obtain ⟨j, hj, hzero⟩ := Finset.prod_eq_zero_iff.mp hz
+  let q := fun (k : ℕ) (w : ComplexEuclidean d) =>
+    squareSum (fun i => w i) - (radius (k + 1) : ℂ) ^ 2
+  let u := fun w : ComplexEuclidean d => ∏ k ∈ (Finset.range N).erase j, q k w
+  have hanalytic (k : ℕ) : AnalyticOnNhd ℂ (q k) univ := by
+    have h := complexPolynomialValue_analytic (spherePolynomial d (radius (k + 1)))
+    change AnalyticOnNhd ℂ (fun w : ComplexEuclidean d =>
+      MvPolynomial.eval (fun i => w i) (spherePolynomial d (radius (k + 1)))) univ at h
+    simpa [q, spherePolynomial, squareSum] using h
+  have hprod (s : Finset ℕ) : AnalyticOnNhd ℂ (fun w => ∏ k ∈ s, q k w) univ := by
+    induction s using Finset.induction_on with
+    | empty => simpa only [Finset.prod_empty] using (analyticOnNhd_const : AnalyticOnNhd ℂ (fun _ : ComplexEuclidean d => (1 : ℂ)) univ)
+    | @insert k s hks ih =>
+      simpa only [Finset.prod_insert hks] using (hanalytic k).mul ih
+  have hu : AnalyticOnNhd ℂ u univ := hprod _
+  have hunit : u z ≠ 0 := by
+    apply Finset.prod_ne_zero_iff.mpr
+    intro k hk
+    rcases Finset.mem_erase.mp hk with ⟨hkj, _⟩
+    intro hkzero
+    have heq : (radius (k + 1) : ℂ) ^ 2 = (radius (j + 1) : ℂ) ^ 2 :=
+      (sub_eq_zero.mp hkzero).symm.trans (sub_eq_zero.mp hzero)
+    have heqR : radius (k + 1) ^ 2 = radius (j + 1) ^ 2 := by exact_mod_cast heq
+    have hrad : radius (k + 1) = radius (j + 1) :=
+      (sq_eq_sq₀ (hr _ (by omega)).le (hr _ (by omega)).le).mp heqR
+    exact hkj (by have hh := hstrict.injective hrad; omega)
+  refine ⟨⟨j, Finset.mem_range.mp hj⟩, sub_eq_zero.mp hzero, u, hu z (mem_univ z), hunit, ?_⟩
+  apply Eventually.of_forall
+  intro w
+  rw [sphereDenominatorFunction_eq_prod]
+  exact (Finset.mul_prod_erase (Finset.range N) (fun k => q k w) hj).symm
+
+/-- Finite analytic removal is proved from actual polynomial denominator geometry. -/
+theorem exists_analytic_finite_sphere_quotient (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius) (N : ℕ)
+    (κ : ComplexEuclidean d → ℂ) (hκ : AnalyticOnNhd ℂ κ univ)
+    (hzero : ∀ j, 0 < j → j ≤ N → ∀ z : ComplexEuclidean d,
+      squareSum (fun i => z i) = (radius j : ℂ) ^ 2 → κ z = 0) :
+    ∃ χ : ComplexEuclidean d → ℂ, AnalyticOnNhd ℂ χ univ ∧
+      (∀ z, κ z = sphereDenominatorFunction radius N z * χ z) ∧
+      ∀ z, sphereDenominatorFunction radius N z ≠ 0 →
+        χ z = κ z / sphereDenominatorFunction radius N z := by
+  exact global_analytic_division_of_simple_quadric_zeros κ (sphereDenominatorFunction radius N)
+    (fun j : Fin N => radius (j.val + 1)) hκ (complexPolynomialValue_analytic _)
+    (sphereDenominatorFunction_zero_ne_zero radius hr N)
+    (fun j => hr _ (by omega)) (sphereDenominatorFunction_simple_quadric_zeros radius hr hstrict N)
+    (fun j z hz => hzero _ (by omega) (by omega) z hz)
+
+/-- Entire finite quotients with the same product are unique, including at zeros. -/
+theorem finite_sphere_quotient_unique (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) (N : ℕ)
+    (κ χ ψ : ComplexEuclidean d → ℂ) (hχ : Continuous χ) (hψ : Continuous ψ)
+    (hχprod : ∀ z, κ z = sphereDenominatorFunction radius N z * χ z)
+    (hψprod : ∀ z, κ z = sphereDenominatorFunction radius N z * ψ z) : χ = ψ := by
+  funext z
+  exact local_quotient_value_unique κ (sphereDenominatorFunction radius N) χ ψ z
+    (entire_not_eventually_zero _ (complexPolynomialValue_analytic _)
+      ⟨0, sphereDenominatorFunction_zero_ne_zero radius hr N⟩ z)
+    (hχ.continuousAt) (hψ.continuousAt)
+    (Eventually.of_forall hχprod) (Eventually.of_forall hψprod)
+
+/-- A continuous physical quotient agrees with the analytically removed
+quotient, including on every removed quadric. -/
+theorem finite_sphere_quotient_analytic (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius) (N : ℕ)
+    (κ χ : ComplexEuclidean d → ℂ) (hκ : AnalyticOnNhd ℂ κ univ)
+    (hχ : Continuous χ)
+    (hproduct : ∀ z, κ z = sphereDenominatorFunction radius N z * χ z) :
+    AnalyticOnNhd ℂ χ univ := by
+  have hzero : ∀ j, 0 < j → j ≤ N → ∀ z : ComplexEuclidean d,
+      squareSum (fun i => z i) = (radius j : ℂ) ^ 2 → κ z = 0 := by
+    intro j hj hjN z hz
+    rw [hproduct]
+    have hQ : sphereDenominatorFunction radius N z = 0 := by
+      rw [sphereDenominatorFunction_eq_prod]
+      apply Finset.prod_eq_zero_iff.mpr
+      refine ⟨j - 1, Finset.mem_range.mpr (by omega), ?_⟩
+      rw [show j - 1 + 1 = j by omega, hz, sub_self]
+    rw [hQ, zero_mul]
+  obtain ⟨ψ, hψ, hψprod, _⟩ := exists_analytic_finite_sphere_quotient
+    radius hr hstrict N κ hκ hzero
+  have heq := finite_sphere_quotient_unique radius hr N κ χ ψ hχ
+    (differentiableOn_univ.mp hψ.differentiableOn).continuous hproduct hψprod
+  exact heq.symm ▸ hψ
+
+private theorem squareSum_realToComplex (x : Euclidean d) :
+    squareSum (fun j => realToComplex x j) = ((‖x‖ ^ 2 : ℝ) : ℂ) := by
+  have h : ‖x‖ ^ 2 = ∑ j : Fin d, (x j) ^ 2 := by
+    simpa only [Real.norm_eq_abs, sq_abs] using PiLp.norm_sq_eq_of_L2 (fun _ : Fin d => ℝ) x
+  rw [h]
+  simp [squareSum, realToComplex_apply]
+
+set_option maxHeartbeats 800000 in
+/-- Removal of the first `N` simple zeros leaves no zero in the closed frequency ball. -/
+theorem finite_sphere_quotient_nonzero (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius) (N : ℕ)
+    (κ χ : ComplexEuclidean d → ℂ) (hχ : Continuous χ)
+    (hκsimple : HasSimpleQuadricZeros κ (fun i : ℕ => radius (i + 1)))
+    (hproduct : ∀ z, κ z = sphereDenominatorFunction radius N z * χ z)
+    (x : Euclidean d) (hx : ‖x‖ ≤ radius N) : χ (realToComplex x) ≠ 0 := by
+  intro hχzero
+  have hκzero : κ (realToComplex x) = 0 := by rw [hproduct, hχzero, mul_zero]
+  obtain ⟨i, hi, uκ, huκ, hunit, hκfactor⟩ := hκsimple _ hκzero
+  have hsquare : ‖x‖ ^ 2 = radius (i + 1) ^ 2 := by
+    exact_mod_cast ((squareSum_realToComplex x).symm.trans hi)
+  have hnorm : ‖x‖ = radius (i + 1) :=
+    (sq_eq_sq₀ (norm_nonneg x) (hr _ (by omega)).le).mp hsquare
+  have hiN : i + 1 ≤ N := hstrict.le_iff_le.mp (hnorm ▸ hx)
+  have hQzero : sphereDenominatorFunction radius N (realToComplex x) = 0 := by
+    exact sphereDenominator_eval_eq_zero_on_sphere radius (by omega) hiN x hnorm
+  obtain ⟨j, hj, uQ, huQ, _huQunit, hQfactor⟩ :=
+    sphereDenominatorFunction_simple_quadric_zeros radius hr hstrict N _ hQzero
+  have hradsq : radius (j.val + 1) ^ 2 = radius (i + 1) ^ 2 := by
+    exact_mod_cast (hj.symm.trans hi)
+  have hrad : radius (j.val + 1) = radius (i + 1) :=
+    (sq_eq_sq₀ (hr _ (by omega)).le (hr _ (by omega)).le).mp hradsq
+  change ∀ᶠ z in 𝓝 (realToComplex x), sphereDenominatorFunction radius N z =
+    (squareSum (fun k => z k) - (radius (j.val + 1) : ℂ) ^ 2) * uQ z at hQfactor
+  rw [hrad] at hQfactor
+  let q : ComplexEuclidean d → ℂ := fun z =>
+    squareSum (fun j => z j) - (radius (i + 1) : ℂ) ^ 2
+  have hq : AnalyticOnNhd ℂ q univ := by
+    have h := complexPolynomialValue_analytic (spherePolynomial d (radius (i + 1)))
+    change AnalyticOnNhd ℂ (fun w : ComplexEuclidean d =>
+      MvPolynomial.eval (fun j => w j) (spherePolynomial d (radius (i + 1)))) univ at h
+    simpa [q, spherePolynomial, squareSum] using h
+  have hq0 : q 0 ≠ 0 := by
+    change (∑ j : Fin d, (0 : ℂ) ^ 2) - (radius (i + 1) : ℂ) ^ 2 ≠ 0
+    simp only [zero_pow (by norm_num : (2 : ℕ) ≠ 0), Finset.sum_const_zero,
+      zero_sub, neg_ne_zero]
+    exact pow_ne_zero _ (Complex.ofReal_ne_zero.mpr (hr _ (by omega)).ne')
+  have hsecond : ∀ᶠ z in 𝓝 (realToComplex x), κ z = q z * (uQ z * χ z) := by
+    filter_upwards [hQfactor] with z hz
+    rw [hproduct, hz]
+    ring
+  have he := local_quotient_value_unique κ q uκ (fun z => uQ z * χ z) (realToComplex x)
+    (entire_not_eventually_zero q hq ⟨0, hq0⟩ _)
+    huκ.continuousAt (huQ.continuousAt.mul hχ.continuousAt) hκfactor hsecond
+  exact hunit (he.trans (by change uQ (realToComplex x) * χ (realToComplex x) = 0; rw [hχzero, mul_zero]))
+
+/-- A later kernel zero remains a zero after division by the first finite factors. -/
+theorem finite_sphere_quotient_zero (radius : ℕ → ℝ)
+    (hr : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius) (N j : ℕ)
+    (κ χ : ComplexEuclidean d → ℂ)
+    (hzero : ∀ x : Euclidean d, ‖x‖ = radius j → κ (realToComplex x) = 0)
+    (hproduct : ∀ z, κ z = sphereDenominatorFunction radius N z * χ z)
+    (hj : N < j) (x : Euclidean d) (hx : ‖x‖ = radius j) : χ (realToComplex x) = 0 := by
+  have hQ : sphereDenominatorFunction radius N (realToComplex x) ≠ 0 := by
+    apply sphereDenominator_eval_ne_zero radius hr x
+    intro k _hk hkN hknorm
+    have he : radius j = radius k := hx.symm.trans hknorm
+    have heindex := hstrict.injective he
+    omega
+  exact (mul_eq_zero.mp ((hproduct _).symm.trans (hzero x hx))).resolve_left hQ
+
+
+/-- The exact analytic division interface: an actual compact inverse quotient,
+its real Fourier representative, and the scalar denominator product. -/
+def CompactSphereTailDivision (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω)
+    (hfinite : volume Ω ≠ ⊤) (radius : ℕ → ℝ) (N : ℕ) : Prop :=
+  ∀ f : DomainL2 Ω,
+    (∀ ξ ∈ laterSpheres radius N, inner (𝕜 := ℂ) f (exponentialL2 Ω hfinite ξ) = 0) →
+    ∃ v : TemperedDistribution d, ∃ G : Euclidean d → ℂ,
+      CompactlySupportedDistribution v ∧ Continuous G ∧
+      (∀ φ : 𝓢(Euclidean d, ℂ), distributionFourier v φ = ∫ x, G x * φ x) ∧
+      ∀ x, polynomialEvaluation x (sphereDenominator d radius N) *
+        𝓕 (domainExtension Ω hΩ f : Euclidean d → ℂ) x =
+          normalizedBallFourier d (realToComplex x) * G x
+
+/-- Compact inverse division, John rigidity, and the proved L² obstruction give
+exactly the bounded-degree entire representation needed by sphere selection. -/
+theorem tailPolynomialRepresentation_of_compact_division
+    (hd : 1 ≤ d) (hTL : TitchmarshLions d)
+    (Ω : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hfinite : volume Ω ≠ ⊤) (hconvex : Convex ℝ (closure Ω))
+    (hJ : IsJohnEllipsoid (closure Ω) (Metric.closedBall (0 : Euclidean d) 1))
+    (radius : ℕ → ℝ) (hr : ∀ j, 0 < j → 0 < radius j) (N : ℕ)
+    (χ : ComplexEuclidean d → ℂ) (hχ : Differentiable ℂ χ)
+    (hχproduct : ∀ z, normalizedBallFourier d z = sphereDenominatorFunction radius N z * χ z)
+    (hκlower : RecurringRadialSquareLowerBound
+      (fun x => normalizedBallFourier d (realToComplex x)) (d + 1))
+    (hdivision : CompactSphereTailDivision Ω hΩ hfinite radius N) :
+    TailPolynomialRepresentation Ω hΩ hfinite (laterSpheres radius N) (2 * N) χ := by
+  intro f hf
+  obtain ⟨v, G, hv, hG, htransform, hproduct⟩ := hdivision f hf
+  have hfsupport : ∀ᵐ x, x ∉ closure Ω → domainExtension Ω hΩ f x = 0 := by
+    filter_upwards [domainExtension_coe Ω hΩ f] with x hx hn
+    rw [hx, Set.indicator_of_not_mem (fun hxΩ => hn (subset_closure hxΩ))]
+  obtain ⟨m, p, _hm, _hGp, hpF⟩ := sphere_tail_fourier_polynomial_product hTL radius N
+    (domainExtension Ω hΩ f) (domainExtension_integrable hΩ hbounded f) hv hconvex
+    isClosed_closure hJ hfsupport G hG htransform hproduct
+  let F := fun x => domainEntireFourier Ω hΩ f (realToComplex x)
+  have hemb : Continuous (realToComplex : Euclidean d → ComplexEuclidean d) :=
+    (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+      change Continuous (fun x : Euclidean d => (x j : ℂ)); fun_prop)
+  have hcF : Continuous F := (domainEntireFourier_differentiable hΩ hbounded f).continuous.comp hemb
+  have hmF : MemLp F 2 volume :=
+    (memLp_congr_ae (domainEntireFourier_eq_fourierL2 hΩ hbounded f)).mpr
+      (Lp.memLp (fourierL2Equiv d (domainExtension Ω hΩ f)))
+  have hrealprod : ∀ x, F x * polynomialEvaluation x (sphereDenominator d radius N) =
+      polynomialEvaluation x p * normalizedBallFourier d (realToComplex x) := by
+    intro x
+    simpa only [F, domainEntireFourier, entireFourier_realToComplex, mul_comm] using hpF x
+  have hdegree : p.totalDegree ≤ 2 * N := polynomial_totalDegree_le_of_memLp_quotient hd N p
+    (sphereDenominator d radius N) (by rw [sphereDenominator_totalDegree hd]) F _ hcF hrealprod
+    hκlower hmF
+  let p' : MvPolynomial.restrictTotalDegree (Fin d) ℂ (2 * N) :=
+    ⟨p, (MvPolynomial.mem_restrictTotalDegree _ _ _).mpr hdegree⟩
+  have hpwhole : (fun z => sphereDenominatorFunction radius N z * domainEntireFourier Ω hΩ f z) =
+      fun z => normalizedBallFourier d z * complexPolynomialValue p z := by
+    apply entire_eq_of_eq_on_real
+    · exact (differentiableOn_univ.mp (complexPolynomialValue_analytic _).differentiableOn).mul
+        (domainEntireFourier_differentiable hΩ hbounded f)
+    · exact (normalizedBallFourier_differentiable d).mul
+        (differentiableOn_univ.mp (complexPolynomialValue_analytic p).differentiableOn)
+    · intro x
+      simpa only [sphereDenominatorFunction, complexPolynomialValue, realToComplex_apply,
+        polynomialEvaluation_apply, F, mul_comm] using hrealprod x
+  have hwhole : domainEntireFourier Ω hΩ f = fun z => χ z * complexPolynomialValue p z := by
+    apply finite_sphere_quotient_unique radius hr N
+      (fun z => normalizedBallFourier d z * complexPolynomialValue p z)
+      (domainEntireFourier Ω hΩ f) (fun z => χ z * complexPolynomialValue p z)
+      (domainEntireFourier_differentiable hΩ hbounded f).continuous
+      (hχ.continuous.mul ((differentiableOn_univ.mp (complexPolynomialValue_analytic p).differentiableOn).continuous))
+    · intro z
+      exact (congrFun hpwhole z).symm
+    · intro z
+      rw [hχproduct]
+      ring
+  refine ⟨p', fun z => ?_⟩
+  exact congrFun hwhole z
+
+
+/-- The boundary of the unit ball is null, so open-ball inclusion is sufficient
+for actual L² synthesis supported in the closed ball. -/
+theorem closedBall_ae_subset_of_ball_subset {Ω : Set (Euclidean d)}
+    (hB : Metric.ball (0 : Euclidean d) 1 ⊆ Ω) :
+    Metric.closedBall (0 : Euclidean d) 1 ≤ᵐ[volume] Ω := by
+  have hnull : volume (Metric.sphere (0 : Euclidean d) 1) = 0 :=
+    Measure.addHaar_sphere_of_ne_zero volume _ (by norm_num)
+  filter_upwards [measure_zero_iff_ae_nmem.mp hnull] with x hx hclosed
+  change x ∈ Metric.closedBall (0 : Euclidean d) 1 at hclosed
+  apply hB
+  have hn : ‖x‖ ≤ 1 := by simpa only [Metric.mem_closedBall, dist_zero_right] using hclosed
+  have hne : ‖x‖ ≠ 1 := by simpa only [Metric.mem_sphere, dist_zero_right] using hx
+  simpa only [Metric.mem_ball, dist_zero_right] using lt_of_le_of_ne hn hne
+
+/-- The enumerated Bessel zeros supply all actual resolvent normalization
+constants required by the finite physical kernel. -/
+theorem ballZeroRadius_resolvent_normalization (n : ℕ) {j : ℕ} (hj : 0 < j) :
+    ballHelmholtzSquare n ((((2 * Real.pi * ballZeroRadius n j) ^ 2 : ℝ) : ℂ)) ≠ 0 := by
+  have ha : 0 < 2 * Real.pi * ballZeroRadius n j :=
+    mul_pos (mul_pos (by norm_num) Real.pi_pos) (ballZeroRadius_pos n hj)
+  have hz : radialBallFourier n ((2 * Real.pi * ballZeroRadius n j : ℝ) : ℂ) = 0 := by
+    rw [radialBallFourier_ofReal_eq, ballZeroRadius_isZero n hj, Complex.ofReal_zero]
+  apply ballHelmholtzSquare_ne_zero_of_simple_zero n ha hz
+  intro hd
+  apply realRadialBallFourier_deriv_ne_zero_at_zero n ha (ballZeroRadius_isZero n hj)
+  rw [realRadialBallFourier_deriv, hd, Complex.zero_re]
+
+/-- The concrete spherical package reduces only to the two analytic identities
+produced by physical resolvents and compact inverse division. All radius,
+simple-zero, support, degree, synthesis, and nonvanishing facts are proved. -/
+def sphereAnalyticInputs_of_resolvent_and_compact_division
+    (n : ℕ) (hTL : TitchmarshLions (n + 1))
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (hfinite : volume Ω ≠ ⊤)
+    (hconvex : Convex ℝ Ω)
+    (hJ : IsJohnEllipsoid (closure Ω) (Metric.closedBall (0 : Euclidean (n + 1)) 1))
+    (hB : Metric.ball (0 : Euclidean (n + 1)) 1 ⊆ Ω)
+    (hproduct : ∀ N z, normalizedBallFourier (n + 1) z =
+      MvPolynomial.eval (fun j => z j) (sphereDenominator (n + 1) (ballZeroRadius n) N) *
+        sphereKernelMultiplier n (ballZeroRadius n) N z)
+    (hdivision : ∀ N, CompactSphereTailDivision Ω hΩ hfinite (ballZeroRadius n) N) :
+    SphereAnalyticInputs Ω hΩ hfinite (ballZeroRadius n)
+      (Metric.closedBall (0 : Euclidean (n + 1)) 1) := by
+  let hb := fun (N j : ℕ) (hj : 0 < j) (_ : j ≤ N) =>
+    ballZeroRadius_resolvent_normalization n hj
+  have hr : ∀ j, 0 < j → 0 < ballZeroRadius n j := fun _ hj => ballZeroRadius_pos n hj
+  refine ⟨sphereKernelMultiplier n (ballZeroRadius n), ?_, ?_, ?_, ?_⟩
+  · intro N p
+    exact sphereKernelMultiplier_synthesize n (ballZeroRadius n) N (hb N) (hproduct N)
+      Ω hΩ hbounded (closedBall_ae_subset_of_ball_subset hB) p.val
+      ((MvPolynomial.mem_restrictTotalDegree _ _ _).mp p.property)
+  · intro N
+    exact tailPolynomialRepresentation_of_compact_division (by omega) hTL Ω hΩ hbounded
+      hfinite hconvex.closure hJ (ballZeroRadius n) hr N _
+      (sphereKernelMultiplier_differentiable n (ballZeroRadius n) N (hb N))
+      (hproduct N) (normalizedBallFourier_recurringSquareLowerBound n) (hdivision N)
+  · intro N x hx
+    exact finite_sphere_quotient_nonzero (ballZeroRadius n) hr (ballZeroRadius_strictMono n)
+      N _ _ (sphereKernelMultiplier_differentiable n (ballZeroRadius n) N (hb N)).continuous
+      (normalizedBallFourier_hasSimpleQuadricZeros_positive n) (hproduct N) x hx
+  · intro N j hj x hx
+    exact finite_sphere_quotient_zero (ballZeroRadius n) hr (ballZeroRadius_strictMono n)
+      N j _ _ (fun x hx => (normalizedBallFourier_real_zero_iff n x).mpr ⟨j, by omega, hx⟩)
+      (hproduct N) hj x hx
+
+/-- The compact quotient required by the tail argument is constructed from
+the actual entire Fourier transform and actual Bessel division. -/
+theorem compactSphereTailDivision (n : ℕ) {Ω : Set (Euclidean (n + 1))}
+    (hΩ : MeasurableSet Ω) (hbounded : Bornology.IsBounded Ω)
+    (hfinite : volume Ω ≠ ⊤) (N : ℕ) :
+    CompactSphereTailDivision Ω hΩ hfinite (ballZeroRadius n) N := by
+  intro f hf
+  obtain ⟨G, u, hG, hproduct, hu, hFourier⟩ :=
+    normalized_ball_tail_compact_inverse n hΩ hfinite hbounded N f hf
+  have hc : Continuous G := (differentiableOn_univ.mp hG.differentiableOn).continuous
+  have hemb : Continuous (realToComplex : Euclidean (n + 1) → ComplexEuclidean (n + 1)) :=
+    (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+      change Continuous (fun x : Euclidean (n + 1) => (x j : ℂ)); fun_prop)
+  refine ⟨u, fun x => G (realToComplex x), hu, hc.comp hemb, hFourier, ?_⟩
+  intro x
+  simpa only [realToComplex_apply, polynomialEvaluation_apply, domainEntireFourier,
+    entireFourier_realToComplex] using hproduct (realToComplex x)
+
+/-- The actual normalized spherical analytic package. Its only external
+analytic theorem is the explicitly named Titchmarsh–Lions hypothesis. -/
+def sphereAnalyticInputs (n : ℕ) (hTL : TitchmarshLions (n + 1))
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (hfinite : volume Ω ≠ ⊤)
+    (hconvex : Convex ℝ Ω)
+    (hJ : IsJohnEllipsoid (closure Ω) (Metric.closedBall (0 : Euclidean (n + 1)) 1))
+    (hB : Metric.ball (0 : Euclidean (n + 1)) 1 ⊆ Ω) :
+    SphereAnalyticInputs Ω hΩ hfinite (ballZeroRadius n)
+      (Metric.closedBall (0 : Euclidean (n + 1)) 1) := by
+  apply sphereAnalyticInputs_of_resolvent_and_compact_division
+    n hTL Ω hΩ hbounded hfinite hconvex hJ hB
+  · intro N
+    apply sphereKernelMultiplier_product n (ballZeroRadius n) N (ballZeroRadius_strictMono n)
+      (fun _ hj => ballZeroRadius_pos n hj)
+    intro j hj _
+    rw [radialBallFourier_ofReal_eq, ballZeroRadius_isZero n hj, Complex.ofReal_zero]
+  · exact compactSphereTailDivision n hΩ hbounded hfinite
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalDomainNormalization.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! John coordinates for actual bounded open convex domains. -/
+
+noncomputable section
+open Set Metric
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The inverse affine coordinates associated with an ellipsoid. -/
+def normalizedDomain {d : ℕ} (Ω : Set (Euclidean d)) (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : Set (Euclidean d) :=
+  (planeAffine (-A.symm a) A.symm) '' Ω
+
+theorem normalizedDomain_image {d : ℕ} (Ω : Set (Euclidean d)) (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    (planeAffine a A) '' normalizedDomain Ω a A = Ω := by
+  rw [normalizedDomain, planeAffine_inverse, image_image]
+  simp only [Function.comp_def, MeasurableEquiv.apply_symm_apply, image_id']
+
+theorem normalizedDomain_isOpen {d : ℕ} {Ω : Set (Euclidean d)} (hΩ : IsOpen Ω)
+    (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    IsOpen (normalizedDomain Ω a A) :=
+  (affineHomeomorph (-A.symm a) A.symm).isOpenMap Ω hΩ
+
+theorem normalizedDomain_convex {d : ℕ} {Ω : Set (Euclidean d)} (hΩ : Convex ℝ Ω)
+    (a : Euclidean d) (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    Convex ℝ (normalizedDomain Ω a A) := convex_affine_image hΩ _ _
+
+theorem closure_normalizedDomain {d : ℕ} (Ω : Set (Euclidean d)) (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) :
+    closure (normalizedDomain Ω a A) = normalizedDomain (closure Ω) a A :=
+  ((affineHomeomorph (-A.symm a) A.symm).image_closure Ω).symm
+
+theorem normalizedDomain_isBounded {d : ℕ} {Ω : Set (Euclidean d)}
+    (hΩ : Bornology.IsBounded Ω) (a : Euclidean d)
+    (A : Euclidean d ≃L[ℝ] Euclidean d) : Bornology.IsBounded (normalizedDomain Ω a A) := by
+  have hc : IsCompact (closure (normalizedDomain Ω a A)) := by
+    rw [closure_normalizedDomain]
+    exact hΩ.isCompact_closure.image (affineHomeomorph (-A.symm a) A.symm).continuous
+  exact hc.isBounded.subset subset_closure
+
+theorem interior_closure_open_convex {d : ℕ} {Ω : Set (Euclidean d)}
+    (hne : Ω.Nonempty) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    interior (closure Ω) = Ω := by
+  simpa only [hopen.interior_eq] using
+    hconvex.interior_closure_eq_interior_of_nonempty_interior
+      (by simpa only [hopen.interior_eq] using hne)
+
+/-- The source normalization lemma: the actual normalized domain contains the
+open unit ball, whose closure is a John ellipsoid with no nonzero contained translate. -/
+theorem exists_john_normalization {d : ℕ} {Ω : Set (Euclidean d)}
+    (hne : Ω.Nonempty) (hbounded : Bornology.IsBounded Ω)
+    (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ a : Euclidean d, ∃ A : Euclidean d ≃L[ℝ] Euclidean d,
+      IsJohnEllipsoid (closure Ω) (closedEllipsoid a A) ∧
+      (normalizedDomain Ω a A).Nonempty ∧
+      Bornology.IsBounded (normalizedDomain Ω a A) ∧
+      IsOpen (normalizedDomain Ω a A) ∧
+      Convex ℝ (normalizedDomain Ω a A) ∧
+      IsJohnEllipsoid (closure (normalizedDomain Ω a A)) (closedBall 0 1) ∧
+      ball 0 1 ⊆ normalizedDomain Ω a A ∧
+      ∀ t : Euclidean d, (fun x => t + x) '' closedBall 0 1 ⊆
+        closure (normalizedDomain Ω a A) → t = 0 := by
+  have hreg := interior_closure_open_convex hne hopen hconvex
+  have hKi : (interior (closure Ω)).Nonempty := by rwa [hreg]
+  obtain ⟨E, hE⟩ := exists_isJohnEllipsoid hbounded.isCompact_closure hKi
+  obtain ⟨a, A, rfl⟩ := hE.isEllipsoid
+  have hneD : (normalizedDomain Ω a A).Nonempty := hne.image _
+  have hopenD := normalizedDomain_isOpen hopen a A
+  have hconvD := normalizedDomain_convex hconvex a A
+  have hJD : IsJohnEllipsoid (closure (normalizedDomain Ω a A)) (closedBall 0 1) := by
+    rw [closure_normalizedDomain]
+    exact hE.normalize
+  have hball : ball 0 1 ⊆ normalizedDomain Ω a A := by
+    rw [← interior_closure_open_convex hneD hopenD hconvD]
+    exact ball_subset_interior_closedBall.trans (interior_mono hJD.subset)
+  exact ⟨a, A, hE, hneD, normalizedDomain_isBounded hbounded a A, hopenD, hconvD,
+    hJD, hball, fun _ ht => hJD.eq_zero_of_translated_unitBall_subset hconvD.closure ht⟩
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalPolynomialDimension.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! # Dimension of polynomials of bounded total degree
+
+Adding one slack exponent identifies bounded exponent vectors in `d` variables
+with homogeneous exponent vectors of degree `m` in `d + 1` variables.
+The monomial basis and stars-and-bars count then give the exact dimension.
+-/
+
+noncomputable section
+open scoped BigOperators
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Add the unused degree as a slack coordinate, turning a degree bound into an exact sum. -/
+def boundedExponentSlackEquiv (d m : ℕ) :
+    {f : Fin d → ℕ // ∑ i, f i ≤ m} ≃
+      {g : Fin (d + 1) → ℕ // ∑ i, g i = m} where
+  toFun f := ⟨Fin.cons (m - ∑ i, f.val i) f.val, by
+    rw [Fin.sum_univ_succ]
+    simp only [Fin.cons_zero, Fin.cons_succ]
+    exact Nat.sub_add_cancel f.prop⟩
+  invFun g := ⟨fun i => g.val i.succ, by
+    change (∑ i : Fin d, g.val i.succ) ≤ m
+    have h := g.prop
+    rw [Fin.sum_univ_succ] at h
+    omega⟩
+  left_inv f := by
+    apply Subtype.ext
+    funext i
+    rfl
+  right_inv g := by
+    apply Subtype.ext
+    funext i
+    refine Fin.cases ?_ (fun j => ?_) i
+    · simp only [Fin.cons_zero]
+      have h := g.prop
+      rw [Fin.sum_univ_succ] at h
+      omega
+    · rfl
+
+/-- Bounded monomial exponents correspond to multisets of `m` letters on `d + 1` symbols. -/
+def boundedMonomialEquivSym (d m : ℕ) :
+    {f : Fin d →₀ ℕ // f.sum (fun _ e => e) ≤ m} ≃ Sym (Fin (d + 1)) m :=
+  (Finsupp.equivFunOnFinite.subtypeEquiv (by
+    intro f
+    simp [Finsupp.sum_fintype])).trans ((boundedExponentSlackEquiv d m).trans
+      (Sym.equivNatSumOfFintype (Fin (d + 1)) m).symm)
+
+/-- The exact binomial dimension of complex polynomials of bounded total degree. -/
+theorem finrank_restrictTotalDegree (d m : ℕ) :
+    Module.finrank ℂ (MvPolynomial.restrictTotalDegree (Fin d) ℂ m) =
+      Nat.choose (m + d) d := by
+  classical
+  let e := boundedMonomialEquivSym d m
+  letI : Fintype {f : Fin d →₀ ℕ // f.sum (fun _ e => e) ≤ m} :=
+    Fintype.ofEquiv (Sym (Fin (d + 1)) m) e.symm
+  calc
+    _ = Fintype.card {f : Fin d →₀ ℕ // f.sum (fun _ e => e) ≤ m} :=
+      Module.finrank_eq_card_basis (MvPolynomial.basisRestrictSupport ℂ _)
+    _ = Fintype.card (Sym (Fin (d + 1)) m) := Fintype.card_congr e
+    _ = Nat.choose (m + d) d := by
+      rw [Sym.card_sym_eq_choose, Fintype.card_fin]
+      have h : d + 1 + m - 1 = m + d := by omega
+      rw [h, Nat.choose_symm_add]
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalInterpolationSpaces.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+open MeasureTheory Set
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- A continuous Fourier multiplier nonzero at the origin embeds every bounded
+polynomial space injectively into actual functions. -/
+theorem polynomialFourierMap_injective {d : ℕ} (degree : ℕ)
+    (M : ComplexEuclidean d → ℂ) (hM : Continuous M) (hM0 : M 0 ≠ 0) :
+    Function.Injective (polynomialFourierMap degree M) := by
+  have hemb : Continuous (realToComplex : Euclidean d → ComplexEuclidean d) :=
+    (PiLp.continuous_equiv_symm 2 _).comp (continuous_pi fun j => by
+      change Continuous (fun x : Euclidean d => (x j : ℂ)); fun_prop)
+  have hopen : IsOpen {x : Euclidean d | M (realToComplex x) ≠ 0} :=
+    isOpen_ne.preimage (hM.comp hemb)
+  have hzero : (0 : Euclidean d) ∈ {x | M (realToComplex x) ≠ 0} := by
+    simpa [realToComplex] using hM0
+  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp hopen 0 hzero
+  intro p q hpq
+  have hpoly : p.val - q.val = 0 := by
+    apply polynomial_eq_zero_of_real_ball _ r hr
+    intro x hx
+    let v : Euclidean d := (WithLp.equiv 2 _).symm x
+    have hnormsq : ‖v‖ ^ 2 = ∑ i, x i ^ 2 := by
+      simp [PiLp.norm_sq_eq_of_L2, v, Real.norm_eq_abs]
+    have hv : v ∈ Metric.ball 0 r := by
+      rw [Metric.mem_ball, dist_zero_right]
+      exact (sq_lt_sq₀ (norm_nonneg v) hr.le).mp (hnormsq ▸ hx)
+    have hne := hball hv
+    have heq := congrFun hpq (realToComplex v)
+    have heval : polynomialEvaluation v p.val = polynomialEvaluation v q.val := by
+      exact mul_left_cancel₀ hne heq
+    simpa [polynomialEvaluation_apply, v, realToComplex_apply] using
+      sub_eq_zero.mpr heval
+  exact Subtype.ext (sub_eq_zero.mp hpoly)
+
+namespace SphereAnalyticInputs
+
+variable {d : ℕ} {Ω : Set (Euclidean d)} {hΩ : MeasurableSet Ω}
+    {hfinite : volume Ω ≠ ⊤} {radius : ℕ → ℝ} {core : Set (Euclidean d)}
+
+/-- Exact tail-annihilator membership for the actual domain L² interpolation space. -/
+theorem mem_spaces_iff_tail_orthogonal
+    (I : SphereAnalyticInputs Ω hΩ hfinite radius core) (hbounded : Bornology.IsBounded Ω)
+    (N : ℕ) (f : DomainL2 Ω) :
+    f ∈ I.spaces hbounded N ↔
+      ∀ x ∈ laterSpheres radius N, inner (𝕜 := ℂ) f (exponentialL2 Ω hfinite x) = 0 := by
+  constructor
+  · rintro ⟨p, hp⟩ x ⟨j, hj, hx⟩
+    have hF : domainEntireFourier Ω hΩ f (realToComplex x) = 0 := by
+      change (domainEntireFourierLinear Ω hΩ hbounded) f (realToComplex x) = 0
+      rw [← congrFun hp (realToComplex x)]
+      change I.multiplier N (realToComplex x) * _ = 0
+      rw [I.zero N j hj x hx, zero_mul]
+    apply (inner_eq_zero_symm (𝕜 := ℂ)).mpr
+    exact (domainEntireFourier_real_inner hΩ hfinite f x) ▸ hF
+  · intro hf
+    obtain ⟨p, hp⟩ := I.tail N f hf
+    exact ⟨p, funext (fun z => (hp z).symm)⟩
+
+/-- The actual finite interpolation spaces are nested. -/
+theorem spaces_mono (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) : Monotone (I.spaces hbounded) := by
+  intro N K hNK f hf
+  apply (I.mem_spaces_iff_tail_orthogonal hbounded K f).mpr
+  intro x hx
+  apply (I.mem_spaces_iff_tail_orthogonal hbounded N f).mp hf x
+  obtain ⟨j, hj, hxnorm⟩ := hx
+  exact ⟨j, lt_of_le_of_lt hNK hj, hxnorm⟩
+
+/-- The actual entire Fourier map on a stage space, with its prescribed range. -/
+def spaceFourierMap (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) (N : ℕ) :
+    I.spaces hbounded N →ₗ[ℂ] LinearMap.range (polynomialFourierMap (2 * N) (I.multiplier N)) :=
+  ((domainEntireFourierLinear Ω hΩ hbounded).comp (I.spaces hbounded N).subtype).codRestrict
+    _ (fun f => f.property)
+
+/-- Synthesis and actual Fourier injectivity make the stage Fourier map bijective. -/
+theorem spaceFourierMap_bijective (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) (N : ℕ) :
+    Function.Bijective (I.spaceFourierMap hbounded N) := by
+  constructor
+  · intro f g hfg
+    apply Subtype.ext
+    apply domainEntireFourier_injective hΩ hbounded
+    exact congrArg Subtype.val hfg
+  · rintro ⟨F, p, hp⟩
+    obtain ⟨f, _hs, hf⟩ := I.synthesize N p
+    have hmem : f ∈ I.spaces hbounded N := ⟨p, hf.symm⟩
+    refine ⟨⟨f, hmem⟩, Subtype.ext ?_⟩
+    exact hf.trans hp
+
+/-- The source polynomial parametrization is a genuine linear equivalence with
+actual domain L² vectors, whenever the multiplier is continuous and nonzero at zero. -/
+def polynomialEquivSpace (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) (N : ℕ)
+    (hM : Continuous (I.multiplier N)) (hM0 : I.multiplier N 0 ≠ 0) :
+    MvPolynomial.restrictTotalDegree (Fin d) ℂ (2 * N) ≃ₗ[ℂ] I.spaces hbounded N :=
+  (LinearEquiv.ofInjective (polynomialFourierMap (2 * N) (I.multiplier N))
+    (polynomialFourierMap_injective (2 * N) (I.multiplier N) hM hM0)).trans
+    (LinearEquiv.ofBijective (I.spaceFourierMap hbounded N)
+      (I.spaceFourierMap_bijective hbounded N)).symm
+
+/-- The linear equivalence has the actual multiplier-polynomial Fourier formula. -/
+theorem polynomialEquivSpace_fourier
+    (I : SphereAnalyticInputs Ω hΩ hfinite radius core)
+    (hbounded : Bornology.IsBounded Ω) (N : ℕ)
+    (hM : Continuous (I.multiplier N)) (hM0 : I.multiplier N 0 ≠ 0)
+    (p : MvPolynomial.restrictTotalDegree (Fin d) ℂ (2 * N)) :
+    domainEntireFourier Ω hΩ (I.polynomialEquivSpace hbounded N hM hM0 p).val =
+      polynomialFourierMap (2 * N) (I.multiplier N) p := by
+  exact congrArg Subtype.val
+    ((LinearEquiv.ofBijective (I.spaceFourierMap hbounded N)
+      (I.spaceFourierMap_bijective hbounded N)).apply_symm_apply
+        (LinearEquiv.ofInjective (polynomialFourierMap (2 * N) (I.multiplier N))
+          (polynomialFourierMap_injective (2 * N) (I.multiplier N) hM hM0) p))
+
+end SphereAnalyticInputs
+
+/-- The actual normalized interpolation subspace at level `N`. -/
+def normalizedInterpolationSpace (n : ℕ)
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (N : ℕ) : Submodule ℂ (DomainL2 Ω) :=
+  polynomialFourierSpace Ω hΩ hbounded (2 * N) (sphereKernelMultiplier n (ballZeroRadius n) N)
+
+section Normalized
+
+variable (n : ℕ) (hTL : TitchmarshLions (n + 1))
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (hconvex : Convex ℝ Ω)
+    (hJ : IsJohnEllipsoid (closure Ω) (Metric.closedBall (0 : Euclidean (n + 1)) 1))
+    (hB : Metric.ball (0 : Euclidean (n + 1)) 1 ⊆ Ω)
+
+include hTL hconvex hJ hB
+
+/-- The actual normalized interpolation spaces are nested. -/
+theorem normalizedInterpolationSpace_mono :
+    Monotone (normalizedInterpolationSpace n Ω hΩ hbounded) :=
+  (sphereAnalyticInputs n hTL Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB).spaces_mono
+    hbounded
+
+/-- Every actual interpolation-space vector is supported in the closed unit ball. -/
+theorem normalizedInterpolationSpace_supported (N : ℕ) (f : DomainL2 Ω)
+    (hf : f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N) :
+    SupportedOn Ω f (Metric.closedBall 0 1) :=
+  (sphereAnalyticInputs n hTL Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB).supported
+    hbounded hf
+
+/-- Exact membership is orthogonality to all frequency spheres past the cutoff. -/
+theorem normalizedInterpolationSpace_iff_tail_orthogonal (N : ℕ) (f : DomainL2 Ω) :
+    f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N ↔
+      ∀ x ∈ laterSpheres (ballZeroRadius n) N,
+        inner (𝕜 := ℂ) f (exponentialL2 Ω hbounded.measure_lt_top.ne x) = 0 :=
+  (sphereAnalyticInputs n hTL Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB).mem_spaces_iff_tail_orthogonal
+    hbounded N f
+
+/-- The actual normalized polynomial parametrization is a linear equivalence. -/
+def normalizedPolynomialEquivSpace (N : ℕ) :
+    MvPolynomial.restrictTotalDegree (Fin (n + 1)) ℂ (2 * N) ≃ₗ[ℂ]
+      normalizedInterpolationSpace n Ω hΩ hbounded N := by
+  let I := sphereAnalyticInputs n hTL Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB
+  apply I.polynomialEquivSpace hbounded N
+  · change Continuous (sphereKernelMultiplier n (ballZeroRadius n) N)
+    exact (sphereKernelMultiplier_differentiable n (ballZeroRadius n) N
+      (fun _ hj _ => ballZeroRadius_resolvent_normalization n hj)).continuous
+  · have hr : 0 ≤ ballZeroRadius n N := by
+      simpa only [ballZeroRadius_zero] using (ballZeroRadius_strictMono n).monotone (Nat.zero_le N)
+    have h := I.nonzero N (0 : Euclidean (n + 1)) (by simpa using hr)
+    simpa [realToComplex] using h
+
+include hTL Ω hΩ hbounded hconvex hJ hB in
+/-- The actual Fourier multiplier is nonzero throughout all radii up to its cutoff. -/
+theorem normalizedInterpolationMultiplier_nonzero (N : ℕ) (x : Euclidean (n + 1))
+    (hx : ‖x‖ ≤ ballZeroRadius n N) :
+    sphereKernelMultiplier n (ballZeroRadius n) N (realToComplex x) ≠ 0 :=
+  (sphereAnalyticInputs n hTL Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB).nonzero N x hx
+
+include hTL Ω hΩ hbounded hconvex hJ hB in
+/-- The actual Fourier multiplier vanishes on every later frequency sphere. -/
+theorem normalizedInterpolationMultiplier_zero (N j : ℕ) (hj : N < j)
+    (x : Euclidean (n + 1)) (hx : ‖x‖ = ballZeroRadius n j) :
+    sphereKernelMultiplier n (ballZeroRadius n) N (realToComplex x) = 0 :=
+  (sphereAnalyticInputs n hTL Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB).zero N j hj x hx
+
+/-- The exact finite dimension in the source membership lemma. -/
+theorem normalizedInterpolationSpace_finrank (N : ℕ) :
+    Module.finrank ℂ (normalizedInterpolationSpace n Ω hΩ hbounded N) =
+      Nat.choose (2 * N + (n + 1)) (n + 1) := by
+  rw [← (normalizedPolynomialEquivSpace n hTL Ω hΩ hbounded hconvex hJ hB N).finrank_eq]
+  exact finrank_restrictTotalDegree (n + 1) (2 * N)
+
+/-- The complete source interpolation-space clauses: nesting, exact dimension,
+unit-ball support, and the precise tail-annihilator characterization, for the
+actual normalized spaces with no analytic package premises. -/
+theorem normalized_interpolation_spaces :
+    Monotone (normalizedInterpolationSpace n Ω hΩ hbounded) ∧
+    ∀ N : ℕ,
+      Module.finrank ℂ (normalizedInterpolationSpace n Ω hΩ hbounded N) =
+        Nat.choose (2 * N + (n + 1)) (n + 1) ∧
+      (∀ f : DomainL2 Ω,
+        f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N →
+          SupportedOn Ω f (Metric.closedBall 0 1)) ∧
+      (∀ f : DomainL2 Ω,
+        f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N ↔
+          ∀ x ∈ laterSpheres (ballZeroRadius n) N,
+            inner (𝕜 := ℂ) f (exponentialL2 Ω hbounded.measure_lt_top.ne x) = 0) :=
+  ⟨normalizedInterpolationSpace_mono n hTL Ω hΩ hbounded hconvex hJ hB,
+    fun N => ⟨normalizedInterpolationSpace_finrank n hTL Ω hΩ hbounded hconvex hJ hB N,
+      normalizedInterpolationSpace_supported n hTL Ω hΩ hbounded hconvex hJ hB N,
+      normalizedInterpolationSpace_iff_tail_orthogonal n hTL Ω hΩ hbounded hconvex hJ hB N⟩⟩
+
+end Normalized
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalInterval.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# The complete and minimal interval exponential system
+
+The Fourier completeness input is Mathlib's proved `fourierBasis`; the
+quotient-circle pullback is proved below using a measurable interval section.
+-/
+
+noncomputable section
+open MeasureTheory MeasureTheory.Measure Set
+open scoped ENNReal
+
+namespace RieszEuclidean.CompleteMinimal
+
+section CircleInterval
+
+variable (T a : ℝ) [hT : Fact (0 < T)]
+
+/-- The measurable representative in the fundamental interval `(a,a+T]`. -/
+def circleRepresentative (x : AddCircle T) : ℝ :=
+  (AddCircle.measurableEquivIoc T a x).val
+
+theorem circleRepresentative_measurable : Measurable (circleRepresentative T a) :=
+  measurable_subtype_coe.comp (AddCircle.measurableEquivIoc T a).measurable
+
+theorem circleRepresentative_quotient (x : AddCircle T) :
+    (circleRepresentative T a x : AddCircle T) = x := by
+  exact (AddCircle.measurableEquivIoc T a).symm_apply_apply x
+
+theorem circleRepresentative_coe {x : ℝ} (hx : x ∈ Ioc a (a + T)) :
+    circleRepresentative T a (x : AddCircle T) = x := by
+  exact congrArg Subtype.val ((AddCircle.measurableEquivIoc T a).apply_symm_apply ⟨x, hx⟩)
+
+theorem circleRepresentative_map_volume :
+    Measure.map (circleRepresentative T a) (volume : Measure (AddCircle T)) =
+      volume.restrict (Ioo a (a + T)) := by
+  rw [restrict_Ioo_eq_restrict_Ioc,
+    ← (AddCircle.measurePreserving_mk T a).map_eq,
+    Measure.map_map (circleRepresentative_measurable T a) AddCircle.measurable_mk']
+  calc
+    _ = Measure.map id (volume.restrict (Ioc a (a + T))) := by
+      apply Measure.map_congr
+      filter_upwards [ae_restrict_mem measurableSet_Ioc] with x hx
+      exact circleRepresentative_coe T a hx
+    _ = _ := Measure.map_id
+
+theorem circleRepresentative_map_haar :
+    Measure.map (circleRepresentative T a) AddCircle.haarAddCircle =
+      (ENNReal.ofReal T)⁻¹ • volume.restrict (Ioo a (a + T)) := by
+  have hc : ENNReal.ofReal T ≠ 0 := ENNReal.ofReal_ne_zero_iff.mpr hT.out
+  have h := circleRepresentative_map_volume T a
+  rw [AddCircle.volume_eq_smul_haarAddCircle, Measure.map_smul] at h
+  rw [← h, smul_smul, ENNReal.inv_mul_cancel hc ENNReal.ofReal_ne_top, one_smul]
+
+theorem intervalQuotient_map :
+    Measure.map ((↑) : ℝ → AddCircle T) (volume.restrict (Ioo a (a + T))) =
+      ENNReal.ofReal T • AddCircle.haarAddCircle := by
+  rw [restrict_Ioo_eq_restrict_Ioc,
+    (AddCircle.measurePreserving_mk T a).map_eq, AddCircle.volume_eq_smul_haarAddCircle]
+
+/-- The a.e. circle/interval correspondence, including its actual volume factor. -/
+def intervalCircleEquiv :
+    Lp ℂ 2 (@AddCircle.haarAddCircle T hT) ≃L[ℂ]
+      Lp ℂ 2 (volume.restrict (Ioo a (a + T))) := by
+  let p := scaledL2Pullback ((↑) : ℝ → AddCircle T) AddCircle.measurable_mk'
+    (intervalQuotient_map T a) ENNReal.ofReal_ne_top
+  let q := scaledL2Pullback (circleRepresentative T a) (circleRepresentative_measurable T a)
+    (circleRepresentative_map_haar T a)
+    (ENNReal.inv_ne_top.mpr (ENNReal.ofReal_ne_zero_iff.mpr hT.out))
+  have hp (g : Lp ℂ 2 (@AddCircle.haarAddCircle T hT)) :
+      (p g : ℝ → ℂ) =ᵐ[volume.restrict (Ioo a (a + T))]
+        fun x => g (x : AddCircle T) := scaledL2Pullback_ae _ _ _ _ g
+  have hq (g : Lp ℂ 2 (volume.restrict (Ioo a (a + T)))) :
+      (q g : AddCircle T → ℂ) =ᵐ[AddCircle.haarAddCircle]
+        fun x => g (circleRepresentative T a x) := scaledL2Pullback_ae _ _ _ _ g
+  have hmp : QuasiMeasurePreserving ((↑) : ℝ → AddCircle T)
+      (volume.restrict (Ioo a (a + T))) AddCircle.haarAddCircle :=
+    ⟨AddCircle.measurable_mk', by rw [intervalQuotient_map]; exact smul_absolutelyContinuous⟩
+  have hmq : QuasiMeasurePreserving (circleRepresentative T a) AddCircle.haarAddCircle
+      (volume.restrict (Ioo a (a + T))) :=
+    ⟨circleRepresentative_measurable T a,
+      by rw [circleRepresentative_map_haar]; exact smul_absolutelyContinuous⟩
+  exact
+    { toLinearEquiv :=
+        { p.toLinearMap with
+          invFun := q
+          left_inv := fun g => Lp.ext (by
+            filter_upwards [hq (p g), hmq.ae (hp g)] with x hx hy
+            exact hx.trans (hy.trans (congrArg g (circleRepresentative_quotient T a x))))
+          right_inv := fun g => Lp.ext (by
+            filter_upwards [hp (q g), hmp.ae (hq g), ae_restrict_mem measurableSet_Ioo]
+              with x hx hy hmem
+            exact hx.trans (hy.trans (congrArg g (circleRepresentative_coe T a
+              (Ioo_subset_Ioc_self hmem))))) }
+      continuous_toFun := p.continuous
+      continuous_invFun := q.continuous }
+
+theorem intervalCircleEquiv_ae (g : Lp ℂ 2 (@AddCircle.haarAddCircle T hT)) :
+    (intervalCircleEquiv T a g : ℝ → ℂ) =ᵐ[volume.restrict (Ioo a (a + T))]
+      fun x => g (x : AddCircle T) :=
+  scaledL2Pullback_ae _ _ _ _ g
+
+/-- Pullback scales the Hilbert inner product by the length of the interval. -/
+theorem intervalCircleEquiv_inner (f g : Lp ℂ 2 (@AddCircle.haarAddCircle T hT)) :
+    inner (𝕜 := ℂ) (intervalCircleEquiv T a f) (intervalCircleEquiv T a g) =
+      (T : ℂ) * inner (𝕜 := ℂ) f g := by
+  rw [L2.inner_def]
+  calc
+    _ = ∫ x in Ioo a (a + T), inner (𝕜 := ℂ) (f (x : AddCircle T))
+        (g (x : AddCircle T)) := by
+      apply integral_congr_ae
+      filter_upwards [intervalCircleEquiv_ae T a f, intervalCircleEquiv_ae T a g]
+        with x hx hy
+      rw [hx, hy]
+    _ = ∫ x : AddCircle T, inner (𝕜 := ℂ) (f x) (g x)
+        ∂(ENNReal.ofReal T • AddCircle.haarAddCircle) := by
+      rw [← intervalQuotient_map T a]
+      exact (integral_map_of_stronglyMeasurable
+        (f := fun x : AddCircle T => inner (𝕜 := ℂ) (f x) (g x)) AddCircle.measurable_mk'
+        ((Lp.stronglyMeasurable f).inner (Lp.stronglyMeasurable g))).symm
+    _ = _ := by
+      rw [integral_smul_measure, L2.inner_def]
+      simp [ENNReal.toReal_ofReal hT.out.le, Complex.real_smul]
+
+/-- The ordinary real-interval exponential modes transported from the circle. -/
+def intervalMode (k : ℤ) : Lp ℂ 2 (volume.restrict (Ioo a (a + T))) :=
+  intervalCircleEquiv T a (_root_.fourierLp 2 k)
+
+theorem intervalMode_ae (k : ℤ) :
+    (intervalMode T a k : ℝ → ℂ) =ᵐ[volume.restrict (Ioo a (a + T))]
+      fun x => Complex.exp (2 * (Real.pi : ℂ) * Complex.I * (k : ℂ) * x / T) := by
+  have hq : QuasiMeasurePreserving ((↑) : ℝ → AddCircle T)
+      (volume.restrict (Ioo a (a + T))) AddCircle.haarAddCircle :=
+    ⟨AddCircle.measurable_mk', by rw [intervalQuotient_map]; exact smul_absolutelyContinuous⟩
+  filter_upwards [intervalCircleEquiv_ae T a (_root_.fourierLp 2 k),
+    hq.ae (_root_.coeFn_fourierLp 2 k)] with x hx hy
+  exact hx.trans (hy.trans _root_.fourier_coe_apply)
+
+theorem intervalMode_inner (k l : ℤ) :
+    inner (𝕜 := ℂ) (intervalMode T a k) (intervalMode T a l) =
+      (T : ℂ) * if k = l then 1 else 0 := by
+  rw [intervalMode, intervalMode, intervalCircleEquiv_inner]
+  congr 1
+  exact (orthonormal_iff_ite.mp (_root_.orthonormal_fourier (T := T))) k l
+
+theorem intervalMode_complete : IsComplete (intervalMode T a) := by
+  have hd := (intervalCircleEquiv T a).surjective.denseRange
+  have hh := hd.topologicalClosure_map_submodule
+    (_root_.span_fourierLp_closure_eq_top (T := T) (p := 2) (by norm_num))
+  rw [Submodule.map_span, ← Set.range_comp] at hh
+  exact hh
+
+theorem intervalMode_biorthogonal :
+    IsBiorthogonal (intervalMode T a) (fun k => (T : ℂ)⁻¹ • intervalMode T a k) := by
+  classical
+  intro k l
+  rw [inner_smul_left, intervalMode_inner]
+  have hstar : starRingEnd ℂ ((T : ℂ)⁻¹) = (T : ℂ)⁻¹ := by simp
+  rw [hstar, ← mul_assoc]
+  rw [inv_mul_cancel₀ (by exact_mod_cast hT.out.ne'), one_mul]
+  by_cases h : k = l <;> simp [h]
+
+theorem intervalMode_minimal : IsMinimal (intervalMode T a) :=
+  (intervalMode_biorthogonal T a).isMinimal
+
+end CircleInterval
+
+/-- Evaluation at the unique coordinate identifies one-dimensional Euclidean space with ℝ. -/
+def lineIsometry : Euclidean 1 ≃ₗᵢ[ℝ] ℝ where
+  toLinearEquiv := (EuclideanSpace.equiv (Fin 1) ℝ).toLinearEquiv.trans
+    (LinearEquiv.funUnique (Fin 1) ℝ ℝ)
+  norm_map' x := by
+    change ‖x 0‖ = ‖x‖
+    rw [EuclideanSpace.norm_eq]
+    simp [Real.sqrt_sq_eq_abs]
+
+@[simp] theorem lineIsometry_apply (x : Euclidean 1) : lineIsometry x = x 0 := rfl
+
+/-- The physical Euclidean realization of an ordinary open interval. -/
+def lineInterval (a b : ℝ) : Set (Euclidean 1) := lineIsometry ⁻¹' Ioo a b
+
+theorem lineInterval_measurable (a b : ℝ) : MeasurableSet (lineInterval a b) :=
+  measurableSet_Ioo.preimage lineIsometry.continuous.measurable
+
+theorem lineInterval_map (a b : ℝ) :
+    Measure.map lineIsometry (volume.restrict (lineInterval a b)) =
+      (1 : ℝ≥0∞) • volume.restrict (Ioo a b) := by
+  let e := lineIsometry.toHomeomorph.toMeasurableEquiv
+  change Measure.map e (volume.restrict (e ⁻¹' Ioo a b)) = _
+  rw [← e.restrict_map]
+  change (Measure.map lineIsometry volume).restrict (Ioo a b) = _
+  rw [lineIsometry.measurePreserving.map_eq, one_smul]
+
+/-- Pullback of real-interval L² along the Euclidean coordinate isometry. -/
+def lineL2Equiv (a b : ℝ) :
+    Lp ℂ 2 (volume.restrict (Ioo a b)) ≃L[ℂ] DomainL2 (lineInterval a b) :=
+  scaledL2Equiv lineIsometry.toHomeomorph.toMeasurableEquiv (lineInterval_map a b)
+    one_ne_zero ENNReal.one_ne_top
+
+theorem lineL2Equiv_ae (a b : ℝ) (f : Lp ℂ 2 (volume.restrict (Ioo a b))) :
+    (lineL2Equiv a b f : Euclidean 1 → ℂ) =ᵐ[volume.restrict (lineInterval a b)]
+      fun x => f (lineIsometry x) :=
+  scaledL2Equiv_ae _ _ _ _ f
+
+theorem lineL2Equiv_inner (a b : ℝ) (f g : Lp ℂ 2 (volume.restrict (Ioo a b))) :
+    inner (𝕜 := ℂ) (lineL2Equiv a b f) (lineL2Equiv a b g) = inner (𝕜 := ℂ) f g := by
+  rw [L2.inner_def]
+  calc
+    _ = ∫ x in lineInterval a b,
+        inner (𝕜 := ℂ) (f (lineIsometry x)) (g (lineIsometry x)) := by
+      apply integral_congr_ae
+      filter_upwards [lineL2Equiv_ae a b f, lineL2Equiv_ae a b g] with x hx hy
+      rw [hx, hy]
+    _ = _ := by
+      have h := integral_map_of_stronglyMeasurable
+        (μ := volume.restrict (lineInterval a b))
+        (f := fun x : ℝ => inner (𝕜 := ℂ) (f x) (g x)) lineIsometry.continuous.measurable
+        ((Lp.stronglyMeasurable f).inner (Lp.stronglyMeasurable g))
+      rw [lineInterval_map, one_smul] at h
+      exact h.symm
+
+section EuclideanInterval
+
+variable (T a : ℝ) [hT : Fact (0 < T)]
+
+/-- The integer lattice of frequencies divided by the length of the interval. -/
+def intervalFrequency (k : ℤ) : Euclidean 1 := lineIsometry.symm ((k : ℝ) / T)
+
+/-- The actual Euclidean domain vectors obtained from the Fourier modes. -/
+def lineMode (k : ℤ) : DomainL2 (lineInterval a (a + T)) :=
+  lineL2Equiv a (a + T) (intervalMode T a k)
+
+theorem lineMode_ae (k : ℤ) :
+    (lineMode T a k : Euclidean 1 → ℂ) =ᵐ[volume.restrict (lineInterval a (a + T))]
+      exponential (intervalFrequency T k) := by
+  have hq : QuasiMeasurePreserving lineIsometry
+      (volume.restrict (lineInterval a (a + T))) (volume.restrict (Ioo a (a + T))) :=
+    ⟨lineIsometry.continuous.measurable,
+      by rw [lineInterval_map, one_smul]⟩
+  filter_upwards [lineL2Equiv_ae a (a + T) (intervalMode T a k),
+    hq.ae (intervalMode_ae T a k)] with x hx hy
+  change (lineL2Equiv a (a + T) (intervalMode T a k)) x = _
+  rw [hx, hy]
+  unfold exponential intervalFrequency
+  congr 1
+  rw [PiLp.inner_apply]
+  simp only [Fin.sum_univ_one, RCLike.inner_apply, conj_trivial]
+  change _ = 2 * (Real.pi : ℂ) * Complex.I *
+    ((x 0 * (lineIsometry.symm ((k : ℝ) / T)) 0 : ℝ) : ℂ)
+  have hs : (lineIsometry.symm ((k : ℝ) / T)) 0 = (k : ℝ) / T :=
+    lineIsometry.apply_symm_apply _
+  rw [hs, Complex.ofReal_mul, Complex.ofReal_div, Complex.ofReal_intCast]
+  change _ = 2 * (Real.pi : ℂ) * Complex.I * (lineIsometry x * ((k : ℂ) / T))
+  ring
+
+theorem lineMode_inner (k l : ℤ) :
+    inner (𝕜 := ℂ) (lineMode T a k) (lineMode T a l) =
+      (T : ℂ) * if k = l then 1 else 0 := by
+  rw [lineMode, lineMode, lineL2Equiv_inner, intervalMode_inner]
+
+theorem lineMode_complete : IsComplete (lineMode T a) := by
+  have hd := (lineL2Equiv a (a + T)).surjective.denseRange
+  have hh := hd.topologicalClosure_map_submodule (intervalMode_complete T a)
+  rw [Submodule.map_span, ← Set.range_comp] at hh
+  exact hh
+
+theorem lineMode_biorthogonal :
+    IsBiorthogonal (lineMode T a) (fun k => (T : ℂ)⁻¹ • lineMode T a k) := by
+  classical
+  intro k l
+  rw [inner_smul_left, lineMode_inner]
+  have hstar : starRingEnd ℂ ((T : ℂ)⁻¹) = (T : ℂ)⁻¹ := by simp
+  rw [hstar, ← mul_assoc, inv_mul_cancel₀ (by exact_mod_cast hT.out.ne'), one_mul]
+  by_cases h : k = l <;> simp [h]
+
+theorem intervalFrequency_injective : Function.Injective (intervalFrequency T) := by
+  intro k l h
+  have hr : (k : ℝ) / T = (l : ℝ) / T := lineIsometry.symm.injective h
+  exact_mod_cast (div_left_inj' hT.out.ne').mp hr
+
+/-- The frequency configuration for a length-T interval. -/
+def intervalSpectrum : Set (Euclidean 1) := range (intervalFrequency T)
+
+theorem intervalSpectrum_separated : Separated (1 / T) (intervalSpectrum T) := by
+  rintro _ ⟨k, rfl⟩ _ ⟨l, rfl⟩ hne
+  have hkl : k ≠ l := fun h => hne (congrArg (intervalFrequency T) h)
+  have hi : (1 : ℤ) ≤ |k - l| := by
+    have hp : (0 : ℤ) < |k - l| := abs_pos.mpr (sub_ne_zero.mpr hkl)
+    omega
+  have hr : (1 : ℝ) ≤ |(k : ℝ) - (l : ℝ)| := by exact_mod_cast hi
+  change 1 / T ≤ dist (lineIsometry.symm ((k : ℝ) / T))
+    (lineIsometry.symm ((l : ℝ) / T))
+  rw [lineIsometry.symm.isometry.dist_eq, Real.dist_eq, ← sub_div,
+    abs_div, abs_of_pos hT.out]
+  exact div_le_div_of_nonneg_right hr hT.out.le
+
+/-- This interval spectrum has finitely many points in every compact region. -/
+theorem intervalSpectrum_locallyFinite (K : Set (Euclidean 1)) (hK : IsCompact K) :
+    (intervalSpectrum T ∩ K).Finite :=
+  (intervalSpectrum_separated T).finite_inter_compact (one_div_pos.mpr hT.out) hK
+
+theorem lineMode_eq_exponentialL2 (hfinite : volume (lineInterval a (a + T)) ≠ ⊤)
+    (k : ℤ) : lineMode T a k = exponentialL2 (lineInterval a (a + T)) hfinite
+      (intervalFrequency T k) := by
+  apply Lp.ext
+  exact (lineMode_ae T a k).trans (exponentialL2_ae _ _ _).symm
+
+/-- The lattice exponential system is complete in the actual Euclidean interval L². -/
+theorem interval_exponentials_complete (hfinite : volume (lineInterval a (a + T)) ≠ ⊤) :
+    IsCompleteExponential (lineInterval a (a + T)) hfinite (intervalSpectrum T) := by
+  have hr : range (exponentialFamily (lineInterval a (a + T)) hfinite (intervalSpectrum T)) =
+      range (lineMode T a) := by
+    ext f
+    constructor
+    · rintro ⟨ξ, rfl⟩
+      obtain ⟨k, hk⟩ := ξ.property
+      refine ⟨k, ?_⟩
+      rw [lineMode_eq_exponentialL2 T a hfinite k]
+      exact congrArg (exponentialL2 _ hfinite) hk
+    · rintro ⟨k, rfl⟩
+      refine ⟨⟨intervalFrequency T k, mem_range_self k⟩, ?_⟩
+      exact (lineMode_eq_exponentialL2 T a hfinite k).symm
+  change (Submodule.span ℂ _).topologicalClosure = ⊤
+  rw [hr]
+  exact lineMode_complete T a
+
+/-- Reciprocal-length multiples of the exponentials are their individual biorthogonals. -/
+theorem interval_exponentials_biorthogonal
+    (hfinite : volume (lineInterval a (a + T)) ≠ ⊤) :
+    IsBiorthogonal (exponentialFamily (lineInterval a (a + T)) hfinite (intervalSpectrum T))
+      (fun ξ => (T : ℂ)⁻¹ • exponentialL2 (lineInterval a (a + T)) hfinite ξ.val) := by
+  classical
+  intro ξ η
+  obtain ⟨k, hk⟩ := ξ.property
+  obtain ⟨l, hl⟩ := η.property
+  have hvk : exponentialL2 (lineInterval a (a + T)) hfinite ξ.val = lineMode T a k := by
+    rw [lineMode_eq_exponentialL2 T a hfinite, hk]
+  have hvl : exponentialL2 (lineInterval a (a + T)) hfinite η.val = lineMode T a l := by
+    rw [lineMode_eq_exponentialL2 T a hfinite, hl]
+  change inner (𝕜 := ℂ) ((T : ℂ)⁻¹ • exponentialL2 _ hfinite ξ.val)
+    (exponentialL2 _ hfinite η.val) = _
+  rw [hvk, hvl, lineMode_biorthogonal T a k l]
+  have heq : k = l ↔ ξ = η := by
+    constructor
+    · intro h
+      apply Subtype.ext
+      rw [← hk, ← hl, h]
+    · intro h
+      apply intervalFrequency_injective T
+      rw [hk, hl, h]
+  simp only [heq]
+  by_cases h : ξ = η <;> simp [h]
+
+theorem interval_exponentials_minimal (hfinite : volume (lineInterval a (a + T)) ≠ ⊤) :
+    IsMinimalExponential (lineInterval a (a + T)) hfinite (intervalSpectrum T) :=
+  (interval_exponentials_biorthogonal T a hfinite).isMinimal
+
+end EuclideanInterval
+
+theorem lineInterval_isBounded (a b : ℝ) : Bornology.IsBounded (lineInterval a b) := by
+  have hc := (isCompact_Icc : IsCompact (Icc a b)).image lineIsometry.symm.continuous
+  apply hc.isBounded.subset
+  intro x hx
+  refine ⟨lineIsometry x, Ioo_subset_Icc_self hx, ?_⟩
+  exact lineIsometry.symm_apply_apply x
+
+/-- Every nondegenerate Euclidean interval admits a locally finite, complete minimal
+exponential system with individual biorthogonals supported in its closure. -/
+theorem complete_minimal_interval (a b : ℝ) (hab : a < b) :
+    ∃ Λ : Set (Euclidean 1),
+      (∀ K : Set (Euclidean 1), IsCompact K → (Λ ∩ K).Finite) ∧
+      IsCompleteExponential (lineInterval a b) (lineInterval_isBounded a b).measure_lt_top.ne Λ ∧
+      IsMinimalExponential (lineInterval a b) (lineInterval_isBounded a b).measure_lt_top.ne Λ ∧
+      ∃ g : Λ → DomainL2 (lineInterval a b),
+        IsBiorthogonal (exponentialFamily (lineInterval a b)
+          (lineInterval_isBounded a b).measure_lt_top.ne Λ) g ∧
+        ∀ ξ, SupportedOn (lineInterval a b) (g ξ) (closure (lineInterval a b)) := by
+  let T := b - a
+  haveI : Fact (0 < T) := ⟨sub_pos.mpr hab⟩
+  have hab' : a + T = b := by dsimp [T]; ring
+  rw [← hab']
+  refine ⟨intervalSpectrum T, intervalSpectrum_locallyFinite T,
+    interval_exponentials_complete T a _, interval_exponentials_minimal T a _,
+    fun ξ => (T : ℂ)⁻¹ • exponentialL2 _ _ ξ.val,
+    interval_exponentials_biorthogonal T a _, ?_⟩
+  intro ξ
+  exact (supportedOn_domain _ (lineInterval_measurable _ _) _).mono subset_closure
+
+/-- A nonempty bounded open convex one-dimensional domain is an ordinary interval. -/
+theorem exists_lineInterval {Ω : Set (Euclidean 1)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ a b : ℝ, a < b ∧ Ω = lineInterval a b := by
+  let S := lineIsometry '' Ω
+  have hSn : S.Nonempty := hne.image lineIsometry
+  have hSo : IsOpen S := lineIsometry.toHomeomorph.isOpenMap Ω hopen
+  have hSc : Convex ℝ S := hconvex.linear_image lineIsometry.toLinearMap
+  have hcompact : IsCompact (closure S) := by
+    change IsCompact (closure (lineIsometry.toHomeomorph '' Ω))
+    rw [← lineIsometry.toHomeomorph.image_closure]
+    exact hbounded.isCompact_closure.image lineIsometry.continuous
+  have hclosed : closure S = Icc (sInf (closure S)) (sSup (closure S)) :=
+    eq_Icc_csInf_csSup_of_connected_bdd_closed
+      (hSc.closure.isConnected (hSn.mono subset_closure))
+      hcompact.bddBelow hcompact.bddAbove isClosed_closure
+  have hreg := hSc.interior_closure_eq_interior_of_nonempty_interior
+    (by rwa [hSo.interior_eq])
+  rw [hclosed, interior_Icc, hSo.interior_eq] at hreg
+  refine ⟨sInf (closure S), sSup (closure S), ?_, ?_⟩
+  · exact nonempty_Ioo.mp (hreg.symm ▸ hSn)
+  · change Ω = lineIsometry ⁻¹' _
+    rw [hreg]
+    exact (preimage_image_eq Ω lineIsometry.injective).symm
+
+/-- The closure of a nondegenerate interval is a full-dimensional ellipsoid. -/
+theorem lineInterval_closure_isEllipsoid (a b : ℝ) (hab : a < b) :
+    IsEllipsoid (closure (lineInterval a b)) := by
+  let m := (a + b) / 2
+  let r := (b - a) / 2
+  have hr : 0 < r := div_pos (sub_pos.mpr hab) (by norm_num)
+  let A := (LinearEquiv.smulOfNeZero ℝ (Euclidean 1) r hr.ne').toContinuousLinearEquiv
+  refine ⟨lineIsometry.symm m, A, ?_⟩
+  apply (Set.image_injective.mpr lineIsometry.injective)
+  have hleft : lineIsometry '' closure (lineInterval a b) = Icc a b := by
+    change lineIsometry.toHomeomorph '' closure (lineInterval a b) = Icc a b
+    rw [lineIsometry.toHomeomorph.image_closure]
+    have he : lineIsometry '' lineInterval a b = Ioo a b :=
+      image_preimage_eq _ lineIsometry.surjective
+    change closure (lineIsometry '' lineInterval a b) = Icc a b
+    rw [he, closure_Ioo hab.ne]
+  rw [hleft]
+  symm
+  calc
+    _ = (fun y : ℝ => r * y + m) '' (lineIsometry '' Metric.closedBall (0 : Euclidean 1) 1) := by
+      rw [closedEllipsoid, image_image, image_image]
+      funext x
+      simp [planeAffine, A, map_add, map_smul, smul_eq_mul, add_comm]
+    _ = Icc a b := by
+      change (fun y : ℝ => r * y + m) ''
+        (lineIsometry.toIsometryEquiv '' Metric.closedBall (0 : Euclidean 1) 1) = Icc a b
+      rw [lineIsometry.toIsometryEquiv.image_closedBall]
+      change (fun y : ℝ => r * y + m) ''
+        Metric.closedBall (lineIsometry (0 : Euclidean 1)) 1 = Icc a b
+      simp only [map_zero, Real.closedBall_eq_Icc, _root_.zero_sub, zero_add]
+      rw [image_affine_Icc' hr]
+      have hleft : r * (-1) + m = a := by dsimp [r, m]; ring
+      have hright : r * 1 + m = b := by dsimp [r, m]; ring
+      rw [hleft, hright]
+
+/-- In one dimension the entire domain closure is its John ellipsoid. -/
+theorem johnEllipsoid_closure_dim_one {Ω : Set (Euclidean 1)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    IsJohnEllipsoid (closure Ω) (closure Ω) := by
+  obtain ⟨a, b, hab, rfl⟩ := exists_lineInterval hne hbounded hopen hconvex
+  exact (lineInterval_closure_isEllipsoid a b hab).isJohnEllipsoid_self
+
+/-- The full one-dimensional complete-minimal theorem, including John-ellipsoid support. -/
+theorem complete_minimal_dim_one {Ω : Set (Euclidean 1)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean 1),
+      (∀ K : Set (Euclidean 1), IsCompact K → (Λ ∩ K).Finite) ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean 1), IsJohnEllipsoid (closure Ω) E ∧
+        ∃ g : Λ → DomainL2 Ω, IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          ∀ ξ, SupportedOn Ω (g ξ) E := by
+  obtain ⟨a, b, hab, hΩ⟩ := exists_lineInterval hne hbounded hopen hconvex
+  subst Ω
+  obtain ⟨Λ, hlocal, hcomplete, hminimal, g, hg, hsupp⟩ := complete_minimal_interval a b hab
+  exact ⟨Λ, hlocal, hcomplete, hminimal, closure (lineInterval a b),
+    (lineInterval_closure_isEllipsoid a b hab).isJohnEllipsoid_self, g, hg, hsupp⟩
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalMain.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Geometric assembly of the complete-minimal theorem. The normalized-domain
+existence premise is explicit until the analytic construction discharges it. -/
+
+noncomputable section
+open MeasureTheory Set Metric
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Finite intersections with compact sets give the local-finiteness convention
+used by the affine transport theorem. -/
+theorem locallyFiniteSet_of_finite_compact_intersections {d : ℕ}
+    {Λ : Set (Euclidean d)}
+    (hΛ : ∀ K : Set (Euclidean d), IsCompact K → (Λ ∩ K).Finite) :
+    IsLocallyFiniteSet Λ := by
+  intro x
+  refine ⟨ball x 1, ball_mem_nhds x zero_lt_one, ?_⟩
+  exact (hΛ (closedBall x 1) (isCompact_closedBall x 1)).subset
+    (inter_subset_inter_right Λ ball_subset_closedBall)
+
+/-- A locally finite set is a locally finite family of its singleton points. -/
+theorem IsLocallyFiniteSet.singletons {X : Type*} [TopologicalSpace X]
+    {Λ : Set X} (hΛ : IsLocallyFiniteSet Λ) : LocallyFinite (fun ξ : Λ => ({ξ.val} : Set X)) := by
+  intro x
+  obtain ⟨U, hU, hfinite⟩ := hΛ x
+  refine ⟨U, hU, ?_⟩
+  have hpre : (((↑) : Λ → X) ⁻¹' (Λ ∩ U)).Finite :=
+    hfinite.preimage (fun _ _ _ _ heq => Subtype.coe_injective heq)
+  exact hpre.subset (by
+    intro ξ hξ
+    obtain ⟨y, hy, hyU⟩ := hξ
+    rw [mem_singleton_iff] at hy
+    subst y
+    exact ⟨ξ.property, hyU⟩)
+
+/-- Local finiteness implies finite intersections with compact sets. -/
+theorem IsLocallyFiniteSet.finite_inter_compact {X : Type*} [TopologicalSpace X]
+    {Λ K : Set X} (hΛ : IsLocallyFiniteSet Λ) (hK : IsCompact K) : (Λ ∩ K).Finite := by
+  have hfin := hΛ.singletons.finite_nonempty_inter_compact hK
+  have heq : ((↑) : Λ → X) '' {ξ : Λ | (({ξ.val} : Set X) ∩ K).Nonempty} = Λ ∩ K := by
+    ext x
+    simp [and_comm]
+  rw [← heq]
+  exact hfin.image _
+
+/-- On a sigma-compact space, a locally finite frequency set is countable. -/
+theorem IsLocallyFiniteSet.countable {X : Type*} [TopologicalSpace X] [SigmaCompactSpace X]
+    {Λ : Set X} (hΛ : IsLocallyFiniteSet Λ) : Λ.Countable := by
+  have h := hΛ.singletons.countable_univ (fun ξ => singleton_nonempty ξ.val)
+  simpa only [image_univ, Subtype.range_coe] using h.image ((↑) : Λ → X)
+
+/-- The geometric part of the source main theorem. Existence on normalized
+John domains in dimensions at least two is the sole premise of this helper;
+the one-dimensional case is already proved by the interval Fourier basis. -/
+theorem complete_minimal_from_normalized_domains {d : ℕ} (hd : 1 ≤ d)
+    (normalized : 2 ≤ d → ∀ (D : Set (Euclidean d))
+      (_hne : D.Nonempty) (hbounded : Bornology.IsBounded D)
+      (_hopen : IsOpen D) (_hconvex : Convex ℝ D),
+      IsJohnEllipsoid (closure D) (closedBall (0 : Euclidean d) 1) →
+      ball (0 : Euclidean d) 1 ⊆ D →
+      (∀ t : Euclidean d, (fun x => t + x) '' closedBall 0 1 ⊆ closure D → t = 0) →
+      ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+        IsCompleteExponential D hbounded.measure_lt_top.ne Λ ∧
+        ∃ g : Λ → DomainL2 D,
+          IsBiorthogonal (exponentialFamily D hbounded.measure_lt_top.ne Λ) g ∧
+          ∀ ξ, SupportedOn D (g ξ) (closedBall 0 1))
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty) (hbounded : Bornology.IsBounded Ω)
+    (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          ∀ ξ, SupportedOn Ω (g ξ) E := by
+  by_cases hone : d = 1
+  · subst d
+    obtain ⟨Λ, hΛ, hcomplete, hminimal, E, hE, g, hg, hs⟩ :=
+      complete_minimal_dim_one hne hbounded hopen hconvex
+    exact ⟨Λ, locallyFiniteSet_of_finite_compact_intersections hΛ,
+      hcomplete, hminimal, E, hE, g, hg, hs⟩
+  · obtain ⟨a, A, hJohn, hneD, hboundedD, hopenD, hconvexD, hJohnD, hballD, htranslateD⟩ :=
+      exists_john_normalization hne hbounded hopen hconvex
+    obtain ⟨Λ, hlocal, hcomplete, g, hg, hs⟩ := normalized (by omega)
+      (normalizedDomain Ω a A) hneD hboundedD hopenD hconvexD hJohnD hballD htranslateD
+    have htransport := complete_minimal_supported_affineImage a A
+      (normalizedDomain Ω a A) Λ (closedBall 0 1) hboundedD.measure_lt_top.ne
+      hcomplete g hg hs hlocal
+    dsimp only at htransport
+    have hpackage : ∃ hfin : volume ((planeAffine a A) '' normalizedDomain Ω a A) ≠ ⊤,
+        IsCompleteExponential ((planeAffine a A) '' normalizedDomain Ω a A) hfin
+          ((affineFrequency A.symm) '' Λ) ∧
+        IsMinimalExponential ((planeAffine a A) '' normalizedDomain Ω a A) hfin
+          ((affineFrequency A.symm) '' Λ) ∧
+        IsLocallyFiniteSet ((affineFrequency A.symm) '' Λ) ∧
+        ∃ w : (affineFrequency A.symm) '' Λ →
+            DomainL2 ((planeAffine a A) '' normalizedDomain Ω a A),
+          IsBiorthogonal (exponentialFamily _ hfin ((affineFrequency A.symm) '' Λ)) w ∧
+          ∀ η, SupportedOn _ (w η) (closedEllipsoid a A) := ⟨_, htransport⟩
+    rw [normalizedDomain_image] at hpackage
+    obtain ⟨_hfin, hc, hm, hl, w, hw, hws⟩ := hpackage
+    exact ⟨(affineFrequency A.symm) '' Λ, hl, hc, hm,
+      closedEllipsoid a A, hJohn, w, hw, hws⟩
+
+/-- Concrete spherical analytic packages on normalized John domains assemble into
+the full geometric conclusion. The package premise is retained explicitly until
+its analytic construction is discharged. -/
+theorem complete_minimal_from_normalized_sphere_inputs {d : ℕ} (hd : 1 ≤ d)
+    (radius : ℕ → ℝ) (hzero : radius 0 = 0)
+    (hpositive : ∀ j, 0 < j → 0 < radius j) (hstrict : StrictMono radius)
+    (hescape : Filter.Tendsto radius Filter.atTop Filter.atTop)
+    (inputs : 2 ≤ d → ∀ (D : Set (Euclidean d))
+      (_hne : D.Nonempty) (hbounded : Bornology.IsBounded D)
+      (hopen : IsOpen D) (_hconvex : Convex ℝ D),
+      IsJohnEllipsoid (closure D) (closedBall (0 : Euclidean d) 1) →
+      ball (0 : Euclidean d) 1 ⊆ D →
+      (∀ t : Euclidean d, (fun x => t + x) '' closedBall 0 1 ⊆ closure D → t = 0) →
+      SphereAnalyticInputs D hopen.measurableSet hbounded.measure_lt_top.ne radius
+        (closedBall 0 1))
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty) (hbounded : Bornology.IsBounded Ω)
+    (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          ∀ ξ, SupportedOn Ω (g ξ) E := by
+  apply complete_minimal_from_normalized_domains hd ?_ hne hbounded hopen hconvex
+  intro hd2 D hneD hboundedD hopenD hconvexD hJohnD hballD htranslateD
+  obtain ⟨Λ, _hspheres, hcomplete, _hminimal, hlocal, g, hg, hs⟩ :=
+    complete_minimal_exponentials_of_sphere_analytic_inputs hd D hopenD.measurableSet
+      hboundedD hboundedD.measure_lt_top.ne radius hzero hpositive hstrict hescape
+      (closedBall 0 1) (inputs hd2 D hneD hboundedD hopenD hconvexD hJohnD hballD htranslateD)
+  exact ⟨Λ, hlocal, hcomplete, g, hg, hs⟩
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalScope.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! The domain scope of the selected exponential system, including almost-everywhere
+intermediate domains and incompleteness of proper ellipsoid-supported dual families. -/
+
+noncomputable section
+open MeasureTheory Set
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- A full-dimensional closed ellipsoid agrees almost everywhere with its interior. -/
+theorem IsEllipsoid.ae_eq_interior {d : ℕ} {E : Set (Euclidean d)} (hE : IsEllipsoid E) :
+    E =ᵐ[volume] interior E :=
+  (interior_ae_eq_of_null_frontier (hE.convex.addHaar_frontier volume)).symm
+
+/-- The closed ellipsoid is almost everywhere contained in its open interior. -/
+theorem IsEllipsoid.ae_subset_interior {d : ℕ} {E : Set (Euclidean d)}
+    (hE : IsEllipsoid E) : E ≤ᵐ[volume] interior E := by
+  filter_upwards [hE.ae_eq_interior] with x hx hEx
+  rwa [← hx]
+
+/-- The interior of a John ellipsoid of the closure of an open convex domain
+is contained in that domain. -/
+theorem IsJohnEllipsoid.interior_subset_domain {d : ℕ} {Ω E : Set (Euclidean d)}
+    (hE : IsJohnEllipsoid (closure Ω) E) (hne : Ω.Nonempty)
+    (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) : interior E ⊆ Ω := by
+  simpa only [interior_closure_open_convex hne hopen hconvex] using interior_mono hE.subset
+
+/-- The same frequencies are complete and minimal on every measurable intermediate
+domain between the open John ellipsoid and the original domain, with inclusions
+up to null sets. The duals are the actual restricted original vectors. -/
+theorem john_supported_complete_scope_ae {d : ℕ}
+    (Ω E : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hfinite : volume Ω ≠ ⊤)
+    (hE : IsEllipsoid E) (Λ : Set (Euclidean d))
+    (hcomplete : IsCompleteExponential Ω hfinite Λ)
+    (g : Λ → DomainL2 Ω) (hg : IsBiorthogonal (exponentialFamily Ω hfinite Λ) g)
+    (hs : ∀ ξ, SupportedOn Ω (g ξ) E) :
+    (∀ (D : Set (Euclidean d)), MeasurableSet D →
+      interior E ≤ᵐ[volume] D → D ≤ᵐ[volume] Ω →
+      ∃ hD : volume D ≠ ⊤,
+        IsCompleteExponential D hD Λ ∧ IsMinimalExponential D hD Λ ∧
+        IsBiorthogonal (exponentialFamily D hD Λ)
+          (fun ξ => domainToDomain Ω D hΩ (g ξ)) ∧
+        ∀ ξ, SupportedOn D (domainToDomain Ω D hΩ (g ξ)) E) ∧
+    (0 < volume (Ω \ E) → ¬ IsComplete g) := by
+  refine ⟨?_, ?_⟩
+  · intro D hD hED hDΩ
+    exact complete_minimal_on_intermediate_domain_ae Ω D E hΩ hD hfinite
+      (hE.ae_subset_interior.trans hED) hDΩ Λ hcomplete g hg hs
+  · intro hpositive
+    exact supported_family_not_complete Ω E hΩ hfinite hE.isCompact.isClosed.measurableSet
+      hpositive g hs
+
+/-- Literal inclusions suffice for the same-frequency scope corollary. Only the
+open ellipsoid must lie in the intermediate domain. -/
+theorem john_supported_complete_scope {d : ℕ}
+    (Ω E D : Set (Euclidean d)) (hΩ : MeasurableSet Ω) (hD : MeasurableSet D)
+    (hfinite : volume Ω ≠ ⊤) (hE : IsEllipsoid E)
+    (hED : interior E ⊆ D) (hDΩ : D ⊆ Ω) (Λ : Set (Euclidean d))
+    (hcomplete : IsCompleteExponential Ω hfinite Λ)
+    (g : Λ → DomainL2 Ω) (hg : IsBiorthogonal (exponentialFamily Ω hfinite Λ) g)
+    (hs : ∀ ξ, SupportedOn Ω (g ξ) E) :
+    ∃ hfiniteD : volume D ≠ ⊤,
+      IsCompleteExponential D hfiniteD Λ ∧ IsMinimalExponential D hfiniteD Λ ∧
+      IsBiorthogonal (exponentialFamily D hfiniteD Λ)
+        (fun ξ => domainToDomain Ω D hΩ (g ξ)) ∧
+      ∀ ξ, SupportedOn D (domainToDomain Ω D hΩ (g ξ)) E :=
+  (john_supported_complete_scope_ae Ω E hΩ hfinite hE Λ hcomplete g hg hs).1 D hD
+    (Filter.Eventually.of_forall hED) (Filter.Eventually.of_forall hDΩ)
+
+/-- Proper inclusion of the open ellipsoid in an open domain forces the original
+supported dual family to be incomplete. -/
+theorem john_supported_duals_incomplete_of_proper {d : ℕ}
+    (Ω E : Set (Euclidean d)) (hΩ : IsOpen Ω) (hfinite : volume Ω ≠ ⊤)
+    (hE : IsJohnEllipsoid (closure Ω) E) (hproper : interior E ⊂ Ω)
+    {ι : Type*} (g : ι → DomainL2 Ω) (hs : ∀ ξ, SupportedOn Ω (g ξ) E) :
+    ¬ IsComplete g :=
+  ellipsoid_supported_duals_not_complete Ω E hΩ hfinite hE.isEllipsoid hproper g hs
+
+/-- Existence integration for the manuscript scope remark. Any proved instance of
+the main theorem supplies one fixed locally finite frequency set and supported
+dual family having all the intermediate-domain properties simultaneously. -/
+theorem complete_minimal_scope_of_existence {d : ℕ}
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty) (hbounded : Bornology.IsBounded Ω)
+    (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω)
+    (existence : ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          ∀ ξ, SupportedOn Ω (g ξ) E) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧ interior E ⊆ Ω ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          (∀ ξ, SupportedOn Ω (g ξ) E) ∧
+          (∀ (D : Set (Euclidean d)), MeasurableSet D →
+            interior E ≤ᵐ[volume] D → D ≤ᵐ[volume] Ω →
+            ∃ hD : volume D ≠ ⊤,
+              IsCompleteExponential D hD Λ ∧ IsMinimalExponential D hD Λ ∧
+              IsBiorthogonal (exponentialFamily D hD Λ)
+                (fun ξ => domainToDomain Ω D hopen.measurableSet (g ξ)) ∧
+              ∀ ξ, SupportedOn D (domainToDomain Ω D hopen.measurableSet (g ξ)) E) ∧
+          (0 < volume (Ω \ E) → ¬ IsComplete g) ∧
+          (interior E ⊂ Ω → ¬ IsComplete g) := by
+  obtain ⟨Λ, hlocal, hcomplete, hminimal, E, hJohn, g, hg, hs⟩ := existence
+  have hscope := john_supported_complete_scope_ae Ω E hopen.measurableSet
+    hbounded.measure_lt_top.ne hJohn.isEllipsoid Λ hcomplete g hg hs
+  exact ⟨Λ, hlocal, hcomplete, hminimal, E, hJohn,
+    hJohn.interior_subset_domain hne hopen hconvex, g, hg, hs, hscope.1, hscope.2,
+    fun hproper => john_supported_duals_incomplete_of_proper Ω E hopen
+      hbounded.measure_lt_top.ne hJohn hproper g hs⟩
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/CompleteMinimalTheorem.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! The final Section 9 main theorem and scope corollary. The only external
+analytic hypothesis is the explicitly named classical Titchmarsh–Lions theorem. -/
+
+noncomputable section
+open MeasureTheory Set Metric
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The actual normalized complete-minimal exponential system, constructed on
+the enumerated Bessel spheres with individual duals supported in the unit ball.
+All analytic package fields are proved; only Titchmarsh–Lions is a hypothesis. -/
+theorem complete_minimal_normalized_domain (n : ℕ) (hTL : TitchmarshLions (n + 1))
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (hconvex : Convex ℝ Ω)
+    (hJ : IsJohnEllipsoid (closure Ω) (closedBall (0 : Euclidean (n + 1)) 1))
+    (hB : ball (0 : Euclidean (n + 1)) 1 ⊆ Ω) :
+    ∃ Λ : Set (Euclidean (n + 1)), Λ ⊆ sphereFrequencies (ballZeroRadius n) ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧ IsLocallyFiniteSet Λ ∧
+      ∃ g : Λ → DomainL2 Ω,
+        IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+        ∀ ξ, SupportedOn Ω (g ξ) (closedBall 0 1) :=
+  complete_minimal_exponentials_of_sphere_analytic_inputs (by omega) Ω hΩ hbounded
+    hbounded.measure_lt_top.ne (ballZeroRadius n) (ballZeroRadius_zero n)
+    (fun j hj => ballZeroRadius_pos n hj) (ballZeroRadius_strictMono n)
+    (ballZeroRadius_tendsto n) (closedBall 0 1)
+    (sphereAnalyticInputs n hTL Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB)
+
+/-- The manuscript main theorem: every nonempty bounded open convex domain in
+positive dimension has actual locally finite complete-minimal exponentials,
+with their biorthogonal functions supported in a John ellipsoid of its closure.
+The sole external analytic input is Titchmarsh–Lions in the physical dimension. -/
+theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
+    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          ∀ ξ, SupportedOn Ω (g ξ) E := by
+  cases d with
+  | zero => omega
+  | succ n =>
+    apply complete_minimal_from_normalized_domains hd ?_ hne hbounded hopen hconvex
+    intro _hd2 D _hneD hboundedD hopenD hconvexD hJD hBD _htranslateD
+    obtain ⟨Λ, _hspheres, hcomplete, _hminimal, hlocal, g, hg, hs⟩ :=
+      complete_minimal_normalized_domain n hTL D hopenD.measurableSet hboundedD hconvexD hJD hBD
+    exact ⟨Λ, hlocal, hcomplete, g, hg, hs⟩
+
+/-- The manuscript scope corollary, simultaneously for every measurable
+intermediate domain up to null sets, using the same selected frequencies and
+actual restrictions of the original duals. Proper ellipsoid-supported duals
+are not complete on the original domain. -/
+theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
+    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧ interior E ⊆ Ω ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          (∀ ξ, SupportedOn Ω (g ξ) E) ∧
+          (∀ (D : Set (Euclidean d)), MeasurableSet D →
+            interior E ≤ᵐ[volume] D → D ≤ᵐ[volume] Ω →
+            ∃ hD : volume D ≠ ⊤,
+              IsCompleteExponential D hD Λ ∧ IsMinimalExponential D hD Λ ∧
+              IsBiorthogonal (exponentialFamily D hD Λ)
+                (fun ξ => domainToDomain Ω D hopen.measurableSet (g ξ)) ∧
+              ∀ ξ, SupportedOn D (domainToDomain Ω D hopen.measurableSet (g ξ)) E) ∧
+          (0 < volume (Ω \ E) → ¬ IsComplete g) ∧
+          (interior E ⊂ Ω → ¬ IsComplete g) :=
+  complete_minimal_scope_of_existence hne hbounded hopen hconvex
+    (complete_minimal_bounded_open_convex hd hTL hne hbounded hopen hconvex)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
 
 /- Source: RieszEuclidean/EdgeGeometry.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -13411,9 +31387,13 @@ theorem edgeLengthMeasure_translate_polygon_remainder {ι : Type*} [Fintype ι]
       edgeLengthMeasure_translate_nonparallel_segment a b (c i) (e i) θ (htrans i)
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/TriangleCrossing.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -13519,9 +31499,13 @@ theorem strictHalfspaceIntersection_same_direction {d : ℕ} {ι : Type*} [Finty
   rw [hu, hv, inner_add_left, hn, add_zero]
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/TriangleBoundary.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -13786,9 +31770,13 @@ theorem exists_conull_sequences_standardTriangle_two_sides (s : ℝ) (hs : 0 < s
   exact exists_conull_sequences_two_sides hG (standardTriangle_isOpen s) h.1 h.2
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/TriangleSymbolLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -13924,9 +31912,13 @@ theorem exists_standardTriangle_boundary_symbol_limits (s : ℝ) (hs : 0 < s)
       (fun n => (hout n).2)⟩⟩
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/TriangleCutoffObstruction.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -14037,9 +32029,13 @@ theorem standardTriangle_cutoffs_continuous_comparison_obstruction {H : Type}
     M hM.continuousAt (hMs t₀) (hMi t₀) hγ hgap
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/TriangleAnalyticAssembly.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean.SeparatedConfiguration
@@ -14117,9 +32113,13 @@ theorem standardTriangle_no_exponentialRieszBasis_of_hull_representations
     (SchwartzMap.norm_le_seminorm ℝ b) hγ hγlt (fun Δ => hgap Δ.val Δ.property)
 
 end RieszEuclidean.SeparatedConfiguration
+end
+end
 
 /- Source: RieszEuclidean/TriangleAffineAssembly.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -14220,9 +32220,13 @@ theorem noncollinear_triangle_no_exponentialRieszBasis_of_hull_representations
       (affineIndependent_iff_not_collinear.mpr h)) hrep Λ
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/GeneralBoundaryAssembly.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -14352,9 +32356,13 @@ theorem no_exponentialRieszBasis_of_general_boundary_and_hull_representations {d
 
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/PolygonGeometry.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -14515,9 +32523,13 @@ theorem strictSupportingFace_not_pos_parallel {d : ℕ} {ι : Type*}
   nlinarith [mul_pos hr (sub_pos.mpr hyi)]
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/PolygonParity.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory
 namespace RieszEuclidean
@@ -14702,9 +32714,13 @@ theorem strictSupportingFaces_parallel_card_le_two {d : ℕ} {ι : Type*} [Finty
     exact (Set.ncard_le_ncard hsub).trans (by simp)
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/PolygonLocalGeometry.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -14858,9 +32874,13 @@ theorem strictSupportingFace_same_direction {d : ℕ} {ι : Type*} [Fintype ι]
     ht.1 htθ.1 ht.2 htθ.2)
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/PolygonSymbolLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -15007,9 +33027,13 @@ theorem exists_unpairedSupportingFace_boundary_symbol_limits [Fintype ι]
       (fun n => (hout n).2)⟩⟩
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/PolygonCutoffObstruction.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -15124,9 +33148,13 @@ theorem unpairedSupportingFace_cutoffs_continuous_comparison_obstruction {H : Ty
     M hM.continuousAt (hMs t₀) (hMi t₀) hγ hgap
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/PolygonAnalyticAssembly.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean.SeparatedConfiguration
@@ -15235,9 +33263,13 @@ theorem oddSupportingPolygon_no_exponentialRieszBasis_of_hull_representations
     (hface j) hj hbounded hrep Λ
 
 end RieszEuclidean.SeparatedConfiguration
+end
+end
 
 /- Source: RieszEuclidean/PolygonPresentation.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -15847,9 +33879,13 @@ theorem SeparatedConfiguration.oddMaximalSides_no_exponentialRieszBasis_of_nonze
   rwa [heq] at h
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/UnconditionalGeometry.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 
@@ -15918,9 +33954,13 @@ theorem unpairedMaximalSide_no_exponentialRieszBasis
 
 end SeparatedConfiguration
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ConvexBoundary.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -16006,9 +34046,13 @@ theorem convex_no_exponentialRieszBasis_of_boundary_patch {d : ℕ}
     exact ⟨hx.2, hx.1.2⟩
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ConvexTranslatedOverlap.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Filter Topology
 namespace RieszEuclidean
@@ -16072,9 +34116,13 @@ theorem c2_patch_translated_overlap_null {n : ℕ} (hn : 2 ≤ n)
     · exact ((hz₂.mp hz.2).trans hg0.symm)
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/ConvexDomainTheorem.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 open MeasureTheory Topology
 namespace RieszEuclidean
@@ -16096,9 +34144,13 @@ theorem convex_C2_no_exponentialRieszBasis {n : ℕ} (hn : 2 ≤ n)
     C.singleton_faces hθ
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/IntervalRectangleRemarks.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 noncomputable section
 
 open MeasureTheory Set
@@ -16148,9 +34200,13 @@ theorem opposite_rectangle_edges_positive_translated_overlap
   exact edist_pos.mpr hab
 
 end RieszEuclidean
+end
+end
 
 /- Source: RieszEuclidean/WeakPointLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 open Filter Metric Set
 namespace RieszEuclidean
 /-- A convergent sequence of configuration points belongs to the closed weak limit. -/
@@ -16177,15 +34233,19 @@ theorem WeaklyConverges.mem_of_tendsto {d : ℕ} {Γ : ℕ → Set (Euclidean d)
   rw [dist_comm x₀ (x j)] at htri
   linarith
 end RieszEuclidean
+end
 
 /- Source: MainResults.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
 /-!
 # Implemented result statements and concrete definitions
 
-This compact Comparator reference states thirty-seven proved results, including
+This compact Comparator reference states proved results, including
 spectral-measure existence for the stationary representation and unconditional
-geometric nonexistence conclusions. Wrapper proofs use the modular library
+geometric nonexistence conclusions, and complete-minimal existence modulo the
+explicit Titchmarsh–Lions hypothesis. Wrapper proofs use the modular library
 without placeholders or warning suppressions.
 -/
 noncomputable section
@@ -16790,4 +34850,102 @@ theorem convex_C2_no_exponentialRieszBasis {n : ℕ} (hn : 2 ≤ n)
     (Λ : Set (Euclidean n)) : ¬ HasExponentialRieszBasis Ω Λ :=
   RieszEuclidean.convex_C2_no_exponentialRieszBasis hn Ω hΩ hne hc hb hC Λ
 
+/-- The entire quotient lemma used in the complete-minimal construction. -/
+theorem entire_quotient_finite_exponential_type {d : ℕ}
+    {A D G : CompleteMinimal.ComplexEuclidean d → ℂ}
+    (hA : Differentiable ℂ A) (hD : Differentiable ℂ D) (hG : Differentiable ℂ G)
+    (hproduct : ∀ z, A z = D z * G z) (hD0 : D 0 ≠ 0)
+    (hAtype : CompleteMinimal.FiniteExponentialType A)
+    (hDtype : CompleteMinimal.FiniteExponentialType D) :
+    CompleteMinimal.FiniteExponentialType G :=
+  CompleteMinimal.finiteExponentialType_entire_quotient hA hD hG hproduct hD0 hAtype hDtype
+
+/-- An entire function of finite type with polynomial real growth is the
+Fourier transform of an actual compactly supported distribution. -/
+theorem paley_wiener_schwartz {d : ℕ} {F : CompleteMinimal.ComplexEuclidean d → ℂ}
+    (hF : Differentiable ℂ F) (htype : CompleteMinimal.FiniteExponentialType F)
+    (hreal : ∃ N : ℕ, ∃ C : ℝ, 0 ≤ C ∧ ∀ x : Euclidean d,
+      ‖F (CompleteMinimal.realToComplex x)‖ ≤ C * (1 + ‖x‖) ^ N) :
+    ∃ u : CompleteMinimal.TemperedDistribution d,
+      CompleteMinimal.CompactlySupportedDistribution u ∧
+      ∀ φ : SchwartzMap (Euclidean d) ℂ,
+        CompleteMinimal.distributionFourier u φ =
+          ∫ x, F (CompleteMinimal.realToComplex x) * φ x :=
+  CompleteMinimal.paleyWienerSchwartz hF htype hreal
+
 end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+open CompleteMinimal in
+/-- Complete and ordinary minimal exponentials on every bounded nonempty open convex domain,
+with locally finite frequencies and John-supported duals, assuming Titchmarsh–Lions. -/
+theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
+    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          ∀ ξ, SupportedOn Ω (g ξ) E :=
+  CompleteMinimal.complete_minimal_bounded_open_convex hd hTL hne hbounded hopen hconvex
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+open CompleteMinimal in
+/-- The same selected frequencies work on all measurable intermediate domains;
+the actual John-supported dual family is incomplete outside a proper support region. -/
+theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
+    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
+    ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
+      IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      IsMinimalExponential Ω hbounded.measure_lt_top.ne Λ ∧
+      ∃ E : Set (Euclidean d), IsJohnEllipsoid (closure Ω) E ∧ interior E ⊆ Ω ∧
+        ∃ g : Λ → DomainL2 Ω,
+          IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
+          (∀ ξ, SupportedOn Ω (g ξ) E) ∧
+          (∀ (D : Set (Euclidean d)), MeasurableSet D →
+            interior E ≤ᵐ[volume] D → D ≤ᵐ[volume] Ω →
+            ∃ hD : volume D ≠ ⊤,
+              IsCompleteExponential D hD Λ ∧ IsMinimalExponential D hD Λ ∧
+              IsBiorthogonal (exponentialFamily D hD Λ)
+                (fun ξ => domainToDomain Ω D hopen.measurableSet (g ξ)) ∧
+              ∀ ξ, SupportedOn D (domainToDomain Ω D hopen.measurableSet (g ξ)) E) ∧
+          (0 < volume (Ω \ E) → ¬ IsComplete g) ∧
+          (interior E ⊂ Ω → ¬ IsComplete g) :=
+  CompleteMinimal.complete_minimal_scope hd hTL hne hbounded hopen hconvex
+
+end RieszEuclidean.Results
+
+namespace RieszEuclidean.Results
+
+open CompleteMinimal in
+/-- Actual interpolation spaces: nesting, binomial dimension, localized support,
+and exact orthogonal annihilators of the later frequency spheres. -/
+theorem normalized_interpolation_spaces (n : ℕ) (hTL : TitchmarshLions (n + 1))
+    (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
+    (hbounded : Bornology.IsBounded Ω) (hconvex : Convex ℝ Ω)
+    (hJ : IsJohnEllipsoid (closure Ω) (Metric.closedBall (0 : Euclidean (n + 1)) 1))
+    (hB : Metric.ball (0 : Euclidean (n + 1)) 1 ⊆ Ω) :
+    Monotone (normalizedInterpolationSpace n Ω hΩ hbounded) ∧
+    ∀ N : ℕ,
+      Module.finrank ℂ (normalizedInterpolationSpace n Ω hΩ hbounded N) =
+        Nat.choose (2 * N + (n + 1)) (n + 1) ∧
+      (∀ f : DomainL2 Ω,
+        f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N →
+          SupportedOn Ω f (Metric.closedBall 0 1)) ∧
+      (∀ f : DomainL2 Ω,
+        f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N ↔
+          ∀ x ∈ laterSpheres (ballZeroRadius n) N,
+            inner (𝕜 := ℂ) f (exponentialL2 Ω hbounded.measure_lt_top.ne x) = 0) :=
+  CompleteMinimal.normalized_interpolation_spaces n hTL Ω hΩ hbounded hconvex hJ hB
+
+end RieszEuclidean.Results
+end
+end
+end

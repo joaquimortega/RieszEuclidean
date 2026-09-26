@@ -3,8 +3,16 @@
 Lean formalization project for Joaquim Ortega-Cerdà's
 [`RieszEuclidean.tex`](paper/RieszEuclidean.tex).
 
-All **32 blueprint obligations are proved**, including the revised Section 2
-and the new Section 8 on bounded convex domains with C² boundary. The bump
+The **32 obligations for Sections 2–8 are proved**. Section 9 now has 20 proved
+milestones and the author-authorized Titchmarsh–Lions hypothesis. Its main theorem
+constructs locally finite complete and ordinary minimal exponentials on every
+nonempty bounded open convex domain, with biorthogonals supported in a John
+ellipsoid. The same frequencies work on intermediate measurable domains.
+The Bessel argument uses proved ODE and zero-geometry results; the literal
+infinite-product identity is not formalized. All 46 public targets passed
+Comparator and kernel validation; see [the Section 9 review](reviews/complete-minimal-progress.md).
+The existing proofs include the revised Section 2 and Section 8 on bounded
+convex domains with C² boundary. The bump
 characterization is an equivalence, and the projection proof uses adjoints,
 closed range, and the exact maximum-norm identity.
 
@@ -43,24 +51,34 @@ All project-specific Lean sources are contained in this repository. No sibling
 checkout, absolute path, generated proof file, or private package is required.
 Mathlib and its transitive dependencies are fetched by Lake.
 
-The public theorems use the concrete `HasExponentialRieszBasis` predicate,
-arbitrary frequency sets, and the manuscript's dimensional and geometric
-hypotheses. CI builds and lints the modular, public, and standalone sources,
+The nonexistence theorems use the concrete `HasExponentialRieszBasis` predicate
+and arbitrary frequency sets. The complete-minimal results use actual restricted
+Lebesgue L² exponentials, closed complex spans and supported biorthogonals.
+Both retain the manuscript's dimensional and geometric hypotheses.
+CI builds and lints the modular, public, and standalone sources,
 checks extraction and metadata, audits transitive axioms, and requires all
-blueprint obligations to be proved.
+blueprint obligations to be resolved, with only the documented Titchmarsh–Lions
+external hypothesis permitted in Section 9.
 
 ## Verification
 
-`MainResults.lean` exposes 41 public targets, including the unconditional convex
-`C²` corollary and the Section 2 bump equivalence.
+`MainResults.lean` exposes 46 public targets, including the unconditional convex
+`C²` corollary, the Section 2 bump equivalence, and five Section 9 results.
 `RieszEuclideanStandalone.lean` is generated from the same checked source modules.
-Current verification results are recorded in
+The completed Section 9 verification is recorded in
+[`reviews/complete-minimal-progress.md`](reviews/complete-minimal-progress.md).
+The completed 41-target verification of Sections 2–8 is recorded in
 [`reviews/convex-progress.md`](reviews/convex-progress.md).
 
 The earlier 37-target Comparator run is a historical verification of the previous
 manuscript scope, recorded in [`reviews/bochner-progress.md`](reviews/bochner-progress.md).
-It must not be read as verification of the new Section 8. Pinned Comparator
+The current 46-target record covers the extended scope. Pinned Comparator
 instructions are in [`standalone/TOOLS.md`](standalone/TOOLS.md).
+
+The axiom checker verifies every blueprint target using Lean's builtin
+transitive-axiom collector, sharing traversal state to compute their exact
+union. It rejects any axiom outside the three standard Lean axioms. Individual
+reports remain available with `lake env lean RieszEuclidean/ProofAudit.lean`.
 
 Regenerate and verify the standalone source after proof edits with:
 
@@ -103,8 +121,9 @@ latexmk -pdf -interaction=nonstopmode -halt-on-error \
 ```
 
 The paper credits weak limits to Beurling and cites Rudin, *Fourier Analysis on
-Groups*, §1.4.3, for Bochner's theorem. The required mathematical conclusions are
-proved in Lean or obtained from Mathlib.
+Groups*, §1.4.3, for Bochner's theorem. Apart from the explicitly authorized
+Titchmarsh–Lions hypothesis, the required mathematical conclusions are proved
+in Lean or obtained from Mathlib.
 
 ## Contribution checks
 

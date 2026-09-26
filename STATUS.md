@@ -1,7 +1,29 @@
 # Formalization status
 
-**All 32 blueprint obligations are proved.** The formalization includes the
-revised Section 2 and the new Section 8 on convex C² domains.
+**Sections 2–9: 52 proved milestones and one authorized external hypothesis.**
+Section 9 proves locally finite complete and ordinary minimal exponential systems
+on every nonempty bounded open convex domain in positive dimension, with duals
+supported in a John ellipsoid of its closure. It also proves the intermediate-domain
+scope and incompleteness of the dual family outside a proper support region.
+
+The only external mathematical hypothesis is the Titchmarsh–Lions convolution
+support theorem, explicitly authorized by the author on 2026-09-26. It is a
+parameter of the Section 9 theorem, not a Lean axiom. Paley–Wiener–Schwartz,
+Bessel zero geometry and estimates, the physical resolvents, interpolation-space
+dimensions and nesting, and the exact tail characterization are proved.
+
+The proof derives Bessel zero geometry directly from the radial ODE. The literal
+infinite-product identity is not formalized. John translation rigidity follows
+from maximal volume without a general uniqueness theorem. These alternatives
+are documented in the blueprint and [Section 9 review](reviews/complete-minimal-progress.md).
+
+The modular, public and standalone builds, all 15 linters in each environment,
+and the full 2,267-declaration axiom audit have passed. Official Comparator
+accepted all 46 public targets and the Lean kernel accepted the standalone solution.
+Logs and exact source fingerprints are in the [Section 9 review](reviews/complete-minimal-progress.md).
+
+The previously completed formalization includes the revised Section 2 and
+Section 8 on convex C² domains.
 
 Section 2 includes both directions of the bump characterization, with the
 Fourier lower bound on the closure of the domain. The projection proof identifies
@@ -29,4 +51,5 @@ retained. The former ellipsoid corollary remains a legacy result.
 
 There are no placeholder proofs, added axioms, or linter suppressions.
 Build, linter, axiom, source-correspondence and Comparator results are recorded
-in [the verification review](reviews/convex-progress.md).
+in [the current verification review](reviews/complete-minimal-progress.md);
+the [Sections 2–8 record](reviews/convex-progress.md) is retained as history.

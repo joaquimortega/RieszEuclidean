@@ -42,7 +42,12 @@
     "RieszEuclidean.Results.initial_bumps_iff",
     "RieszEuclidean.Results.convex_boundary_measure_no_exponentialRieszBasis",
     "RieszEuclidean.Results.projection_gap_maximum",
-    "RieszEuclidean.Results.convex_C2_no_exponentialRieszBasis"
+    "RieszEuclidean.Results.convex_C2_no_exponentialRieszBasis",
+    "RieszEuclidean.Results.entire_quotient_finite_exponential_type",
+    "RieszEuclidean.Results.paley_wiener_schwartz",
+    "RieszEuclidean.Results.complete_minimal_bounded_open_convex",
+    "RieszEuclidean.Results.complete_minimal_scope",
+    "RieszEuclidean.Results.normalized_interpolation_spaces"
   ],
   "permitted_axioms": [
     "propext",

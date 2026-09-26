@@ -1,0 +1,4 @@
+ℹ [2740/2741] Built RieszEuclideanStandalone
+info: ././././RieszEuclideanStandalone.lean:20565:4: Try this: ring_nf
+info: ././././RieszEuclideanStandalone.lean:26709:38: Try this: ring_nf
+Build completed successfully.

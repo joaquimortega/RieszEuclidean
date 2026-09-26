@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import re
+from check_blueprint import uncomment
 
 root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
@@ -29,15 +30,43 @@ for name in sorted(modules):
     visit(name)
 order.append(root/'MainResults.lean')
 imports, bodies = set(), []
+
+
+def close_file_sections(text, source):
+    """Close anonymous sections that Lean normally closes at end of file."""
+    scopes = []
+    for line in uncomment(text).splitlines():
+        match = re.fullmatch(
+            r'\s*(noncomputable section|section|namespace|end)(?:\s+([\w.]+))?\s*', line)
+        if not match:
+            continue
+        command, name = match.groups()
+        if command == 'end':
+            assert scopes, f'Unmatched end in {source}'
+            _, opened_name = scopes.pop()
+            assert name is None or name == opened_name, f'Mismatched scope in {source}'
+        else:
+            scopes.append((command, name))
+    assert all(command != 'namespace' and name is None for command, name in scopes), \
+        f'Only anonymous sections may remain open at EOF: {source}'
+    return 'end\n' * len(scopes)
+
+
 for source in order:
     text = source.read_text()
     imports.update(re.findall(r'^import (Mathlib\.\S+)', text, re.M))
     body = re.sub(r'^import .+\n', '', text, flags=re.M).strip()
-    # Lean's auxiliary proof cache is local to a compilation unit and is not
+    # Lean's auxiliary proof and matcher caches are local to a compilation unit and are not
     # stored in .olean files. Reproduce that boundary when concatenating files.
     # This resets only name deduplication, never declarations or kernel checks.
-    boundary = 'run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})'
-    bodies.append(f'/- Source: {source.relative_to(root)} -/\n{boundary}\n{body}\n')
+    boundary = ('run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})\n'
+                'run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})')
+    # A compilation unit also isolates `open`, scoped notation, local attributes,
+    # options, and section variables. An anonymous outer section restores those
+    # settings after closing any sections the source leaves open at EOF.
+    closing = close_file_sections(body, source.relative_to(root))
+    bodies.append(f'/- Source: {source.relative_to(root)} -/\n{boundary}\n'
+                  f'section\n{body}\n{closing}end\n')
 result = '\n'.join(f'import {x}' for x in sorted(imports)) + '''
 
 /-!

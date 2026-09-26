@@ -48,6 +48,7 @@ def main():
     theorem_labels = set(re.findall(r'\\begin\{(?:theorem|lemma|proposition|corollary)\}'
         r'(?:\[[^\]]*\])?\s*\\label\{([^}]+)\}', tex))
     graph = {n['id']: n for n in data['nodes']}
+    external = {n['id']: n for n in data.get('authorized_external_results', [])}
     assert len(graph) == len(data['nodes']), 'Duplicate node ID'
     covered, visited, active = set(), set(), set()
     audit = (ROOT / 'RieszEuclidean/ProofAudit.lean').read_text()
@@ -67,10 +68,16 @@ def main():
         visit(node['id'])
         assert set(node['source_labels']) <= labels, f"Missing source label: {node['id']}"
         covered.update(node['source_labels'])
-        assert node['status'] in {'proved', 'pending'}
-        if node['status'] == 'proved':
+        assert node['status'] in {'proved', 'assumed', 'pending'}
+        if node['status'] == 'assumed':
+            assert node.get('external_result') == 'titchmarsh-lions', 'Unauthorized external result'
+            dependency = external[node['external_result']]
+            assert dependency['declaration'] in node['declarations'], 'Missing explicit hypothesis'
+            assert dependency['file'] == node['file'], 'Wrong external-hypothesis file'
+            assert dependency['authorization'], 'Missing author authorization record'
+        if node['status'] in {'proved', 'assumed'}:
             assert node['file'] and (ROOT / node['file']).is_file()
-            assert all(graph[d]['status'] == 'proved' for d in node['dependencies'])
+            assert all(graph[d]['status'] in {'proved', 'assumed'} for d in node['dependencies'])
             for name in node['declarations']:
                 assert f'#print axioms {name}\n' in audit, f'Missing axiom audit {name}'
     assert theorem_labels <= covered, f'Untracked manuscript results: {theorem_labels-covered}'
@@ -86,9 +93,11 @@ def main():
         if path.stem != 'ProofAudit':
             assert f'import RieszEuclidean.{path.stem}\n' in umbrella, f'Unbuilt source module: {path}'
             assert str(path.relative_to(ROOT)) in data['proof_source_sha256']
-    pending = [n['id'] for n in data['nodes'] if n['status'] != 'proved']
+    pending = [n['id'] for n in data['nodes'] if n['status'] == 'pending']
+    assumed = [n['id'] for n in data['nodes'] if n['status'] == 'assumed']
     assert data['complete'] == (not pending), 'False completion flag'
-    print(f'Inventory checked: {len(graph)-len(pending)} proved-scope nodes; {len(pending)} pending full-paper obligations.')
+    print(f'Inventory checked: {len(graph)-len(pending)-len(assumed)} proved-scope nodes; '
+          f'{len(assumed)} authorized external hypotheses; {len(pending)} pending full-paper obligations.')
     if args.require_complete:
         assert not pending, 'Full formalization incomplete: ' + ', '.join(pending)
 

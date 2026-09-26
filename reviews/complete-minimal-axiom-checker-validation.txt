@@ -1,0 +1,27 @@
+Builtin shared-state axiom-union validation (Lean 4.19.0)
+
+PASS: 12-target exact union equality versus independent builtin #print axioms reports.
+PASS: full 2,267 unique checked targets exactly equal the current manifest inventory.
+PASS: full union exactly [propext, Classical.choice, Quot.sound].
+PASS: complete proposed Python integration also checked all 2,267 targets successfully.
+PASS: synthetic extra-axiom root produced its exact union and exited 1 with
+      Unexpected transitive axiom: BatchAuditNegative.deliberately_extra.
+PASS: nonexistent root exited 1 with Missing checked target: DefinitelyMissingAuditTarget.
+
+The batch uses Lean.CollectAxioms.collect unchanged with one shared builtin State;
+every root is first required to exist in env.checked. Shared visited state preserves
+the exact union, including cycles; the original per-target ProofAudit.lean is retained.
+During these prototype tests, only /tmp files were written and the existing
+individual audit was left running. The project checker subsequently adopted
+the same builtin traversal; its final output is complete-minimal-axioms-batch.txt.
+
+Artifacts:
+/tmp/cm-shared-builtin-axiom-sample.lean and .txt
+/tmp/cm-shared-builtin-axiom-all.lean and .txt
+/tmp/cm-shared-builtin-axiom-extra-negative.lean and .txt
+/tmp/cm-shared-builtin-axiom-missing-negative.lean and .txt
+/tmp/cm-check-axioms-proposed.py and .txt
+
+Builtin references:
+Lean/Util/CollectAxioms.lean:22-39 (unchanged visitor), :42-46 (per-root state reset)
+Lean/Elab/Print.lean:184-189 (#print collector call and output sorting)
