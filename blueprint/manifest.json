@@ -5,7 +5,7 @@
   "notice": "All named manuscript theorem, lemma, proposition and corollary obligations are resolved: 52 proved milestones and one explicitly author-authorized Titchmarsh-Lions hypothesis. The literal Bessel infinite-product identity is replaced by a proved ODE/zero-geometry argument; see alternative_proof_notes. Final publication validation is recorded separately.",
   "manuscript": {
     "file": "paper/RieszEuclidean.tex",
-    "sha256": "43aea75c2dfb395672178d08eaa97dbabb3db7378d1a8d6abb9681aeca4515cf"
+    "sha256": "027937777a4a43ec61061d5001fd6f59de89f08e78ac08386c5575270761fbf9"
   },
   "nodes": [
     {
