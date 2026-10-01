@@ -99,12 +99,12 @@ The same frequency set is complete and minimal in $L^2(D)$ for every measurable
 intermediate set
 
 $$
-\operatorname{int}E\subseteq D\subseteq\Omega
+\mathrm{int}\,E\subseteq D\subseteq\Omega
 \qquad\text{up to Lebesgue-null sets}.
 $$
 
 The supported biorthogonal functions restrict to biorthogonals on each such
-$D$. If $\operatorname{int}E$ is a proper subset of $\Omega$, the biorthogonal
+$D$. If $\mathrm{int}\,E$ is a proper subset of $\Omega$, the biorthogonal
 family is incomplete in $L^2(\Omega)$.
 
 After normalizing the John ellipsoid to the closed unit ball, the construction
@@ -127,16 +127,17 @@ The project proves the analytic results used in these constructions:
   supported tempered distribution.
 - **Entire division:** an entire quotient of finite exponential type functions
   has finite exponential type when the denominator is nonzero at the origin.
-- **Titchmarsh–Lions:** for nonzero compactly supported tempered distributions
-  $u,v$ and a distribution $w$ representing their convolution,
 
-  $$
-  \operatorname{conv}(\operatorname{supp}w)
-  =\operatorname{conv}(\operatorname{supp}u)
-  +\operatorname{conv}(\operatorname{supp}v),
-  $$
+**Titchmarsh–Lions:** for nonzero compactly supported tempered distributions
+$u,v$ and a distribution $w$ representing their convolution,
 
-  where $+$ denotes the Minkowski sum.
+$$
+\mathrm{conv}(\mathrm{supp}\,w)
+=\mathrm{conv}(\mathrm{supp}\,u)
++\mathrm{conv}(\mathrm{supp}\,v),
+$$
+
+where $+$ denotes the Minkowski sum.
 
 Other proved tools include affine invariance, the equivalence between
 exponential Riesz bases and the small-bump projection gap condition, and the
