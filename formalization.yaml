@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=./schema/formalization-v0.4.schema.json
 version: v0.4
 project:
   name: Riesz bases in Euclidean space
@@ -16,10 +15,9 @@ sources:
   id: https://github.com/joaquimortega/RieszEuclidean/blob/main/paper/RieszEuclidean.tex
   type: article
   relationship: formalizes
-  note: 'The revised manuscript fingerprint is recorded in blueprint/manifest.json. All named theorem,
-    lemma, proposition and corollary obligations are resolved: 52 proved milestones and one author-authorized
-    Titchmarsh–Lions hypothesis. Alternative proofs and the unformalized literal Bessel product identity
-    are documented under fidelity and in the verification review.'
+  note: The manuscript fingerprint is recorded in blueprint/manifest.json. All 53 named manuscript milestones
+    are proved, including Titchmarsh-Lions. Alternative proofs and the unformalized literal Bessel product
+    identity are documented under fidelity and in the verification reviews.
 - title: Supports and singular supports of convolutions
   authors:
   - Lars Hörmander
@@ -27,21 +25,21 @@ sources:
   type: article
   location: Theorem 4.2, Acta Mathematica 110 (1963), 279–302
   relationship: background
-  note: The Titchmarsh–Lions convex convolution support theorem is retained as an explicit Section 9 theorem
-    hypothesis at the author’s direction on 2026-09-26. It is not added as a Lean axiom.
+  note: The Titchmarsh-Lions convex convolution support theorem is proved in RieszEuclidean/TitchmarshLions.lean
+    for actual compactly supported tempered distributions. The public Section 9 results use this proof.
 status:
   scope: Sections 2–8 and the named results of Section 9 are formalized. Section 9 proves actual locally
     finite complete and ordinary minimal exponential systems on all nonempty bounded open convex domains
     in positive dimension, with John-ellipsoid-supported biorthogonals and the simultaneous intermediate-domain
-    scope. Its only external mathematical hypothesis is the author-authorized Titchmarsh–Lions convolution
-    support theorem. Paley–Wiener–Schwartz, the Bessel zero geometry and estimates, the physical resolvents,
-    interpolation-space dimension and nesting, and the sharp exact tail characterization are proved. The
-    earlier nonexistence theorems remain unconditional.
+    scope. The Titchmarsh-Lions convolution support theorem is proved; the public Section 9 results have
+    no external mathematical theorem hypothesis. Paley–Wiener–Schwartz, the Bessel zero geometry and estimates,
+    the physical resolvents, interpolation-space dimension and nesting, and the sharp exact tail characterization
+    are proved. The earlier nonexistence theorems remain unconditional.
   sorry_count: 0
   sorry_in_definitions: 0
-  sorry_count_note: No placeholder proofs, added mathematical axioms or linter suppressions. The explicit
-    Titchmarsh–Lions theorem parameter is recorded separately as a literature dependency. Modular and
-    standalone builds, all linters, the full axiom audit, and official Comparator validation passed.
+  sorry_count_note: No placeholder proofs, added mathematical axioms or linter suppressions. The Titchmarsh-Lions
+    support theorem is proved. Current build, linter, axiom and standalone verification is recorded in
+    reviews/titchmarsh-progress.md; prior verification records are retained as history.
   axioms:
   - propext
   - Classical.choice
@@ -173,6 +171,15 @@ status:
     - Quot.sound
     comparator_config: standalone/comparator.json
     literature_dependencies: []
+  - declaration: RieszEuclidean.CompleteMinimal.titchmarshLions
+    file: RieszEuclidean/TitchmarshLions.lean
+    sorry_count: 0
+    axioms:
+    - propext
+    - Classical.choice
+    - Quot.sound
+    comparator_config: standalone/comparator.json
+    literature_dependencies: []
 fidelity:
   divergences: The basis predicate uses actual restricted Lebesgue L² and exp(2πi inner(ξ,x)); Mathlib
     conjugates the first inner-product argument. Hull compactness uses Hausdorff limits on compact Euclidean
@@ -187,8 +194,9 @@ fidelity:
     by the nonzero scalar (4π²)^N. Direct radial ODE and energy arguments prove the complete Bessel zero
     locus and simple local factors used in place of the infinite product; the literal identity cm:eq:product
     is not formalized. Maximal-volume capsule enlargement proves John translation rigidity without a general
-    uniqueness theorem. The only external theorem parameter is Titchmarsh–Lions, explicitly authorized
-    by the author.
+    uniqueness theorem. Titchmarsh-Lions is proved from Liouville, Fourier uniqueness, polynomial moment
+    detection and compact-kernel regularization, so no external theorem parameter remains in the public
+    results.
 alignment:
   namespace: RieszEuclidean
   complete_mapping: blueprint/manifest.json
@@ -225,14 +233,14 @@ alignment:
   - source: Entire quotient lemma (cm:lem:type)
     lean: RieszEuclidean.CompleteMinimal.finiteExponentialType_entire_quotient
     status: proved
+  - source: Titchmarsh-Lions convolution support theorem (cm:eq:titchmarsh)
+    lean: RieszEuclidean.CompleteMinimal.titchmarshLions
+    status: proved
 review:
   status: agent-reviewed
-  notes: The named Section 9 results and all preceding-scope obligations are proved, modulo the sole authorized
-    Titchmarsh–Lions theorem hypothesis. Modular, public and standalone builds and linters, the full
-    2,267-declaration axiom audit, and official 46-target Comparator validation with Lean kernel replay
-    pass. Historical 41-target records in reviews/convex-progress.md cover only the earlier scope.
-    The current record is reviews/complete-minimal-progress.md. No independent
-    external human review is claimed.
+  notes: All named Section 9 results and preceding-scope obligations are proved. The Titchmarsh-Lions
+    support theorem discharges the former external hypothesis. Current verification is recorded in reviews/titchmarsh-progress.md;
+    earlier 37-, 41- and 46-target records are historical. No independent external human review is claimed.
 classification:
   msc2020:
   - 42C15
@@ -248,10 +256,10 @@ automation:
     prompting_notes: The author requested a standalone formalization of RieszEuclidean.tex, authorized
       reuse of specified author-owned helper code, required linter fixes without suppressions, and requested
       Comparator and formalization.yaml.
-  notes: The author directs the mathematical scope and authorized external-library reuse and subagents.
-    The Section 9 development proves the analytic and geometric inputs explicitly, with only the Titchmarsh–Lions
-    exception authorized on 2026-09-26. Reused code and retained licenses are recorded in PROVENANCE.md.
-    No independent external human review is claimed.
+  notes: The author directs the mathematical scope and authorized external-library reuse and cheap subagents.
+    The Section 9 analytic and geometric inputs are proved, including the former Titchmarsh-Lions exception.
+    Reused code and retained licenses are recorded in PROVENANCE.md. No independent external human review
+    is claimed.
 techniques:
 - name: Concrete Euclidean exponential synthesis
   status: implemented definitions
@@ -479,11 +487,11 @@ techniques:
   - RieszEuclidean/PolygonPresentation.lean
 - name: Complete-minimal geometry and finite selection
   status: proved
-  description: Actual restricted L² exponentials, closed-span completeness, ordinary minimality and
-    supported biorthogonals are defined. Maximal-volume inscribed ellipsoids exist and give affine
-    normalization and translation rigidity. Finite polynomial interpolation and evaluation-basis
-    extension feed a recursive selection with individual global duals and locally finite frequencies.
-    Affine transport and restriction retain the same functions on intermediate measurable domains.
+  description: Actual restricted L² exponentials, closed-span completeness, ordinary minimality and supported
+    biorthogonals are defined. Maximal-volume inscribed ellipsoids exist and give affine normalization
+    and translation rigidity. Finite polynomial interpolation and evaluation-basis extension feed a recursive
+    selection with individual global duals and locally finite frequencies. Affine transport and restriction
+    retain the same functions on intermediate measurable domains.
   files:
   - RieszEuclidean/CompleteMinimalBasic.lean
   - RieszEuclidean/CompleteMinimalEllipsoid.lean
@@ -501,12 +509,12 @@ techniques:
   - RieszEuclidean/CompleteMinimalScope.lean
   - RieszEuclidean/CompleteMinimalTheorem.lean
 - name: Entire division and compact distributions
-  status: proved, with the explicitly authorized Titchmarsh–Lions hypothesis at the support step
-  description: The actual negative Fourier transform is entire. Real-sphere vanishing extends to the
-    complex quadric and admits local analytic division. Jensen and Poisson estimates bound entire
-    quotients. Paley–Wiener–Schwartz is proved by Gaussian regularization and contour shifting.
-    Actual distribution convolution, point-support classification and polynomial differential operators
-    turn the sole Titchmarsh–Lions support hypothesis into polynomial numerators.
+  status: proved
+  description: The actual negative Fourier transform is entire. Real-sphere vanishing extends to the complex
+    quadric and admits local analytic division. Jensen and Poisson estimates bound entire quotients. Paley–Wiener–Schwartz
+    is proved by Gaussian regularization and contour shifting. Actual distribution convolution, point-support
+    classification and polynomial differential operators combine with the proved Titchmarsh-Lions support
+    theorem to yield polynomial numerators.
   files:
   - RieszEuclidean/CompleteMinimalEntireFourier.lean
   - RieszEuclidean/CompleteMinimalFourierAnalytic.lean
@@ -530,14 +538,40 @@ techniques:
   - RieszEuclidean/CompleteMinimalPaleyWiener.lean
   - RieszEuclidean/CompleteMinimalFourierDivision.lean
   - RieszEuclidean/CompleteMinimalTail.lean
+  - RieszEuclidean/TitchmarshBootstrap.lean
+  - RieszEuclidean/TitchmarshCompactHull.lean
+  - RieszEuclidean/TitchmarshConvexGeometry.lean
+  - RieszEuclidean/TitchmarshDistributionAssembly.lean
+  - RieszEuclidean/TitchmarshFourierDetection.lean
+  - RieszEuclidean/TitchmarshFourierProduct.lean
+  - RieszEuclidean/TitchmarshFunctionAlgebra.lean
+  - RieszEuclidean/TitchmarshFunctionEndpoints.lean
+  - RieszEuclidean/TitchmarshFunctionHalf.lean
+  - RieszEuclidean/TitchmarshFunctionTranslations.lean
+  - RieszEuclidean/TitchmarshFunctions.lean
+  - RieszEuclidean/TitchmarshJetEmbedding.lean
+  - RieszEuclidean/TitchmarshJetIntegrability.lean
+  - RieszEuclidean/TitchmarshKernelDerivatives.lean
+  - RieszEuclidean/TitchmarshKernelIntegral.lean
+  - RieszEuclidean/TitchmarshKernelJets.lean
+  - RieszEuclidean/TitchmarshLaplace.lean
+  - RieszEuclidean/TitchmarshLaplaceIntegral.lean
+  - RieszEuclidean/TitchmarshLions.lean
+  - RieszEuclidean/TitchmarshMomentDetection.lean
+  - RieszEuclidean/TitchmarshRegularization.lean
+  - RieszEuclidean/TitchmarshRegularizationSupport.lean
+  - RieszEuclidean/TitchmarshRegularizedConvolution.lean
+  - RieszEuclidean/TitchmarshSupport.lean
+  - RieszEuclidean/TitchmarshTranslationContinuity.lean
+  - RieszEuclidean/TitchmarshTranslations.lean
 - name: Ball-transform zeros and exact interpolation spaces
   status: proved
-  description: The ball integral yields an even Gamma series and radial ODE. Energy identities and
-    asymptotics prove its full complex zero geometry, ordered simple positive zeros, separation and
-    sharp decay bounds. Compact physical resolvents produce the canonical interpolation multiplier.
-    Polar L² divergence gives the exact polynomial degree bound; the resulting spaces have proved
-    dimension, nesting, unit-ball support and exact tail-annihilator membership. The ODE argument
-    replaces the uses of the manuscript's infinite product without asserting that literal identity.
+  description: The ball integral yields an even Gamma series and radial ODE. Energy identities and asymptotics
+    prove its full complex zero geometry, ordered simple positive zeros, separation and sharp decay bounds.
+    Compact physical resolvents produce the canonical interpolation multiplier. Polar L² divergence gives
+    the exact polynomial degree bound; the resulting spaces have proved dimension, nesting, unit-ball
+    support and exact tail-annihilator membership. The ODE argument replaces the uses of the manuscript's
+    infinite product without asserting that literal identity.
   files:
   - RieszEuclidean/CompleteMinimalBessel.lean
   - RieszEuclidean/CompleteMinimalBesselAsymptotic.lean
@@ -553,20 +587,17 @@ techniques:
   - RieszEuclidean/CompleteMinimalAnalyticAssembly.lean
   - RieszEuclidean/CompleteMinimalAvailable.lean
 comparator:
-  status: forty-six supporting, conditional and unconditional results accepted
+  status: Official Comparator and Lean kernel replay passed for all 47 public targets.
   reference: MainResults.lean
   solution: RieszEuclideanStandalone.lean
   configuration: standalone/comparator.json
-  verification_log: reviews/comparator-complete-minimal.txt
-  input_hashes: reviews/complete-minimal-progress-hashes.json
-  verified_scope: All 46 public targets, retaining the supporting, spectral and geometric results of
-    the earlier scope, the revised Section 2 bump equivalence and projection identity, and the Section 8
-    convex C² obstruction. Five Section 9 targets cover the actual entire-quotient growth theorem,
-    Paley–Wiener–Schwartz, complete-minimal exponentials on bounded open convex domains, their simultaneous
-    intermediate-domain scope, and the exact normalized interpolation-space properties. The Section 9
-    construction retains the explicit author-authorized Titchmarsh–Lions hypothesis. The literal Bessel
-    product identity is replaced by the documented ODE argument and is not claimed as formalized.
-  kernel: Lean default kernel via pinned lean4checker; accepted with exit 0.
+  verification_log: reviews/comparator-titchmarsh.txt
+  input_hashes: reviews/titchmarsh-progress-hashes.json
+  verified_scope: All 47 public targets passed, including Titchmarsh-Lions and the unconditional Section
+    9 complete-minimal and interpolation results. The previous 46-target record is retained as history.
+    The Bessel product identity is replaced by the documented ODE argument and is not claimed as formalized.
+  kernel: The pinned Lean default kernel accepts the exported standalone solution. No external kernel
+    is enabled.
   plan: MainResults.lean gives concrete definitions and explicit result statements, and RieszEuclideanStandalone.lean
     gives the self-contained solution. Official Comparator checks them with only propext, Classical.choice
     and Quot.sound permitted. Tool setup and source generation are recorded separately from Comparator

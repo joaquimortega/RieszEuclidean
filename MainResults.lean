@@ -5,8 +5,8 @@ import RieszEuclidean
 
 This compact Comparator reference states proved results, including
 spectral-measure existence for the stationary representation and unconditional
-geometric nonexistence conclusions, and complete-minimal existence modulo the
-explicit Titchmarsh–Lions hypothesis. Wrapper proofs use the modular library
+geometric nonexistence conclusions, complete-minimal existence and the
+Titchmarsh–Lions convolution support theorem. Wrapper proofs use the modular library
 without placeholders or warning suppressions.
 -/
 noncomputable section
@@ -640,9 +640,9 @@ namespace RieszEuclidean.Results
 
 open CompleteMinimal in
 /-- Complete and ordinary minimal exponentials on every bounded nonempty open convex domain,
-with locally finite frequencies and John-supported duals, assuming Titchmarsh–Lions. -/
+with locally finite frequencies and John-supported duals. -/
 theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
-    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
     (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
     ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
       IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
@@ -651,7 +651,7 @@ theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
         ∃ g : Λ → DomainL2 Ω,
           IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
           ∀ ξ, SupportedOn Ω (g ξ) E :=
-  CompleteMinimal.complete_minimal_bounded_open_convex hd hTL hne hbounded hopen hconvex
+  CompleteMinimal.complete_minimal_bounded_open_convex hd hne hbounded hopen hconvex
 
 end RieszEuclidean.Results
 
@@ -661,7 +661,7 @@ open CompleteMinimal in
 /-- The same selected frequencies work on all measurable intermediate domains;
 the actual John-supported dual family is incomplete outside a proper support region. -/
 theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
-    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
     (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
     ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
       IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
@@ -679,7 +679,7 @@ theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
               ∀ ξ, SupportedOn D (domainToDomain Ω D hopen.measurableSet (g ξ)) E) ∧
           (0 < volume (Ω \ E) → ¬ IsComplete g) ∧
           (interior E ⊂ Ω → ¬ IsComplete g) :=
-  CompleteMinimal.complete_minimal_scope hd hTL hne hbounded hopen hconvex
+  CompleteMinimal.complete_minimal_scope hd hne hbounded hopen hconvex
 
 end RieszEuclidean.Results
 
@@ -688,7 +688,7 @@ namespace RieszEuclidean.Results
 open CompleteMinimal in
 /-- Actual interpolation spaces: nesting, binomial dimension, localized support,
 and exact orthogonal annihilators of the later frequency spheres. -/
-theorem normalized_interpolation_spaces (n : ℕ) (hTL : TitchmarshLions (n + 1))
+theorem normalized_interpolation_spaces (n : ℕ)
     (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
     (hbounded : Bornology.IsBounded Ω) (hconvex : Convex ℝ Ω)
     (hJ : IsJohnEllipsoid (closure Ω) (Metric.closedBall (0 : Euclidean (n + 1)) 1))
@@ -704,6 +704,11 @@ theorem normalized_interpolation_spaces (n : ℕ) (hTL : TitchmarshLions (n + 1)
         f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N ↔
           ∀ x ∈ laterSpheres (ballZeroRadius n) N,
             inner (𝕜 := ℂ) f (exponentialL2 Ω hbounded.measure_lt_top.ne x) = 0) :=
-  CompleteMinimal.normalized_interpolation_spaces n hTL Ω hΩ hbounded hconvex hJ hB
+  CompleteMinimal.normalized_interpolation_spaces n (CompleteMinimal.titchmarshLions (n + 1))
+    Ω hΩ hbounded hconvex hJ hB
+
+/-- Convex convolution support for nonzero compactly supported tempered distributions. -/
+theorem titchmarsh_lions (d : ℕ) : CompleteMinimal.TitchmarshLions d :=
+  CompleteMinimal.titchmarshLions d
 
 end RieszEuclidean.Results

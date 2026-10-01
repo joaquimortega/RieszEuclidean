@@ -1,3 +1,4 @@
+import Mathlib.Algebra.MvPolynomial.Basic
 import Mathlib.Algebra.MvPolynomial.CommRing
 import Mathlib.Algebra.MvPolynomial.Polynomial
 import Mathlib.Algebra.Order.Archimedean.Basic
@@ -12,6 +13,7 @@ import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Analysis.Calculus.ContDiff.Bounds
 import Mathlib.Analysis.Calculus.ContDiff.Defs
+import Mathlib.Analysis.Calculus.ContDiff.FTaylorSeries
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.FDeriv.Analytic
@@ -23,9 +25,12 @@ import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.Calculus.ParametricIntegral
 import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
 import Mathlib.Analysis.Complex.AbsMax
+import Mathlib.Analysis.Complex.Basic
 import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.Complex.Liouville
 import Mathlib.Analysis.Complex.PhragmenLindelof
 import Mathlib.Analysis.Complex.RealDeriv
+import Mathlib.Analysis.Convex.Caratheodory
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.Convex.Hull
 import Mathlib.Analysis.Convex.Measure
@@ -51,6 +56,8 @@ import Mathlib.Analysis.Normed.Module.WeakDual
 import Mathlib.Analysis.Normed.Operator.Banach
 import Mathlib.Analysis.Normed.Operator.BoundedLinearMaps
 import Mathlib.Analysis.Normed.Order.Lattice
+import Mathlib.Analysis.NormedSpace.HahnBanach.Extension
+import Mathlib.Analysis.NormedSpace.HahnBanach.Separation
 import Mathlib.Analysis.NormedSpace.OperatorNorm.Completeness
 import Mathlib.Analysis.NormedSpace.Pointwise
 import Mathlib.Analysis.NormedSpace.Real
@@ -78,7 +85,11 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 import Mathlib.Analysis.SpecificLimits.Basic
 import Mathlib.Analysis.SpecificLimits.Normed
 import Mathlib.Combinatorics.SimpleGraph.DegreeSum
+import Mathlib.Data.Finsupp.Basic
 import Mathlib.Data.Finsupp.Multiset
+import Mathlib.Data.NNReal.Basic
+import Mathlib.Data.Real.Archimedean
+import Mathlib.Data.Real.Basic
 import Mathlib.Data.Set.Card
 import Mathlib.Data.Sym.Card
 import Mathlib.Geometry.Manifold.Instances.Sphere
@@ -95,6 +106,7 @@ import Mathlib.LinearAlgebra.Lagrange
 import Mathlib.LinearAlgebra.LinearIndependent.Defs
 import Mathlib.LinearAlgebra.Matrix.SchurComplement
 import Mathlib.LinearAlgebra.Multilinear.Basis
+import Mathlib.Logic.Function.Iterate
 import Mathlib.MeasureTheory.Constructions.HaarToSphere
 import Mathlib.MeasureTheory.Constructions.Polish.Basic
 import Mathlib.MeasureTheory.Function.ContinuousMapDense
@@ -103,6 +115,7 @@ import Mathlib.MeasureTheory.Function.Holder
 import Mathlib.MeasureTheory.Function.L2Space
 import Mathlib.MeasureTheory.Function.LocallyIntegrable
 import Mathlib.MeasureTheory.Function.LpSpace.ContinuousCompMeasurePreserving
+import Mathlib.MeasureTheory.Function.LpSpace.ContinuousFunctions
 import Mathlib.MeasureTheory.Function.StronglyMeasurable.Inner
 import Mathlib.MeasureTheory.Group.Integral
 import Mathlib.MeasureTheory.Group.Measure
@@ -158,6 +171,7 @@ import Mathlib.Topology.ContinuousMap.BoundedCompactlySupported
 import Mathlib.Topology.ContinuousMap.Compact
 import Mathlib.Topology.ContinuousMap.CompactlySupported
 import Mathlib.Topology.ContinuousMap.Ordered
+import Mathlib.Topology.ContinuousMap.StoneWeierstrass
 import Mathlib.Topology.ContinuousMap.ZeroAtInfty
 import Mathlib.Topology.EMetricSpace.Paracompact
 import Mathlib.Topology.Instances.Real.Lemmas
@@ -20867,12 +20881,12 @@ run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
 section
 /-!
-# The Titchmarsh–Lions hypothesis and its John-ellipsoid consequence
+# The Titchmarsh–Lions statement and its John-ellipsoid consequence
 
 Distribution support is defined by actual local compact Schwartz tests. The
 convolution relation is the iterated action on `φ(x+y)`; its definition contains
-no support assertion. `TitchmarshLions` is an explicit proposition to be supplied
-as a hypothesis, not an axiom or a theorem asserted without proof.
+no support assertion. `TitchmarshLions` is the support proposition whose concrete
+proof is provided by `titchmarshLions` in `TitchmarshLions.lean`.
 -/
 
 noncomputable section
@@ -22968,7 +22982,7 @@ section
 
 These composition theorems take an actual compactly supported inverse quotient
 and an actual Fourier-product identity. Their conclusion is derived from the
-single named Titchmarsh–Lions hypothesis, John maximality, and the proved
+Titchmarsh–Lions proposition, John maximality, and the proved
 point-support classification. They do not assert the still separate analytic
 division or the sharp polynomial degree estimate.
 -/
@@ -29983,8 +29997,8 @@ theorem compactSphereTailDivision (n : ℕ) {Ω : Set (Euclidean (n + 1))}
   simpa only [realToComplex_apply, polynomialEvaluation_apply, domainEntireFourier,
     entireFourier_realToComplex] using hproduct (realToComplex x)
 
-/-- The actual normalized spherical analytic package. Its only external
-analytic theorem is the explicitly named Titchmarsh–Lions hypothesis. -/
+/-- The actual normalized spherical analytic package, parameterized by the
+Titchmarsh–Lions proposition proved in `TitchmarshLions.lean`. -/
 def sphereAnalyticInputs (n : ℕ) (hTL : TitchmarshLions (n + 1))
     (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
     (hbounded : Bornology.IsBounded Ω) (hfinite : volume Ω ≠ ⊤)
@@ -31128,12 +31142,4076 @@ end RieszEuclidean.CompleteMinimal
 end
 end
 
+/- Source: RieszEuclidean/TitchmarshBootstrap.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# The algebraic Titchmarsh bootstrap
+
+This extracts the Mikusiński–Yosida–Masuda argument from the analytic half lemma.
+`V a t` says that `a` vanishes below the level `t`; the intended multiplication is
+convolution, and `M` multiplies a function by a fixed real linear coordinate.
+-/
+
+noncomputable section
+
+namespace RieszEuclidean.TitchmarshBootstrap
+
+variable {A : Type*} [NonUnitalCommRing A]
+
+/-- Algebraic and support properties needed to bootstrap the self-convolution
+half lemma to the full convolution theorem. -/
+structure Data (A : Type*) [NonUnitalCommRing A] where
+  /-- Multiplication by the chosen physical coordinate. -/
+  M : A → A
+  /-- Vanishing below the indicated support level. -/
+  V : A → ℝ → Prop
+  V_zero : ∀ a, V a 0
+  V_mono : ∀ {a s t}, V a t → s ≤ t → V a s
+  V_closed : ∀ {a t}, (∀ s < t, V a s) → V a t
+  V_add : ∀ {a b t}, V a t → V b t → V (a + b) t
+  V_neg : ∀ {a t}, V a t → V (-a) t
+  V_mul : ∀ {a b s t}, V a s → V b t → V (a * b) (s + t)
+  V_M : ∀ {a t}, V a t → V (M a) t
+  M_mul : ∀ a b, M (a * b) = M a * b + a * M b
+  half : ∀ {a t}, 0 ≤ t → V (a * a) (2 * t) → V a t
+
+namespace Data
+
+variable (D : Data A)
+
+private def Good (α : ℝ) : Prop :=
+  ∀ (f g : A) (T : ℝ), 0 ≤ T → D.V (f * g) T → D.V (f * D.M g) (α * T)
+
+private theorem good_zero : D.Good 0 := by
+  intro f g T hT hfg
+  simpa using D.V_zero (f * D.M g)
+
+private def GoodSet : Set ℝ := {α | 0 ≤ α ∧ α ≤ 1 ∧ D.Good α}
+
+private theorem goodSet_nonempty : D.GoodSet.Nonempty :=
+  ⟨0, ⟨le_refl _, zero_le_one, D.good_zero⟩⟩
+
+private theorem goodSet_bddAbove : BddAbove D.GoodSet :=
+  ⟨1, fun _ h => h.2.1⟩
+
+private theorem good_improve {α : ℝ} (hα0 : 0 ≤ α) (hα1 : α ≤ 1)
+    (hα : D.Good α) : D.Good ((1 + α ^ 2) / 2) := by
+  intro f g T hT hfg
+  let h := f * D.M g
+  have hh : D.V h (α * T) := hα f g T hT hfg
+  have hD : D.V (D.M (f * g)) T := D.V_M hfg
+  have hprod : D.V (h * D.M (f * g)) (α * T + T) := D.V_mul hh hD
+  have hMfg : D.V (D.M f * g) (α * T) := by
+    simpa only [mul_comm] using hα g f T hT (by simpa only [mul_comm] using hfg)
+  have hMfMg : D.V (D.M f * D.M g) (α * (α * T)) :=
+    hα (D.M f) g (α * T) (mul_nonneg hα0 hT) hMfg
+  have hfirst : D.V ((f * g) * (D.M f * D.M g))
+      (T + α * (α * T)) := D.V_mul hfg hMfMg
+  have hprod' : D.V (h * D.M (f * g)) (T + α * (α * T)) := by
+    apply D.V_mono hprod
+    nlinarith [mul_nonneg (sub_nonneg.mpr hα1) (mul_nonneg hα0 hT)]
+  have hself : D.V (h * h) (T + α * (α * T)) := by
+    have heq : h * h = h * D.M (f * g) + -((f * g) * (D.M f * D.M g)) := by
+      dsimp [h]
+      rw [D.M_mul]
+      simp only [mul_add, mul_neg, neg_mul, mul_assoc, mul_comm, mul_left_comm,
+        add_assoc, add_comm, add_left_comm]
+      abel
+    rw [heq]
+    exact D.V_add hprod' (D.V_neg hfirst)
+  have hhalf : D.V h (((1 + α ^ 2) / 2) * T) := by
+    apply D.half (mul_nonneg (by nlinarith [sq_nonneg α]) hT)
+    convert hself using 1
+    ring
+  exact hhalf
+
+/-- Vanishing of a convolution below `T` persists after multiplying its second
+factor by the coordinate. This is the algebraic heart of Titchmarsh's theorem. -/
+theorem multiplier_stability (f g : A) {T : ℝ} (hT : 0 ≤ T)
+    (hfg : D.V (f * g) T) : D.V (f * D.M g) T := by
+  let α : ℝ := sSup D.GoodSet
+  have hα0 : 0 ≤ α := le_csSup D.goodSet_bddAbove
+    ⟨le_refl _, zero_le_one, D.good_zero⟩
+  have hα1 : α ≤ 1 := csSup_le D.goodSet_nonempty (fun _ h => h.2.1)
+  have hαgood : D.Good α := by
+    intro p q S hS hpq
+    apply D.V_closed
+    intro s hs
+    by_cases hS0 : S = 0
+    · subst S
+      have hs0 : s < 0 := by simpa using hs
+      exact D.V_mono (D.V_zero _) (le_of_lt hs0)
+    · have hSpos : 0 < S := lt_of_le_of_ne hS (Ne.symm hS0)
+      have hratio : s / S < α := (div_lt_iff₀ hSpos).mpr (by simpa [α] using hs)
+      obtain ⟨β, hβ, hlt⟩ := exists_lt_of_lt_csSup D.goodSet_nonempty hratio
+      have hβS : s ≤ β * S := by
+        exact le_of_lt ((div_lt_iff₀ hSpos).mp hlt)
+      exact D.V_mono (hβ.2.2 p q S hS hpq) hβS
+  have hαimp : D.Good ((1 + α ^ 2) / 2) := D.good_improve hα0 hα1 hαgood
+  have hβ0 : 0 ≤ (1 + α ^ 2) / 2 := by positivity
+  have hβ1 : (1 + α ^ 2) / 2 ≤ 1 := by nlinarith [sq_nonneg (1 - α)]
+  have hβle : (1 + α ^ 2) / 2 ≤ α :=
+    le_csSup D.goodSet_bddAbove ⟨hβ0, hβ1, hαimp⟩
+  have hαeq : α = 1 := by nlinarith [sq_nonneg (1 - α)]
+  simpa [Good, hαeq] using hαgood f g T hT hfg
+
+/-- Vanishing is preserved by every iterate of the coordinate multiplier. -/
+theorem iterate_multiplier_stability (f g : A) (n : ℕ) {T : ℝ}
+    (hT : 0 ≤ T) (hfg : D.V (f * g) T) :
+    D.V (f * D.M^[n] g) T := by
+  induction n with
+  | zero => simpa using hfg
+  | succ n ih =>
+      simpa only [Function.iterate_succ_apply'] using
+        D.multiplier_stability f (D.M^[n] g) hT ih
+
+private theorem V_int_smul {a : A} {t : ℝ} (ha : D.V a t) (z : ℤ) :
+    D.V (z • a) t := by
+  induction z using Int.induction_on with
+  | hz =>
+      have hz : D.V (a + -a) t := D.V_add ha (D.V_neg ha)
+      simpa using hz
+  | hp z ih =>
+      have hz : D.V ((z : ℤ) • a + a) t := D.V_add ih ha
+      simpa [add_zsmul] using hz
+  | hn z ih =>
+      have hz : D.V ((-(z : ℤ)) • a + -a) t := D.V_add ih (D.V_neg ha)
+      simpa [sub_zsmul] using hz
+
+/-- A finite integer linear combination of iterated multipliers applied to the
+second factor retains the same vanishing level. -/
+def polynomialCombination (p : ℕ →₀ ℤ) (f g : A) : A :=
+  ∑ n ∈ p.support, p n • (f * D.M^[n] g)
+
+theorem polynomial_combination_stability (p : ℕ →₀ ℤ) (f g : A)
+    {T : ℝ} (hT : 0 ≤ T) (hfg : D.V (f * g) T) :
+    D.V (Data.polynomialCombination D p f g) T := by
+  change D.V (∑ n ∈ p.support, p n • (f * D.M^[n] g)) T
+  have hzero : D.V (0 : A) T := by
+    have hz := D.V_add hfg (D.V_neg hfg)
+    simpa using hz
+  induction p.support using Finset.induction_on with
+  | empty => simpa using hzero
+  | @insert n s hn ih =>
+      rw [Finset.sum_insert hn]
+      apply D.V_add
+      · exact D.V_int_smul
+          (D.iterate_multiplier_stability f g n hT hfg) (p n)
+      · exact ih
+
+end Data
+
+/-- Apply a finite sequence of coordinate multipliers, from left to right. -/
+def multiplierWord {ι : Type*} (D : ι → Data A) (word : List ι) (g : A) : A :=
+  word.foldr (fun i a => (D i).M a) g
+
+/-- If all indexed data use the same vanishing predicate, any finite sequence
+of their multipliers preserves the vanishing level of a convolution. -/
+theorem multivariate_multiplier_stability {ι : Type*} (D : ι → Data A)
+    (V : A → ℝ → Prop) (hV : ∀ i, (D i).V = V) (word : List ι)
+    (f g : A) {T : ℝ} (hT : 0 ≤ T) (hfg : V (f * g) T) :
+    V (f * multiplierWord D word g) T := by
+  induction word with
+  | nil => simpa [multiplierWord] using hfg
+  | cons i rest ih =>
+      have htail : (D i).V (f * multiplierWord D rest g) T := by
+        rw [hV i]
+        exact ih
+      have hresult := (D i).multiplier_stability f
+        (multiplierWord D rest g) hT htail
+      simpa [multiplierWord, hV i] using hresult
+
+/-- A finite scalar combination of coordinate monomials applied to `g`. -/
+def scalarPolynomial {ι S : Type*} [Semiring S] [Module S A]
+    (D : ι → Data A)
+    (p : List ι →₀ S) (g : A) : A :=
+  ∑ word ∈ p.support, p word • multiplierWord D word g
+
+/-- Finite scalar combinations of coordinate monomials preserve vanishing.
+The scalar action is assumed to preserve `V`, and to commute with convolution
+in its second factor. -/
+theorem scalar_combination_stability {ι S : Type*} [DecidableEq ι]
+    [Semiring S] [Module S A]
+    (D : ι → Data A) (V : A → ℝ → Prop) (hV : ∀ i, (D i).V = V)
+    (p : List ι →₀ S) (f g : A) {T : ℝ} (hT : 0 ≤ T)
+    (hfg : V (f * g) T)
+    (hVadd : ∀ {a b t}, V a t → V b t → V (a + b) t)
+    (hVneg : ∀ {a t}, V a t → V (-a) t)
+    (hscalar : ∀ {a t}, V a t → ∀ c : S, V (c • a) t)
+    (hcompat : ∀ c : S, ∀ a b : A, a * (c • b) = c • (a * b)) :
+    V (f * scalarPolynomial D p g) T := by
+  have hzero : V (0 : A) T := by
+    have hz := hVadd hfg (hVneg hfg)
+    simpa using hz
+  have hsum : ∀ s : Finset (List ι),
+      (∀ word ∈ s, V (p word • (f * multiplierWord D word g)) T) →
+      V (∑ word ∈ s, p word • (f * multiplierWord D word g)) T := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty =>
+        intro _
+        simpa using hzero
+    | @insert word s hword ih =>
+        intro hterms
+        rw [Finset.sum_insert hword]
+        apply hVadd
+        · exact hterms word (by simp)
+        · apply ih
+          intro w hw
+          exact hterms w (by simp [hw])
+  have hterms : ∀ word ∈ p.support,
+      V (p word • (f * multiplierWord D word g)) T := by
+    intro word _
+    apply hscalar
+    exact multivariate_multiplier_stability D V hV word f g hT hfg
+  have hsum' := hsum p.support hterms
+  have heq : f * scalarPolynomial D p g =
+      ∑ word ∈ p.support, p word • (f * multiplierWord D word g) := by
+    unfold scalarPolynomial
+    induction p.support using Finset.induction_on with
+    | empty => simp
+    | @insert word s hword ih =>
+        rw [Finset.sum_insert hword, Finset.sum_insert hword, mul_add,
+          hcompat, ih]
+  rw [heq]
+  exact hsum'
+
+end RieszEuclidean.TitchmarshBootstrap
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshLaplace.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Analytic core of the directional Laplace support argument. -/
+
+noncomputable section
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The Liouville step in the self-convolution support argument. A bound on
+the square of the full transform controls the full transform itself. -/
+theorem laplace_low_part_eq_zero
+    (F G H : ℂ → ℂ) (hG : Differentiable ℂ G)
+    (hdecomp : ∀ z, F z = G z + H z)
+    {C D E : ℝ} (hC : 0 ≤ C)
+    (hFsq : ∀ z, 0 ≤ z.re → ‖F z‖ ^ 2 ≤ C ^ 2)
+    (hH : ∀ z, 0 ≤ z.re → ‖H z‖ ≤ D)
+    (hGleft : ∀ z, z.re ≤ 0 → ‖G z‖ ≤ E)
+    (hvanish : Filter.Tendsto (fun t : ℝ => G (-(t : ℂ)))
+      Filter.atTop (nhds 0)) :
+    G = 0 := by
+  have hbound : ∀ z, ‖G z‖ ≤ max E (C + D) := by
+    intro z
+    by_cases hz : 0 ≤ z.re
+    · have hFn : ‖F z‖ ≤ C := by
+        have := hFsq z hz
+        nlinarith [norm_nonneg (F z)]
+      have hEq : G z = F z - H z := by rw [hdecomp z]; abel
+      calc
+        ‖G z‖ = ‖F z - H z‖ := by rw [hEq]
+        _ ≤ ‖F z‖ + ‖H z‖ := norm_sub_le _ _
+        _ ≤ C + D := add_le_add hFn (hH z hz)
+        _ ≤ max E (C + D) := le_max_right _ _
+    · exact (hGleft z (le_of_lt (lt_of_not_ge hz))).trans (le_max_left _ _)
+  have hb : Bornology.IsBounded (Set.range G) := by
+    apply isBounded_iff_forall_norm_le.mpr
+    refine ⟨max E (C + D), ?_⟩
+    rintro y ⟨z, rfl⟩
+    exact hbound z
+  have hconst : ∀ z, G z = G 0 := fun z => hG.apply_eq_apply_of_bounded hb z 0
+  have hzero : G 0 = 0 := by
+    have hc : Filter.Tendsto (fun _ : ℝ => G 0) Filter.atTop (nhds (G 0)) :=
+      tendsto_const_nhds
+    have heq : (fun t : ℝ => G (-(t : ℂ))) = fun _ => G 0 := by
+      funext t
+      exact hconst _
+    exact tendsto_nhds_unique (heq ▸ hvanish) hc |>.symm
+  funext z
+  simpa [hzero] using hconst z
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshFourierProduct.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Fourier transforms turn the actual Lebesgue convolution into products. -/
+
+noncomputable section
+
+open MeasureTheory
+open scoped Convolution
+
+namespace RieszEuclidean.CompleteMinimal
+
+theorem complexFourierKernel_add {d : ℕ} (x y : Euclidean d)
+    (z : ComplexEuclidean d) :
+    complexFourierKernel (x + y) z =
+      complexFourierKernel x z * complexFourierKernel y z := by
+  have hp : complexPairing (x + y) z = complexPairing x z + complexPairing y z := by
+    simp [complexPairing, add_mul, Finset.sum_add_distrib]
+  simp [complexFourierKernel, fourierPhaseCLM, complexPairingCLM_apply,
+    hp, Complex.exp_add, mul_add, mul_assoc]
+
+theorem complexFourierKernel_neg {d : ℕ} (x : Euclidean d)
+    (z : ComplexEuclidean d) :
+    complexFourierKernel (-x) z = (complexFourierKernel x z)⁻¹ := by
+  have hp : complexPairing (-x) z = -complexPairing x z := by
+    simp [complexPairing]
+  simp [complexFourierKernel, fourierPhaseCLM, complexPairingCLM_apply,
+    hp, Complex.exp_neg]
+
+theorem complexFourierKernel_sub {d : ℕ} (x y : Euclidean d)
+    (z : ComplexEuclidean d) :
+    complexFourierKernel (x - y) z =
+      complexFourierKernel x z / complexFourierKernel y z := by
+  rw [sub_eq_add_neg, complexFourierKernel_add, complexFourierKernel_neg,
+    div_eq_mul_inv]
+
+theorem complexFourierKernel_eq_exp_pairing {d : ℕ} (x : Euclidean d)
+    (z : ComplexEuclidean d) :
+    complexFourierKernel x z =
+      Complex.exp ((-2 * (Real.pi : ℂ) * Complex.I) * complexPairing x z) := by
+  simp [complexFourierKernel, fourierPhaseCLM, complexPairingCLM_apply,
+    smul_eq_mul, mul_assoc]
+
+/-- Convolution commutes with twisting both inputs by the same Fourier
+character, with the output twisted by that character. -/
+theorem convolution_complexFourierKernel_twist {d : ℕ}
+    (f g : Euclidean d → ℂ) (z : ComplexEuclidean d) :
+    ((fun x => f x * complexFourierKernel x z) ⋆[ContinuousLinearMap.mul ℂ ℂ, volume]
+        (fun x => g x * complexFourierKernel x z)) =
+      fun x => (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) x *
+        complexFourierKernel x z := by
+  funext x
+  rw [MeasureTheory.convolution_def, MeasureTheory.convolution_def]
+  rw [← integral_mul_const]
+  apply integral_congr_ae
+  filter_upwards [] with y
+  calc
+    f y * complexFourierKernel y z *
+        (g (x - y) * complexFourierKernel (x - y) z) =
+        (f y * g (x - y)) *
+          (complexFourierKernel y z * complexFourierKernel (x - y) z) := by ring
+    _ = (f y * g (x - y)) * complexFourierKernel x z := by
+      rw [← complexFourierKernel_add y (x - y) z]
+      congr 2
+      abel
+
+/-- The complex Fourier transform of Lebesgue convolution is the product of
+the two transforms. The support assumptions state bounded support by balls. -/
+theorem entireFourier_convolution {d : ℕ} {f g : Euclidean d → ℂ}
+    (hf : Integrable f) (hg : Integrable g)
+    {R S : ℝ} (hfs : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R)
+    (hgs : ∀ᵐ x, g x ≠ 0 → ‖x‖ ≤ S) (z : ComplexEuclidean d) :
+    entireFourier (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) z =
+      entireFourier f z * entireFourier g z := by
+  let F : Euclidean d → ℂ := fun x => f x * complexFourierKernel x z
+  let G : Euclidean d → ℂ := fun x => g x * complexFourierKernel x z
+  have hF : Integrable F := entireFourier_integrable hf hfs z
+  have hG : Integrable G := entireFourier_integrable hg hgs z
+  have htwist := convolution_complexFourierKernel_twist f g z
+  have hpoint (x : Euclidean d) :
+      (F ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] G) x =
+        ((f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) x) *
+          complexFourierKernel x z := by
+    simpa [F, G] using congrFun htwist x
+  have hprod := MeasureTheory.integral_convolution
+    (L := ContinuousLinearMap.mul ℂ ℂ) hF hG
+  calc
+    entireFourier (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) z
+        = ∫ x, ((f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) x) *
+            complexFourierKernel x z := rfl
+    _ = ∫ x, (F ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] G) x := by
+      apply integral_congr_ae
+      filter_upwards [] with x
+      exact (hpoint x).symm
+    _ = (∫ x, F x) * ∫ x, G x := hprod
+    _ = entireFourier f z * entireFourier g z := rfl
+
+/-- Moving the complex frequency in the direction `v` encodes the directional
+Laplace exponential as a Fourier kernel factor. -/
+theorem complexFourierKernel_laplace_shift {d : ℕ} (x v ξ : Euclidean d)
+    (T : ℝ) (z : ℂ) :
+    Complex.exp (z * ((T - inner (𝕜 := ℝ) v x : ℝ) : ℂ)) *
+        complexFourierKernel x (realToComplex ξ) =
+      Complex.exp (z * (T : ℂ)) *
+        complexFourierKernel x
+          (realToComplex ξ + (-(z * Complex.I) / (2 * Real.pi)) • realToComplex v) := by
+  let η : ComplexEuclidean d :=
+    realToComplex ξ + (-(z * Complex.I) / (2 * Real.pi)) • realToComplex v
+  have hp : complexPairing x η =
+      (inner (𝕜 := ℝ) x ξ : ℂ) +
+        (-(z * Complex.I) / (2 * Real.pi)) *
+          (inner (𝕜 := ℝ) x v : ℂ) := by
+    calc
+      complexPairing x η = complexPairingCLM x η :=
+        (complexPairingCLM_apply x η).symm
+      _ = complexPairingCLM x (realToComplex ξ) +
+          (-(z * Complex.I) / (2 * Real.pi)) *
+            complexPairingCLM x (realToComplex v) := by
+        change complexPairingCLM x (realToComplex ξ +
+          (-(z * Complex.I) / (2 * Real.pi)) • realToComplex v) = _
+        rw [ContinuousLinearMap.map_add, ContinuousLinearMap.map_smul]
+        simp only [smul_eq_mul]
+      _ = _ := by simp [complexPairingCLM_apply, complexPairing_realToComplex]
+  rw [complexFourierKernel_realToComplex, complexFourierKernel_eq_exp_pairing]
+  rw [← Complex.exp_add, ← Complex.exp_add]
+  congr 1
+  simp only [η] at hp
+  rw [hp]
+  push_cast
+  have hvx : inner (𝕜 := ℝ) x v = inner (𝕜 := ℝ) v x := real_inner_comm v x
+  rw [hvx]
+  field_simp [Real.pi_ne_zero]
+  ring_nf
+  rw [Complex.I_sq]
+  ring
+
+/-- The directional Laplace integral is a shifted entire Fourier transform,
+including the scalar exponential contributed by the support boundary. -/
+theorem integral_directionalLaplace_eq_entireFourier_shift {d : ℕ}
+    (f : Euclidean d → ℂ) (v ξ : Euclidean d) (T : ℝ) (z : ℂ) :
+    (∫ x, f x * Complex.exp (z * ((T - inner (𝕜 := ℝ) v x : ℝ) : ℂ)) *
+        complexFourierKernel x (realToComplex ξ)) =
+      Complex.exp (z * (T : ℂ)) *
+        entireFourier f
+          (realToComplex ξ + (-(z * Complex.I) / (2 * Real.pi)) • realToComplex v) := by
+  unfold entireFourier
+  rw [← integral_const_mul]
+  apply integral_congr_ae
+  filter_upwards [] with x
+  calc
+    f x * Complex.exp (z * ((T - inner (𝕜 := ℝ) v x : ℝ) : ℂ)) *
+        complexFourierKernel x (realToComplex ξ) =
+        f x * (Complex.exp (z * ((T - inner (𝕜 := ℝ) v x : ℝ) : ℂ)) *
+          complexFourierKernel x (realToComplex ξ)) := by ring
+    _ = f x * (Complex.exp (z * (T : ℂ)) *
+        complexFourierKernel x
+          (realToComplex ξ + (-(z * Complex.I) / (2 * Real.pi)) • realToComplex v)) := by
+      rw [complexFourierKernel_laplace_shift x v ξ T z]
+    _ = Complex.exp (z * (T : ℂ)) *
+        (f x * complexFourierKernel x
+          (realToComplex ξ + (-(z * Complex.I) / (2 * Real.pi)) • realToComplex v)) := by ring
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshLaplaceIntegral.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Integral estimates and analyticity for the directional Laplace transform. -/
+
+noncomputable section
+set_option maxHeartbeats 600000
+open MeasureTheory Filter Topology
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The directional Laplace transform, with sign chosen for decay on `ℓ x < T`.
+The support hypothesis is not built into the definition. -/
+def titchmarshLaplaceIntegral {d : ℕ} (f : Euclidean d → ℂ)
+    (ℓ : Euclidean d →L[ℝ] ℝ) (T : ℝ) (z : ℂ) : ℂ :=
+  ∫ x, f x * Complex.exp (z * ((T - ℓ x : ℝ) : ℂ))
+
+private theorem laplace_arg_bound {d : ℕ} {f : Euclidean d → ℂ}
+    (ℓ : Euclidean d →L[ℝ] ℝ) (T R : ℝ)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) :
+    ∀ᵐ x, f x ≠ 0 → ‖((T - ℓ x : ℝ) : ℂ)‖ ≤ |T| + ‖ℓ‖ * R := by
+  filter_upwards [hsupp] with x hx hfx
+  rw [Complex.norm_real, Real.norm_eq_abs]
+  calc
+    |T - ℓ x| ≤ |T| + |ℓ x| := abs_sub _ _
+    _ ≤ |T| + ‖ℓ‖ * ‖x‖ := by
+      gcongr
+      exact ContinuousLinearMap.le_opNorm ℓ x
+    _ ≤ |T| + ‖ℓ‖ * R := by
+      exact add_le_add le_rfl (mul_le_mul_of_nonneg_left (hx hfx) (norm_nonneg _))
+
+/-- Integrability of the Laplace integrand follows from bounded support. -/
+theorem titchmarshLaplaceIntegral_integrable {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : Integrable f) (ℓ : Euclidean d →L[ℝ] ℝ) (T : ℝ) {R : ℝ}
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) (z : ℂ) :
+    Integrable (fun x => f x * Complex.exp (z * ((T - ℓ x : ℝ) : ℂ))) := by
+  let B : ℝ := |T| + ‖ℓ‖ * R
+  let C : ℝ := Real.exp (‖z‖ * B)
+  have hmeas : AEStronglyMeasurable
+      (fun x => f x * Complex.exp (z * ((T - ℓ x : ℝ) : ℂ))) := by
+    exact hf.aestronglyMeasurable.mul
+      ((Complex.continuous_exp.comp
+        (continuous_const.mul (Complex.continuous_ofReal.comp
+          (continuous_const.sub ℓ.continuous)))).aestronglyMeasurable)
+  apply (hf.norm.mul_const C).mono' hmeas
+  filter_upwards [laplace_arg_bound ℓ T R hsupp] with x hx
+  by_cases hfx : f x = 0
+  · simp [hfx]
+  · have harg : (z * ((T - ℓ x : ℝ) : ℂ)).re ≤ ‖z‖ * B := by
+      calc
+        _ ≤ ‖z * ((T - ℓ x : ℝ) : ℂ)‖ := Complex.re_le_norm _
+        _ = ‖z‖ * ‖((T - ℓ x : ℝ) : ℂ)‖ := norm_mul _ _
+        _ ≤ ‖z‖ * B := mul_le_mul_of_nonneg_left (hx hfx) (norm_nonneg _)
+    rw [norm_mul, Complex.norm_exp]
+    apply mul_le_mul_of_nonneg_left _ (norm_nonneg _)
+    exact Real.exp_le_exp.mpr harg
+
+/-- Bounded support makes the directional Laplace transform entire. This follows
+by representing the real functional as an inner product and using the shifted
+entire Fourier transform identity. -/
+theorem titchmarshLaplaceIntegral_differentiable {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Integrable f)
+    (ℓ : Euclidean d →L[ℝ] ℝ) (T : ℝ) {R : ℝ} (hR : 0 ≤ R)
+    (hsupp : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R) :
+    Differentiable ℂ (titchmarshLaplaceIntegral f ℓ T) := by
+  let v : Euclidean d := (InnerProductSpace.toDual ℝ (Euclidean d)).symm ℓ
+  have hrepr : ℓ = innerSL ℝ v := by
+    ext x
+    simp only [innerSL_apply]
+    exact (InnerProductSpace.toDual_symm_apply (x := x) (y := ℓ)).symm
+  have hshift : Differentiable ℂ (fun z : ℂ =>
+      Complex.exp (z * (T : ℂ)) *
+        entireFourier f ((-(z * Complex.I) / (2 * Real.pi)) • realToComplex v)) := by
+    have hfrequency : Differentiable ℂ (fun z : ℂ =>
+        (-(z * Complex.I) / (2 * Real.pi)) • realToComplex v) := by fun_prop
+    have hfourier := (entireFourier_differentiable hf hR hsupp).comp hfrequency
+    have hexp : Differentiable ℂ (fun z : ℂ => Complex.exp (z * (T : ℂ))) := by fun_prop
+    exact hexp.mul hfourier
+  have hEq (z : ℂ) : titchmarshLaplaceIntegral f ℓ T z =
+      Complex.exp (z * (T : ℂ)) *
+        entireFourier f ((-(z * Complex.I) / (2 * Real.pi)) • realToComplex v) := by
+    rw [hrepr]
+    change (∫ x, f x * Complex.exp (z * ((T - inner (𝕜 := ℝ) v x : ℝ) : ℂ))) = _
+    have hz0 : realToComplex (0 : Euclidean d) = 0 := by
+      ext j
+      simp [realToComplex]
+    have hkernel (x : Euclidean d) : complexFourierKernel x 0 = 1 := by
+      rw [← hz0, complexFourierKernel_realToComplex]
+      simp
+    have hshifted := integral_directionalLaplace_eq_entireFourier_shift f v 0 T z
+    rw [hz0] at hshifted
+    calc
+      (∫ x, f x * Complex.exp (z * ((T - inner (𝕜 := ℝ) v x : ℝ) : ℂ))) =
+          ∫ x, f x * Complex.exp (z * ((T - inner (𝕜 := ℝ) v x : ℝ) : ℂ)) *
+            complexFourierKernel x 0 := by
+        apply integral_congr_ae
+        filter_upwards with x
+        rw [hkernel x]
+        ring
+      _ = _ := by simpa using hshifted
+  intro z
+  apply (hshift z).congr_of_eventuallyEq
+  filter_upwards with w
+  exact hEq w
+
+/-- On either closed half-plane pointing away from the support, the transform is
+bounded by the `L¹` norm. -/
+theorem titchmarshLaplaceIntegral_norm_le {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : Integrable f) (ℓ : Euclidean d →L[ℝ] ℝ) (T : ℝ) (z : ℂ)
+    (hz : (0 ≤ z.re ∧ ∀ᵐ x, f x ≠ 0 → T ≤ ℓ x) ∨
+      (z.re ≤ 0 ∧ ∀ᵐ x, f x ≠ 0 → ℓ x ≤ T)) :
+    ‖titchmarshLaplaceIntegral f ℓ T z‖ ≤ ∫ x, ‖f x‖ := by
+  apply norm_integral_le_of_norm_le hf.norm
+  rcases hz with ⟨hzRe, hside⟩ | ⟨hzRe, hside⟩
+  · filter_upwards [hside] with x hx
+    by_cases hfx : f x = 0
+    · simp [hfx]
+    · rw [norm_mul, Complex.norm_exp]
+      have hRe : (z * ↑(T - ℓ x)).re = z.re * (T - ℓ x) := by simp [Complex.mul_re]
+      rw [hRe]
+      have hle : z.re * (T - ℓ x) ≤ 0 :=
+        mul_nonpos_of_nonneg_of_nonpos hzRe (by linarith [hx hfx])
+      exact mul_le_of_le_one_right (norm_nonneg _) (Real.exp_le_one_iff.mpr hle)
+  · filter_upwards [hside] with x hx
+    by_cases hfx : f x = 0
+    · simp [hfx]
+    · rw [norm_mul, Complex.norm_exp]
+      have hRe : (z * ↑(T - ℓ x)).re = z.re * (T - ℓ x) := by simp [Complex.mul_re]
+      rw [hRe]
+      have hle : z.re * (T - ℓ x) ≤ 0 :=
+        mul_nonpos_of_nonpos_of_nonneg hzRe (by linarith [hx hfx])
+      exact mul_le_of_le_one_right (norm_nonneg _) (Real.exp_le_one_iff.mpr hle)
+
+/-- Strict support below the boundary forces decay along the negative real axis. -/
+theorem titchmarshLaplaceIntegral_tendsto_neg_real {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Integrable f)
+    (ℓ : Euclidean d →L[ℝ] ℝ) (T : ℝ)
+    (hstrict : ∀ᵐ x, f x ≠ 0 → ℓ x < T) :
+    Tendsto (fun t : ℝ => titchmarshLaplaceIntegral f ℓ T (-(t : ℂ)))
+      Filter.atTop (nhds 0) := by
+  have hpoint : ∀ᵐ x, Tendsto
+      (fun t : ℝ => f x * Complex.exp (-(t : ℂ) * ((T - ℓ x : ℝ) : ℂ)))
+      atTop (nhds 0) := by
+    filter_upwards [hstrict] with x hx
+    by_cases hfx : f x = 0
+    · simp [hfx]
+    · have hpos : 0 < T - ℓ x := sub_pos.mpr (hx hfx)
+      have hreal : Tendsto (fun t : ℝ => Real.exp (-t * (T - ℓ x))) atTop (nhds 0) := by
+        have hlin : Tendsto (fun t : ℝ => t * (T - ℓ x)) atTop atTop :=
+          tendsto_id.atTop_mul_const hpos
+        convert Real.tendsto_exp_neg_atTop_nhds_zero.comp hlin using 1
+        ext t
+        congr 1
+        ring
+      have hc : Tendsto (fun t : ℝ => Complex.exp (-(t : ℂ) * ↑(T - ℓ x)))
+          atTop (nhds 0) := by
+        have heq : (fun t : ℝ => Complex.exp (-(t : ℂ) * ↑(T - ℓ x))) =
+            fun t => (Complex.ofReal (Real.exp (-t * (T - ℓ x)))) := by
+          funext t
+          calc
+            Complex.exp (-(t : ℂ) * ↑(T - ℓ x)) =
+                Complex.exp ((-t * (T - ℓ x) : ℝ) : ℂ) := by congr 1; push_cast; ring
+            _ = Complex.ofReal (Real.exp (-t * (T - ℓ x))) := by rw [← Complex.ofReal_exp]
+        have hcont := (Complex.continuous_ofReal.tendsto 0).comp hreal
+        convert hcont using 1
+      simpa [mul_comm] using hc.const_mul (f x)
+  have hdom : ∀ᶠ t : ℝ in atTop, ∀ᵐ x,
+      ‖f x * Complex.exp (-(t : ℂ) * ↑(T - ℓ x))‖ ≤ ‖f x‖ := by
+    filter_upwards [eventually_atTop.2 ⟨0, fun t ht => ht⟩] with t ht
+    filter_upwards [hstrict] with x hx
+    rw [norm_mul, Complex.norm_exp]
+    have hRe : (-(t : ℂ) * ↑(T - ℓ x)).re = -t * (T - ℓ x) := by simp [Complex.mul_re]
+    rw [hRe]
+    by_cases hfx : f x = 0
+    · simp [hfx]
+    · have hpos : 0 ≤ T - ℓ x := sub_nonneg.mpr (le_of_lt (hx hfx))
+      exact mul_le_of_le_one_right (norm_nonneg _)
+        (Real.exp_le_one_iff.mpr (mul_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr ht) hpos))
+  have hmeas (t : ℝ) : AEStronglyMeasurable
+      (fun x => f x * Complex.exp (-(t : ℂ) * ↑(T - ℓ x))) := by
+    exact hf.aestronglyMeasurable.mul
+      ((Complex.continuous_exp.comp
+        (continuous_const.mul (Complex.continuous_ofReal.comp
+          (continuous_const.sub ℓ.continuous)))).aestronglyMeasurable)
+  have hlim : ∀ᵐ x, Tendsto
+      (fun t : ℝ => f x * Complex.exp (-(t : ℂ) * ↑(T - ℓ x))) atTop (nhds (0 : ℂ)) := hpoint
+  have h := tendsto_integral_filter_of_dominated_convergence (fun x => ‖f x‖)
+    (Filter.Eventually.of_forall hmeas) hdom hf.norm hlim
+  simpa [titchmarshLaplaceIntegral] using h
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshFourierDetection.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Fourier uniqueness for the low part of the directional support argument. -/
+
+noncomputable section
+open MeasureTheory Filter Topology
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- An integrable L² function with zero Fourier integral vanishes almost everywhere. -/
+theorem ae_eq_zero_of_fourierIntegral_eq_zero {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Integrable f) (h₂ : MemLp f 2 volume)
+    (hF : ∀ ξ, Real.fourierIntegral f ξ = 0) : f =ᵐ[volume] 0 := by
+  let u : FullL2 d := h₂.toLp f
+  have hu : (u : Euclidean d → ℂ) =ᵐ[volume] f := h₂.coeFn_toLp
+  have hui : Integrable (u : Euclidean d → ℂ) := hf.congr hu.symm
+  have hFu : ∀ ξ, entireFourier u (realToComplex ξ) = 0 := by
+    intro ξ
+    rw [entireFourier_congr hu, entireFourier_realToComplex]
+    exact hF ξ
+  have hzero : fourierL2Equiv d u = 0 := by
+    apply Lp.ext
+    filter_upwards [entireFourier_eq_fourierL2 u hui, Lp.coeFn_zero ℂ 2 volume]
+      with ξ hξ h0
+    exact hξ.symm.trans ((hFu ξ).trans h0.symm)
+  have huz : u = 0 := by
+    apply (fourierL2Equiv d).injective
+    simpa using hzero
+  exact hu.symm.trans (huz ▸ Lp.coeFn_zero ℂ 2 volume)
+
+/-- Fourier uniqueness upgrades to pointwise uniqueness for continuous compact tests. -/
+theorem eq_zero_of_fourierIntegral_eq_zero {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Continuous f) (hc : HasCompactSupport f)
+    (hF : ∀ ξ, Real.fourierIntegral f ξ = 0) : f = 0 := by
+  exact MeasureTheory.Measure.eq_of_ae_eq
+    (ae_eq_zero_of_fourierIntegral_eq_zero (hf.integrable_of_hasCompactSupport hc)
+      (hf.memLp_of_hasCompactSupport (p := 2) hc) hF) hf continuous_const
+
+/-- An almost-everywhere vanishing low part forces vanishing on the open halfspace. -/
+theorem eq_zero_on_halfspace_of_indicator_ae_eq_zero {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Continuous f)
+    (ℓ : Euclidean d →L[ℝ] ℝ) (T : ℝ)
+    (hzero : {x | ℓ x < T}.indicator f =ᵐ[volume] 0) :
+    ∀ x, ℓ x < T → f x = 0 := by
+  have hU : IsOpen {x | ℓ x < T} := isOpen_lt ℓ.continuous continuous_const
+  have hae : f =ᵐ[volume.restrict {x | ℓ x < T}] 0 := by
+    apply (ae_restrict_iff' hU.measurableSet).mpr
+    filter_upwards [hzero] with x hx hmem
+    change {x | ℓ x < T}.indicator f x = 0 at hx
+    rw [Set.indicator_of_mem (show x ∈ {x | ℓ x < T} from hmem)] at hx
+    exact hx
+  exact MeasureTheory.Measure.eqOn_open_of_ae_eq hae hU hf.continuousOn
+    continuous_const.continuousOn
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshFunctionHalf.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! The analytic half lemma: a square bound forbids a low support component. -/
+
+noncomputable section
+open MeasureTheory Filter Topology
+open scoped Convolution
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- A uniform bound on each Fourier-twisted Laplace square forces the function
+to vanish below the corresponding supporting hyperplane. -/
+theorem vanishes_below_of_laplace_square_bound {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Continuous f) (hc : HasCompactSupport f)
+    (ℓ : Euclidean d →L[ℝ] ℝ) (T : ℝ)
+    (hsquare : ∀ ξ : Euclidean d, ∃ C : ℝ, 0 ≤ C ∧
+      ∀ z : ℂ, 0 ≤ z.re →
+        ‖titchmarshLaplaceIntegral
+          (fun x => f x * complexFourierKernel x (realToComplex ξ)) ℓ T z‖ ^ 2 ≤ C ^ 2) :
+    ∀ x, ℓ x < T → f x = 0 := by
+  let U : Set (Euclidean d) := {x | ℓ x < T}
+  have hU : MeasurableSet U := (isOpen_lt ℓ.continuous continuous_const).measurableSet
+  obtain ⟨R, hR, hbound⟩ := hc.isBounded.exists_pos_norm_le
+  have hfs : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R := Eventually.of_forall
+    (fun x hx => hbound x (subset_tsupport f hx))
+  have hfi : Integrable f := hf.integrable_of_hasCompactSupport hc
+  have hlow₂ : MemLp (U.indicator f) 2 volume :=
+    (hf.memLp_of_hasCompactSupport (p := 2) hc).indicator hU
+  have hlowi : Integrable (U.indicator f) := hfi.indicator hU
+  have hFourier : ∀ ξ, Real.fourierIntegral (U.indicator f) ξ = 0 := by
+    intro ξ
+    let p : Euclidean d → ℂ := fun x =>
+      f x * complexFourierKernel x (realToComplex ξ)
+    let g : Euclidean d → ℂ := U.indicator p
+    let h : Euclidean d → ℂ := Uᶜ.indicator p
+    have hpi : Integrable p := entireFourier_integrable hfi hfs (realToComplex ξ)
+    have hgi : Integrable g := hpi.indicator hU
+    have hhi : Integrable h := hpi.indicator hU.compl
+    have hgs : ∀ᵐ x, g x ≠ 0 → ‖x‖ ≤ R := by
+      filter_upwards [hfs] with x hx hgx
+      apply hx
+      intro hfx
+      exact hgx (by simp [g, p, hfx])
+    have hhs : ∀ᵐ x, h x ≠ 0 → ‖x‖ ≤ R := by
+      filter_upwards [hfs] with x hx hhx
+      apply hx
+      intro hfx
+      exact hhx (by simp [h, p, hfx])
+    have hstrict : ∀ᵐ x, g x ≠ 0 → ℓ x < T := Eventually.of_forall (by
+      intro x hx
+      by_contra hn
+      exact hx (Set.indicator_of_not_mem (show x ∉ U from hn) p))
+    have hhigh : ∀ᵐ x, h x ≠ 0 → T ≤ ℓ x := Eventually.of_forall (by
+      intro x hx
+      by_cases hxU : x ∈ U
+      · exact False.elim (hx (Set.indicator_of_not_mem
+          (Set.not_mem_compl_iff.mpr hxU) p))
+      · exact le_of_not_gt hxU)
+    let F := titchmarshLaplaceIntegral p ℓ T
+    let G := titchmarshLaplaceIntegral g ℓ T
+    let H := titchmarshLaplaceIntegral h ℓ T
+    have hdecomp : ∀ z, F z = G z + H z := by
+      intro z
+      change (∫ x, p x * Complex.exp (z * ↑(T - ℓ x))) =
+        (∫ x, g x * Complex.exp (z * ↑(T - ℓ x))) +
+          ∫ x, h x * Complex.exp (z * ↑(T - ℓ x))
+      rw [← integral_add
+        (titchmarshLaplaceIntegral_integrable hgi ℓ T hgs z)
+        (titchmarshLaplaceIntegral_integrable hhi ℓ T hhs z)]
+      apply integral_congr_ae
+      filter_upwards with x
+      by_cases hx : x ∈ U <;> simp [g, h, hx]
+    obtain ⟨C, hC, hsq⟩ := hsquare ξ
+    have hGzero : G = 0 := laplace_low_part_eq_zero F G H
+      (titchmarshLaplaceIntegral_differentiable hgi ℓ T hR.le hgs)
+      hdecomp hC hsq
+      (fun z hz => titchmarshLaplaceIntegral_norm_le hhi ℓ T z (Or.inl ⟨hz, hhigh⟩))
+      (fun z hz => titchmarshLaplaceIntegral_norm_le hgi ℓ T z
+        (Or.inr ⟨hz, hstrict.mono fun _ hx hn => (hx hn).le⟩))
+      (titchmarshLaplaceIntegral_tendsto_neg_real hgi ℓ T hstrict)
+    have hG0 := congrFun hGzero 0
+    change titchmarshLaplaceIntegral g ℓ T 0 = 0 at hG0
+    simp only [titchmarshLaplaceIntegral, zero_mul, Complex.exp_zero, mul_one] at hG0
+    rw [← entireFourier_realToComplex, entireFourier]
+    convert hG0 using 1
+    apply integral_congr_ae
+    filter_upwards with x
+    by_cases hx : x ∈ U <;> simp [g, p, hx]
+  exact eq_zero_on_halfspace_of_indicator_ae_eq_zero hf ℓ T
+    (ae_eq_zero_of_fourierIntegral_eq_zero hlowi hlow₂ hFourier)
+
+/-- The actual Laplace square is the Laplace transform of self-convolution. -/
+theorem titchmarshLaplaceIntegral_twisted_self_convolution {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Integrable f)
+    {R : ℝ} (hs : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R)
+    (v ξ : Euclidean d) (T : ℝ) (z : ℂ) :
+    titchmarshLaplaceIntegral
+      (fun x => f x * complexFourierKernel x (realToComplex ξ))
+      (innerSL ℝ v) T z ^ 2 =
+    titchmarshLaplaceIntegral
+      (fun x => (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] f) x *
+        complexFourierKernel x (realToComplex ξ)) (innerSL ℝ v) (2 * T) z := by
+  have hshift (g : Euclidean d → ℂ) (S : ℝ) :
+      titchmarshLaplaceIntegral
+        (fun x => g x * complexFourierKernel x (realToComplex ξ))
+        (innerSL ℝ v) S z =
+      Complex.exp (z * (S : ℂ)) * entireFourier g
+        (realToComplex ξ + (-(z * Complex.I) / (2 * Real.pi)) • realToComplex v) := by
+    unfold titchmarshLaplaceIntegral
+    convert integral_directionalLaplace_eq_entireFourier_shift g v ξ S z using 1
+    apply integral_congr_ae
+    filter_upwards with x
+    change g x * complexFourierKernel x (realToComplex ξ) *
+      Complex.exp (z * ↑(S - inner (𝕜 := ℝ) v x)) = _
+    ring
+  rw [hshift, hshift, entireFourier_convolution hf hf hs hs]
+  have hexp : Complex.exp (z * ((2 * T : ℝ) : ℂ)) =
+      Complex.exp (z * (T : ℂ)) ^ 2 := by
+    rw [pow_two, ← Complex.exp_add]
+    congr 1
+    push_cast
+    ring
+  rw [hexp]
+  ring
+
+/-- If self-convolution vanishes below level `2*T`, the original continuous
+compactly supported function vanishes below level `T`. -/
+theorem self_convolution_halfspace {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Continuous f) (hc : HasCompactSupport f)
+    (v : Euclidean d) (T : ℝ)
+    (hw : ∀ x, inner (𝕜 := ℝ) v x < 2 * T →
+      (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] f) x = 0) :
+    ∀ x, inner (𝕜 := ℝ) v x < T → f x = 0 := by
+  have hfi : Integrable f := hf.integrable_of_hasCompactSupport hc
+  obtain ⟨R, _, hbound⟩ := hc.isBounded.exists_pos_norm_le
+  have hfs : ∀ᵐ x, f x ≠ 0 → ‖x‖ ≤ R := Eventually.of_forall
+    (fun x hx => hbound x (subset_tsupport f hx))
+  let w := f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] f
+  have hwi : Integrable w := hfi.integrable_convolution (L := ContinuousLinearMap.mul ℂ ℂ) hfi
+  apply vanishes_below_of_laplace_square_bound hf hc (innerSL ℝ v) T
+  intro ξ
+  let p : Euclidean d → ℂ := fun x => w x * complexFourierKernel x (realToComplex ξ)
+  have hp : Integrable p := by
+    apply hwi.norm.mono'
+    · exact hwi.aestronglyMeasurable.mul
+        (complexFourierKernel_continuous_left (realToComplex ξ)).aestronglyMeasurable
+    · filter_upwards with x
+      simp [p, norm_mul, complexFourierKernel_real_norm]
+  have hps : ∀ᵐ x, p x ≠ 0 → 2 * T ≤ (innerSL ℝ v) x := by
+    filter_upwards with x hx
+    by_contra hn
+    have hlow : inner (𝕜 := ℝ) v x < 2 * T := lt_of_not_ge hn
+    exact hx (by simp [p, w, hw x hlow])
+  let A : ℝ := ∫ x, ‖p x‖
+  have hA : 0 ≤ A := integral_nonneg fun _ => norm_nonneg _
+  refine ⟨A + 1, by positivity, ?_⟩
+  intro z hz
+  rw [← norm_pow, titchmarshLaplaceIntegral_twisted_self_convolution hfi hfs]
+  have hb := titchmarshLaplaceIntegral_norm_le hp (innerSL ℝ v) (2 * T) z
+    (Or.inl ⟨hz, hps⟩)
+  change ‖titchmarshLaplaceIntegral p (innerSL ℝ v) (2 * T) z‖ ≤ (A + 1) ^ 2
+  exact hb.trans (by nlinarith [sq_nonneg A])
+
+/-- The half lemma for an arbitrary continuous real linear coordinate. -/
+theorem self_convolution_halfspace_linear {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : Continuous f) (hc : HasCompactSupport f)
+    (ℓ : Euclidean d →L[ℝ] ℝ) (T : ℝ)
+    (hw : ∀ x, ℓ x < 2 * T →
+      (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] f) x = 0) :
+    ∀ x, ℓ x < T → f x = 0 := by
+  let v : Euclidean d := (InnerProductSpace.toDual ℝ (Euclidean d)).symm ℓ
+  have hrepr : ℓ = innerSL ℝ v := by
+    ext x
+    simp only [innerSL_apply]
+    exact (InnerProductSpace.toDual_symm_apply (x := x) (y := ℓ)).symm
+  rw [hrepr] at hw ⊢
+  exact self_convolution_halfspace hf hc v T hw
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshFunctionAlgebra.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Compactly supported functions with convolution multiplication
+
+This file sets up the concrete convolution algebra used by the algebraic
+Titchmarsh bootstrap. The multiplication is Lebesgue convolution, rather than
+pointwise multiplication.
+-/
+
+noncomputable section
+
+set_option maxHeartbeats 600000
+
+open MeasureTheory
+open scoped CompactlySupported Convolution
+
+namespace RieszEuclidean.TitchmarshFunctionAlgebra
+
+variable (d : ℕ)
+
+private theorem volume_neg_map :
+    Measure.map Neg.neg (volume : Measure (RieszEuclidean.Euclidean d)) = volume := by
+  exact (LinearIsometryEquiv.measurePreserving
+    (LinearIsometryEquiv.neg ℝ : RieszEuclidean.Euclidean d ≃ₗᵢ[ℝ]
+      RieszEuclidean.Euclidean d)).map_eq
+
+local instance : (volume : Measure (RieszEuclidean.Euclidean d)).IsNegInvariant :=
+  ⟨by rw [Measure.neg_def]; exact volume_neg_map d⟩
+
+/-- Compactly supported continuous complex functions on Euclidean space, with
+the multiplication intended to be convolution. -/
+abbrev Function := C_c(RieszEuclidean.Euclidean d, ℂ)
+
+local notation "𝒞" => Function d
+
+/-- The actual Lebesgue convolution of two compactly supported continuous
+functions. -/
+def convolution (f g : 𝒞) : 𝒞 := by
+  let h : RieszEuclidean.Euclidean d → ℂ :=
+    MeasureTheory.convolution (f : RieszEuclidean.Euclidean d → ℂ)
+      (g : RieszEuclidean.Euclidean d → ℂ) (ContinuousLinearMap.mul ℂ ℂ) volume
+  have hc : Continuous h := by
+    apply HasCompactSupport.continuous_convolution_right (L := ContinuousLinearMap.mul ℂ ℂ)
+    · exact g.hasCompactSupport
+    · exact (f.continuous.locallyIntegrable)
+    · exact g.continuous
+  have hs : HasCompactSupport h :=
+    HasCompactSupport.convolution (L := ContinuousLinearMap.mul ℂ ℂ)
+      f.hasCompactSupport g.hasCompactSupport
+  exact ⟨⟨h, hc⟩, hs⟩
+
+@[simp]
+theorem coe_convolution (f g : 𝒞) (x : RieszEuclidean.Euclidean d) :
+    (convolution d f g : RieszEuclidean.Euclidean d → ℂ) x =
+      ∫ y, f y * g (x - y) ∂volume := by
+  rfl
+
+private theorem convolution_exists (f g : 𝒞) :
+    MeasureTheory.ConvolutionExists (f : RieszEuclidean.Euclidean d → ℂ)
+      (g : RieszEuclidean.Euclidean d → ℂ) (ContinuousLinearMap.mul ℂ ℂ) volume := by
+  exact f.hasCompactSupport.convolutionExists_left (ContinuousLinearMap.mul ℂ ℂ)
+    f.continuous g.continuous.locallyIntegrable
+
+theorem convolution_add_left (f g h : 𝒞) :
+    convolution d (f + g) h = convolution d f h + convolution d g h := by
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  change (MeasureTheory.convolution (f + g) h (ContinuousLinearMap.mul ℂ ℂ) volume) x = _
+  exact congrFun ((convolution_exists d f h).add_distrib (convolution_exists d g h)) x
+
+theorem convolution_add_right (f g h : 𝒞) :
+    convolution d f (g + h) = convolution d f g + convolution d f h := by
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  change (MeasureTheory.convolution f (g + h) (ContinuousLinearMap.mul ℂ ℂ) volume) x = _
+  exact congrFun ((convolution_exists d f g).distrib_add (convolution_exists d f h)) x
+
+theorem convolution_comm (f g : 𝒞) : convolution d f g = convolution d g f := by
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  have hflip := MeasureTheory.convolution_flip (L := ContinuousLinearMap.mul ℂ ℂ)
+    (μ := volume) (f := (f : RieszEuclidean.Euclidean d → ℂ))
+    (g := (g : RieszEuclidean.Euclidean d → ℂ))
+  have hmul : (ContinuousLinearMap.mul ℂ ℂ).flip = ContinuousLinearMap.mul ℂ ℂ := by
+    ext
+    simp [ContinuousLinearMap.mul_apply, mul_comm]
+  change (MeasureTheory.convolution f g (ContinuousLinearMap.mul ℂ ℂ) volume) x = _
+  rw [hmul] at hflip
+  exact (congrFun hflip x).symm
+
+theorem convolution_assoc (f g h : 𝒞) :
+    convolution d (convolution d f g) h = convolution d f (convolution d g h) := by
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  let nf : RieszEuclidean.Euclidean d → ℝ := fun y => ‖f y‖
+  let ng : RieszEuclidean.Euclidean d → ℝ := fun y => ‖g y‖
+  let nh : RieszEuclidean.Euclidean d → ℝ := fun y => ‖h y‖
+  let q : RieszEuclidean.Euclidean d → ℝ :=
+    MeasureTheory.convolution ng nh (ContinuousLinearMap.mul ℝ ℝ) volume
+  have hqcont : Continuous q := by
+    dsimp [q]
+    apply HasCompactSupport.continuous_convolution_right
+    · exact h.hasCompactSupport.norm
+    · exact (g.continuous.norm.locallyIntegrable)
+    · exact h.continuous.norm
+  have hfg : ∀ᵐ y : RieszEuclidean.Euclidean d ∂volume,
+      MeasureTheory.ConvolutionExistsAt f g y (ContinuousLinearMap.mul ℂ ℂ) volume :=
+    Filter.Eventually.of_forall fun y => (convolution_exists d f g) y
+  have hgnh : ∀ᵐ y : RieszEuclidean.Euclidean d ∂volume,
+      MeasureTheory.ConvolutionExistsAt ng nh y (ContinuousLinearMap.mul ℝ ℝ) volume := by
+    exact MeasureTheory.Integrable.ae_convolution_exists
+      (L := ContinuousLinearMap.mul ℝ ℝ)
+      (g.continuous.norm.integrable_of_hasCompactSupport g.hasCompactSupport.norm)
+      (h.continuous.norm.integrable_of_hasCompactSupport h.hasCompactSupport.norm)
+  have hfgq : MeasureTheory.ConvolutionExistsAt nf q x
+      (ContinuousLinearMap.mul ℝ ℝ) volume := by
+    apply HasCompactSupport.convolutionExistsAt
+    · exact f.hasCompactSupport.norm.mul_right
+    · exact f.continuous.norm.locallyIntegrable
+    · exact hqcont
+  exact MeasureTheory.convolution_assoc (L := ContinuousLinearMap.mul ℂ ℂ)
+    (L₂ := ContinuousLinearMap.mul ℂ ℂ) (L₃ := ContinuousLinearMap.mul ℂ ℂ)
+    (L₄ := ContinuousLinearMap.mul ℂ ℂ)
+    (fun a b c => by simp [ContinuousLinearMap.mul_apply, mul_assoc])
+    f.continuous.aestronglyMeasurable g.continuous.aestronglyMeasurable
+    h.continuous.aestronglyMeasurable hfg hgnh hfgq
+
+@[simp]
+theorem convolution_zero_left (f : 𝒞) : convolution d (0 : 𝒞) f = 0 := by
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  simp [coe_convolution]
+
+@[simp]
+theorem convolution_zero_right (f : 𝒞) : convolution d f (0 : 𝒞) = 0 := by
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  simp [coe_convolution]
+
+/-- Multiplication by a real linear coordinate, regarded as a complex-valued
+function. -/
+def coordinateMultiplier (ℓ : RieszEuclidean.Euclidean d →L[ℝ] ℝ) (f : 𝒞) : 𝒞 := by
+  let m : RieszEuclidean.Euclidean d → ℂ := fun x => (ℓ x : ℂ) * f x
+  have hm : Continuous m := by
+    dsimp [m]
+    fun_prop
+  have hs : HasCompactSupport m := by
+    dsimp [m]
+    exact f.hasCompactSupport.mul_left
+  exact ⟨⟨m, hm⟩, hs⟩
+
+@[simp]
+theorem coe_coordinateMultiplier (ℓ : RieszEuclidean.Euclidean d →L[ℝ] ℝ)
+    (f : 𝒞) (x : RieszEuclidean.Euclidean d) :
+    (coordinateMultiplier d ℓ f : RieszEuclidean.Euclidean d → ℂ) x =
+      (ℓ x : ℂ) * f x := rfl
+
+/-- Multiplication by a linear coordinate is a derivation for convolution. -/
+theorem coordinateMultiplier_convolution
+    (ℓ : RieszEuclidean.Euclidean d →L[ℝ] ℝ) (f g : 𝒞) :
+    coordinateMultiplier d ℓ (convolution d f g) =
+    convolution d (coordinateMultiplier d ℓ f) g +
+        convolution d f (coordinateMultiplier d ℓ g) := by
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  change (ℓ x : ℂ) * (∫ y, f y * g (x - y) ∂volume) =
+    (∫ y, (ℓ y : ℂ) * f y * g (x - y) ∂volume) +
+      (∫ y, f y * ((ℓ (x - y) : ℂ) * g (x - y)) ∂volume)
+  have hi₂ : Integrable (fun y : RieszEuclidean.Euclidean d =>
+      (ℓ y : ℂ) * f y * g (x - y)) := by
+    let q : RieszEuclidean.Euclidean d → ℂ := fun y => (ℓ y : ℂ) * g (x - y)
+    have hcont : Continuous q :=
+      (Complex.continuous_ofReal.comp ℓ.continuous).mul
+        (g.continuous.comp (continuous_const.sub continuous_id))
+    have heq : (fun y : RieszEuclidean.Euclidean d =>
+        (ℓ y : ℂ) * f y * g (x - y)) = fun y => f y * q y := by
+      funext y
+      dsimp [q]
+      ring
+    rw [heq]
+    exact Continuous.integrable_of_hasCompactSupport (f.continuous.mul hcont)
+      (f.hasCompactSupport.mul_right)
+  have hi₃ : Integrable (fun y : RieszEuclidean.Euclidean d =>
+      f y * ((ℓ (x - y) : ℂ) * g (x - y))) := by
+    exact Continuous.integrable_of_hasCompactSupport
+      (f.continuous.mul ((Complex.continuous_ofReal.comp ℓ.continuous).comp
+        (continuous_const.sub continuous_id) |>.mul
+        (g.continuous.comp (continuous_const.sub continuous_id))))
+      (f.hasCompactSupport.mul_right)
+  rw [← integral_const_mul, ← integral_add hi₂ hi₃]
+  apply integral_congr_ae
+  filter_upwards with y
+  have hℓ : ℓ x = ℓ y + ℓ (x - y) := by simp
+  rw [hℓ]
+  push_cast
+  ring
+
+/-- Functions supported in the closed positive halfspace for a chosen
+continuous real coordinate. -/
+def halfspace (ℓ : RieszEuclidean.Euclidean d →L[ℝ] ℝ) : Submodule ℂ 𝒞 where
+  carrier := {f | ∀ x, ℓ x < 0 → f x = 0}
+  zero_mem' := by simp
+  add_mem' := by
+    intro f g hf hg x hx
+    simp [hf x hx, hg x hx]
+  smul_mem' := by
+    intro c f hf x hx
+    simp [hf x hx]
+
+/-- Compactly supported continuous functions whose support lies in a fixed
+closed halfspace. -/
+abbrev HalfspaceFunctions (ℓ : RieszEuclidean.Euclidean d →L[ℝ] ℝ) :=
+  (halfspace d ℓ : Submodule ℂ 𝒞)
+
+namespace HalfspaceFunctions
+
+variable {ℓ : RieszEuclidean.Euclidean d →L[ℝ] ℝ}
+
+/-- Vanishing of a halfspace-supported function below any level. -/
+def V (f : HalfspaceFunctions d ℓ) (t : ℝ) : Prop :=
+  ∀ x, ℓ x < t → f.val x = 0
+
+theorem V_zero (t : ℝ) : V d (ℓ := ℓ) (0 : HalfspaceFunctions d ℓ) t := by
+  intro x hx
+  simp
+
+theorem V_base (f : HalfspaceFunctions d ℓ) : V d f 0 := f.property
+
+theorem V_mono {f : HalfspaceFunctions d ℓ} {s t : ℝ}
+    (hf : V d f t) (hst : s ≤ t) : V d f s := by
+  intro x hx
+  exact hf x (hx.trans_le hst)
+
+theorem V_closed {f : HalfspaceFunctions d ℓ} {t : ℝ}
+    (hf : ∀ s < t, V d f s) : V d f t := by
+  intro x hx
+  obtain ⟨s, hxs, hst⟩ := exists_between hx
+  exact hf s hst x hxs
+
+theorem V_add {f g : HalfspaceFunctions d ℓ} {t : ℝ}
+    (hf : V d f t) (hg : V d g t) : V d (f + g) t := by
+  intro x hx
+  simp [hf x hx, hg x hx]
+
+theorem V_neg {f : HalfspaceFunctions d ℓ} {t : ℝ}
+    (hf : V d f t) : V d (-f) t := by
+  intro x hx
+  simp [hf x hx]
+
+theorem convolution_mem_halfspace (f g : HalfspaceFunctions d ℓ) :
+    convolution d f.val g.val ∈ HalfspaceFunctions d ℓ := by
+  intro x hx
+  rw [coe_convolution]
+  apply integral_eq_zero_of_ae
+  filter_upwards with y
+  by_cases hy : ℓ y < 0
+  · simp [f.property y hy]
+  · by_cases hxy : ℓ (x - y) < 0
+    · simp [g.property (x - y) hxy]
+    · have hsum : ℓ x = ℓ y + ℓ (x - y) := by simp
+      linarith [hsum, hx]
+
+instance : Mul (HalfspaceFunctions d ℓ) where
+  mul f g := ⟨convolution d f.val g.val, convolution_mem_halfspace d f g⟩
+
+@[simp]
+theorem coe_mul (f g : HalfspaceFunctions d ℓ) :
+    (f * g).val = convolution d f.val g.val := rfl
+
+instance : NonUnitalNonAssocRing (HalfspaceFunctions d ℓ) where
+  left_distrib f g h := by
+    apply Subtype.ext
+    change convolution d f.val (g.val + h.val) =
+      convolution d f.val g.val + convolution d f.val h.val
+    exact convolution_add_right d f.val g.val h.val
+  right_distrib f g h := by
+    apply Subtype.ext
+    change convolution d (f.val + g.val) h.val =
+      convolution d f.val h.val + convolution d g.val h.val
+    exact convolution_add_left d f.val g.val h.val
+  zero_mul f := by
+    apply Subtype.ext
+    change convolution d (0 : 𝒞) f.val = 0
+    exact convolution_zero_left d f.val
+  mul_zero f := by
+    apply Subtype.ext
+    change convolution d f.val (0 : 𝒞) = 0
+    exact convolution_zero_right d f.val
+
+instance : NonUnitalRing (HalfspaceFunctions d ℓ) where
+  toNonUnitalNonAssocRing := inferInstance
+  mul_assoc f g h := by
+    apply Subtype.ext
+    change convolution d (convolution d f.val g.val) h.val =
+      convolution d f.val (convolution d g.val h.val)
+    exact convolution_assoc d f.val g.val h.val
+
+instance : NonUnitalCommRing (HalfspaceFunctions d ℓ) :=
+  NonUnitalCommRing.mk (fun f g => by
+    apply Subtype.ext
+    change convolution d f.val g.val = convolution d g.val f.val
+    exact convolution_comm d f.val g.val)
+
+/-- Convolution retains a lower support bound equal to the sum of the two
+factor bounds. -/
+theorem V_convolution {f g : HalfspaceFunctions d ℓ} {s t : ℝ}
+    (hf : V d f s) (hg : V d g t) :
+    V d (f * g) (s + t) := by
+  intro x hx
+  rw [coe_mul, coe_convolution]
+  apply integral_eq_zero_of_ae
+  filter_upwards with y
+  by_cases hys : ℓ y < s
+  · simp [hf y hys]
+  · by_cases hyt : ℓ (x - y) < t
+    · simp [hg (x - y) hyt]
+    · have hxy : ℓ x = ℓ y + ℓ (x - y) := by simp
+      linarith [hxy, hx]
+
+/-- The coordinate multiplier, as an endomorphism of the halfspace function
+space. -/
+def M (f : HalfspaceFunctions d ℓ) : HalfspaceFunctions d ℓ :=
+  ⟨coordinateMultiplier d ℓ f.val, by
+    intro x hx
+    simp [f.property x hx]⟩
+
+@[simp]
+theorem coe_M (f : HalfspaceFunctions d ℓ) :
+    (M d f : 𝒞) = coordinateMultiplier d ℓ f.val := rfl
+
+/-- The coordinate multiplier is a derivation for the halfspace convolution
+product. -/
+theorem M_mul (f g : HalfspaceFunctions d ℓ) :
+    M d (f * g) = M d f * g + f * M d g := by
+  apply Subtype.ext
+  change coordinateMultiplier d ℓ (convolution d f.val g.val) =
+    convolution d (coordinateMultiplier d ℓ f.val) g.val +
+      convolution d f.val (coordinateMultiplier d ℓ g.val)
+  exact coordinateMultiplier_convolution d ℓ f.val g.val
+
+theorem V_coordinateMultiplier {f : HalfspaceFunctions d ℓ} {t : ℝ}
+    (hf : V d f t) : V d (M d f) t := by
+  intro x hx
+  simp [M, coordinateMultiplier, hf x hx]
+
+/-- The coordinate multiplier by any real linear functional. The multiplier
+coordinate is independent of the halfspace defining the function space. -/
+def Mcoordinate (m : RieszEuclidean.Euclidean d →L[ℝ] ℝ)
+    (f : HalfspaceFunctions d ℓ) : HalfspaceFunctions d ℓ :=
+  ⟨coordinateMultiplier d m f.val, by
+    intro x hx
+    simp [f.property x hx]⟩
+
+@[simp]
+theorem coe_Mcoordinate (m : RieszEuclidean.Euclidean d →L[ℝ] ℝ)
+    (f : HalfspaceFunctions d ℓ) :
+    (Mcoordinate d m f : 𝒞) = coordinateMultiplier d m f.val := rfl
+
+theorem Mcoordinate_mul (m : RieszEuclidean.Euclidean d →L[ℝ] ℝ)
+    (f g : HalfspaceFunctions d ℓ) :
+    Mcoordinate d m (f * g) = Mcoordinate d m f * g + f * Mcoordinate d m g := by
+  apply Subtype.ext
+  change coordinateMultiplier d m (convolution d f.val g.val) =
+    convolution d (coordinateMultiplier d m f.val) g.val +
+      convolution d f.val (coordinateMultiplier d m g.val)
+  exact coordinateMultiplier_convolution d m f.val g.val
+
+theorem V_Mcoordinate {m : RieszEuclidean.Euclidean d →L[ℝ] ℝ}
+    {f : HalfspaceFunctions d ℓ} {t : ℝ} (hf : V d f t) :
+    V d (Mcoordinate d m f) t := by
+  intro x hx
+  simp [Mcoordinate, coordinateMultiplier, hf x hx]
+
+/-- The concrete bootstrap data for the halfspace algebra. The self-convolution
+half lemma is the sole analytic input left to the algebraic bootstrap. -/
+def bootstrapData (ℓ m : RieszEuclidean.Euclidean d →L[ℝ] ℝ)
+    (half : ∀ {f : HalfspaceFunctions d ℓ} {t : ℝ}, 0 ≤ t →
+      V d (f * f) (2 * t) → V d f t) :
+    RieszEuclidean.TitchmarshBootstrap.Data (HalfspaceFunctions d ℓ) where
+  M := Mcoordinate d m
+  V := V d
+  V_zero := V_base d
+  V_mono := fun hf hst => V_mono d hf hst
+  V_closed := fun hf => V_closed d hf
+  V_add := fun hf hg => V_add d hf hg
+  V_neg := fun hf => V_neg d hf
+  V_mul := fun hf hg => V_convolution d hf hg
+  V_M := fun hf => V_Mcoordinate d hf
+  M_mul := Mcoordinate_mul d m
+  half := half
+
+/-- Bootstrap data using the proved self-convolution halfspace theorem. -/
+def provedBootstrapData (ℓ m : RieszEuclidean.Euclidean d →L[ℝ] ℝ) :
+    RieszEuclidean.TitchmarshBootstrap.Data (HalfspaceFunctions d ℓ) :=
+  bootstrapData d ℓ m (by
+    intro f t ht hsq
+    exact RieszEuclidean.CompleteMinimal.self_convolution_halfspace_linear
+      f.val.continuous f.val.hasCompactSupport ℓ t (by
+        intro x hx
+        have hzero := hsq x hx
+        change (MeasureTheory.convolution f.val f.val
+          (ContinuousLinearMap.mul ℂ ℂ) volume) x = 0
+        simpa [coe_mul, coe_convolution, convolution] using hzero))
+
+end HalfspaceFunctions
+
+end RieszEuclidean.TitchmarshFunctionAlgebra
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshFunctionTranslations.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Translation and support normalization for compactly supported functions. -/
+
+noncomputable section
+open MeasureTheory
+open scoped Convolution
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- Translate a function by `a`, with the convention `fₐ(x) = f(x - a)`. -/
+def titchmarshTranslate {d : ℕ} (f : Euclidean d → ℂ) (a : Euclidean d) :
+    Euclidean d → ℂ := fun x => f (x - a)
+
+theorem continuous_titchmarshTranslate {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : Continuous f) (a : Euclidean d) : Continuous (titchmarshTranslate f a) := by
+  exact hf.comp (continuous_id.sub continuous_const)
+
+theorem hasCompactSupport_titchmarshTranslate {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : HasCompactSupport f) (a : Euclidean d) : HasCompactSupport (titchmarshTranslate f a) := by
+  simpa [titchmarshTranslate, sub_eq_add_neg] using
+    hf.comp_homeomorph (Homeomorph.addRight (-a))
+
+/-- Translating the factors of a Lebesgue convolution translates its output by the
+sum of the two translation vectors. -/
+theorem convolution_titchmarshTranslate {d : ℕ}
+    (f g : Euclidean d → ℂ) (a b x : Euclidean d) :
+    ((titchmarshTranslate f a) ⋆[ContinuousLinearMap.mul ℂ ℂ, volume]
+        (titchmarshTranslate g b)) x =
+      (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) (x - (a + b)) := by
+  rw [MeasureTheory.convolution_def, MeasureTheory.convolution_def]
+  let K : Euclidean d → ℂ := fun y => f y * g ((x - (a + b)) - y)
+  calc
+    (∫ y, f (y - a) * g ((x - y) - b)) = ∫ y, K (y - a) := by
+      apply integral_congr_ae
+      filter_upwards with y
+      simp only [K]
+      congr 1
+      congr 1
+      abel
+    _ = ∫ y, K y := by
+      simpa only [sub_eq_add_neg] using
+        (measurePreserving_add_right volume (-a)).integral_comp
+          (Homeomorph.addRight (-a)).measurableEmbedding K
+    _ = ∫ y, f y * g ((x - (a + b)) - y) := rfl
+
+/-- A nonzero compactly supported function has a point in its support where a real
+linear functional attains its minimum. -/
+theorem exists_minimum_on_tsupport {d : ℕ} {f : Euclidean d → ℂ}
+    (hf : HasCompactSupport f) (hfne : f ≠ 0) (ℓ : Euclidean d →L[ℝ] ℝ) :
+    ∃ c ∈ tsupport f, ∀ x ∈ tsupport f, ℓ c ≤ ℓ x := by
+  have hcompact : IsCompact (tsupport f) := by
+    simpa only [HasCompactSupport] using hf
+  have hnonempty : (tsupport f).Nonempty := by
+    by_contra h
+    apply hfne
+    funext x
+    by_contra hfx
+    exact h ⟨x, subset_tsupport f hfx⟩
+  obtain ⟨c, hc, hmin⟩ := hcompact.exists_isMinOn hnonempty ℓ.continuous.continuousOn
+  exact ⟨c, hc, hmin⟩
+
+/-- Translating a nonzero compactly supported function by the negative of a support
+minimum puts its support in the closed half-space `0 ≤ ℓ x`. -/
+theorem exists_titchmarshTranslate_supported_nonnegative {d : ℕ}
+    {f : Euclidean d → ℂ} (hf : HasCompactSupport f) (hfne : f ≠ 0)
+    (ℓ : Euclidean d →L[ℝ] ℝ) :
+    ∃ c, c ∈ tsupport f ∧
+      (∀ x ∈ tsupport f, ℓ c ≤ ℓ x) ∧
+      (∀ x, titchmarshTranslate f (-c) x ≠ 0 → 0 ≤ ℓ x) := by
+  obtain ⟨c, hc, hmin⟩ := exists_minimum_on_tsupport hf hfne ℓ
+  refine ⟨c, hc, hmin, ?_⟩
+  intro x hx
+  have hfx : f (x + c) ≠ 0 := by simpa [titchmarshTranslate] using hx
+  have hx' : x + c ∈ tsupport f := subset_tsupport f hfx
+  have hle := hmin (x + c) hx'
+  have heq : ℓ (x + c) = ℓ x + ℓ c := by simp
+  rw [heq] at hle
+  linarith
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshMomentDetection.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+open MeasureTheory
+
+namespace RieszEuclidean
+
+private def continuousMulRightCLM {X : Type*} [TopologicalSpace X] [CompactSpace X]
+    (h : C(X, ℂ)) : C(X, ℂ) →L[ℝ] C(X, ℂ) := by
+  let L : C(X, ℂ) →ₗ[ℝ] C(X, ℂ) := {
+    toFun := fun f => f * h
+    map_add' := by intro f g; ext x; simp [add_mul]
+    map_smul' := by intro c f; ext x; simp [smul_eq_mul, mul_assoc, mul_left_comm, mul_comm]
+  }
+  have hL : ∀ f, ‖L f‖ ≤ ‖h‖ * ‖f‖ := by
+    intro f
+    change ‖f * h‖ ≤ ‖h‖ * ‖f‖
+    calc
+      ‖f * h‖ ≤ ‖f‖ * ‖h‖ := norm_mul_le _ _
+      _ = ‖h‖ * ‖f‖ := mul_comm _ _
+  exact L.mkContinuous ‖h‖ hL
+
+/-- Vanishing of the moment functional on a dense star subalgebra's closure forces a continuous
+function to vanish. The proof tests against `star h` and uses positivity of the integral of
+`‖h‖²` on any nonempty open set. -/
+theorem continuous_moment_detection_of_vanishing_on_closure
+    {X : Type*} [TopologicalSpace X] [MeasurableSpace X] [BorelSpace X]
+    [CompactSpace X] [T2Space X]
+    (μ : Measure X) [IsFiniteMeasure μ] [Measure.IsOpenPosMeasure μ]
+    (A : StarSubalgebra ℂ C(X, ℂ))
+    (hA : A.topologicalClosure = ⊤)
+    (h : C(X, ℂ))
+    (hmom : ∀ p ∈ A.topologicalClosure, ∫ x, p x * h x ∂μ = 0) :
+    h = 0 := by
+  classical
+  have hstar : star h ∈ A.topologicalClosure := by rw [hA]; trivial
+  have hzero : ∫ x, star (h x) * h x ∂μ = 0 := by
+    apply hmom (star h)
+    exact hstar
+  by_contra hne
+  have hx : ∃ x, h x ≠ 0 := by
+    by_contra h'
+    push_neg at h'
+    apply hne
+    ext x
+    exact h' x
+  obtain ⟨x, hx⟩ := hx
+  have hcont : Continuous (fun x : X => ‖h x‖ ^ 2) :=
+    h.continuous.norm.pow 2
+  have hint : Integrable (fun x : X => ‖h x‖ ^ 2) μ := by
+    simpa only [IntegrableOn, Measure.restrict_univ] using
+      hcont.continuousOn.integrableOn_compact isCompact_univ
+  have hxn : ‖h x‖ ^ 2 ≠ 0 := pow_ne_zero _ (norm_ne_zero_iff.mpr hx)
+  have hpos : 0 < ∫ x, ‖h x‖ ^ 2 ∂μ :=
+    integral_pos_of_integrable_nonneg_nonzero hcont hint (fun _ => sq_nonneg _) hxn
+  have hfun : (fun x : X => star (h x) * h x) = fun x => (↑(‖h x‖ ^ 2) : ℂ) := by
+    funext x
+    simp [Complex.conj_mul']
+  rw [hfun, integral_complex_ofReal] at hzero
+  have hI : (∫ x, ‖h x‖ ^ 2 ∂μ) = 0 := by
+    have := congrArg Complex.re hzero
+    simpa using this
+  exact (ne_of_gt hpos) hI
+
+/-- Multivariate polynomial moments detect a continuous function on a compact Euclidean set,
+provided the measure has full topological support. -/
+theorem compact_euclidean_polynomial_moment_detection
+    {d : ℕ} {K : Set (EuclideanSpace ℝ (Fin d))}
+    [CompactSpace K]
+    [MeasurableSpace K] [BorelSpace K]
+    (μ : Measure K) [IsFiniteMeasure μ] [Measure.IsOpenPosMeasure μ]
+    (h : C(K, ℂ))
+    (hmom : ∀ p : MvPolynomial (Fin d) ℂ,
+      ∫ x, MvPolynomial.eval (fun i => ((x : EuclideanSpace ℝ (Fin d)) i : ℂ)) p * h x ∂μ = 0) :
+    h = 0 := by
+  classical
+  let coord : Fin d → C(K, ℂ) := fun i =>
+    ⟨fun x => ((x : EuclideanSpace ℝ (Fin d)) i : ℂ),
+      Complex.continuous_ofReal.comp ((continuous_apply i).comp continuous_subtype_val)⟩
+  let evalHom : MvPolynomial (Fin d) ℂ →ₐ[ℂ] C(K, ℂ) := MvPolynomial.aeval coord
+  have heval (p : MvPolynomial (Fin d) ℂ) (x : K) :
+      evalHom p x = MvPolynomial.eval (fun i => ((x : EuclideanSpace ℝ (Fin d)) i : ℂ)) p := by
+    induction p using MvPolynomial.induction_on with
+    | C a => simp [evalHom, coord, MvPolynomial.aeval_def]
+    | add p q hp hq =>
+        change evalHom (p + q) x = _
+        rw [map_add, ContinuousMap.add_apply, hp, hq, MvPolynomial.eval_add]
+    | mul_X p i hp =>
+        change evalHom (p * MvPolynomial.X i) x = _
+        rw [map_mul, ContinuousMap.mul_apply, hp]
+        have hXi : evalHom (MvPolynomial.X i) x = ((x : EuclideanSpace ℝ (Fin d)) i : ℂ) := by
+          simp [evalHom, coord]
+        rw [hXi, MvPolynomial.eval_mul, MvPolynomial.eval_X]
+  let R := evalHom.range
+  have hsep : R.SeparatesPoints := by
+    intro x y hxy
+    obtain ⟨i, hi⟩ : ∃ i : Fin d,
+        (x : EuclideanSpace ℝ (Fin d)) i ≠ (y : EuclideanSpace ℝ (Fin d)) i := by
+      by_contra hnot
+      have heq : ∀ i : Fin d, (x : EuclideanSpace ℝ (Fin d)) i =
+          (y : EuclideanSpace ℝ (Fin d)) i := by
+        intro i
+        by_contra hneq
+        exact hnot ⟨i, hneq⟩
+      exact hxy (Subtype.ext (funext heq))
+    refine ⟨_, ⟨evalHom (MvPolynomial.X i), ?_, rfl⟩, ?_⟩
+    · exact ⟨MvPolynomial.X i, rfl⟩
+    simpa [evalHom, coord] using hi
+  have hstarEval (p : MvPolynomial (Fin d) ℂ) :
+      star (evalHom p) = evalHom (MvPolynomial.map (starRingEnd ℂ) p) := by
+    ext x
+    change star (evalHom p x) = evalHom (MvPolynomial.map (starRingEnd ℂ) p) x
+    rw [heval, heval]
+    induction p using MvPolynomial.induction_on' with
+    | monomial s a =>
+        simp only [MvPolynomial.map_monomial, MvPolynomial.eval_monomial]
+        have hprod : star (s.prod fun n e => ((x : EuclideanSpace ℝ (Fin d)) n : ℂ) ^ e) =
+            s.prod fun n e => ((x : EuclideanSpace ℝ (Fin d)) n : ℂ) ^ e := by
+          simp [Finsupp.prod, Complex.conj_ofReal]
+        rw [star_mul, hprod]
+        rw [starRingEnd_apply]
+        exact mul_comm _ _
+    | add p q hp hq => simp [hp, hq]
+  let A : StarSubalgebra ℂ C(K, ℂ) := ⟨R, by
+    rintro f ⟨p, rfl⟩
+    exact ⟨MvPolynomial.map (starRingEnd ℂ) p, (hstarEval p).symm⟩⟩
+  have hA : A.topologicalClosure = ⊤ :=
+    ContinuousMap.starSubalgebra_topologicalClosure_eq_top_of_separatesPoints A hsep
+  let mult := continuousMulRightCLM h
+  let T : C(K, ℂ) →L[ℝ] ℂ :=
+    (MeasureTheory.L1.integralCLM (μ := μ)).comp
+      ((ContinuousMap.toLp 1 μ ℝ).comp mult)
+  have hT_apply (f : C(K, ℂ)) : T f = ∫ x, f x * h x ∂μ := by
+    change MeasureTheory.L1.integralCLM
+      (ContinuousMap.toLp 1 μ ℝ ((mult) f)) = _
+    change MeasureTheory.L1.integralCLM
+      (ContinuousMap.toLp 1 μ ℝ (f * h)) = _
+    rw [← MeasureTheory.L1.integral_eq, MeasureTheory.L1.integral_eq_integral]
+    exact integral_congr_ae
+      (ContinuousMap.coeFn_toLp (p := 1) (μ := μ) (𝕜 := ℝ) (f * h))
+  have hclosed : IsClosed {f : C(K, ℂ) | T f = 0} :=
+    isClosed_singleton.preimage T.continuous
+  have hvanish : ∀ f ∈ (A : Set C(K, ℂ)), T f = 0 := by
+    rintro f ⟨p, rfl⟩
+    rw [hT_apply]
+    calc
+      (∫ x, evalHom p x * h x ∂μ) =
+          ∫ x, MvPolynomial.eval (fun i => ((x : EuclideanSpace ℝ (Fin d)) i : ℂ)) p * h x ∂μ := by
+        apply integral_congr_ae
+        filter_upwards with x
+        rw [heval]
+      _ = 0 := hmom p
+  have hvanishClosure : ∀ f ∈ A.topologicalClosure, T f = 0 := by
+    intro f hf
+    exact hclosed.closure_subset_iff.mpr hvanish hf
+  have hstar : star h ∈ A.topologicalClosure := by rw [hA]; trivial
+  have hzero : ∫ x, star (h x) * h x ∂μ = 0 := by
+    calc
+      (∫ x, star (h x) * h x ∂μ) = T (star h) := (hT_apply (star h)).symm
+      _ = 0 := hvanishClosure (star h) hstar
+  have hpoint : ∀ x : K, h x = 0 := by
+    intro x
+    by_cases hx : h x = 0
+    · exact hx
+    · have hx' : h x ≠ 0 := hx
+      have hcont : Continuous (fun x : K => ‖h x‖ ^ 2) := h.continuous.norm.pow 2
+      have hint : Integrable (fun x : K => ‖h x‖ ^ 2) μ := by
+        simpa only [IntegrableOn, Measure.restrict_univ] using
+          hcont.continuousOn.integrableOn_compact isCompact_univ
+      have hxn : ‖h x‖ ^ 2 ≠ 0 := pow_ne_zero _ (norm_ne_zero_iff.mpr hx')
+      have hpos : 0 < ∫ x, ‖h x‖ ^ 2 ∂μ :=
+        integral_pos_of_integrable_nonneg_nonzero hcont hint (fun _ => sq_nonneg _) hxn
+      have hfun : (fun x : K => star (h x) * h x) = fun x => (↑(‖h x‖ ^ 2) : ℂ) := by
+        funext x
+        simp [Complex.conj_mul']
+      rw [hfun, integral_complex_ofReal] at hzero
+      have hI : (∫ x, ‖h x‖ ^ 2 ∂μ) = 0 := by
+        have := congrArg Complex.re hzero
+        simpa using this
+      exact False.elim ((ne_of_gt hpos) hI)
+  ext x
+  exact hpoint x
+
+/-- A continuous compactly supported Euclidean function is detected by all of its polynomial
+moments with respect to Lebesgue measure. -/
+theorem euclidean_compactSupport_polynomial_moment_detection
+    {d : ℕ} (h : EuclideanSpace ℝ (Fin d) → ℂ) (hcont : Continuous h)
+    (hcompact : HasCompactSupport h)
+    (hmom : ∀ p : MvPolynomial (Fin d) ℂ,
+      ∫ x, MvPolynomial.eval (fun i => ((x : EuclideanSpace ℝ (Fin d)) i : ℂ)) p * h x = 0) :
+    h = 0 := by
+  classical
+  let K : Set (EuclideanSpace ℝ (Fin d)) := tsupport h
+  have hKcompact : IsCompact K := by
+    change IsCompact (tsupport h)
+    exact hcompact
+  letI : CompactSpace K := isCompact_iff_compactSpace.mp hKcompact
+  letI : MeasureSpace K := MeasureTheory.Measure.Subtype.measureSpace
+  have hKmeas : MeasurableSet K := hKcompact.measurableSet
+  letI : IsFiniteMeasure (volume : Measure K) := by
+    refine ⟨?_⟩
+    rw [MeasureTheory.Measure.Subtype.volume_univ hKmeas.nullMeasurableSet]
+    exact hKcompact.measure_lt_top
+  let S : Set K := Subtype.val ⁻¹' Function.support h
+  have hImage : (Subtype.val '' S) = Function.support h := by
+    ext x
+    constructor
+    · rintro ⟨y, hy, rfl⟩
+      exact hy
+    · intro hx
+      exact ⟨⟨x, subset_tsupport h hx⟩, hx, rfl⟩
+  have hDense : Dense S := by
+    rw [dense_iff_closure_eq]
+    ext x
+    rw [closure_subtype, hImage]
+    simp [K, tsupport]
+  letI : Measure.IsOpenPosMeasure (volume : Measure K) := by
+    constructor
+    intro U hU hUne
+    obtain ⟨V, hVopen, hV⟩ := isOpen_induced_iff.mp hU
+    obtain ⟨x, hx⟩ := hUne
+    obtain ⟨y, hyS, hyV⟩ := hDense.exists_mem_open
+      (hVopen.preimage continuous_subtype_val) ⟨x, hV ▸ hx⟩
+    have hySupport : y.1 ∈ Function.support h := hyS
+    let W : Set (EuclideanSpace ℝ (Fin d)) := V ∩ Function.support h
+    have hSupportOpen : IsOpen (Function.support h) := by
+      change IsOpen (h ⁻¹' ({0}ᶜ : Set ℂ))
+      exact hcont.isOpen_preimage _ isClosed_singleton.isOpen_compl
+    have hWopen : IsOpen W := hVopen.inter hSupportOpen
+    have hWne : W.Nonempty := ⟨y.1, hyV, hySupport⟩
+    have hWsub : W ⊆ Subtype.val '' U := by
+      intro z hz
+      refine ⟨⟨z, subset_tsupport h hz.2⟩, ?_, rfl⟩
+      rw [← hV]
+      exact hz.1
+    have hUmeasure : (volume : Measure K) U = volume (Subtype.val '' U) := by
+      rw [MeasureTheory.Measure.Subtype.volume_def]
+      exact comap_subtype_coe_apply hKmeas volume U
+    have hWpos : 0 < volume W := hWopen.measure_pos volume hWne
+    rw [hUmeasure]
+    exact (ne_of_gt (lt_of_lt_of_le hWpos (measure_mono hWsub)))
+  have hMomentOnK (p : MvPolynomial (Fin d) ℂ) :
+      ∫ x : K, MvPolynomial.eval (fun i => ((x.1 : EuclideanSpace ℝ (Fin d)) i : ℂ)) p * h x.1
+        ∂(volume : Measure K) = 0 := by
+    let F : EuclideanSpace ℝ (Fin d) → ℂ := fun x =>
+      MvPolynomial.eval (fun i => (x i : ℂ)) p * h x
+    have hMap : (volume : Measure K).map (Subtype.val : K → EuclideanSpace ℝ (Fin d)) =
+        volume.restrict K := MeasurableSet.map_coe_volume hKmeas
+    have hFullRestr : ∫ x, F x = ∫ x in K, F x := by
+      rw [← integral_indicator hKmeas]
+      apply integral_congr_ae
+      filter_upwards with x
+      by_cases hx : x ∈ K
+      · simp [hx, F]
+      · have hx0 : h x = 0 := by
+          by_contra hn
+          exact hx (subset_tsupport h (by simpa [Function.mem_support] using hn))
+        simp [hx, hx0, F]
+    calc
+      _ = ∫ x, F x ∂(volume.restrict K) := by
+        symm
+        rw [← hMap]
+        exact (MeasurableEmbedding.subtype_coe hKmeas).integral_map F
+      _ = ∫ x in K, F x := rfl
+      _ = ∫ x, F x := hFullRestr.symm
+      _ = 0 := hmom p
+  let hK : C(K, ℂ) := ⟨fun x => h x.1, hcont.comp continuous_subtype_val⟩
+  have hhK : hK = 0 :=
+    compact_euclidean_polynomial_moment_detection (μ := volume) hK hMomentOnK
+  ext x
+  by_cases hx : h x = 0
+  · exact hx
+  · have hxK : x ∈ K := subset_tsupport h (by simpa [Function.mem_support] using hx)
+    have hzero := congrArg (fun q : C(K, ℂ) => q ⟨x, hxK⟩) hhK
+    exact (hx (by simpa [hK] using hzero)).elim
+
+end RieszEuclidean
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshFunctionEndpoints.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Endpoint consequences for the actual convolution of compactly supported functions. -/
+
+noncomputable section
+
+open MeasureTheory
+open Filter Topology
+open scoped Convolution CompactlySupported
+
+namespace RieszEuclidean.TitchmarshFunctionAlgebra
+
+open RieszEuclidean.TitchmarshBootstrap
+open HalfspaceFunctions
+
+variable {d : ℕ}
+
+private def coordinateFunctional (i : Fin d) : Euclidean d →L[ℝ] ℝ :=
+  PiLp.proj 2 (fun _ : Fin d => ℝ) i
+
+private theorem coordinateFunctional_apply (i : Fin d) (x : Euclidean d) :
+    coordinateFunctional i x = x i := rfl
+
+private theorem coordinate_continuous (i : Fin d) :
+    Continuous (fun x : Euclidean d => ((x i : ℝ) : ℂ)) :=
+  Complex.continuous_ofReal.comp (continuous_apply i)
+
+private theorem polynomialEval_continuous (p : MvPolynomial (Fin d) ℂ) :
+    Continuous (fun x : Euclidean d =>
+      MvPolynomial.eval (fun i => ((x i : ℝ) : ℂ)) p) := by
+  induction p using MvPolynomial.induction_on with
+  | C c => simpa using continuous_const
+  | add p q hp hq =>
+      simpa only [MvPolynomial.eval_add] using hp.add hq
+  | mul_X p i hp =>
+      have hXi : Continuous (fun x : Euclidean d => ((x i : ℝ) : ℂ)) :=
+        coordinate_continuous i
+      simpa only [MvPolynomial.eval_mul, MvPolynomial.eval_X] using hp.mul hXi
+
+/-- Apply a complex polynomial in the coordinate multipliers to a halfspace
+function. -/
+private def polynomialMultiplier (ℓ : Euclidean d →L[ℝ] ℝ)
+    (p : MvPolynomial (Fin d) ℂ) (g : HalfspaceFunctions d ℓ) :
+    HalfspaceFunctions d ℓ := by
+  let q : Euclidean d → ℂ := fun x =>
+    MvPolynomial.eval (fun i => ((x i : ℝ) : ℂ)) p * g.val x
+  have hq : Continuous q := polynomialEval_continuous p |>.mul g.val.continuous
+  have hs : HasCompactSupport q := by
+    dsimp [q]
+    exact g.val.hasCompactSupport.mul_left
+  refine ⟨⟨⟨q, hq⟩, hs⟩, ?_⟩
+  intro x hx
+  simp [q, g.property x hx]
+
+private theorem coe_polynomialMultiplier (ℓ : Euclidean d →L[ℝ] ℝ)
+    (p : MvPolynomial (Fin d) ℂ) (g : HalfspaceFunctions d ℓ) (x : Euclidean d) :
+    (polynomialMultiplier ℓ p g).val x =
+      MvPolynomial.eval (fun i => ((x i : ℝ) : ℂ)) p * g.val x := rfl
+
+private theorem polynomialMultiplier_C (ℓ : Euclidean d →L[ℝ] ℝ)
+    (c : ℂ) (g : HalfspaceFunctions d ℓ) :
+    polynomialMultiplier ℓ (MvPolynomial.C c) g = c • g := by
+  apply Subtype.ext
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  simp [polynomialMultiplier, MvPolynomial.eval_C, smul_eq_mul]
+
+private theorem polynomialMultiplier_add (ℓ : Euclidean d →L[ℝ] ℝ)
+    (p q : MvPolynomial (Fin d) ℂ) (g : HalfspaceFunctions d ℓ) :
+    polynomialMultiplier ℓ (p + q) g =
+      polynomialMultiplier ℓ p g + polynomialMultiplier ℓ q g := by
+  apply Subtype.ext
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  simp [polynomialMultiplier, MvPolynomial.eval_add, add_mul]
+
+private theorem polynomialMultiplier_mul_X (ℓ : Euclidean d →L[ℝ] ℝ)
+    (p : MvPolynomial (Fin d) ℂ) (i : Fin d) (g : HalfspaceFunctions d ℓ) :
+    polynomialMultiplier ℓ (p * MvPolynomial.X i) g =
+      HalfspaceFunctions.Mcoordinate d (coordinateFunctional i)
+        (polynomialMultiplier ℓ p g) := by
+  apply Subtype.ext
+  apply CompactlySupportedContinuousMap.ext
+  intro x
+  simp [polynomialMultiplier, HalfspaceFunctions.Mcoordinate,
+    coordinateFunctional, coordinateMultiplier, MvPolynomial.eval_mul,
+    MvPolynomial.eval_X, mul_assoc, mul_left_comm, mul_comm]
+
+private theorem polynomialMultiplier_preserves_vanishing
+    (ℓ : Euclidean d →L[ℝ] ℝ) {f g : HalfspaceFunctions d ℓ} {T : ℝ}
+    (hT : 0 ≤ T) (hfg : HalfspaceFunctions.V d (f * g) T)
+    (p : MvPolynomial (Fin d) ℂ) :
+    HalfspaceFunctions.V d (f * polynomialMultiplier ℓ p g) T := by
+  let A := HalfspaceFunctions d ℓ
+  let V := HalfspaceFunctions.V d (ℓ := ℓ)
+  let D : Fin d → Data A := fun i =>
+    HalfspaceFunctions.provedBootstrapData d ℓ
+      (coordinateFunctional i)
+  induction p using MvPolynomial.induction_on with
+  | C c =>
+      have hs : V (c • (f * g)) T := by
+        intro x hx
+        have hzero := hfg x hx
+        simp only [coe_mul] at hzero
+        simp [hzero]
+      have hmul : f * polynomialMultiplier ℓ (MvPolynomial.C c) g =
+          c • (f * g) := by
+        rw [polynomialMultiplier_C]
+        apply Subtype.ext
+        apply CompactlySupportedContinuousMap.ext
+        intro x
+        change (convolution d f.val (c • g.val) : Euclidean d → ℂ) x =
+          c • (convolution d f.val g.val : Euclidean d → ℂ) x
+        rw [coe_convolution, coe_convolution]
+        simp only [Pi.smul_apply, smul_eq_mul]
+        rw [← integral_const_mul]
+        apply integral_congr_ae
+        filter_upwards with y
+        change f.val y * (c * g.val (x - y)) = c * (f.val y * g.val (x - y))
+        ring
+      rw [hmul]
+      exact hs
+  | add p q hp hq =>
+      rw [polynomialMultiplier_add]
+      simpa only [mul_add] using HalfspaceFunctions.V_add d hp hq
+  | mul_X p i hp =>
+      rw [polynomialMultiplier_mul_X]
+      exact (D i).multiplier_stability f (polynomialMultiplier ℓ p g) hT hp
+
+/-- If two functions are supported in the positive halfspace and their
+convolution vanishes below `T`, every pointwise product across a sublevel sum
+also vanishes. -/
+theorem halfspace_convolution_pointwise_zero
+    (ℓ : Euclidean d →L[ℝ] ℝ) {f g : Function d}
+    (hf : ∀ x, ℓ x < 0 → f x = 0)
+    (hg : ∀ x, ℓ x < 0 → g x = 0)
+    {T : ℝ} (hT : 0 ≤ T)
+    (hconv : ∀ x, ℓ x < T →
+      (convolution d f g : Euclidean d → ℂ) x = 0) :
+    ∀ x, ℓ x < T → ∀ y, f y * g (x - y) = 0 := by
+  let f' : HalfspaceFunctions d ℓ := ⟨f, hf⟩
+  let g' : HalfspaceFunctions d ℓ := ⟨g, hg⟩
+  intro x hx y
+  let H : Euclidean d → ℂ := fun z => f (x - z) * g z
+  have hHcont : Continuous H := by
+    dsimp [H]
+    exact f.continuous.comp (continuous_const.sub continuous_id) |>.mul g.continuous
+  have hHcompact : HasCompactSupport H := by
+    dsimp [H]
+    exact g.hasCompactSupport.mul_left
+  have hmom : ∀ p : MvPolynomial (Fin d) ℂ,
+      ∫ z, MvPolynomial.eval (fun i => ((z i : ℝ) : ℂ)) p * H z = 0 := by
+    intro p
+    have hpoly := polynomialMultiplier_preserves_vanishing ℓ (f := f') (g := g') hT
+      (by
+        intro q hq
+        simpa [f', g', HalfspaceFunctions.coe_mul, coe_convolution] using hconv q hq) p
+    have hvan : (f' * polynomialMultiplier ℓ p g').val x = 0 := hpoly x hx
+    have hconv' : (convolution d f (polynomialMultiplier ℓ p g').val :
+        Euclidean d → ℂ) x = 0 := by
+      simpa [f', g', HalfspaceFunctions.coe_mul] using hvan
+    have hcomm : convolution d f (polynomialMultiplier ℓ p g').val =
+        convolution d (polynomialMultiplier ℓ p g').val f :=
+      convolution_comm d f (polynomialMultiplier ℓ p g').val
+    have hconv'' : (convolution d (polynomialMultiplier ℓ p g').val f :
+        Euclidean d → ℂ) x = 0 := by
+      rw [← hcomm]
+      exact hconv'
+    rw [coe_convolution] at hconv''
+    calc
+      (∫ z, MvPolynomial.eval (fun i => ((z i : ℝ) : ℂ)) p * H z) =
+          ∫ z, (polynomialMultiplier ℓ p g').val z * f (x - z) := by
+        apply integral_congr_ae
+        filter_upwards with z
+        rw [coe_polynomialMultiplier]
+        dsimp [H]
+        ring
+      _ = 0 := hconv''
+  have hzero := RieszEuclidean.euclidean_compactSupport_polynomial_moment_detection
+    H hHcont hHcompact hmom
+  have hpoint := congrFun hzero (x - y)
+  simpa [H, sub_sub_cancel] using hpoint
+
+/-- The support endpoint of the actual convolution is the sum of the factor
+endpoints, expressed pointwise along any continuous real linear functional. -/
+theorem convolution_halfspace_endpoint {f g : Euclidean d → ℂ}
+    (hf : Continuous f) (hg : Continuous g)
+    (hfc : HasCompactSupport f) (hgc : HasCompactSupport g)
+    (ℓ : Euclidean d →L[ℝ] ℝ) {T : ℝ}
+    (hvan : ∀ z, ℓ z < T →
+      (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) z = 0) :
+    ∀ x y, f x ≠ 0 → g y ≠ 0 → T ≤ ℓ (x + y) := by
+  intro x y hfx hgy
+  have hfne : f ≠ 0 := by
+    intro hz
+    apply hfx
+    simp [hz]
+  have hgne : g ≠ 0 := by
+    intro hz
+    apply hgy
+    simp [hz]
+  obtain ⟨a, ha, hamin⟩ :=
+    RieszEuclidean.CompleteMinimal.exists_minimum_on_tsupport hfc hfne ℓ
+  obtain ⟨b, hb, hbmin⟩ :=
+    RieszEuclidean.CompleteMinimal.exists_minimum_on_tsupport hgc hgne ℓ
+  let f₀ := RieszEuclidean.CompleteMinimal.titchmarshTranslate f (-a)
+  let g₀ := RieszEuclidean.CompleteMinimal.titchmarshTranslate g (-b)
+  have hf₀cont : Continuous f₀ :=
+    RieszEuclidean.CompleteMinimal.continuous_titchmarshTranslate hf (-a)
+  have hg₀cont : Continuous g₀ :=
+    RieszEuclidean.CompleteMinimal.continuous_titchmarshTranslate hg (-b)
+  have hf₀compact : HasCompactSupport f₀ :=
+    RieszEuclidean.CompleteMinimal.hasCompactSupport_titchmarshTranslate hfc (-a)
+  have hg₀compact : HasCompactSupport g₀ :=
+    RieszEuclidean.CompleteMinimal.hasCompactSupport_titchmarshTranslate hgc (-b)
+  have hf₀supp : ∀ z, ℓ z < 0 → f₀ z = 0 := by
+    intro z hz
+    by_cases hzero : f₀ z = 0
+    · exact hzero
+    · have hnonzero := hamin (z + a) (by
+        apply subset_tsupport
+        simpa [f₀, RieszEuclidean.CompleteMinimal.titchmarshTranslate] using hzero)
+      have heq : ℓ (z + a) = ℓ z + ℓ a := by simp
+      rw [heq] at hnonzero
+      linarith
+  have hg₀supp : ∀ z, ℓ z < 0 → g₀ z = 0 := by
+    intro z hz
+    by_cases hzero : g₀ z = 0
+    · exact hzero
+    · have hnonzero := hbmin (z + b) (by
+        apply subset_tsupport
+        simpa [g₀, RieszEuclidean.CompleteMinimal.titchmarshTranslate] using hzero)
+      have heq : ℓ (z + b) = ℓ z + ℓ b := by simp
+      rw [heq] at hnonzero
+      linarith
+  let T₀ := T - ℓ a - ℓ b
+  have hT₀_nonpos : T₀ ≤ 0 := by
+    by_cases hT₀ : 0 < T₀
+    · have hT₀_nonneg : 0 ≤ T₀ := le_of_lt hT₀
+      have hvan₀ : ∀ z, ℓ z < T₀ →
+          (f₀ ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g₀) z = 0 := by
+        intro z hz
+        rw [RieszEuclidean.CompleteMinimal.convolution_titchmarshTranslate]
+        apply hvan
+        have heq : ℓ (z - ((-a) + (-b))) = ℓ z + ℓ a + ℓ b := by
+          simp [map_add, sub_eq_add_neg]
+          ring
+        rw [heq]
+        dsimp [T₀] at hz
+        linarith
+      have hpoint := halfspace_convolution_pointwise_zero (d := d)
+        (ℓ := ℓ) (f := ⟨⟨f₀, hf₀cont⟩, hf₀compact⟩)
+        (g := ⟨⟨g₀, hg₀cont⟩, hg₀compact⟩)
+        hf₀supp hg₀supp
+        (T := T₀) hT₀_nonneg (by
+          intro z hz
+          simpa [coe_convolution] using hvan₀ z hz)
+      have hnear_f : ∃ u, f₀ u ≠ 0 ∧ ℓ u < T₀ / 2 := by
+        have hmem : a ∈ closure (Function.support f) := ha
+        have hnhds : {q : Euclidean d | ℓ (q - a) < T₀ / 2} ∈ 𝓝 a := by
+          apply (isOpen_lt (ℓ.continuous.comp (continuous_id.sub continuous_const))
+            continuous_const).mem_nhds
+          simpa using half_pos hT₀
+        obtain ⟨q, hq, hqsupp⟩ := (mem_closure_iff_nhds.mp hmem) _ hnhds
+        refine ⟨q - a, ?_, ?_⟩
+        · simpa [f₀, RieszEuclidean.CompleteMinimal.titchmarshTranslate,
+            sub_eq_add_neg, add_assoc] using hqsupp
+        · simpa using hq
+      have hnear_g : ∃ u, g₀ u ≠ 0 ∧ ℓ u < T₀ / 2 := by
+        have hmem : b ∈ closure (Function.support g) := hb
+        have hnhds : {q : Euclidean d | ℓ (q - b) < T₀ / 2} ∈ 𝓝 b := by
+          apply (isOpen_lt (ℓ.continuous.comp (continuous_id.sub continuous_const))
+            continuous_const).mem_nhds
+          simpa using half_pos hT₀
+        obtain ⟨q, hq, hqsupp⟩ := (mem_closure_iff_nhds.mp hmem) _ hnhds
+        refine ⟨q - b, ?_, ?_⟩
+        · simpa [g₀, RieszEuclidean.CompleteMinimal.titchmarshTranslate,
+            sub_eq_add_neg, add_assoc] using hqsupp
+        · simpa using hq
+      obtain ⟨u, hu, hlu⟩ := hnear_f
+      obtain ⟨w, hw, hlw⟩ := hnear_g
+      have hprod := hpoint (u + w) (by simpa using add_lt_add hlu hlw) u
+      have hprod' : f₀ u * g₀ w = 0 := by
+        simpa [sub_eq_add_neg, add_assoc] using hprod
+      exact False.elim ((mul_ne_zero hu hw) hprod')
+    · exact le_of_not_gt hT₀
+  have haminx := hamin x (subset_tsupport f hfx)
+  have hbminy := hbmin y (subset_tsupport g hgy)
+  have hsum_min : ℓ a + ℓ b ≤ ℓ (x + y) := by
+    have hxadd : ℓ (x + y) = ℓ x + ℓ y := by simp
+    rw [hxadd]
+    linarith
+  dsimp [T₀] at hT₀_nonpos
+  linarith
+
+end RieszEuclidean.TitchmarshFunctionAlgebra
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshCompactHull.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+
+open Set
+
+namespace RieszEuclidean.Titchmarsh
+
+theorem pad_finite_convex_combination
+    {E : Type*} [AddCommGroup E] [Module ℝ E]
+    {ι : Type*} [Fintype ι] {N : ℕ}
+    (hcard : Fintype.card ι ≤ N)
+    (C : Set E) (hC : C.Nonempty)
+    (x : ι → C) (w : ι → NNReal)
+    (hw : ∑ i, w i = 1) :
+    ∃ x' : Fin N → C, ∃ w' : Fin N → NNReal,
+      (∑ i, w' i = 1) ∧
+      (∑ i, (w' i : ℝ) • (x' i : E) = ∑ i, (w i : ℝ) • (x i : E)) := by
+  classical
+  let emb : ι ↪ Fin N := Classical.choice <|
+    Function.Embedding.nonempty_of_card_le (by simpa using hcard)
+  let e : ι ≃ Set.range emb := Equiv.ofInjective emb emb.injective
+  obtain ⟨c₀, hc₀⟩ := hC
+  let c₀' : C := ⟨c₀, hc₀⟩
+  let x' : Fin N → C := fun j =>
+    if hj : j ∈ Set.range emb then x (e.symm ⟨j, hj⟩) else c₀'
+  let w' : Fin N → NNReal := fun j =>
+    if hj : j ∈ Set.range emb then w (e.symm ⟨j, hj⟩) else 0
+  have hx' (i : ι) : x' (emb i) = x i := by
+    simp [x', e]
+  have hw' (i : ι) : w' (emb i) = w i := by
+    simp [w', e]
+  have hsumw : ∑ j : Fin N, w' j = ∑ i, w i := by
+    classical
+    calc
+      ∑ j : Fin N, w' j = ∑ j ∈ (Finset.univ.filter fun j : Fin N => j ∈ Set.range emb), w' j := by
+        symm
+        apply Finset.sum_subset (Finset.filter_subset _ _)
+        intro j hj hnot
+        have hnot' : j ∉ Set.range emb := fun hjr =>
+          hnot (Finset.mem_filter.mpr ⟨by simp, hjr⟩)
+        change (if hj : j ∈ Set.range emb then w (e.symm ⟨j, hj⟩) else 0) = 0
+        rw [dif_neg hnot']
+      _ = ∑ j : {j : Fin N // j ∈ Set.range emb}, w' j := by
+        exact Finset.sum_subtype _ (by intro j; simp) w'
+      _ = ∑ i, w i := by
+        apply Fintype.sum_equiv e.symm
+        intro i
+        have hi : emb (e.symm i) = (i : Fin N) :=
+          congrArg Subtype.val (e.apply_symm_apply i)
+        rw [← hi, hw']
+  have hsumx :
+      (∑ j : Fin N, (w' j : ℝ) • (x' j : E)) =
+        ∑ i, (w i : ℝ) • (x i : E) := by
+    classical
+    calc
+      ∑ j : Fin N, (w' j : ℝ) • (x' j : E) =
+          ∑ j ∈ (Finset.univ.filter fun j : Fin N => j ∈ Set.range emb),
+            (w' j : ℝ) • (x' j : E) := by
+        symm
+        apply Finset.sum_subset (Finset.filter_subset _ _)
+        intro j hj hnot
+        have hnot' : j ∉ Set.range emb := fun hjr =>
+          hnot (Finset.mem_filter.mpr ⟨by simp, hjr⟩)
+        simp only [w', dif_neg hnot', NNReal.coe_zero, zero_smul]
+      _ = ∑ j : {j : Fin N // j ∈ Set.range emb},
+            (w' j : ℝ) • (x' j : E) := by
+        exact Finset.sum_subtype _ (by intro j; simp) _
+      _ = ∑ i, (w i : ℝ) • (x i : E) := by
+        apply Fintype.sum_equiv e.symm
+        intro i
+        have hi : emb (e.symm i) = (i : Fin N) :=
+          congrArg Subtype.val (e.apply_symm_apply i)
+        rw [← hi, hw', hx']
+  exact ⟨x', w', hsumw.trans hw, hsumx⟩
+
+/-- The algebraic convex hull of a compact set in a finite-dimensional real normed space is
+compact. The proof uses Carathéodory's theorem and realizes the hull as a finite-dimensional
+simplex image. -/
+theorem isCompact_convexHull_of_compact
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [FiniteDimensional ℝ E] {C : Set E} (hC : IsCompact C) :
+    IsCompact (convexHull ℝ C) := by
+  classical
+  by_cases hne : C.Nonempty
+  · let N := Module.finrank ℝ E + 1
+    letI : CompactSpace C := isCompact_iff_compactSpace.mp hC
+    letI : CompactSpace (Fin N → C) := inferInstance
+    letI : CompactSpace (stdSimplex ℝ (Fin N)) :=
+      isCompact_iff_compactSpace.mp (isCompact_stdSimplex (Fin N))
+    letI : CompactSpace (stdSimplex ℝ (Fin N) × (Fin N → C)) := inferInstance
+    let Φ : stdSimplex ℝ (Fin N) × (Fin N → C) → E := fun p =>
+      ∑ i, (p.1.1 i) • (p.2 i : E)
+    have hΦ : Continuous Φ := by
+      unfold Φ
+      apply continuous_finset_sum Finset.univ
+      intro i hi
+      exact (((continuous_apply i).comp (continuous_subtype_val.comp continuous_fst)).smul
+        (continuous_subtype_val.comp ((continuous_apply i).comp continuous_snd)))
+    have hcompact : IsCompact (Set.range Φ) := isCompact_range hΦ
+    have heq : convexHull ℝ C = Set.range Φ := by
+      apply Set.Subset.antisymm
+      · intro y hy
+        obtain ⟨ι, hι, z, w, hz, hind, hwp, hw1, hyz⟩ :=
+          eq_pos_convex_span_of_mem_convexHull hy
+        letI : Fintype ι := hι
+        have hcard : Fintype.card ι ≤ N := by
+          calc
+            Fintype.card ι ≤ Module.finrank ℝ (vectorSpan ℝ (Set.range z)) + 1 :=
+              hind.card_le_finrank_succ
+            _ ≤ Module.finrank ℝ E + 1 := by
+              exact Nat.add_le_add_right (Submodule.finrank_le _) 1
+        let xc : ι → C := fun i => ⟨z i, hz ⟨i, rfl⟩⟩
+        let wn : ι → NNReal := fun i => ⟨w i, (hwp i).le⟩
+        have hwn : ∑ i, wn i = 1 := by
+          apply NNReal.coe_injective
+          simpa [wn] using hw1
+        have hsum : ∑ i, (wn i : ℝ) • (xc i : E) = y := by
+          simpa [wn, xc] using hyz
+        obtain ⟨x', w', hw'sum, hw'vec⟩ :=
+          pad_finite_convex_combination hcard C hne xc wn hwn
+        have hw'nonneg : ∀ i : Fin N, 0 ≤ (w' i : ℝ) := fun i => (w' i).property
+        have hw'simplex : (fun i => (w' i : ℝ)) ∈ stdSimplex ℝ (Fin N) :=
+          ⟨hw'nonneg, by
+            have hcast := congrArg (fun a : NNReal => (a : ℝ)) hw'sum
+            simpa using hcast⟩
+        refine ⟨(⟨(fun i => (w' i : ℝ)), hw'simplex⟩, x'), ?_⟩
+        change ∑ i, (w' i : ℝ) • (x' i : E) = y
+        exact hw'vec.trans hsum
+      · rintro y ⟨p, rfl⟩
+        apply mem_convexHull_of_exists_fintype (fun i => p.1.1 i)
+          (fun i => (p.2 i : E))
+        · exact fun i => (p.1.2.1 i)
+        · exact p.1.2.2
+        · exact fun i => (p.2 i).property
+        · rfl
+    rw [heq]
+    exact hcompact
+  · have hCempty : C = ∅ := Set.not_nonempty_iff_eq_empty.mp hne
+    simp [hCempty]
+
+end RieszEuclidean.Titchmarsh
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshConvexGeometry.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Convex geometry for the Titchmarsh–Lions support theorem
+
+This file packages the finite-dimensional geometric step which passes from
+approximate support identities to the exact convex-hull inclusion.
+-/
+
+open Set
+open scoped Pointwise
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  [LocallyConvexSpace ℝ E]
+
+/-- A point outside a convex hull can be strictly separated from it by a continuous
+real linear functional. We retain a weak inequality on the original set for use
+with support approximations. -/
+theorem exists_strict_separating_functional_of_not_mem_convexHull
+    {C : Set E} {x : E}
+    (hclosed : IsClosed (convexHull ℝ C))
+    (hx : x ∉ convexHull ℝ C) :
+    ∃ (ℓ : E →L[ℝ] ℝ) (T : ℝ),
+      ℓ x < T ∧ ∀ c ∈ C, T ≤ ℓ c := by
+  obtain ⟨ℓ, T, hxT, hTC⟩ :=
+    geometric_hahn_banach_point_closed
+      (convex_convexHull ℝ C) hclosed hx
+  refine ⟨ℓ, T, hxT, ?_⟩
+  intro c hc
+  exact le_of_lt (hTC c (subset_convexHull ℝ C hc))
+
+/-- If every pair of points in `A × B` can be approximated by support sets whose
+Minkowski-sum convex hull is exact, and the resulting support lies within ε of `C`,
+then the exact sum of the convex hulls of `A` and `B` lies in the convex hull of `C`.
+
+The proof separates a hypothetical point outside `convexHull C`; the functional's
+operator norm controls the error introduced by the ε-neighborhood. -/
+theorem convexHull_add_subset_convexHull_of_approx
+    {A B C : Set E}
+    (hclosed : IsClosed (convexHull ℝ C))
+    (happrox : ∀ ⦃a b : E⦄, a ∈ A → b ∈ B → ∀ ε : ℝ, 0 < ε →
+      ∃ Aε Bε Cε : Set E,
+        a ∈ Aε ∧ b ∈ Bε ∧
+        convexHull ℝ Cε = convexHull ℝ Aε + convexHull ℝ Bε ∧
+        Cε ⊆ C + Metric.closedBall (0 : E) ε) :
+    convexHull ℝ A + convexHull ℝ B ⊆ convexHull ℝ C := by
+  have hsum : A + B ⊆ convexHull ℝ C := by
+    rintro x ⟨a, ha, b, hb, rfl⟩
+    by_contra hx
+    obtain ⟨ℓ, T, hlt, hsep⟩ :=
+      exists_strict_separating_functional_of_not_mem_convexHull hclosed hx
+    let ε : ℝ := (T - ℓ (a + b)) / (2 * (‖ℓ‖ + 1))
+    have hgap : 0 < T - ℓ (a + b) := sub_pos.mpr hlt
+    have hε : 0 < ε := by
+      dsimp [ε]
+      positivity
+    obtain ⟨Aε, Bε, Cε, haε, hbε, hconv, hCε⟩ := happrox ha hb ε hε
+    have hbase : ∀ z ∈ Cε, T - ‖ℓ‖ * ε ≤ ℓ z := by
+      intro z hz
+      obtain ⟨c, hc, y, hy, rfl⟩ := Set.mem_add.mp (hCε hz)
+      have hy' : ‖y‖ ≤ ε := by
+        simpa only [Metric.mem_closedBall, dist_zero_right] using hy
+      have hnorm := ℓ.le_opNorm y
+      rw [map_add]
+      have hAbs : |ℓ y| ≤ ‖ℓ‖ * ε := by
+        simpa only [Real.norm_eq_abs] using
+          hnorm.trans (mul_le_mul_of_nonneg_left hy' (norm_nonneg _))
+      have hly : -(‖ℓ‖ * ε) ≤ ℓ y := (abs_le.mp hAbs).1
+      linarith [hsep c hc]
+    have hℓ : IsLinearMap ℝ ℓ := ⟨map_add ℓ, map_smul ℓ⟩
+    have hhalf : Convex ℝ {z : E | T - ‖ℓ‖ * ε ≤ ℓ z} :=
+      convex_halfSpace_ge hℓ _
+    have hconvbase : convexHull ℝ Cε ⊆ {z : E | T - ‖ℓ‖ * ε ≤ ℓ z} :=
+      convexHull_min hbase hhalf
+    have hpoint : a + b ∈ convexHull ℝ Cε := by
+      rw [hconv]
+      exact Set.mem_add.mpr
+        ⟨a, subset_convexHull ℝ Aε haε, b, subset_convexHull ℝ Bε hbε, rfl⟩
+    have hlow := hconvbase hpoint
+    have hεeq : ε * (2 * (‖ℓ‖ + 1)) = T - ℓ (a + b) := by
+      dsimp [ε]
+      field_simp
+    change T - ‖ℓ‖ * ε ≤ ℓ (a + b) at hlow
+    nlinarith [hεeq, norm_nonneg ℓ, hε]
+  calc
+    convexHull ℝ A + convexHull ℝ B = convexHull ℝ (A + B) := (convexHull_add A B).symm
+    _ ⊆ convexHull ℝ (convexHull ℝ C) := convexHull_mono hsum
+    _ = convexHull ℝ C := (convex_convexHull ℝ C).convexHull_eq
+
+/-- Compact-target version of `convexHull_add_subset_convexHull_of_approx` in a
+finite-dimensional space. Compactness makes the algebraic convex hull closed. -/
+theorem convexHull_add_subset_convexHull_of_approx_of_compact
+    [FiniteDimensional ℝ E] {A B C : Set E} (hC : IsCompact C)
+    (happrox : ∀ ⦃a b : E⦄, a ∈ A → b ∈ B → ∀ ε : ℝ, 0 < ε →
+      ∃ Aε Bε Cε : Set E,
+        a ∈ Aε ∧ b ∈ Bε ∧
+        convexHull ℝ Cε = convexHull ℝ Aε + convexHull ℝ Bε ∧
+        Cε ⊆ C + Metric.closedBall (0 : E) ε) :
+    convexHull ℝ A + convexHull ℝ B ⊆ convexHull ℝ C :=
+  convexHull_add_subset_convexHull_of_approx
+    (RieszEuclidean.Titchmarsh.isCompact_convexHull_of_compact hC).isClosed happrox
+
+/-! ### Recovery of a convex support hull from directional endpoint bounds -/
+
+/-- If a continuous compactly supported function `h` vanishes to one side of every
+separating hyperplane, and the endpoint of its support is at least the sum of the
+two factor endpoints in every direction, then its support hull contains the sum
+of the factor support hulls. The other inclusion is supplied by `hforward`.
+
+The closedness assumption is automatic once one has the finite-dimensional
+compact-convex-hull lemma for `tsupport h`. -/
+theorem convexHull_tsupport_eq_add_of_all_direction_endpoint
+    {f g h : E → ℂ}
+    (hclosed : IsClosed (convexHull ℝ (tsupport h)))
+    (hforward : convexHull ℝ (tsupport h) ⊆
+      convexHull ℝ (tsupport f) + convexHull ℝ (tsupport g))
+    (hendpoint : ∀ (ℓ : E →L[ℝ] ℝ) (T : ℝ),
+      (∀ z, ℓ z < T → h z = 0) →
+      ∀ x y, f x ≠ 0 → g y ≠ 0 → T ≤ ℓ (x + y)) :
+    convexHull ℝ (tsupport h) =
+      convexHull ℝ (tsupport f) + convexHull ℝ (tsupport g) := by
+  have hsum : tsupport f + tsupport g ⊆ convexHull ℝ (tsupport h) := by
+    rintro z ⟨x, hx, y, hy, rfl⟩
+    by_contra hnot
+    obtain ⟨ℓ, T, hlt, hsep⟩ :=
+      exists_strict_separating_functional_of_not_mem_convexHull hclosed hnot
+    have hvanish : ∀ z, ℓ z < T → h z = 0 := by
+      intro z hz
+      by_contra hhz
+      have hts : z ∈ tsupport h := subset_tsupport _ hhz
+      exact (not_lt_of_ge (hsep z hts)) hz
+    have hpair : ∀ x ∈ tsupport f, ∀ y ∈ tsupport g, T ≤ ℓ (x + y) := by
+      intro x hx y hy
+      have hfor_y : ∀ y' ∈ Function.support g, T ≤ ℓ (x + y') := by
+        intro y' hy'
+        have hfhalf : Function.support f ⊆ {x' | T ≤ ℓ (x' + y')} := by
+          intro x' hx'
+          change f x' ≠ 0 at hx'
+          change g y' ≠ 0 at hy'
+          exact hendpoint ℓ T hvanish x' y' hx' hy'
+        have hfclosed : IsClosed {x' : E | T ≤ ℓ (x' + y')} := by
+          exact isClosed_le continuous_const
+            (ℓ.continuous.comp (continuous_id.add continuous_const))
+        have hx' : T ≤ ℓ (x + y') := by
+          have hcl : closure (Function.support f) ⊆ {x' | T ≤ ℓ (x' + y')} :=
+            closure_minimal hfhalf hfclosed
+          exact hcl hx
+        exact hx'
+      have hgclosed : IsClosed {y' : E | T ≤ ℓ (x + y')} := by
+        exact isClosed_le continuous_const
+          (ℓ.continuous.comp (continuous_const.add continuous_id))
+      have hcl : closure (Function.support g) ⊆ {y' | T ≤ ℓ (x + y')} :=
+        closure_minimal hfor_y hgclosed
+      exact hcl hy
+    exact (not_lt_of_ge (hpair x hx y hy)) hlt
+  have hback : convexHull ℝ (tsupport f) + convexHull ℝ (tsupport g) ⊆
+      convexHull ℝ (tsupport h) := by
+    calc
+      convexHull ℝ (tsupport f) + convexHull ℝ (tsupport g) =
+          convexHull ℝ (tsupport f + tsupport g) :=
+        (convexHull_add (tsupport f) (tsupport g)).symm
+      _ ⊆ convexHull ℝ (convexHull ℝ (tsupport h)) := convexHull_mono hsum
+      _ = convexHull ℝ (tsupport h) := (convex_convexHull ℝ (tsupport h)).convexHull_eq
+  exact Set.Subset.antisymm hforward hback
+
+/-- Compact-support version of the all-directions endpoint criterion. -/
+theorem convexHull_tsupport_eq_add_of_all_direction_endpoint_of_compact
+    [FiniteDimensional ℝ E] {f g h : E → ℂ}
+    (hh : IsCompact (tsupport h))
+    (hforward : convexHull ℝ (tsupport h) ⊆
+      convexHull ℝ (tsupport f) + convexHull ℝ (tsupport g))
+    (hendpoint : ∀ (ℓ : E →L[ℝ] ℝ) (T : ℝ),
+      (∀ z, ℓ z < T → h z = 0) →
+      ∀ x y, f x ≠ 0 → g y ≠ 0 → T ≤ ℓ (x + y)) :
+    convexHull ℝ (tsupport h) =
+      convexHull ℝ (tsupport f) + convexHull ℝ (tsupport g) :=
+  convexHull_tsupport_eq_add_of_all_direction_endpoint
+    (RieszEuclidean.Titchmarsh.isCompact_convexHull_of_compact hh).isClosed
+    hforward hendpoint
+
+end RieszEuclidean.CompleteMinimal
+end
+
+/- Source: RieszEuclidean/TitchmarshFunctions.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! The convolution support theorem for continuous compactly supported functions. -/
+
+noncomputable section
+open MeasureTheory Set
+open scoped Convolution Pointwise
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The convex hull of convolution support is the Minkowski sum of the factor
+support hulls, for actual continuous compactly supported complex functions. -/
+theorem convexHull_tsupport_convolution {d : ℕ}
+    {f g : Euclidean d → ℂ} (hf : Continuous f) (hg : Continuous g)
+    (hfc : HasCompactSupport f) (hgc : HasCompactSupport g) :
+    convexHull ℝ (tsupport (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g)) =
+      convexHull ℝ (tsupport f) + convexHull ℝ (tsupport g) := by
+  have hwc : HasCompactSupport (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) :=
+    hfc.convolution (L := ContinuousLinearMap.mul ℂ ℂ) hgc
+  have hs : tsupport (f ⋆[ContinuousLinearMap.mul ℂ ℂ, volume] g) ⊆
+      tsupport f + tsupport g := by
+    apply closure_minimal
+    · exact (MeasureTheory.support_convolution_subset
+        (L := ContinuousLinearMap.mul ℂ ℂ) (μ := volume)).trans
+        (Set.add_subset_add (subset_tsupport f) (subset_tsupport g))
+    · exact (IsCompact.add hfc hgc).isClosed
+  apply convexHull_tsupport_eq_add_of_all_direction_endpoint_of_compact hwc
+  · rw [← convexHull_add]
+    exact convexHull_mono hs
+  · intro ℓ T hvan
+    exact RieszEuclidean.TitchmarshFunctionAlgebra.convolution_halfspace_endpoint
+      hf hg hfc hgc ℓ hvan
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshSupport.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap Pointwise
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+private theorem translated_tsupport_subset (x : Euclidean d) (φ : 𝓢(Euclidean d, ℂ)) :
+    tsupport (schwartzTranslateCLM x φ : Euclidean d → ℂ) ⊆
+      (fun y => x + y) ⁻¹' tsupport (φ : Euclidean d → ℂ) := by
+  change closure (Function.support (schwartzTranslateCLM x φ : Euclidean d → ℂ)) ⊆
+    (fun y => x + y) ⁻¹' tsupport (φ : Euclidean d → ℂ)
+  apply IsClosed.closure_subset_iff (isClosed_tsupport _ |>.preimage (continuous_const.add continuous_id)) |>.mpr
+  intro y hy
+  exact subset_tsupport _ (show φ (x + y) ≠ 0 from hy)
+
+/-- The actual convolution is supported in the sum of the compact factor supports. -/
+theorem distributionConvolution_support_subset_add
+    {u v w : TemperedDistribution d}
+    (hu : CompactlySupportedDistribution u)
+    (hv : CompactlySupportedDistribution v)
+    (hc : IsDistributionConvolution u v w) :
+    distributionSupport w ⊆ distributionSupport u + distributionSupport v := by
+  let A := distributionSupport u
+  let B := distributionSupport v
+  have hAc : IsCompact A := hu.support_isCompact
+  have hBc : IsCompact B := hv.support_isCompact
+  have hsumc : IsCompact (A + B) := hAc.add hBc
+  apply (distributionSupportedIn_iff_support_subset w (A + B) hsumc.isClosed).mp
+  intro φ hφ hdisj
+  obtain ⟨ψ, hψ, hw⟩ := hc φ
+  let C : Set (Euclidean d) :=
+    (fun p : Euclidean d × Euclidean d => p.1 - p.2) ''
+      (tsupport (φ : Euclidean d → ℂ) ×ˢ B)
+  have hCc : IsCompact C := (hφ.prod hBc).image (continuous_fst.sub continuous_snd)
+  have hψC : tsupport (ψ : Euclidean d → ℂ) ⊆ C := by
+    apply IsClosed.closure_subset_iff hCc.isClosed |>.mpr
+    intro x hx
+    have hne : v (schwartzTranslateCLM x φ) ≠ 0 := by simpa only [← hψ x] using hx
+    by_contra hnot
+    apply hne
+    apply (distributionSupportedIn_support v).schwartz_test
+    apply Set.disjoint_left.mpr
+    intro y hy hyB
+    have hxy : x + y ∈ tsupport (φ : Euclidean d → ℂ) :=
+      translated_tsupport_subset x φ hy
+    apply hnot
+    exact ⟨(x + y, y), ⟨hxy, hyB⟩, by simp⟩
+  have hCA : Disjoint C A := by
+    apply Set.disjoint_left.mpr
+    intro x hx hxa
+    obtain ⟨p, hp, rfl⟩ := hx
+    have hp0 : p.1 ∈ tsupport (φ : Euclidean d → ℂ) := hp.1
+    have hp1 : p.2 ∈ B := hp.2
+    have hmem : p.1 - p.2 + p.2 ∈ A + B :=
+      Set.mem_add.mpr ⟨p.1 - p.2, hxa, p.2, hp1, rfl⟩
+    have : p.1 ∈ A + B := by simpa using hmem
+    exact Set.disjoint_left.mp hdisj hp0 this
+  have hzero : u ψ = 0 :=
+    (distributionSupportedIn_support u).schwartz_test ψ (hCA.mono_left hψC)
+  exact hw.trans hzero
+
+/-- The convex hull of the actual convolution support lies in the sum of factor hulls. -/
+theorem distributionConvolution_convexHull_subset_add
+    {u v w : TemperedDistribution d}
+    (hu : CompactlySupportedDistribution u)
+    (hv : CompactlySupportedDistribution v)
+    (hc : IsDistributionConvolution u v w) :
+    convexHull ℝ (distributionSupport w) ⊆
+      convexHull ℝ (distributionSupport u) + convexHull ℝ (distributionSupport v) := by
+  rw [← convexHull_add]
+  exact convexHull_mono (distributionConvolution_support_subset_add hu hv hc)
+
+/-- Convolution of compactly supported distributions is compactly supported. -/
+theorem IsDistributionConvolution.compactlySupported
+    {u v w : TemperedDistribution d}
+    (hc : IsDistributionConvolution u v w)
+    (hu : CompactlySupportedDistribution u)
+    (hv : CompactlySupportedDistribution v) :
+    CompactlySupportedDistribution w := by
+  let K := distributionSupport u + distributionSupport v
+  have hK : IsCompact K := hu.support_isCompact.add hv.support_isCompact
+  refine ⟨K, hK, ?_⟩
+  exact (distributionSupportedIn_iff_support_subset w K hK.isClosed).mpr
+    (distributionConvolution_support_subset_add hu hv hc)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshRegularization.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Regularization of a compactly supported tempered distribution by a compact
+smooth kernel. -/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap Pointwise FourierTransform
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- A functional which factors through a normed Banach jet space commutes with a
+parameter integral as soon as that integral identity is known after applying
+the jet map. This is the scalar interchange needed for distribution actions. -/
+theorem continuousFunctional_integral_via_factorization
+    {α E F : Type*} [MeasurableSpace α] {μ : Measure α}
+    [TopologicalSpace E] [AddCommGroup E] [Module ℂ E]
+    [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
+    (J : E →L[ℂ] F) (L : F →L[ℂ] ℂ) (u : E →L[ℂ] ℂ)
+    (hfactor : L.comp J = u) {φ : E} (ψ : α → E)
+    (hjet : J φ = ∫ t, J (ψ t) ∂μ)
+    (hInt : Integrable (fun t => J (ψ t)) μ) :
+    u φ = ∫ t, u (ψ t) ∂μ := by
+  calc
+    u φ = L (J φ) := by rw [← hfactor]; rfl
+    _ = L (∫ t, J (ψ t) ∂μ) := by rw [hjet]
+    _ = ∫ t, L (J (ψ t)) ∂μ := (L.integral_comp_comm hInt).symm
+    _ = ∫ t, u (ψ t) ∂μ := by
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall fun t => by
+        rw [← hfactor]
+        rfl
+
+/-- Fubini for a compact kernel test, reduced to the finite-jet identity. Once
+the jet embedding factors the distribution and the jet of the test convolution
+is the integral of translated jets, the scalar distribution action commutes
+with the kernel integral. -/
+theorem distribution_apply_kernelConvolutionTest_eq_integral
+    {F : Type*} [NormedAddCommGroup F] [NormedSpace ℂ F] [CompleteSpace F]
+    (J : 𝓢(Euclidean d, ℂ) →L[ℂ] F) (L : F →L[ℂ] ℂ)
+    (u : TemperedDistribution d) (hfactor : L.comp J = u)
+    (f : Euclidean d → ℂ)
+    (hm : Function.HasTemperateGrowth (𝓕 f)) (φ : 𝓢(Euclidean d, ℂ))
+    (hjet : J (kernelConvolutionTestCLM f hm φ) =
+      ∫ x, J (f x • schwartzTranslateCLM x φ))
+    (hInt : Integrable (fun x => J (f x • schwartzTranslateCLM x φ))) :
+    u (kernelConvolutionTestCLM f hm φ) =
+      ∫ x, f x * u (schwartzTranslateCLM x φ) := by
+  have hcomm := continuousFunctional_integral_via_factorization J L u hfactor
+    (φ := kernelConvolutionTestCLM f hm φ)
+    (ψ := fun x => f x • schwartzTranslateCLM x φ) hjet hInt
+  rw [hcomm]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun x => by
+    simp only [map_smul, smul_eq_mul]
+
+/-- Reflection `φ(x) ↦ φ(-x)` as a continuous linear map on Schwartz space. -/
+def schwartzReflectCLM : 𝓢(Euclidean d, ℂ) →L[ℂ] 𝓢(Euclidean d, ℂ) :=
+  SchwartzMap.compCLMOfContinuousLinearEquiv ℂ (ContinuousLinearEquiv.neg ℝ)
+
+@[simp] theorem schwartzReflectCLM_apply (ρ : 𝓢(Euclidean d, ℂ)) (y : Euclidean d) :
+    schwartzReflectCLM ρ y = ρ (-y) := by simp [schwartzReflectCLM]
+
+/-- The Schwartz test `y ↦ ρ(x-y)` used to regularize a distribution. -/
+def regularizationTest (ρ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    𝓢(Euclidean d, ℂ) := schwartzTranslateCLM (-x) (schwartzReflectCLM ρ)
+
+@[simp] theorem regularizationTest_apply (ρ : 𝓢(Euclidean d, ℂ)) (x y : Euclidean d) :
+    regularizationTest ρ x y = ρ (x - y) := by
+  simp [regularizationTest, schwartzTranslateCLM_apply, schwartzReflectCLM_apply,
+    sub_eq_add_neg, add_comm]
+
+/-- Pointwise regularization of a distribution by a Schwartz kernel. -/
+def distributionRegularization (u : TemperedDistribution d)
+    (ρ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) : ℂ := u (regularizationTest ρ x)
+
+theorem distributionRegularization_apply (u : TemperedDistribution d)
+    (ρ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    distributionRegularization u ρ x = u (regularizationTest ρ x) := rfl
+
+/-- The Fourier-multiplier test action is ordinary convolution by the reflected
+kernel. This converts it to Mathlib's compact-right-factor convolution calculus. -/
+theorem kernelConvolutionTestCLM_eq_convolution (f : Euclidean d → ℂ)
+    (hf : Integrable f) (hm : Function.HasTemperateGrowth (𝓕 f))
+    (φ : 𝓢(Euclidean d, ℂ)) (y : Euclidean d) :
+    kernelConvolutionTestCLM f hm φ y =
+      MeasureTheory.convolution (φ : Euclidean d → ℂ)
+        (fun z => f (-z)) (ContinuousLinearMap.mul ℝ ℂ) volume y := by
+  rw [kernelConvolutionTestCLM_apply f hf hm]
+  rw [MeasureTheory.convolution_def]
+  let T : Euclidean d → Euclidean d := fun z => y + z
+  have hT : MeasureTheory.MeasurePreserving T volume volume := by
+    simpa [T] using MeasureTheory.measurePreserving_add_left volume y
+  have heT : MeasurableEmbedding T := by
+    simpa [T] using measurableEmbedding_addLeft y
+  calc
+    (∫ z, (f z) * φ (y + z)) = ∫ z, φ (T z) * f ((T z) - y) := by
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall fun z => by
+        simp [T, sub_add_cancel, mul_comm]
+    _ = ∫ z, φ z * f (z - y) := by
+      simpa only [T] using hT.integral_comp heT (fun z => φ z * f (z - y))
+    _ = ∫ z, φ z * f (-(y - z)) := by
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall fun z => by simp [sub_eq_add_neg, neg_sub]
+
+theorem schwartzReflectCLM_tsupport_subset (ρ : 𝓢(Euclidean d, ℂ)) :
+    tsupport (schwartzReflectCLM ρ : Euclidean d → ℂ) ⊆
+      (fun x : Euclidean d => -x) ⁻¹' tsupport (ρ : Euclidean d → ℂ) := by
+  change closure (Function.support (schwartzReflectCLM ρ : Euclidean d → ℂ)) ⊆ _
+  apply IsClosed.closure_subset_iff
+    ((isClosed_tsupport (ρ : Euclidean d → ℂ)).preimage continuous_neg) |>.mpr
+  intro x hx
+  change schwartzReflectCLM ρ x ≠ 0 at hx
+  exact subset_tsupport _ (by simpa using hx)
+
+theorem schwartzReflectCLM_hasCompactSupport {ρ : 𝓢(Euclidean d, ℂ)}
+    (hρ : HasCompactSupport (ρ : Euclidean d → ℂ)) :
+    HasCompactSupport (schwartzReflectCLM ρ : Euclidean d → ℂ) := by
+  let T : Euclidean d → Euclidean d := fun x => -x
+  have hpre : T ⁻¹' tsupport (ρ : Euclidean d → ℂ) =
+      T '' tsupport (ρ : Euclidean d → ℂ) := by
+    ext x
+    constructor
+    · intro hx
+      refine ⟨T x, hx, ?_⟩
+      simp [T]
+    · rintro ⟨y, hy, rfl⟩
+      simpa [T]
+  have hK : IsCompact (T '' tsupport (ρ : Euclidean d → ℂ)) :=
+    hρ.image continuous_neg
+  exact hK.of_isClosed_subset isClosed_closure (by
+    rw [← hpre]
+    exact schwartzReflectCLM_tsupport_subset ρ)
+
+/-- Compact smooth kernels make the actual inner convolution test smooth in its
+translation parameter. The proof uses Mathlib's compact-right-factor convolution
+regularity theorem after identifying the test action with ordinary convolution. -/
+theorem kernelConvolutionTestCLM_contDiff (ρ φ : 𝓢(Euclidean d, ℂ))
+    (hρ : HasCompactSupport (ρ : Euclidean d → ℂ)) (n : ℕ) :
+    ContDiff ℝ n (kernelConvolutionTestCLM (ρ : Euclidean d → ℂ)
+      (fourier_hasTemperateGrowth_of_compact_support ρ.integrable hρ
+        (Filter.Eventually.of_forall fun _ hx => image_eq_zero_of_nmem_tsupport hx)) φ) := by
+  let hm := fourier_hasTemperateGrowth_of_compact_support ρ.integrable hρ
+    (Filter.Eventually.of_forall fun _ hx => image_eq_zero_of_nmem_tsupport hx)
+  have heq : (fun y => kernelConvolutionTestCLM (ρ : Euclidean d → ℂ) hm φ y) =
+      MeasureTheory.convolution (φ : Euclidean d → ℂ)
+        (fun z => ρ (-z)) (ContinuousLinearMap.mul ℝ ℂ) volume := by
+    funext y
+    exact kernelConvolutionTestCLM_eq_convolution _ ρ.integrable hm φ y
+  change ContDiff ℝ n (fun y => kernelConvolutionTestCLM (ρ : Euclidean d → ℂ) hm φ y)
+  rw [heq]
+  have hreflect : (schwartzReflectCLM ρ : Euclidean d → ℂ) = fun z => ρ (-z) := by
+    funext z
+    simp
+  rw [← hreflect]
+  simpa using HasCompactSupport.contDiff_convolution_right
+    (n := n) (L := ContinuousLinearMap.mul ℝ ℂ) (μ := volume)
+    (schwartzReflectCLM_hasCompactSupport hρ) φ.continuous.locallyIntegrable
+    ((schwartzReflectCLM ρ).smooth n)
+
+
+private theorem schwartz_fderiv_bound (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    ‖fderiv ℝ φ x‖ ≤ SchwartzMap.seminorm ℂ 0 1 φ := by
+  have h := φ.le_seminorm ℂ 0 1 x
+  calc
+    ‖fderiv ℝ φ x‖ = ‖iteratedFDeriv ℝ 0 (fderiv ℝ φ) x‖ := by simp
+    _ = ‖iteratedFDeriv ℝ 1 φ x‖ := norm_iteratedFDeriv_fderiv
+    _ ≤ SchwartzMap.seminorm ℂ 0 1 φ := by simpa using h
+
+theorem regularizationTest_tsupport_subset (ρ : 𝓢(Euclidean d, ℂ))
+    (x : Euclidean d) :
+    tsupport (regularizationTest ρ x : Euclidean d → ℂ) ⊆
+      (fun y : Euclidean d => x - y) ⁻¹' tsupport (ρ : Euclidean d → ℂ) := by
+  change closure (Function.support (regularizationTest ρ x : Euclidean d → ℂ)) ⊆ _
+  apply IsClosed.closure_subset_iff
+    ((isClosed_tsupport (ρ : Euclidean d → ℂ)).preimage
+      (continuous_const.sub continuous_id)) |>.mpr
+  intro y hy
+  change regularizationTest ρ x y ≠ 0 at hy
+  have hy' : ρ (x - y) ≠ 0 := by
+    simpa only [regularizationTest_apply] using hy
+  exact subset_tsupport _ hy'
+
+theorem regularizationTest_hasCompactSupport {ρ : 𝓢(Euclidean d, ℂ)}
+    (hρ : HasCompactSupport (ρ : Euclidean d → ℂ)) (x : Euclidean d) :
+    HasCompactSupport (regularizationTest ρ x : Euclidean d → ℂ) := by
+  let T : Euclidean d → Euclidean d := fun y => x - y
+  have hT : Continuous T := continuous_const.sub continuous_id
+  have hpre : T ⁻¹' tsupport (ρ : Euclidean d → ℂ) =
+      T '' tsupport (ρ : Euclidean d → ℂ) := by
+    ext y
+    constructor
+    · intro hy
+      refine ⟨T y, hy, ?_⟩
+      simp [T]
+    · rintro ⟨z, hz, rfl⟩
+      simpa [T]
+  have hK : IsCompact (T '' tsupport (ρ : Euclidean d → ℂ)) := hρ.image hT
+  exact hK.of_isClosed_subset isClosed_closure (by
+    rw [← hpre]
+    exact regularizationTest_tsupport_subset ρ x)
+
+theorem distributionRegularization_eq_zero_of_not_mem_add_support
+    {u : TemperedDistribution d} (ρ : 𝓢(Euclidean d, ℂ))
+    {x : Euclidean d} (hx : x ∉ distributionSupport u + tsupport (ρ : Euclidean d → ℂ)) :
+    distributionRegularization u ρ x = 0 := by
+  rw [distributionRegularization_apply]
+  have hdisj : Disjoint (tsupport (regularizationTest ρ x : Euclidean d → ℂ))
+      (distributionSupport u) := by
+    apply Set.disjoint_left.mpr
+    intro y hy hys
+    have hxy : x - y ∈ tsupport (ρ : Euclidean d → ℂ) :=
+      regularizationTest_tsupport_subset ρ x hy
+    apply hx
+    apply Set.mem_add.mpr
+    refine ⟨y, hys, x - y, hxy, ?_⟩
+    simp
+  exact (distributionSupportedIn_support u).schwartz_test (regularizationTest ρ x) hdisj
+
+theorem regularizationTest_ne_zero_of_regularization_ne_zero
+    (u : TemperedDistribution d) (ρ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d)
+    (h : distributionRegularization u ρ x ≠ 0) : regularizationTest ρ x ≠ 0 := by
+  intro hz
+  apply h
+  rw [distributionRegularization_apply, hz]
+  simp
+
+theorem distributionRegularization_test_of_reflected_translate
+    (u : TemperedDistribution d) (φ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    distributionRegularization u (regularizationTest φ x) x = u φ := by
+  rw [distributionRegularization_apply]
+  congr 1
+  ext y
+  simp [regularizationTest_apply]
+
+/-- Every support point is detected at the same point by regularization with a
+compact kernel whose support is the reflected local test support. -/
+theorem distributionSupport_regularization_detect
+    {u : TemperedDistribution d} {x : Euclidean d}
+    (hx : x ∈ distributionSupport u) (U : Set (Euclidean d))
+    (hU : IsOpen U) (hxU : x ∈ U) :
+    ∃ ρ : 𝓢(Euclidean d, ℂ), HasCompactSupport (ρ : Euclidean d → ℂ) ∧
+      (∀ z ∈ tsupport (ρ : Euclidean d → ℂ), x - z ∈ U) ∧
+      distributionRegularization u ρ x ≠ 0 := by
+  obtain ⟨φ, hφc, hφs, hφ⟩ := hx U hU hxU
+  refine ⟨regularizationTest φ x, regularizationTest_hasCompactSupport hφc x, ?_, ?_⟩
+  · intro z hz
+    have hzx := regularizationTest_tsupport_subset φ x hz
+    exact hφs hzx
+  · rw [distributionRegularization_test_of_reflected_translate]
+    exact hφ
+
+/-- Regularizing an actual distribution convolution gives an outer distribution
+acting on the inner regularization. This is the exact test-level identity before
+any attempt to exchange distribution actions with ordinary integrals. -/
+theorem IsDistributionConvolution.regularization_formula
+    {u v w : TemperedDistribution d} (hc : IsDistributionConvolution u v w)
+    (ρ : 𝓢(Euclidean d, ℂ)) (x : Euclidean d) :
+    ∃ ψ : 𝓢(Euclidean d, ℂ),
+      (∀ y : Euclidean d, ψ y = distributionRegularization v ρ (x - y)) ∧
+      distributionRegularization w ρ x = u ψ := by
+  obtain ⟨ψ, hψ, hw⟩ := hc (regularizationTest ρ x)
+  refine ⟨ψ, ?_, ?_⟩
+  · intro y
+    rw [distributionRegularization_apply]
+    have heq : schwartzTranslateCLM y (regularizationTest ρ x) =
+        regularizationTest ρ (x - y) := by
+      ext z
+      simp [regularizationTest_apply, sub_eq_add_neg, add_assoc, add_comm, add_left_comm]
+    exact (hψ y).trans (congrArg v heq)
+  · rw [distributionRegularization_apply]
+    exact hw
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshTranslationContinuity.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+open MeasureTheory SchwartzMap Set Filter Topology
+open scoped SchwartzMap ContDiff
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+private theorem translateDifference_seminorm_bound (φ : 𝓢(Euclidean d, ℂ))
+    (h : Euclidean d) (hh : ‖h‖ ≤ 1) (k j : ℕ) :
+    SchwartzMap.seminorm ℂ k j (schwartzTranslateCLM h φ - φ) ≤
+      4 ^ k * (Finset.Iic (k, j + 1)).sup
+        (fun m => SchwartzMap.seminorm ℂ m.1 m.2) φ * ‖h‖ := by
+  let F : Euclidean d → ContinuousMultilinearMap ℝ (fun _ : Fin j => Euclidean d) ℂ :=
+    iteratedFDeriv ℝ j (φ : Euclidean d → ℂ)
+  let S := (Finset.Iic (k, j + 1)).sup
+    (fun m => SchwartzMap.seminorm ℂ m.1 m.2) φ
+  apply SchwartzMap.seminorm_le_bound ℂ k j (schwartzTranslateCLM h φ - φ) (by positivity)
+  intro x
+  have hiter : iteratedFDeriv ℝ j (schwartzTranslateCLM h φ - φ : Euclidean d → ℂ) x =
+      F (x + h) - F x := by
+    have hfun : (schwartzTranslateCLM h φ - φ : Euclidean d → ℂ) =
+        fun y => φ (h + y) - φ y := by
+      ext y
+      simp [schwartzTranslateCLM_apply]
+    rw [hfun]
+    change iteratedFDeriv ℝ j
+      ((fun y => φ (h + y)) + (fun y => -(φ y))) x = _
+    rw [iteratedFDeriv_add_apply]
+    · have hneg : (fun y : Euclidean d => -φ y) = -(fun y => (φ : Euclidean d → ℂ) y) := rfl
+      rw [hneg, iteratedFDeriv_neg_apply (𝕜 := ℝ) (f := (φ : Euclidean d → ℂ)),
+        iteratedFDeriv_comp_add_left]
+      change iteratedFDeriv ℝ j (φ : Euclidean d → ℂ) (h + x) +
+        -iteratedFDeriv ℝ j (φ : Euclidean d → ℂ) x = _
+      simp [F, sub_eq_add_neg, add_comm]
+    · have hadd : ContDiff ℝ ∞ (fun y : Euclidean d => h + y) :=
+        (contDiff_const : ContDiff ℝ ∞ (fun _ : Euclidean d => h)).add contDiff_id
+      have hs := φ.smooth'.comp hadd
+      exact (hs.of_le (by exact_mod_cast (le_top : (j : ℕ∞) ≤ ⊤))).contDiffAt
+    · have hs := φ.smooth'.neg
+      exact (hs.of_le (by exact_mod_cast (le_top : (j : ℕ∞) ≤ ⊤))).contDiffAt
+  have hco : (schwartzTranslateCLM h φ - φ : 𝓢(Euclidean d, ℂ)) =
+      (schwartzTranslateCLM h φ : Euclidean d → ℂ) - (φ : Euclidean d → ℂ) := by
+    ext y
+    rfl
+  change ‖x‖ ^ k * ‖iteratedFDeriv ℝ j
+    (schwartzTranslateCLM h φ - φ : 𝓢(Euclidean d, ℂ)) x‖ ≤ _
+  rw [hco, hiter]
+  have hFdiff : ∀ z ∈ Metric.closedBall x 1, DifferentiableAt ℝ F z := by
+    intro z hz
+    exact ((φ.smooth'.iteratedFDeriv_right (m := 1) (i := j)
+      (by exact_mod_cast (le_top : ((1 + j : ℕ) : ℕ∞) ≤ ⊤))).differentiable le_rfl) z
+  have hFbound : ∀ z ∈ Metric.closedBall x 1,
+      ‖fderiv ℝ F z‖ ≤ (4 ^ k * S) / (1 + ‖x‖) ^ k := by
+    intro z hz
+    have hdist : dist z x ≤ 1 := Metric.mem_closedBall.mp hz
+    have hnormxz : ‖x‖ ≤ ‖z‖ + 1 := by
+      calc
+        ‖x‖ = ‖(x - z) + z‖ := by congr 1; abel
+        _ ≤ ‖x - z‖ + ‖z‖ := norm_add_le _ _
+        _ = dist z x + ‖z‖ := by rw [dist_eq_norm]; simp [norm_sub_rev]
+        _ ≤ _ := by linarith
+    have hweight : (1 + ‖x‖) ^ k ≤ 2 ^ k * (1 + ‖z‖) ^ k := by
+      have hbase : 1 + ‖x‖ ≤ 2 * (1 + ‖z‖) := by
+        nlinarith [norm_nonneg z]
+      calc
+        _ ≤ (2 * (1 + ‖z‖)) ^ k := by gcongr
+        _ = _ := by rw [mul_pow]
+    have hseminorm := one_add_le_sup_seminorm_apply (𝕜 := ℂ) (E := Euclidean d) (F := ℂ)
+      (m := (k, j + 1))
+      (k := k) (n := j + 1) le_rfl le_rfl φ z
+    have hderiv := norm_fderiv_iteratedFDeriv (𝕜 := ℝ) (f := (φ : Euclidean d → ℂ))
+      (n := j) (x := z)
+    have hweighted : ‖fderiv ℝ F z‖ * (1 + ‖x‖) ^ k ≤ 4 ^ k * S := by
+      rw [hderiv]
+      calc
+        ‖iteratedFDeriv ℝ (j + 1) (φ : Euclidean d → ℂ) z‖ * (1 + ‖x‖) ^ k
+            ≤ ‖iteratedFDeriv ℝ (j + 1) (φ : Euclidean d → ℂ) z‖ *
+                (2 ^ k * (1 + ‖z‖) ^ k) :=
+              mul_le_mul_of_nonneg_left hweight (norm_nonneg _)
+        _ = 2 ^ k * ((1 + ‖z‖) ^ k *
+              ‖iteratedFDeriv ℝ (j + 1) (φ : Euclidean d → ℂ) z‖) := by ring
+        _ ≤ 2 ^ k * (2 ^ k * S) := by
+              gcongr
+        _ = 4 ^ k * S := by
+          have hp : (2 : ℝ) ^ k * (2 : ℝ) ^ k = (4 : ℝ) ^ k := by
+            rw [← mul_pow]
+            norm_num
+          calc
+            2 ^ k * (2 ^ k * S) = (2 ^ k * 2 ^ k) * S := by ring
+            _ = 4 ^ k * S := by rw [hp]
+    have hpos : 0 < (1 + ‖x‖) ^ k := by positivity
+    exact (le_div_iff₀ hpos).2 (by simpa [mul_comm] using hweighted)
+  have hxball : x ∈ Metric.closedBall x 1 := by simp
+  have hxhball : x + h ∈ Metric.closedBall x 1 := by
+    rw [Metric.mem_closedBall, dist_eq_norm]
+    simpa only [add_sub_cancel_left] using hh
+  have hmvt := (convex_closedBall x (1 : ℝ)).norm_image_sub_le_of_norm_fderiv_le
+    (f := F) (C := (4 ^ k * S) / (1 + ‖x‖) ^ k) hFdiff hFbound hxball hxhball
+  have hweight_le : ‖x‖ ^ k ≤ (1 + ‖x‖) ^ k := by gcongr; linarith [norm_nonneg x]
+  calc
+    ‖x‖ ^ k * ‖F (x + h) - F x‖ ≤
+        ‖x‖ ^ k * (((4 ^ k * S) / (1 + ‖x‖) ^ k) * ‖h‖) := by
+      apply mul_le_mul_of_nonneg_left _ (by positivity)
+      simpa only [show x + h - x = h by abel] using hmvt
+    _ ≤ 4 ^ k * S * ‖h‖ := by
+      have hp : 0 < (1 + ‖x‖) ^ k := by positivity
+      have hcancel : ‖x‖ ^ k * ((4 ^ k * S) / (1 + ‖x‖) ^ k) ≤ 4 ^ k * S := by
+        have hD : 0 ≤ 4 ^ k * S := by positivity
+        rw [← mul_div_assoc]
+        apply (div_le_iff₀ hp).2
+        simpa [mul_comm] using mul_le_mul_of_nonneg_right hweight_le hD
+      calc
+        _ = (‖x‖ ^ k * ((4 ^ k * S) / (1 + ‖x‖) ^ k)) * ‖h‖ := by ring
+        _ ≤ (4 ^ k * S) * ‖h‖ := mul_le_mul_of_nonneg_right hcancel (norm_nonneg _)
+
+/-- Translation of a fixed Schwartz function depends continuously on the translation vector. -/
+theorem continuous_schwartzTranslateCLM_apply (φ : 𝓢(Euclidean d, ℂ)) :
+    Continuous (fun x : Euclidean d => schwartzTranslateCLM x φ) := by
+  have hzero : ∀ ψ : 𝓢(Euclidean d, ℂ),
+      Filter.Tendsto (fun h : Euclidean d => schwartzTranslateCLM h ψ)
+        (𝓝 (0 : Euclidean d)) (𝓝 ψ) := by
+    intro ψ
+    apply ((schwartz_withSeminorms ℂ (Euclidean d) ℂ).tendsto_nhds
+      (fun h : Euclidean d => schwartzTranslateCLM h ψ) ψ).mpr
+    intro i ε hε
+    let C := 4 ^ i.1 * (Finset.Iic (i.1, i.2 + 1)).sup
+      (fun m => SchwartzMap.seminorm ℂ m.1 m.2) ψ
+    have hC : 0 ≤ C := by positivity
+    let δ := min 1 (ε / (C + 1))
+    have hδ : 0 < δ := by positivity
+    filter_upwards [Metric.ball_mem_nhds 0 hδ] with h hh
+    have hnorm : ‖h‖ < δ := by simpa [Metric.mem_ball] using hh
+    have hh1 : ‖h‖ ≤ 1 := (hnorm.trans_le (min_le_left _ _)).le
+    have hb := translateDifference_seminorm_bound ψ h hh1 i.1 i.2
+    change SchwartzMap.seminorm ℂ i.1 i.2 (schwartzTranslateCLM h ψ - ψ) < ε
+    calc
+      SchwartzMap.seminorm ℂ i.1 i.2 (schwartzTranslateCLM h ψ - ψ) ≤ C * ‖h‖ := hb
+      _ < ε := by
+        have hsmall : ‖h‖ < ε / (C + 1) := hnorm.trans_le (min_le_right _ _)
+        have hε' : C * (ε / (C + 1)) < ε := by
+          calc
+            C * (ε / (C + 1)) < (C + 1) * (ε / (C + 1)) :=
+              mul_lt_mul_of_pos_right (by linarith) (by positivity)
+            _ = ε := by field_simp
+        exact (mul_le_mul_of_nonneg_left hsmall.le hC).trans_lt hε'
+  have hzero_eq : ∀ ψ : 𝓢(Euclidean d, ℂ), schwartzTranslateCLM (0 : Euclidean d) ψ = ψ := by
+    intro ψ
+    ext y
+    simp [schwartzTranslateCLM_apply]
+  apply continuous_iff_continuousAt.mpr
+  intro x
+  have harg : ContinuousAt (fun y : Euclidean d => y - x) x := by
+    simpa using (continuousAt_id.sub continuousAt_const :
+      ContinuousAt (fun y : Euclidean d => y - (x : Euclidean d)) x)
+  have hcont0x : ContinuousAt
+      (fun h : Euclidean d => schwartzTranslateCLM h (schwartzTranslateCLM x φ))
+      (0 : Euclidean d) := by
+    simpa [ContinuousAt, hzero_eq (schwartzTranslateCLM x φ)] using
+      hzero (schwartzTranslateCLM x φ)
+  have hcont0x' : ContinuousAt
+      (fun h : Euclidean d => schwartzTranslateCLM h (schwartzTranslateCLM x φ)) (x - x) := by
+    convert hcont0x using 1
+    simp
+  have hshiftComp : ContinuousAt
+      ((fun t : Euclidean d => schwartzTranslateCLM t (schwartzTranslateCLM x φ)) ∘
+        fun y : Euclidean d => y - x) x :=
+    hcont0x'.comp (f := fun y : Euclidean d => y - x) harg
+  have heq : (fun y : Euclidean d =>
+      schwartzTranslateCLM (y - x) (schwartzTranslateCLM x φ)) =
+      fun y => schwartzTranslateCLM y φ := by
+    funext y
+    ext z
+    simp only [schwartzTranslateCLM_apply]
+    congr 1
+    abel
+  exact heq ▸ hshiftComp
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshRegularizationSupport.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Exact support control and local detection for compact distribution kernels. -/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap Pointwise
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- A fixed smooth kernel gives a continuous family of reflected translated tests. -/
+theorem continuous_regularizationTest {d : ℕ} (ρ : 𝓢(Euclidean d, ℂ)) :
+    Continuous (regularizationTest ρ) :=
+  (continuous_schwartzTranslateCLM_apply (schwartzReflectCLM ρ)).comp continuous_neg
+
+/-- Regularization of a tempered distribution is a continuous function. -/
+theorem continuous_distributionRegularization {d : ℕ}
+    (u : TemperedDistribution d) (ρ : 𝓢(Euclidean d, ℂ)) :
+    Continuous (distributionRegularization u ρ) :=
+  u.continuous.comp (continuous_regularizationTest ρ)
+
+/-- The closed support of a regularized compact distribution lies in the sum
+of the exact distribution support and the compact kernel support. -/
+theorem distributionRegularization_tsupport_subset {d : ℕ}
+    {u : TemperedDistribution d} (hu : CompactlySupportedDistribution u)
+    {ρ : 𝓢(Euclidean d, ℂ)} (hρ : HasCompactSupport (ρ : Euclidean d → ℂ)) :
+    tsupport (distributionRegularization u ρ) ⊆
+      distributionSupport u + tsupport (ρ : Euclidean d → ℂ) := by
+  apply closure_minimal
+  · intro x hx
+    by_contra hn
+    exact hx (distributionRegularization_eq_zero_of_not_mem_add_support ρ hn)
+  · exact (hu.support_isCompact.add hρ).isClosed
+
+/-- Regularization with a compact kernel has compact support. -/
+theorem distributionRegularization_hasCompactSupport {d : ℕ}
+    {u : TemperedDistribution d} (hu : CompactlySupportedDistribution u)
+    {ρ : 𝓢(Euclidean d, ℂ)} (hρ : HasCompactSupport (ρ : Euclidean d → ℂ)) :
+    HasCompactSupport (distributionRegularization u ρ) :=
+  (hu.support_isCompact.add hρ).of_isClosed_subset isClosed_closure
+    (distributionRegularization_tsupport_subset hu hρ)
+
+/-- Each exact support point can be detected by a compact smooth kernel with
+arbitrarily small support around the origin. -/
+theorem distributionSupport_regularization_detect_small {d : ℕ}
+    {u : TemperedDistribution d} {x : Euclidean d}
+    (hx : x ∈ distributionSupport u) {ε : ℝ} (hε : 0 < ε) :
+    ∃ ρ : 𝓢(Euclidean d, ℂ), HasCompactSupport (ρ : Euclidean d → ℂ) ∧
+      tsupport (ρ : Euclidean d → ℂ) ⊆ Metric.closedBall 0 ε ∧
+      distributionRegularization u ρ x ≠ 0 := by
+  obtain ⟨ρ, hρ, hlocal, hnonzero⟩ := distributionSupport_regularization_detect
+    hx (Metric.ball x ε) Metric.isOpen_ball (Metric.mem_ball_self hε)
+  refine ⟨ρ, hρ, ?_, hnonzero⟩
+  intro z hz
+  have hdist : dist (x - z) x < ε := hlocal z hz
+  have hnorm : ‖z‖ < ε := by
+    simpa only [dist_eq_norm, sub_sub_cancel_left, norm_neg] using hdist
+  simpa only [Metric.mem_closedBall, dist_zero_right] using hnorm.le
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshDistributionAssembly.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# Assembly of the distribution Titchmarsh theorem from regularizations
+
+The two analytic inputs are kept explicit: the function support theorem for
+compactly supported continuous functions, and support propagation for the
+convolution of two regularized distributions. This file handles the remaining
+localization, compactness, and convex-geometric argument.
+-/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap Pointwise CompactlySupported Convolution
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+private abbrev RegularizedFunction (d : ℕ) :=
+  RieszEuclidean.TitchmarshFunctionAlgebra.Function d
+
+/-- Package one compactly supported regularization as a compactly supported
+continuous function. -/
+private noncomputable def regularizedAssemblyFunction
+    (u : TemperedDistribution d) (hu : CompactlySupportedDistribution u)
+    (ρ : 𝓢(Euclidean d, ℂ)) (hρ : HasCompactSupport (ρ : Euclidean d → ℂ))
+    (hcont : Continuous (distributionRegularization u ρ)) : RegularizedFunction d :=
+  ⟨⟨distributionRegularization u ρ, hcont⟩,
+    distributionRegularization_hasCompactSupport hu hρ⟩
+
+theorem titchmarshLions_of_regularized_support
+    (hFunctionTL : ∀ (f g : RegularizedFunction d), f ≠ 0 → g ≠ 0 →
+      convexHull ℝ (tsupport
+        (RieszEuclidean.TitchmarshFunctionAlgebra.convolution d f g : Euclidean d → ℂ)) =
+        convexHull ℝ (tsupport (f : Euclidean d → ℂ)) +
+          convexHull ℝ (tsupport (g : Euclidean d → ℂ)))
+    (hRegConvSupport : ∀ {u v w : TemperedDistribution d}
+      (hu : CompactlySupportedDistribution u) (hv : CompactlySupportedDistribution v)
+      (_ : IsDistributionConvolution u v w)
+      {ρ σ : 𝓢(Euclidean d, ℂ)},
+      (hρ : HasCompactSupport (ρ : Euclidean d → ℂ)) →
+      (hσ : HasCompactSupport (σ : Euclidean d → ℂ)) →
+      tsupport (RieszEuclidean.TitchmarshFunctionAlgebra.convolution d
+        (regularizedAssemblyFunction u hu ρ hρ (continuous_distributionRegularization u ρ))
+        (regularizedAssemblyFunction v hv σ hσ (continuous_distributionRegularization v σ)) :
+        Euclidean d → ℂ) ⊆
+        distributionSupport w + tsupport (ρ : Euclidean d → ℂ) +
+          tsupport (σ : Euclidean d → ℂ)) :
+    TitchmarshLions d := by
+  intro u v w hu hv hu0 hv0 hc
+  have hw : CompactlySupportedDistribution w := hc.compactlySupported hu hv
+  have hreverse : convexHull ℝ (distributionSupport u) +
+      convexHull ℝ (distributionSupport v) ⊆ convexHull ℝ (distributionSupport w) := by
+    refine convexHull_add_subset_convexHull_of_approx_of_compact
+      (E := Euclidean d) (A := distributionSupport u) (B := distributionSupport v)
+      (C := distributionSupport w) hw.support_isCompact ?_
+    intro a b ha hb ε hε
+    obtain ⟨ρ, hρc, hρloc, hρa⟩ :=
+      distributionSupport_regularization_detect_small ha (half_pos hε)
+    obtain ⟨σ, hσc, hσloc, hσb⟩ :=
+      distributionSupport_regularization_detect_small hb (half_pos hε)
+    let hρ : Continuous (distributionRegularization u ρ) := continuous_distributionRegularization u ρ
+    let hσ : Continuous (distributionRegularization v σ) := continuous_distributionRegularization v σ
+    let f := regularizedAssemblyFunction u hu ρ hρc hρ
+    let g := regularizedAssemblyFunction v hv σ hσc hσ
+    let k := RieszEuclidean.TitchmarshFunctionAlgebra.convolution d f g
+    have hfne : f ≠ 0 := by
+      intro hz
+      have := congrArg (fun q : RegularizedFunction d => (q : Euclidean d → ℂ) a) hz
+      exact hρa (by simpa [f, regularizedAssemblyFunction] using this)
+    have hgne : g ≠ 0 := by
+      intro hz
+      have := congrArg (fun q : RegularizedFunction d => (q : Euclidean d → ℂ) b) hz
+      exact hσb (by simpa [g, regularizedAssemblyFunction] using this)
+    have hkHull := hFunctionTL f g hfne hgne
+    have haF : a ∈ tsupport (f : Euclidean d → ℂ) := subset_tsupport _ hρa
+    have hbG : b ∈ tsupport (g : Euclidean d → ℂ) := subset_tsupport _ hσb
+    let ε' : ℝ := ε / 2
+    have hρball : tsupport (ρ : Euclidean d → ℂ) ⊆ Metric.closedBall 0 ε' := by
+      simpa [ε'] using hρloc
+    have hσball : tsupport (σ : Euclidean d → ℂ) ⊆ Metric.closedBall 0 ε' := by
+      simpa [ε'] using hσloc
+    have hksub : tsupport (k : Euclidean d → ℂ) ⊆
+        distributionSupport w + Metric.closedBall 0 ε := by
+      intro x hx
+      have hreg := (hRegConvSupport hu hv hc hρc hσc) hx
+      obtain ⟨p, hp, q, hq, hpq⟩ := Set.mem_add.mp hreg
+      obtain ⟨p₀, hp₀, z, hz, hp₀z⟩ := Set.mem_add.mp hp
+      have hnz : ‖z‖ ≤ ε / 2 := by
+        simpa only [Metric.mem_closedBall, dist_zero_right] using hρball hz
+      have hnq : ‖q‖ ≤ ε / 2 := by
+        simpa only [Metric.mem_closedBall, dist_zero_right] using hσball hq
+      have hnorm : ‖z + q‖ ≤ ε := by
+        calc
+          ‖z + q‖ ≤ ‖z‖ + ‖q‖ := norm_add_le _ _
+          _ ≤ ε := by linarith
+      have hzz' : z + q ∈ Metric.closedBall (0 : Euclidean d) ε := by
+        simpa only [Metric.mem_closedBall, dist_zero_right] using hnorm
+      have hpx : p₀ + (z + q) = x := by calc
+        p₀ + (z + q) = (p₀ + z) + q := by abel
+        _ = p + q := by rw [hp₀z]
+        _ = x := hpq
+      exact Set.mem_add.mpr ⟨p₀, hp₀, z + q, hzz', hpx⟩
+    refine ⟨tsupport (f : Euclidean d → ℂ), tsupport (g : Euclidean d → ℂ),
+      tsupport (k : Euclidean d → ℂ), haF, hbG, ?_, ?_⟩
+    · simpa [k] using hkHull
+    · exact hksub
+  exact Set.Subset.antisymm
+    (distributionConvolution_convexHull_subset_add hu hv hc) hreverse
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshJetEmbedding.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+set_option maxHeartbeats 1000000
+
+/-!
+# Factoring distributions through finite jets
+
+The central interchange tool is a normed-space statement: a continuous linear
+functional controlled by a continuous linear jet map factors through that map.
+The Hahn–Banach extension then supplies a functional on the whole jet space.
+-/
+
+noncomputable section
+
+namespace RieszEuclidean.CompleteMinimal
+
+open scoped BoundedContinuousFunction SchwartzMap
+
+/-- A functional bounded by the norm of a jet map factors through that map and
+extends to a bounded functional on the target space. -/
+theorem exists_bounded_functional_factorization
+    {E F : Type*} [AddCommGroup E] [Module ℂ E] [TopologicalSpace E]
+    [NormedAddCommGroup F] [NormedSpace ℂ F]
+    (J : E →L[ℂ] F) (u : E →L[ℂ] ℂ) (C : ℝ)
+    (hbound : ∀ x : E, ‖u x‖ ≤ C * ‖J x‖) :
+    ∃ L : F →L[ℂ] ℂ, L.comp J = u := by
+  let kerJ : Submodule ℂ E := LinearMap.ker J.toLinearMap
+  have hker : kerJ ≤ LinearMap.ker u.toLinearMap := by
+    intro x hx
+    have hu : ‖u x‖ ≤ C * ‖J x‖ := hbound x
+    have hJ : J x = 0 := by simpa [kerJ] using hx
+    rw [hJ, norm_zero, mul_zero] at hu
+    exact (norm_eq_zero.mp (le_antisymm hu (norm_nonneg _)))
+  let quotientFunctional : (E ⧸ kerJ) →ₗ[ℂ] ℂ := kerJ.liftQ u.toLinearMap hker
+  let rangeFunctional : LinearMap.range J.toLinearMap →ₗ[ℂ] ℂ :=
+    quotientFunctional.comp (LinearMap.quotKerEquivRange J.toLinearMap).symm.toLinearMap
+  have hrangeBound (y : LinearMap.range J.toLinearMap) :
+      ‖rangeFunctional y‖ ≤ C * ‖(y : F)‖ := by
+    obtain ⟨x, hx⟩ := y.property
+    have hy : y = ⟨J x, ⟨x, rfl⟩⟩ := Subtype.ext hx.symm
+    rw [hy]
+    have hy : rangeFunctional ⟨J x, ⟨x, rfl⟩⟩ = u x := by
+      have heq : (LinearMap.quotKerEquivRange J.toLinearMap).symm
+          ⟨J x, ⟨x, rfl⟩⟩ = kerJ.mkQ x := by
+        simpa [kerJ] using LinearMap.quotKerEquivRange_symm_apply_image
+          J.toLinearMap x ⟨x, rfl⟩
+      calc
+        rangeFunctional ⟨J x, ⟨x, rfl⟩⟩ =
+            quotientFunctional ((LinearMap.quotKerEquivRange J.toLinearMap).symm
+              ⟨J x, ⟨x, rfl⟩⟩) := rfl
+        _ = quotientFunctional (kerJ.mkQ x) := congrArg quotientFunctional heq
+        _ = u x := by simp [quotientFunctional]
+    rw [hy]
+    exact hbound x
+  let rangeFunctionalCLM : LinearMap.range J.toLinearMap →L[ℂ] ℂ :=
+    rangeFunctional.mkContinuous C hrangeBound
+  obtain ⟨L, hL, _⟩ := exists_extension_norm_eq
+    (LinearMap.range J.toLinearMap) rangeFunctionalCLM
+  refine ⟨L, ?_⟩
+  ext x
+  have hLx := hL ⟨J x, ⟨x, rfl⟩⟩
+  have hfactor : rangeFunctionalCLM ⟨J x, ⟨x, rfl⟩⟩ = u x := by
+    change rangeFunctional ⟨J x, ⟨x, rfl⟩⟩ = u x
+    have heq : (LinearMap.quotKerEquivRange J.toLinearMap).symm
+        ⟨J x, ⟨x, rfl⟩⟩ = kerJ.mkQ x := by
+      simpa [kerJ] using LinearMap.quotKerEquivRange_symm_apply_image
+        J.toLinearMap x ⟨x, rfl⟩
+    calc
+      rangeFunctional ⟨J x, ⟨x, rfl⟩⟩ =
+          quotientFunctional ((LinearMap.quotKerEquivRange J.toLinearMap).symm
+            ⟨J x, ⟨x, rfl⟩⟩) := rfl
+      _ = quotientFunctional (kerJ.mkQ x) := congrArg quotientFunctional heq
+      _ = u x := by simp [quotientFunctional]
+  · exact hLx.trans hfactor
+
+/-- The value space for a derivative of order `j`. -/
+abbrev JetValue (d : ℕ) (j : ℕ) :=
+  ContinuousMultilinearMap ℝ (fun _ : Fin j => RieszEuclidean.Euclidean d) ℂ
+
+/-- The finite family of weighted derivatives through orders `N` in both indices. -/
+abbrev FiniteJetSpace (d N : ℕ) :=
+  ∀ i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)},
+    (RieszEuclidean.Euclidean d →ᵇ JetValue d i.1.2)
+
+/-- Canonical normed additive group structure on the finite jet product. -/
+instance (priority := 1001) finiteJetSpaceNormedAddCommGroup {d N : ℕ} :
+    NormedAddCommGroup (FiniteJetSpace d N) :=
+  inferInstanceAs (NormedAddCommGroup
+    (∀ i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)},
+      RieszEuclidean.Euclidean d →ᵇ
+        ContinuousMultilinearMap ℝ (fun _ : Fin i.1.2 => RieszEuclidean.Euclidean d) ℂ))
+
+/-- Canonical complex normed-space structure on the finite jet product. -/
+instance (priority := 1001) finiteJetSpaceNormedSpaceComplex {d N : ℕ} :
+    NormedSpace ℂ (FiniteJetSpace d N) :=
+  inferInstanceAs (NormedSpace ℂ
+    (∀ i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)},
+      RieszEuclidean.Euclidean d →ᵇ
+        ContinuousMultilinearMap ℝ (fun _ : Fin i.1.2 => RieszEuclidean.Euclidean d) ℂ))
+
+/-- Canonical real normed-space structure on the finite jet product. -/
+instance (priority := 1001) finiteJetSpaceNormedSpaceReal {d N : ℕ} :
+    NormedSpace ℝ (FiniteJetSpace d N) :=
+  inferInstanceAs (NormedSpace ℝ
+    (∀ i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)},
+      RieszEuclidean.Euclidean d →ᵇ
+        ContinuousMultilinearMap ℝ (fun _ : Fin i.1.2 => RieszEuclidean.Euclidean d) ℂ))
+
+/-- Canonical completeness structure on the finite jet product. -/
+instance (priority := 1001) finiteJetSpaceCompleteSpace {d N : ℕ} :
+    CompleteSpace (FiniteJetSpace d N) :=
+  inferInstanceAs (CompleteSpace
+    (∀ i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)},
+      RieszEuclidean.Euclidean d →ᵇ
+        ContinuousMultilinearMap ℝ (fun _ : Fin i.1.2 => RieszEuclidean.Euclidean d) ℂ))
+
+/-- A weighted derivative, viewed as a bounded continuous function. -/
+def weightedJetCoordinate {d : ℕ} (i : ℕ × ℕ)
+    (φ : 𝓢(RieszEuclidean.Euclidean d, ℂ)) :
+    (RieszEuclidean.Euclidean d →ᵇ JetValue d i.2) := by
+  let f : C(RieszEuclidean.Euclidean d, JetValue d i.2) :=
+    ⟨fun x => ‖x‖ ^ i.1 • iteratedFDeriv ℝ i.2 (φ : RieszEuclidean.Euclidean d → ℂ) x,
+      (continuous_norm.pow i.1).smul
+        (ContDiff.continuous_iteratedFDeriv (by exact_mod_cast le_top) φ.smooth')⟩
+  refine BoundedContinuousFunction.mkOfBound f
+    (2 * SchwartzMap.seminorm ℂ i.1 i.2 φ) ?_
+  intro x y
+  have hx : ‖‖x‖ ^ i.1 • iteratedFDeriv ℝ i.2 (φ : RieszEuclidean.Euclidean d → ℂ) x‖ ≤
+      SchwartzMap.seminorm ℂ i.1 i.2 φ := by
+    rw [norm_smul, Real.norm_of_nonneg (pow_nonneg (norm_nonneg _) _)]
+    exact φ.le_seminorm ℂ i.1 i.2 x
+  have hy : ‖‖y‖ ^ i.1 • iteratedFDeriv ℝ i.2 (φ : RieszEuclidean.Euclidean d → ℂ) y‖ ≤
+      SchwartzMap.seminorm ℂ i.1 i.2 φ := by
+    rw [norm_smul, Real.norm_of_nonneg (pow_nonneg (norm_nonneg _) _)]
+    exact φ.le_seminorm ℂ i.1 i.2 y
+  calc
+    dist (f x) (f y) = ‖f x - f y‖ := dist_eq_norm _ _
+    _ ≤ ‖f x‖ + ‖f y‖ := norm_sub_le _ _
+    _ ≤ SchwartzMap.seminorm ℂ i.1 i.2 φ + SchwartzMap.seminorm ℂ i.1 i.2 φ :=
+      add_le_add hx hy
+    _ = 2 * SchwartzMap.seminorm ℂ i.1 i.2 φ := by ring
+
+/-- The finite product of weighted derivative coordinates through order `N`. -/
+def finiteJetFun {d : ℕ} (N : ℕ) (φ : 𝓢(RieszEuclidean.Euclidean d, ℂ)) :
+    FiniteJetSpace d N := fun i => weightedJetCoordinate i.1 φ
+
+private theorem weightedJetCoordinate_add {d : ℕ} (i : ℕ × ℕ)
+    (φ ψ : 𝓢(RieszEuclidean.Euclidean d, ℂ)) :
+    weightedJetCoordinate i (φ + ψ) =
+      weightedJetCoordinate i φ + weightedJetCoordinate i ψ := by
+  apply BoundedContinuousFunction.ext
+  intro x
+  change ‖x‖ ^ i.1 • iteratedFDeriv ℝ i.2
+      (fun z => (φ : RieszEuclidean.Euclidean d → ℂ) z + ψ z) x =
+    ‖x‖ ^ i.1 • iteratedFDeriv ℝ i.2 (φ : RieszEuclidean.Euclidean d → ℂ) x +
+      ‖x‖ ^ i.1 • iteratedFDeriv ℝ i.2 (ψ : RieszEuclidean.Euclidean d → ℂ) x
+  rw [iteratedFDeriv_add_apply' (f := (φ : RieszEuclidean.Euclidean d → ℂ))
+    (g := (ψ : RieszEuclidean.Euclidean d → ℂ)) (i := i.2) (x := x)
+    (hf := φ.smooth'.contDiffAt.of_le (by exact_mod_cast le_top))
+    (hg := ψ.smooth'.contDiffAt.of_le (by exact_mod_cast le_top)), smul_add]
+
+private theorem weightedJetCoordinate_smul {d : ℕ} (i : ℕ × ℕ) (c : ℂ)
+    (φ : 𝓢(RieszEuclidean.Euclidean d, ℂ)) :
+    weightedJetCoordinate i (c • φ) = c • weightedJetCoordinate i φ := by
+  apply BoundedContinuousFunction.ext
+  intro x
+  change ‖x‖ ^ i.1 • iteratedFDeriv ℝ i.2
+      (fun z => c • (φ : RieszEuclidean.Euclidean d → ℂ) z) x =
+    c • (‖x‖ ^ i.1 • iteratedFDeriv ℝ i.2 (φ : RieszEuclidean.Euclidean d → ℂ) x)
+  rw [iteratedFDeriv_const_smul_apply' (f := (φ : RieszEuclidean.Euclidean d → ℂ))
+    (i := i.2) (x := x) (a := c)
+    (hf := φ.smooth'.contDiffAt.of_le (by exact_mod_cast le_top))]
+  rw [smul_comm]
+
+/-- The finite weighted-derivative jet as a continuous linear map out of Schwartz space. -/
+def finiteJetMap {d : ℕ} (N : ℕ) :
+    𝓢(RieszEuclidean.Euclidean d, ℂ) →L[ℂ] FiniteJetSpace d N := by
+  apply SchwartzMap.mkCLMtoNormedSpace (σ := RingHom.id ℂ) (finiteJetFun N)
+  · intro φ ψ
+    funext i
+    exact weightedJetCoordinate_add i.1 φ ψ
+  · intro c φ
+    funext i
+    exact weightedJetCoordinate_smul i.1 c φ
+  · letI : Nonempty (RieszEuclidean.Euclidean d) := ⟨0⟩
+    refine ⟨Finset.Iic (N, N), 1, zero_le_one, ?_⟩
+    intro φ
+    let S := (Finset.Iic (N, N)).sup
+      (schwartzSeminormFamily ℂ (RieszEuclidean.Euclidean d) ℂ) φ
+    have hS0 : 0 ≤ S := by
+      dsimp [S]
+      exact apply_nonneg _ _
+    have hfinite : ‖finiteJetFun N φ‖ ≤ S := by
+      change ‖(fun i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)} =>
+        weightedJetCoordinate i.1 φ)‖ ≤ S
+      apply (pi_norm_le_iff_of_nonneg hS0).2
+      intro i
+      apply (BoundedContinuousFunction.norm_le_of_nonempty).2
+      intro x
+      change ‖‖x‖ ^ i.1.1 • iteratedFDeriv ℝ i.1.2
+        (φ : RieszEuclidean.Euclidean d → ℂ) x‖ ≤ S
+      have hpoint := φ.le_seminorm ℂ i.1.1 i.1.2 x
+      have hsup : SchwartzMap.seminorm ℂ i.1.1 i.1.2 φ ≤ S := by
+        dsimp [S]
+        have := Seminorm.le_finset_sup_apply (p := schwartzSeminormFamily ℂ
+          (RieszEuclidean.Euclidean d) ℂ) (s := Finset.Iic (N, N))
+          (x := φ) (i := i.1) i.2
+        simpa only [SchwartzMap.schwartzSeminormFamily_apply] using this
+      rw [norm_smul, Real.norm_of_nonneg (pow_nonneg (norm_nonneg x) _)]
+      exact hpoint.trans hsup
+    calc
+      ‖finiteJetFun N φ‖ ≤ S := hfinite
+      _ = 1 * ((Finset.Iic (N, N)).sup
+          (schwartzSeminormFamily ℂ (RieszEuclidean.Euclidean d) ℂ) φ) := by
+        simp [S]
+
+/-- The finite jet norm controls every Schwartz seminorm in its defining square. -/
+theorem finiteJetMap_controls_seminorm {d : ℕ} (N : ℕ)
+    (φ : 𝓢(RieszEuclidean.Euclidean d, ℂ)) :
+    (Finset.Iic (N, N)).sup
+      (schwartzSeminormFamily ℂ (RieszEuclidean.Euclidean d) ℂ) φ ≤
+      ‖finiteJetMap N φ‖ := by
+  apply Seminorm.finset_sup_apply_le (norm_nonneg (finiteJetMap N φ))
+  intro ij hij
+  have hseminorm : SchwartzMap.seminorm ℂ ij.1 ij.2 φ ≤ ‖finiteJetMap N φ‖ := by
+    apply SchwartzMap.seminorm_le_bound ℂ ij.1 ij.2 φ
+      (norm_nonneg (finiteJetMap N φ))
+    intro x
+    let i : {p : ℕ × ℕ // p ∈ Finset.Iic (N, N)} := ⟨ij, hij⟩
+    have hcoord := (weightedJetCoordinate ij φ).norm_coe_le_norm x
+    have hpi : ‖finiteJetMap N φ i‖ ≤ ‖finiteJetMap N φ‖ :=
+      norm_le_pi_norm (finiteJetMap N φ) i
+    have hweighted : ‖x‖ ^ ij.1 *
+        ‖iteratedFDeriv ℝ ij.2 (φ : RieszEuclidean.Euclidean d → ℂ) x‖ ≤
+        ‖finiteJetMap N φ‖ := by
+      have hcoord' :
+          ‖‖x‖ ^ ij.1 • iteratedFDeriv ℝ ij.2
+              (φ : RieszEuclidean.Euclidean d → ℂ) x‖ ≤ ‖finiteJetMap N φ‖ := by
+        simpa [finiteJetMap, finiteJetFun, i, weightedJetCoordinate] using hcoord.trans hpi
+      simpa only [norm_smul,
+        Real.norm_of_nonneg (pow_nonneg (norm_nonneg x) _)] using hcoord'
+    exact hweighted
+  simpa only [SchwartzMap.schwartzSeminormFamily_apply] using hseminorm
+
+/-- Every tempered distribution factors continuously through a finite weighted
+derivative jet. -/
+theorem temperedDistribution_factors_through_finiteJet {d : ℕ}
+    (u : TemperedDistribution d) :
+    ∃ N : ℕ, ∃ L : FiniteJetSpace d N →L[ℂ] ℂ,
+      L.comp (finiteJetMap N) = u := by
+  obtain ⟨N, C, hC, hbound⟩ := distribution_finite_order_bound u
+  have hjetbound : ∀ φ : 𝓢(RieszEuclidean.Euclidean d, ℂ),
+      ‖u φ‖ ≤ C * ‖finiteJetMap N φ‖ := by
+    intro φ
+    apply (hbound φ).trans
+    apply mul_le_mul_of_nonneg_left _ hC.le
+    exact finiteJetMap_controls_seminorm N φ
+  obtain ⟨L, hL⟩ := exists_bounded_functional_factorization
+    (E := 𝓢(RieszEuclidean.Euclidean d, ℂ)) (F := FiniteJetSpace d N)
+    (finiteJetMap N) u C hjetbound
+  exact ⟨N, L, hL⟩
+
+/-- Evaluating a jet at an index and a point gives the corresponding weighted derivative. -/
+@[simp] theorem finiteJetMap_apply {d : ℕ} (N : ℕ)
+    (φ : 𝓢(RieszEuclidean.Euclidean d, ℂ))
+    (i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)}) (x : RieszEuclidean.Euclidean d) :
+    finiteJetMap N φ i x = ‖x‖ ^ i.1.1 •
+      iteratedFDeriv ℝ i.1.2 (φ : RieszEuclidean.Euclidean d → ℂ) x := rfl
+
+end RieszEuclidean.CompleteMinimal
+
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshJetIntegrability.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+set_option maxHeartbeats 200000
+set_option synthInstance.maxHeartbeats 50000
+
+/-! Bochner integrability and coordinate extraction for finite jets of translated tests. -/
+
+noncomputable section
+
+open MeasureTheory SchwartzMap
+open scoped BoundedContinuousFunction SchwartzMap
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- A compactly supported continuous scalar weight times the finite jet of a translated
+Schwartz test is Bochner integrable. -/
+theorem finiteJetMap_smulTranslatedFamily_integrable (N : ℕ) (f : Euclidean d → ℂ)
+    (hf : Continuous f) (hfc : HasCompactSupport f) (φ : 𝓢(Euclidean d, ℂ)) :
+    Integrable (fun x => finiteJetMap (d := d) N (f x • schwartzTranslateCLM x φ)) := by
+  classical
+  let G : Euclidean d → FiniteJetSpace d N :=
+    fun x => finiteJetMap (d := d) N (f x • schwartzTranslateCLM x φ)
+  have htrans : Continuous (fun x : Euclidean d => schwartzTranslateCLM x φ) :=
+    continuous_schwartzTranslateCLM_apply φ
+  have hG : Continuous G := by
+    dsimp [G]
+    exact (finiteJetMap (d := d) N).continuous.comp (hf.smul htrans)
+  have hsupport : tsupport G ⊆ tsupport f := by
+    change closure (Function.support G) ⊆ tsupport f
+    apply IsClosed.closure_subset_iff (isClosed_tsupport f) |>.mpr
+    intro x hx
+    change G x ≠ 0 at hx
+    by_cases hxf : x ∈ tsupport f
+    · exact hxf
+    · exfalso
+      have hfx : f x = 0 := image_eq_zero_of_nmem_tsupport hxf
+      exact hx (by simp only [G, hfx, zero_smul, map_zero])
+  have hGc : HasCompactSupport G := hfc.of_isClosed_subset (isClosed_tsupport G) hsupport
+  exact hG.integrable_of_hasCompactSupport hGc
+
+/-- Evaluation of a Bochner integral of finite jets at one coordinate and one spatial point
+commutes with integration. -/
+theorem finiteJet_integral_coordinate_apply {α : Type*} [MeasurableSpace α]
+    {μ : Measure α} {N : ℕ}
+    (F : α → FiniteJetSpace d N) (hF : Integrable F μ)
+    (i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)}) (y : Euclidean d) :
+    (∫ x, F x ∂μ) i y = ∫ x, F x i y ∂μ := by
+  let proj : FiniteJetSpace d N →L[ℝ]
+      (Euclidean d →ᵇ JetValue d i.1.2) := ContinuousLinearMap.proj (R := ℝ) i
+  let eval : (Euclidean d →ᵇ JetValue d i.1.2) →L[ℝ] JetValue d i.1.2 :=
+    BoundedContinuousFunction.evalCLM ℝ y
+  let L : FiniteJetSpace d N →L[ℝ] JetValue d i.1.2 := eval.comp proj
+  have hcomm : ∫ x, L (F x) ∂μ = L (∫ x, F x ∂μ) := by
+    exact L.integral_comp_comm (μ := μ) hF
+  calc
+    (∫ x, F x ∂μ) i y = L (∫ x, F x ∂μ) := rfl
+    _ = ∫ x, L (F x) ∂μ := hcomm.symm
+    _ = ∫ x, F x i y ∂μ := rfl
+
+/-- Coordinatewise scalar integral identities determine an equality in the finite-jet space.
+This packages the final step after differentiating a kernel integral under the integral sign. -/
+theorem finiteJet_eq_integral_of_coordinate_eq {α : Type*} [MeasurableSpace α]
+    {μ : Measure α} {N : ℕ}
+    (J : FiniteJetSpace d N)
+    (F : α → FiniteJetSpace d N) (hF : Integrable F μ)
+    (hcoord : ∀ (i : {i : ℕ × ℕ // i ∈ Finset.Iic (N, N)}) (y : Euclidean d),
+      J i y = ∫ x, F x i y ∂μ) :
+    J = ∫ x, F x ∂μ := by
+  apply funext
+  intro i
+  apply BoundedContinuousFunction.ext
+  intro y
+  rw [finiteJet_integral_coordinate_apply F hF i y]
+  exact hcoord i y
+
+end RieszEuclidean.CompleteMinimal
+
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshKernelDerivatives.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Exact finite-jet formula for the compact-kernel test action. -/
+
+noncomputable section
+open MeasureTheory SchwartzMap Set
+open scoped SchwartzMap Pointwise FourierTransform
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- The real multilinear target used for the order `n` differential jet. -/
+abbrev Jet (d n : ℕ) :=
+  ContinuousMultilinearMap ℝ (fun _ : Fin n => Euclidean d) ℂ
+
+/-- The bilinear action taking a complex scalar and multiplying a jet. -/
+def jetAction (n : ℕ) : Jet d n →L[ℝ] ℂ →L[ℝ] Jet d n :=
+  ContinuousLinearMap.flip (ContinuousLinearMap.lsmul ℝ (E := Jet d n) ℂ)
+
+/-- Reflection of the integrable factor used in Mathlib convolution. -/
+def reflected (f : Euclidean d → ℂ) : Euclidean d → ℂ := fun z => f (-z)
+
+/-- Convolution of the `n`-th kernel jet with the reflected scalar factor. -/
+def convolutionJet (f : Euclidean d → ℂ) (φ : 𝓢(Euclidean d, ℂ))
+    (n : ℕ) : Euclidean d → Jet d n :=
+  MeasureTheory.convolution (iteratedFDeriv ℝ n (φ : Euclidean d → ℂ))
+    (reflected f) (jetAction (d := d) n) volume
+
+/-- The jet-valued convolution is the integral of translated kernel jets. -/
+theorem convolutionJet_apply (f : Euclidean d → ℂ)
+    (φ : 𝓢(Euclidean d, ℂ)) (n : ℕ) (y : Euclidean d) :
+    convolutionJet (d := d) f φ n y =
+      ∫ x, f x • iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) (y + x) := by
+  rw [convolutionJet, MeasureTheory.convolution_def]
+  let T : Euclidean d → Euclidean d := fun x => y + x
+  have hT : MeasureTheory.MeasurePreserving T volume volume := by
+    simpa [T] using MeasureTheory.measurePreserving_add_left volume y
+  have heT : MeasurableEmbedding T := by
+    simpa [T] using measurableEmbedding_addLeft y
+  calc
+    (∫ z, jetAction (d := d) n
+        (iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) z) (reflected f (y - z))) =
+      ∫ x, jetAction (d := d) n
+        (iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) (T x))
+        (reflected f (y - T x)) := by
+          have hcomp := hT.integral_comp heT (fun z =>
+            jetAction (d := d) n (iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) z)
+              (reflected f (y - z)))
+          simpa only [T] using hcomp.symm
+    _ = ∫ x, f x • iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) (y + x) := by
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall fun x => by
+        change f (-(y - (y + x))) • iteratedFDeriv ℝ n
+          (φ : Euclidean d → ℂ) (y + x) =
+          f x • iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) (y + x)
+        congr 1
+        congr 1
+        all_goals abel
+
+/-- Compact smooth kernel jets can be differentiated through convolution on the
+compact, differentiable factor. -/
+theorem convolutionJet_hasFDerivAt (f : Euclidean d → ℂ) (hf : Continuous f)
+    (φ : 𝓢(Euclidean d, ℂ)) (hφ : HasCompactSupport (φ : Euclidean d → ℂ))
+    (n : ℕ) (y : Euclidean d) :
+    HasFDerivAt (𝕜 := ℝ) (convolutionJet (d := d) f φ n)
+      (MeasureTheory.convolution (𝕜 := ℝ)
+        (fderiv ℝ (iteratedFDeriv ℝ n (φ : Euclidean d → ℂ)))
+        (reflected f) (ContinuousLinearMap.precompL (𝕜 := ℝ) (Euclidean d)
+          (jetAction (d := d) n)) volume y) y := by
+  refine HasCompactSupport.hasFDerivAt_convolution_left
+    (𝕜 := ℝ) (L := jetAction (d := d) n)
+    (hcf := hφ.iteratedFDeriv n)
+    (hf := (φ.smooth ⊤).iteratedFDeriv_right (by exact (WithTop.coe_le_coe).2 le_top))
+    (hg := (hf.comp continuous_neg).locallyIntegrable) y
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshKernelJets.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Differentiating compact-kernel tests through every finite order. -/
+
+noncomputable section
+open MeasureTheory SchwartzMap
+open scoped SchwartzMap FourierTransform
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+private def curryJet (n : ℕ) :
+    Jet d (n + 1) →L[ℝ] Euclidean d →L[ℝ] Jet d n :=
+  (continuousMultilinearCurryLeftEquiv ℝ
+    (fun _ : Fin (n + 1) => Euclidean d) ℂ).toContinuousLinearEquiv.toContinuousLinearMap
+
+private theorem convolutionJet_fderiv (f : Euclidean d → ℂ) (hf : Continuous f)
+    (φ : 𝓢(Euclidean d, ℂ)) (hφ : HasCompactSupport (φ : Euclidean d → ℂ))
+    (n : ℕ) (y : Euclidean d) :
+    fderiv ℝ (convolutionJet f φ n) y = curryJet n (convolutionJet f φ (n + 1) y) := by
+  rw [(convolutionJet_hasFDerivAt f hf φ hφ n y).fderiv]
+  have hcont : Continuous (iteratedFDeriv ℝ (n + 1) (φ : Euclidean d → ℂ)) :=
+    φ.smooth'.continuous_iteratedFDeriv (by exact_mod_cast le_top)
+  have hInt := (hφ.iteratedFDeriv (n + 1)).convolutionExists_left (μ := volume)
+    (jetAction (d := d) (n + 1)) hcont (hf.comp continuous_neg).locallyIntegrable y
+  simp only [convolutionJet, MeasureTheory.convolution_def]
+  trans ∫ z, curryJet n
+    (jetAction (d := d) (n + 1) (iteratedFDeriv ℝ (n + 1) (φ : Euclidean d → ℂ) z)
+      (reflected f (y - z)))
+  · apply integral_congr_ae
+    exact Filter.Eventually.of_forall fun z => by
+      apply ContinuousLinearMap.ext
+      intro v
+      apply ContinuousMultilinearMap.ext
+      intro m
+      rfl
+  · exact ContinuousLinearMap.integral_comp_comm (𝕜 := ℝ)
+      (E := Jet d (n + 1)) (F := Euclidean d →L[ℝ] Jet d n) (μ := volume)
+      (curryJet (d := d) n) hInt
+
+private theorem translatedJet_integrable (f : Euclidean d → ℂ)
+    (hf : Continuous f) (hfc : HasCompactSupport f)
+    (φ : 𝓢(Euclidean d, ℂ)) (n : ℕ) (y : Euclidean d) :
+    Integrable (fun x => f x • iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) (y + x)) := by
+  have hcont : Continuous (iteratedFDeriv ℝ n (φ : Euclidean d → ℂ)) :=
+    φ.smooth'.continuous_iteratedFDeriv (by exact_mod_cast le_top)
+  exact (hf.smul (hcont.comp (continuous_const.add continuous_id))).integrable_of_hasCompactSupport
+    hfc.smul_right
+
+/-- Every finite derivative of the compact-kernel test is the integral of
+the corresponding derivatives of its translated Schwartz test. -/
+theorem iteratedFDeriv_kernelConvolutionTestCLM
+    (f : Euclidean d → ℂ) (hf : Continuous f) (hfc : HasCompactSupport f)
+    (hm : Function.HasTemperateGrowth (𝓕 f))
+    (φ : 𝓢(Euclidean d, ℂ)) (hφ : HasCompactSupport (φ : Euclidean d → ℂ))
+    (n : ℕ) (y : Euclidean d) :
+    iteratedFDeriv ℝ n (kernelConvolutionTestCLM f hm φ : Euclidean d → ℂ) y =
+      ∫ x, f x • iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) (y + x) := by
+  let K := (kernelConvolutionTestCLM f hm φ : Euclidean d → ℂ)
+  have hjet : ∀ n, iteratedFDeriv ℝ n K = convolutionJet f φ n := by
+    intro n
+    induction n with
+    | zero =>
+      funext z
+      rw [convolutionJet_apply]
+      apply ContinuousMultilinearMap.ext
+      intro m
+      rw [ContinuousMultilinearMap.integral_apply (translatedJet_integrable f hf hfc φ 0 z)]
+      simp only [iteratedFDeriv_zero_apply, ContinuousMultilinearMap.smul_apply]
+      exact kernelConvolutionTestCLM_apply f (hf.integrable_of_hasCompactSupport hfc) hm φ z
+    | succ n ih =>
+      rw [iteratedFDeriv_succ_eq_comp_left, ih]
+      funext z
+      change (continuousMultilinearCurryLeftEquiv ℝ
+        (fun _ : Fin (n + 1) => Euclidean d) ℂ).symm
+          (fderiv ℝ (convolutionJet f φ n) z) = _
+      rw [convolutionJet_fderiv f hf φ hφ n z]
+      change (continuousMultilinearCurryLeftEquiv ℝ
+        (fun _ : Fin (n + 1) => Euclidean d) ℂ).symm
+          ((continuousMultilinearCurryLeftEquiv ℝ
+            (fun _ : Fin (n + 1) => Euclidean d) ℂ) (convolutionJet f φ (n + 1) z)) = _
+      exact LinearIsometryEquiv.symm_apply_apply _ _
+  rw [hjet n, convolutionJet_apply]
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshKernelIntegral.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+set_option maxHeartbeats 1000000
+set_option synthInstance.maxHeartbeats 1000000
+
+/-! Distribution/test Fubini through finite weighted jets. -/
+
+noncomputable section
+open MeasureTheory SchwartzMap
+open scoped SchwartzMap Pointwise FourierTransform
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+/-- The derivative formula needed to identify the finite jet of a kernel test
+with the integral of translated test jets. -/
+def KernelTestJetFormula (f : Euclidean d → ℂ)
+    (hm : Function.HasTemperateGrowth (𝓕 f)) (φ : 𝓢(Euclidean d, ℂ)) : Prop :=
+  ∀ n y, iteratedFDeriv ℝ n
+      (kernelConvolutionTestCLM f hm φ : Euclidean d → ℂ) y =
+    ∫ x, f x • iteratedFDeriv ℝ n (φ : Euclidean d → ℂ) (y + x)
+
+/-- Coordinatewise, the kernel-test derivative formula yields the Bochner
+integral identity in the finite jet Banach space. -/
+theorem finiteJetMap_kernelTest_eq_integral_of_formula
+    (N : ℕ) (f : Euclidean d → ℂ) (hf : Continuous f)
+    (hfc : HasCompactSupport f) (hm : Function.HasTemperateGrowth (𝓕 f))
+    (φ : 𝓢(Euclidean d, ℂ)) (hformula : KernelTestJetFormula f hm φ) :
+    finiteJetMap N (kernelConvolutionTestCLM f hm φ) =
+      ∫ x, finiteJetMap N (f x • schwartzTranslateCLM x φ) := by
+  let G : Euclidean d → FiniteJetSpace d N :=
+    fun x => finiteJetMap N (f x • schwartzTranslateCLM x φ)
+  have hG : Integrable G := by
+    change Integrable (fun x => finiteJetMap N (f x • schwartzTranslateCLM x φ))
+    exact finiteJetMap_smulTranslatedFamily_integrable N f hf hfc φ
+  apply finiteJet_eq_integral_of_coordinate_eq
+    (finiteJetMap N (kernelConvolutionTestCLM f hm φ)) G hG
+  intro i y
+  change ‖y‖ ^ i.1.1 •
+      iteratedFDeriv ℝ i.1.2
+        (kernelConvolutionTestCLM f hm φ : Euclidean d → ℂ) y = _
+  rw [hformula i.1.2 y, ← integral_smul]
+  apply integral_congr_ae
+  exact Filter.Eventually.of_forall fun x => by
+    have hcoord : G x i y = f x •
+        (‖y‖ ^ i.1.1 • iteratedFDeriv ℝ i.1.2
+          (φ : Euclidean d → ℂ) (y + x)) := by
+      change (finiteJetMap N (f x • schwartzTranslateCLM x φ)) i y = _
+      rw [(finiteJetMap N).map_smul]
+      change f x • (finiteJetMap N (schwartzTranslateCLM x φ) i y) = _
+      rw [finiteJetMap_apply]
+      have htrans : (schwartzTranslateCLM x φ : Euclidean d → ℂ) =
+          fun z => (φ : Euclidean d → ℂ) (x + z) := by
+        funext z
+        simp [schwartzTranslateCLM_apply]
+      rw [htrans, iteratedFDeriv_comp_add_left]
+      rw [add_comm x y]
+    calc
+      ‖y‖ ^ i.1.1 •
+          (f x • iteratedFDeriv ℝ i.1.2 (φ : Euclidean d → ℂ) (y + x)) =
+        f x • (‖y‖ ^ i.1.1 •
+          iteratedFDeriv ℝ i.1.2 (φ : Euclidean d → ℂ) (y + x)) := by
+            exact smul_comm _ _ _
+      _ = G x i y := hcoord.symm
+
+/-- Once a distribution factors through the finite jet map, the kernel-test
+functional integral identity follows from the jet formula and compact support. -/
+theorem distribution_apply_kernelConvolutionTest_eq_integral_of_factor
+    (N : ℕ) (L : FiniteJetSpace d N →L[ℂ] ℂ)
+    (u : TemperedDistribution d)
+    (hfactor : L.comp (finiteJetMap N) = u)
+    (f : Euclidean d → ℂ) (hf : Continuous f) (hfc : HasCompactSupport f)
+    (hm : Function.HasTemperateGrowth (𝓕 f)) (φ : 𝓢(Euclidean d, ℂ))
+    (hformula : KernelTestJetFormula f hm φ) :
+    u (kernelConvolutionTestCLM f hm φ) =
+      ∫ x, f x * u (schwartzTranslateCLM x φ) := by
+  apply distribution_apply_kernelConvolutionTest_eq_integral
+      (finiteJetMap N) L u hfactor f hm φ
+      (finiteJetMap_kernelTest_eq_integral_of_formula N f hf hfc hm φ hformula)
+      (finiteJetMap_smulTranslatedFamily_integrable N f hf hfc φ)
+
+/-- Every tempered distribution commutes with the compact-kernel integral once
+the kernel-test derivative formula is established. The finite-order estimate
+factors the distribution through a finite weighted jet space. -/
+theorem distribution_apply_kernelConvolutionTest_eq_integral_of_formula
+    (u : TemperedDistribution d) (f : Euclidean d → ℂ) (hf : Continuous f)
+    (hfc : HasCompactSupport f) (hm : Function.HasTemperateGrowth (𝓕 f))
+    (φ : 𝓢(Euclidean d, ℂ))
+    (hformula : KernelTestJetFormula f hm φ) :
+    u (kernelConvolutionTestCLM f hm φ) =
+      ∫ x, f x * u (schwartzTranslateCLM x φ) := by
+  obtain ⟨N, L, hfactor⟩ := temperedDistribution_factors_through_finiteJet u
+  exact distribution_apply_kernelConvolutionTest_eq_integral_of_factor
+    N L u hfactor f hf hfc hm φ hformula
+
+/-- Distribution actions commute with integration against a compactly supported
+continuous kernel when the Schwartz test is compactly supported. -/
+theorem distribution_apply_compactKernelConvolutionTest_eq_integral
+    (u : TemperedDistribution d) (f : Euclidean d → ℂ) (hf : Continuous f)
+    (hfc : HasCompactSupport f) (hm : Function.HasTemperateGrowth (𝓕 f))
+    (φ : 𝓢(Euclidean d, ℂ)) (hφ : HasCompactSupport (φ : Euclidean d → ℂ)) :
+    u (kernelConvolutionTestCLM f hm φ) =
+      ∫ x, f x * u (schwartzTranslateCLM x φ) := by
+  apply distribution_apply_kernelConvolutionTest_eq_integral_of_formula
+    u f hf hfc hm φ
+  intro n y
+  exact iteratedFDeriv_kernelConvolutionTestCLM f hf hfc hm φ hφ n y
+
+end RieszEuclidean.CompleteMinimal
+
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshRegularizedConvolution.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-! Exact convolution identity for two compactly supported distribution
+regularizations, followed by the corresponding support bound. -/
+
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap CompactlySupported Convolution FourierTransform Pointwise
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+private theorem compact_continuous_fourier_growth (f : Euclidean d → ℂ)
+    (hf : Continuous f) (hfc : HasCompactSupport f) :
+    Function.HasTemperateGrowth (𝓕 f) :=
+  fourier_hasTemperateGrowth_of_compact_support
+    (hf.integrable_of_hasCompactSupport hfc) hfc
+    (Filter.Eventually.of_forall fun _ hx => image_eq_zero_of_nmem_tsupport hx)
+
+private theorem volume_neg_invariant :
+    (volume : Measure (Euclidean d)).IsNegInvariant := by
+  refine ⟨?_⟩
+  rw [Measure.neg_def]
+  exact (LinearIsometryEquiv.measurePreserving
+    (LinearIsometryEquiv.neg ℝ : Euclidean d ≃ₗᵢ[ℝ] Euclidean d)).map_eq
+
+private def regularizedKernel (ρ σ : 𝓢(Euclidean d, ℂ))
+    (hρ : HasCompactSupport (ρ : Euclidean d → ℂ)) : 𝓢(Euclidean d, ℂ) :=
+  kernelConvolutionTestCLM (schwartzReflectCLM ρ)
+    (compact_continuous_fourier_growth _ (schwartzReflectCLM ρ).continuous
+      (schwartzReflectCLM_hasCompactSupport hρ)) σ
+
+private def regularizedFunction (u : TemperedDistribution d)
+    (hu : CompactlySupportedDistribution u) (ρ : 𝓢(Euclidean d, ℂ))
+    (hρ : HasCompactSupport (ρ : Euclidean d → ℂ)) :
+    RieszEuclidean.TitchmarshFunctionAlgebra.Function d :=
+  ⟨⟨distributionRegularization u ρ, continuous_distributionRegularization u ρ⟩,
+    distributionRegularization_hasCompactSupport hu hρ⟩
+
+private theorem regularizedKernel_eq_functionConvolution
+    (ρ σ : 𝓢(Euclidean d, ℂ))
+    (hρ : HasCompactSupport (ρ : Euclidean d → ℂ))
+    (hσ : HasCompactSupport (σ : Euclidean d → ℂ)) :
+    (regularizedKernel ρ σ hρ : Euclidean d → ℂ) =
+      RieszEuclidean.TitchmarshFunctionAlgebra.convolution d
+        ⟨ρ, hρ⟩ ⟨σ, hσ⟩ := by
+  funext x
+  let hm := compact_continuous_fourier_growth (schwartzReflectCLM ρ)
+    (schwartzReflectCLM ρ).continuous (schwartzReflectCLM_hasCompactSupport hρ)
+  calc
+    regularizedKernel ρ σ hρ x =
+        MeasureTheory.convolution (σ : Euclidean d → ℂ)
+          (fun z => (schwartzReflectCLM ρ) (-z))
+          (ContinuousLinearMap.mul ℝ ℂ) volume x := by
+      exact kernelConvolutionTestCLM_eq_convolution _ (schwartzReflectCLM ρ).integrable
+        hm σ x
+    _ = MeasureTheory.convolution (σ : Euclidean d → ℂ) ρ
+          (ContinuousLinearMap.mul ℝ ℂ) volume x := by
+      congr 1
+      funext z
+      simp [schwartzReflectCLM_apply]
+    _ = MeasureTheory.convolution (ρ : Euclidean d → ℂ) σ
+          (ContinuousLinearMap.mul ℝ ℂ) volume x := by
+      let ρcc : RieszEuclidean.TitchmarshFunctionAlgebra.Function d := ⟨ρ, hρ⟩
+      let σcc : RieszEuclidean.TitchmarshFunctionAlgebra.Function d := ⟨σ, hσ⟩
+      have hcomm := RieszEuclidean.TitchmarshFunctionAlgebra.convolution_comm d σcc ρcc
+      have hpoint := congrArg (fun f : RieszEuclidean.TitchmarshFunctionAlgebra.Function d => f x) hcomm
+      simpa [ρcc, σcc, RieszEuclidean.TitchmarshFunctionAlgebra.convolution,
+        MeasureTheory.convolution_def] using hpoint
+    _ = RieszEuclidean.TitchmarshFunctionAlgebra.convolution d ⟨ρ, hρ⟩ ⟨σ, hσ⟩ x := by
+      rfl
+
+/-- The convolution of two distribution regularizations is the regularization
+of their actual distribution convolution, with kernel `ρ ⋆ σ`. -/
+theorem IsDistributionConvolution.regularizedConvolution_identity
+    {u v w : TemperedDistribution d} (hc : IsDistributionConvolution u v w)
+    (hu : CompactlySupportedDistribution u) (hv : CompactlySupportedDistribution v)
+    (ρ σ : 𝓢(Euclidean d, ℂ))
+    (hρ : HasCompactSupport (ρ : Euclidean d → ℂ))
+    (hσ : HasCompactSupport (σ : Euclidean d → ℂ)) (x : Euclidean d) :
+    RieszEuclidean.TitchmarshFunctionAlgebra.convolution d
+      (regularizedFunction u hu ρ hρ) (regularizedFunction v hv σ hσ) x =
+      distributionRegularization w (regularizedKernel ρ σ hρ) x := by
+  letI := volume_neg_invariant (d := d)
+  let f : Euclidean d → ℂ := fun t => distributionRegularization v σ (x + t)
+  have hf : Continuous f :=
+    (continuous_distributionRegularization v σ).comp (continuous_const.add continuous_id)
+  have hfc : HasCompactSupport f :=
+    (distributionRegularization_hasCompactSupport hv hσ).comp_homeomorph
+      (Homeomorph.addLeft x)
+  let hm := compact_continuous_fourier_growth f hf hfc
+  have hout := distribution_apply_compactKernelConvolutionTest_eq_integral
+    u f hf hfc hm (schwartzReflectCLM ρ) (schwartzReflectCLM_hasCompactSupport hρ)
+  have htrans : ∀ t, schwartzTranslateCLM t (schwartzReflectCLM ρ) =
+      regularizationTest ρ (-t) := by
+    intro t
+    ext z
+    simp only [schwartzTranslateCLM_apply, schwartzReflectCLM_apply,
+      regularizationTest_apply]
+    congr 1
+    abel
+  have hout' : u (kernelConvolutionTestCLM f hm (schwartzReflectCLM ρ)) =
+      ∫ t, f t * distributionRegularization u ρ (-t) := by
+    rw [hout]
+    apply integral_congr_ae
+    exact Filter.Eventually.of_forall fun t => by
+      simp only [htrans t, distributionRegularization_apply]
+  let κ := regularizedKernel ρ σ hρ
+  obtain ⟨ψ, hψ, hw⟩ := hc.regularization_formula κ x
+  have hκρ := compact_continuous_fourier_growth (schwartzReflectCLM ρ)
+    (schwartzReflectCLM ρ).continuous (schwartzReflectCLM_hasCompactSupport hρ)
+  let φx := regularizationTest σ x
+  have hφxc : HasCompactSupport (φx : Euclidean d → ℂ) :=
+    regularizationTest_hasCompactSupport hσ x
+  have hkernel_identity (z : Euclidean d) :
+      kernelConvolutionTestCLM (fun a => ρ (a - z))
+        (compact_continuous_fourier_growth (fun a => ρ (a - z))
+          (ρ.continuous.comp (continuous_id.sub continuous_const))
+          (hρ.comp_homeomorph (Homeomorph.subRight z))) φx =
+      regularizationTest κ (x - z) := by
+    ext t
+    let fz : Euclidean d → ℂ := fun a => ρ (a - z)
+    let hmz := compact_continuous_fourier_growth fz
+      (ρ.continuous.comp (continuous_id.sub continuous_const))
+      (hρ.comp_homeomorph (Homeomorph.subRight z))
+    let T : Euclidean d → Euclidean d := fun a => z - a
+    have hT : MeasurePreserving T volume volume := by
+      simpa [T, sub_eq_add_neg] using
+        (MeasureTheory.measurePreserving_add_left volume z).comp
+          (MeasureTheory.Measure.measurePreserving_neg volume)
+    have heT : MeasurableEmbedding T := by
+      let e : Euclidean d ≃ₜ Euclidean d :=
+        (Homeomorph.neg (Euclidean d)).trans (Homeomorph.addLeft z)
+      simpa [T, e, sub_eq_add_neg] using e.measurableEmbedding
+    calc
+      kernelConvolutionTestCLM fz hmz φx t =
+          ∫ a, fz a * φx (t + a) :=
+        kernelConvolutionTestCLM_apply fz
+          ((ρ.continuous.comp (continuous_id.sub continuous_const)).integrable_of_hasCompactSupport
+            (hρ.comp_homeomorph (Homeomorph.subRight z))) hmz φx t
+      _ = ∫ a, ρ (a - z) * σ (x - t - a) := by
+        apply integral_congr_ae
+        exact Filter.Eventually.of_forall fun a => by
+          simp only [fz, φx, regularizationTest_apply]
+          congr 1
+          abel
+      _ = ∫ a, (schwartzReflectCLM ρ) (z - a) * σ (x - z - t + (z - a)) := by
+        apply integral_congr_ae
+        exact Filter.Eventually.of_forall fun a => by
+          simp [T, schwartzReflectCLM_apply, sub_eq_add_neg, add_assoc,
+            add_left_comm, add_comm]
+      _ = ∫ a, (schwartzReflectCLM ρ) a * σ (x - z - t + a) :=
+        hT.integral_comp heT
+          (fun b => (schwartzReflectCLM ρ) b * σ (x - z - t + b))
+      _ = κ (x - z - t) := by
+        dsimp [κ, regularizedKernel]
+        rw [kernelConvolutionTestCLM_apply _ (schwartzReflectCLM ρ).integrable hκρ]
+      _ = regularizationTest κ (x - z) t := by
+        simp [regularizationTest_apply]
+  have hpoint (z : Euclidean d) :
+      kernelConvolutionTestCLM f hm (schwartzReflectCLM ρ) z =
+        distributionRegularization v κ (x - z) := by
+    let fz : Euclidean d → ℂ := fun a => ρ (a - z)
+    let hmz := compact_continuous_fourier_growth fz
+      (ρ.continuous.comp (continuous_id.sub continuous_const))
+      (hρ.comp_homeomorph (Homeomorph.subRight z))
+    have hinter := distribution_apply_compactKernelConvolutionTest_eq_integral v fz
+      (ρ.continuous.comp (continuous_id.sub continuous_const))
+      (hρ.comp_homeomorph (Homeomorph.subRight z)) hmz φx hφxc
+    have htest := hkernel_identity z
+    have htranslation : ∀ a,
+        schwartzTranslateCLM a φx = regularizationTest σ (x - a) := by
+      intro a
+      ext t
+      simp [φx, regularizationTest_apply, schwartzTranslateCLM_apply,
+        sub_eq_add_neg, add_assoc, add_comm, add_left_comm]
+    have hreg : distributionRegularization v κ (x - z) =
+        ∫ a, ρ (a - z) * distributionRegularization v σ (x - a) := by
+      rw [distributionRegularization_apply]
+      rw [← htest]
+      rw [hinter]
+      apply integral_congr_ae
+      exact Filter.Eventually.of_forall fun a => by
+        simp only [htranslation a, distributionRegularization_apply, fz]
+    have hchange :
+        (∫ a, ρ (a - z) * distributionRegularization v σ (x - a)) =
+          ∫ t, f t * (schwartzReflectCLM ρ) (z + t) := by
+      let q : Euclidean d → ℂ := fun a =>
+        ρ (a - z) * distributionRegularization v σ (x - a)
+      calc
+        ∫ a, q a = ∫ t, q (-t) := (integral_neg_eq_self q volume).symm
+        _ = ∫ t, f t * (schwartzReflectCLM ρ) (z + t) := by
+          apply integral_congr_ae
+          exact Filter.Eventually.of_forall fun t => by
+            simp [q, f, schwartzReflectCLM_apply, sub_eq_add_neg,
+              add_assoc, add_left_comm, add_comm, mul_comm]
+    calc
+      kernelConvolutionTestCLM f hm (schwartzReflectCLM ρ) z =
+          ∫ t, f t * (schwartzReflectCLM ρ) (z + t) := by
+        rw [kernelConvolutionTestCLM_apply f
+          (hf.integrable_of_hasCompactSupport hfc) hm]
+      _ = distributionRegularization v κ (x - z) := by
+        rw [← hchange, ← hreg]
+
+  have hψeq : ψ = kernelConvolutionTestCLM f hm (schwartzReflectCLM ρ) := by
+    ext z
+    rw [hψ z, hpoint z]
+  have houter : u ψ = distributionRegularization w κ x := by
+    rw [hψeq]
+    exact (congrArg u hψeq).symm.trans hw.symm
+  have hconvint :
+      RieszEuclidean.TitchmarshFunctionAlgebra.convolution d
+        (regularizedFunction u hu ρ hρ) (regularizedFunction v hv σ hσ) x =
+      ∫ t, f t * distributionRegularization u ρ (-t) := by
+    rw [RieszEuclidean.TitchmarshFunctionAlgebra.coe_convolution]
+    let g : Euclidean d → ℂ := fun y =>
+      distributionRegularization u ρ y * distributionRegularization v σ (x - y)
+    calc
+      ∫ y, g y = ∫ y, g (-y) := (integral_neg_eq_self g volume).symm
+      _ = ∫ t, f t * distributionRegularization u ρ (-t) := by
+        apply integral_congr_ae
+        exact Filter.Eventually.of_forall fun t => by
+          simp [g, f, mul_comm]
+  calc
+    _ = ∫ t, f t * distributionRegularization u ρ (-t) := hconvint
+    _ = u ψ := hout'.symm.trans (congrArg u hψeq).symm
+    _ = distributionRegularization w κ x := houter
+
+/-- The support of the convolution of two regularizations is bounded by the
+support of the distribution convolution and the two kernel supports. -/
+theorem IsDistributionConvolution.regularizedConvolution_support_subset
+    {u v w : TemperedDistribution d} (hc : IsDistributionConvolution u v w)
+    (hu : CompactlySupportedDistribution u) (hv : CompactlySupportedDistribution v)
+    {ρ σ : 𝓢(Euclidean d, ℂ)}
+    (hρ : HasCompactSupport (ρ : Euclidean d → ℂ))
+    (hσ : HasCompactSupport (σ : Euclidean d → ℂ)) :
+    tsupport (distributionRegularization u ρ ⋆[ContinuousLinearMap.mul ℂ ℂ, volume]
+      distributionRegularization v σ) ⊆
+      distributionSupport w + tsupport (ρ : Euclidean d → ℂ) +
+        tsupport (σ : Euclidean d → ℂ) := by
+  let κ := regularizedKernel ρ σ hρ
+  let ρcc : RieszEuclidean.TitchmarshFunctionAlgebra.Function d := ⟨ρ, hρ⟩
+  let σcc : RieszEuclidean.TitchmarshFunctionAlgebra.Function d := ⟨σ, hσ⟩
+  have hκeq : (κ : Euclidean d → ℂ) =
+      RieszEuclidean.TitchmarshFunctionAlgebra.convolution d ρcc σcc := by
+    exact regularizedKernel_eq_functionConvolution ρ σ hρ hσ
+  have hκcompact : HasCompactSupport (κ : Euclidean d → ℂ) := by
+    rw [hκeq]
+    exact hρ.convolution (L := ContinuousLinearMap.mul ℂ ℂ) hσ
+  have hκsupport : tsupport (κ : Euclidean d → ℂ) ⊆
+      tsupport (ρ : Euclidean d → ℂ) + tsupport (σ : Euclidean d → ℂ) := by
+    rw [hκeq]
+    apply closure_minimal
+    · exact (MeasureTheory.support_convolution_subset
+        (L := ContinuousLinearMap.mul ℂ ℂ) (μ := volume)).trans
+        (Set.add_subset_add (subset_tsupport (ρ : Euclidean d → ℂ))
+          (subset_tsupport (σ : Euclidean d → ℂ)))
+    · exact (IsCompact.add hρ hσ).isClosed
+  have hidentity (y : Euclidean d) :
+      (distributionRegularization u ρ ⋆[ContinuousLinearMap.mul ℂ ℂ, volume]
+        distributionRegularization v σ) y =
+      distributionRegularization w κ y := by
+    simpa [regularizedFunction, RieszEuclidean.TitchmarshFunctionAlgebra.coe_convolution,
+      RieszEuclidean.TitchmarshFunctionAlgebra.convolution] using
+      (hc.regularizedConvolution_identity hu hv ρ σ hρ hσ y)
+  have hw : CompactlySupportedDistribution w := hc.compactlySupported hu hv
+  rw [show (distributionRegularization u ρ ⋆[ContinuousLinearMap.mul ℂ ℂ, volume]
+      distributionRegularization v σ) = distributionRegularization w κ from funext hidentity]
+  exact (distributionRegularization_tsupport_subset hw hκcompact).trans
+    (by simpa [add_assoc] using Set.add_subset_add_left hκsupport)
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
+/- Source: RieszEuclidean/TitchmarshLions.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+/-!
+# The Titchmarsh–Lions convolution support theorem
+
+For nonzero compactly supported tempered distributions, the convex hull of
+convolution support equals the sum of the convex hulls of the factor supports.
+The function theorem, local regularization, and exact convolution identity
+provide the three analytic ingredients of the proof.
+-/
+
+noncomputable section
+open MeasureTheory Set
+open scoped Convolution Pointwise SchwartzMap
+
+namespace RieszEuclidean.CompleteMinimal
+
+/-- The classical Titchmarsh–Lions theorem for actual compactly supported
+tempered distributions on finite-dimensional Euclidean space. -/
+theorem titchmarshLions (d : ℕ) : TitchmarshLions d := by
+  apply titchmarshLions_of_regularized_support
+  · intro f g _ _
+    exact convexHull_tsupport_convolution
+      f.continuous g.continuous f.hasCompactSupport g.hasCompactSupport
+  · intro u v w hu hv hc ρ σ hρ hσ
+    change tsupport (distributionRegularization u ρ ⋆[
+      ContinuousLinearMap.mul ℂ ℂ, volume] distributionRegularization v σ) ⊆
+        distributionSupport w + tsupport (ρ : Euclidean d → ℂ) +
+          tsupport (σ : Euclidean d → ℂ)
+    exact hc.regularizedConvolution_support_subset hu hv hρ hσ
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
 /- Source: RieszEuclidean/CompleteMinimalTheorem.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
 section
-/-! The final Section 9 main theorem and scope corollary. The only external
-analytic hypothesis is the explicitly named classical Titchmarsh–Lions theorem. -/
+/-! The unconditional Section 9 main theorem and scope corollary. -/
 
 noncomputable section
 open MeasureTheory Set Metric
@@ -31142,8 +35220,8 @@ namespace RieszEuclidean.CompleteMinimal
 
 /-- The actual normalized complete-minimal exponential system, constructed on
 the enumerated Bessel spheres with individual duals supported in the unit ball.
-All analytic package fields are proved; only Titchmarsh–Lions is a hypothesis. -/
-theorem complete_minimal_normalized_domain (n : ℕ) (hTL : TitchmarshLions (n + 1))
+All analytic package fields, including Titchmarsh–Lions, are proved. -/
+theorem complete_minimal_normalized_domain (n : ℕ)
     (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
     (hbounded : Bornology.IsBounded Ω) (hconvex : Convex ℝ Ω)
     (hJ : IsJohnEllipsoid (closure Ω) (closedBall (0 : Euclidean (n + 1)) 1))
@@ -31158,14 +35236,14 @@ theorem complete_minimal_normalized_domain (n : ℕ) (hTL : TitchmarshLions (n +
     hbounded.measure_lt_top.ne (ballZeroRadius n) (ballZeroRadius_zero n)
     (fun j hj => ballZeroRadius_pos n hj) (ballZeroRadius_strictMono n)
     (ballZeroRadius_tendsto n) (closedBall 0 1)
-    (sphereAnalyticInputs n hTL Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB)
+    (sphereAnalyticInputs n (titchmarshLions (n + 1))
+      Ω hΩ hbounded hbounded.measure_lt_top.ne hconvex hJ hB)
 
 /-- The manuscript main theorem: every nonempty bounded open convex domain in
 positive dimension has actual locally finite complete-minimal exponentials,
-with their biorthogonal functions supported in a John ellipsoid of its closure.
-The sole external analytic input is Titchmarsh–Lions in the physical dimension. -/
+with their biorthogonal functions supported in a John ellipsoid of its closure. -/
 theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
-    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
     (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
     ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
       IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
@@ -31180,7 +35258,7 @@ theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
     apply complete_minimal_from_normalized_domains hd ?_ hne hbounded hopen hconvex
     intro _hd2 D _hneD hboundedD hopenD hconvexD hJD hBD _htranslateD
     obtain ⟨Λ, _hspheres, hcomplete, _hminimal, hlocal, g, hg, hs⟩ :=
-      complete_minimal_normalized_domain n hTL D hopenD.measurableSet hboundedD hconvexD hJD hBD
+      complete_minimal_normalized_domain n D hopenD.measurableSet hboundedD hconvexD hJD hBD
     exact ⟨Λ, hlocal, hcomplete, g, hg, hs⟩
 
 /-- The manuscript scope corollary, simultaneously for every measurable
@@ -31188,7 +35266,7 @@ intermediate domain up to null sets, using the same selected frequencies and
 actual restrictions of the original duals. Proper ellipsoid-supported duals
 are not complete on the original domain. -/
 theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
-    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
     (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
     ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
       IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
@@ -31207,7 +35285,7 @@ theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
           (0 < volume (Ω \ E) → ¬ IsComplete g) ∧
           (interior E ⊂ Ω → ¬ IsComplete g) :=
   complete_minimal_scope_of_existence hne hbounded hopen hconvex
-    (complete_minimal_bounded_open_convex hd hTL hne hbounded hopen hconvex)
+    (complete_minimal_bounded_open_convex hd hne hbounded hopen hconvex)
 
 end RieszEuclidean.CompleteMinimal
 end
@@ -34203,6 +38281,137 @@ end RieszEuclidean
 end
 end
 
+/- Source: RieszEuclidean/TitchmarshTranslations.lean -/
+run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
+run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
+section
+noncomputable section
+open MeasureTheory Set SchwartzMap
+open scoped SchwartzMap Pointwise
+
+namespace RieszEuclidean.CompleteMinimal
+
+variable {d : ℕ}
+
+private theorem translatedTest_tsupport_subset (x : Euclidean d) (φ : 𝓢(Euclidean d, ℂ)) :
+    tsupport (schwartzTranslateCLM x φ : Euclidean d → ℂ) ⊆
+      (fun y => x + y) ⁻¹' tsupport (φ : Euclidean d → ℂ) := by
+  change closure (Function.support (schwartzTranslateCLM x φ : Euclidean d → ℂ)) ⊆ _
+  apply IsClosed.closure_subset_iff
+    (isClosed_tsupport _ |>.preimage (continuous_const.add continuous_id)) |>.mpr
+  intro y hy
+  exact subset_tsupport _ (show φ (x + y) ≠ 0 from hy)
+
+/-- Translation moves the exact distribution support by the same physical vector. -/
+private theorem distributionSupport_translate_subset (x : Euclidean d) (u : TemperedDistribution d) :
+    distributionSupport (distributionTranslate x u) ⊆
+      (fun y : Euclidean d => x + y) '' distributionSupport u := by
+  let H : Euclidean d ≃ₜ Euclidean d := Homeomorph.addLeft x
+  have himage : (fun y : Euclidean d => x + y) '' distributionSupport u =
+      (fun y : Euclidean d => -x + y) ⁻¹' distributionSupport u := by
+    ext y
+    constructor
+    · intro hy
+      obtain ⟨z, hz, hzy⟩ := hy
+      rw [← hzy]
+      simpa [add_assoc] using hz
+    · intro hy
+      refine ⟨-x + y, hy, ?_⟩
+      simp [add_assoc]
+  have hclosed : IsClosed ((fun y : Euclidean d => x + y) '' distributionSupport u) := by
+    rw [himage]
+    exact (distributionSupport_isClosed u).preimage (continuous_const.add continuous_id)
+  apply (distributionSupportedIn_iff_support_subset _ _ hclosed).mp
+  intro φ hφ hdisj
+  have hcompact : HasCompactSupport (schwartzTranslateCLM x φ : Euclidean d → ℂ) :=
+    hφ.comp_homeomorph H
+  have htest : Disjoint (tsupport (schwartzTranslateCLM x φ : Euclidean d → ℂ))
+      (distributionSupport u) := by
+    apply Set.disjoint_left.mpr
+    intro y hy hyu
+    have hxφ := translatedTest_tsupport_subset x φ hy
+    have hxφ' : x + y ∈ tsupport (φ : Euclidean d → ℂ) := by
+      change y ∈ (fun z => x + z) ⁻¹' tsupport (φ : Euclidean d → ℂ) at hxφ
+      exact hxφ
+    exact Set.disjoint_left.mp hdisj hxφ' ⟨y, hyu, rfl⟩
+  exact (distributionSupportedIn_support u) _ hcompact htest
+
+theorem distributionSupport_translate (x : Euclidean d) (u : TemperedDistribution d) :
+    distributionSupport (distributionTranslate x u) =
+      (fun y : Euclidean d => x + y) '' distributionSupport u := by
+  apply Set.Subset.antisymm (distributionSupport_translate_subset x u)
+  intro y hy
+  obtain ⟨z, hz, rfl⟩ := hy
+  have hcomp : distributionTranslate (-x) (distributionTranslate x u) = u := by
+    ext φ
+    change u (schwartzTranslateCLM x (schwartzTranslateCLM (-x) φ)) = u φ
+    congr 1
+    ext q
+    simp only [schwartzTranslateCLM_apply]
+    congr 1
+    abel
+  have hback := distributionSupport_translate_subset (-x) (distributionTranslate x u)
+  rw [hcomp] at hback
+  have hz' := hback hz
+  obtain ⟨q, hq, hqeq⟩ := hz'
+  have hqval : q = x + z := by
+    change -x + q = z at hqeq
+    calc
+      q = x + (-x + q) := by abel
+      _ = x + z := by rw [hqeq]
+  simpa [hqval] using hq
+
+/-- A Dirac distribution has support exactly at its evaluation point. -/
+theorem distributionSupport_delta (x : Euclidean d) :
+    distributionSupport (distributionDelta x) = {x} := by
+  apply Set.Subset.antisymm
+  · exact (distributionDelta_supported x).support_subset isClosed_singleton
+  · intro y hy
+    have hyx : y = x := Set.mem_singleton_iff.mp hy
+    subst y
+    change ∀ U : Set (Euclidean d), IsOpen U → x ∈ U →
+      ∃ φ : 𝓢(Euclidean d, ℂ), HasCompactSupport (φ : Euclidean d → ℂ) ∧
+        tsupport (φ : Euclidean d → ℂ) ⊆ U ∧ distributionDelta x φ ≠ 0
+    intro U hU hxU
+    obtain ⟨R, hR, hball⟩ := Metric.isOpen_iff.mp hU x hxU
+    obtain ⟨b, hbcompact, hb0, _, hbsupp⟩ :=
+      RieszEuclidean.exists_schwartz_bump (d := d) (show 0 < R / 2 by positivity)
+    let φ := schwartzTranslateCLM (-x) b
+    refine ⟨φ, ?_, ?_, ?_⟩
+    · exact hbcompact.comp_homeomorph (Homeomorph.addLeft (-x))
+    · have hts : tsupport (φ : Euclidean d → ℂ) ⊆ Metric.closedBall x (R / 2) := by
+        apply closure_minimal _ (Metric.isClosed_closedBall)
+        intro y hy
+        change b (-x + y) ≠ 0 at hy
+        apply Metric.mem_closedBall.mpr
+        have hnorm : ‖-x + y‖ ≤ R / 2 := by
+          by_contra hn
+          have ht : R / 2 < ‖-x + y‖ := lt_of_not_ge hn
+          exact hy (hbsupp (-x + y) ht.le)
+        simpa [dist_eq_norm, sub_eq_add_neg, add_comm] using hnorm
+      exact hts.trans (fun y hy => hball (Metric.mem_ball.mpr (by
+        have hy' := Metric.mem_closedBall.mp hy
+        change dist y x ≤ R / 2 at hy'
+        change dist y x < R
+        linarith [hR])))
+    · change φ x ≠ 0
+      simp [φ, schwartzTranslateCLM_apply, hb0]
+
+/-- A nonzero compactly supported distribution has nonempty exact support. -/
+theorem distributionSupport_nonempty {u : TemperedDistribution d} (hu0 : u ≠ 0) :
+    (distributionSupport u).Nonempty := by
+  by_contra hne
+  have hempty : distributionSupport u = ∅ := Set.not_nonempty_iff_eq_empty.mp hne
+  apply hu0
+  apply distribution_eq_of_compact_tests
+  intro φ hφ
+  have hs := (distributionSupportedIn_support u) φ hφ (by rw [hempty]; simp)
+  simpa using hs
+
+end RieszEuclidean.CompleteMinimal
+end
+end
+
 /- Source: RieszEuclidean/WeakPointLimits.lean -/
 run_cmd Lean.modifyEnv (Lean.Meta.auxLemmasExt.setState · {})
 run_cmd Lean.modifyEnv (Lean.Meta.Match.matcherExt.setState · {})
@@ -34244,8 +38453,8 @@ section
 
 This compact Comparator reference states proved results, including
 spectral-measure existence for the stationary representation and unconditional
-geometric nonexistence conclusions, and complete-minimal existence modulo the
-explicit Titchmarsh–Lions hypothesis. Wrapper proofs use the modular library
+geometric nonexistence conclusions, complete-minimal existence and the
+Titchmarsh–Lions convolution support theorem. Wrapper proofs use the modular library
 without placeholders or warning suppressions.
 -/
 noncomputable section
@@ -34879,9 +39088,9 @@ namespace RieszEuclidean.Results
 
 open CompleteMinimal in
 /-- Complete and ordinary minimal exponentials on every bounded nonempty open convex domain,
-with locally finite frequencies and John-supported duals, assuming Titchmarsh–Lions. -/
+with locally finite frequencies and John-supported duals. -/
 theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
-    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
     (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
     ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
       IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
@@ -34890,7 +39099,7 @@ theorem complete_minimal_bounded_open_convex {d : ℕ} (hd : 1 ≤ d)
         ∃ g : Λ → DomainL2 Ω,
           IsBiorthogonal (exponentialFamily Ω hbounded.measure_lt_top.ne Λ) g ∧
           ∀ ξ, SupportedOn Ω (g ξ) E :=
-  CompleteMinimal.complete_minimal_bounded_open_convex hd hTL hne hbounded hopen hconvex
+  CompleteMinimal.complete_minimal_bounded_open_convex hd hne hbounded hopen hconvex
 
 end RieszEuclidean.Results
 
@@ -34900,7 +39109,7 @@ open CompleteMinimal in
 /-- The same selected frequencies work on all measurable intermediate domains;
 the actual John-supported dual family is incomplete outside a proper support region. -/
 theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
-    (hTL : TitchmarshLions d) {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
+    {Ω : Set (Euclidean d)} (hne : Ω.Nonempty)
     (hbounded : Bornology.IsBounded Ω) (hopen : IsOpen Ω) (hconvex : Convex ℝ Ω) :
     ∃ Λ : Set (Euclidean d), IsLocallyFiniteSet Λ ∧
       IsCompleteExponential Ω hbounded.measure_lt_top.ne Λ ∧
@@ -34918,7 +39127,7 @@ theorem complete_minimal_scope {d : ℕ} (hd : 1 ≤ d)
               ∀ ξ, SupportedOn D (domainToDomain Ω D hopen.measurableSet (g ξ)) E) ∧
           (0 < volume (Ω \ E) → ¬ IsComplete g) ∧
           (interior E ⊂ Ω → ¬ IsComplete g) :=
-  CompleteMinimal.complete_minimal_scope hd hTL hne hbounded hopen hconvex
+  CompleteMinimal.complete_minimal_scope hd hne hbounded hopen hconvex
 
 end RieszEuclidean.Results
 
@@ -34927,7 +39136,7 @@ namespace RieszEuclidean.Results
 open CompleteMinimal in
 /-- Actual interpolation spaces: nesting, binomial dimension, localized support,
 and exact orthogonal annihilators of the later frequency spheres. -/
-theorem normalized_interpolation_spaces (n : ℕ) (hTL : TitchmarshLions (n + 1))
+theorem normalized_interpolation_spaces (n : ℕ)
     (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
     (hbounded : Bornology.IsBounded Ω) (hconvex : Convex ℝ Ω)
     (hJ : IsJohnEllipsoid (closure Ω) (Metric.closedBall (0 : Euclidean (n + 1)) 1))
@@ -34943,7 +39152,12 @@ theorem normalized_interpolation_spaces (n : ℕ) (hTL : TitchmarshLions (n + 1)
         f ∈ normalizedInterpolationSpace n Ω hΩ hbounded N ↔
           ∀ x ∈ laterSpheres (ballZeroRadius n) N,
             inner (𝕜 := ℂ) f (exponentialL2 Ω hbounded.measure_lt_top.ne x) = 0) :=
-  CompleteMinimal.normalized_interpolation_spaces n hTL Ω hΩ hbounded hconvex hJ hB
+  CompleteMinimal.normalized_interpolation_spaces n (CompleteMinimal.titchmarshLions (n + 1))
+    Ω hΩ hbounded hconvex hJ hB
+
+/-- Convex convolution support for nonzero compactly supported tempered distributions. -/
+theorem titchmarsh_lions (d : ℕ) : CompleteMinimal.TitchmarshLions d :=
+  CompleteMinimal.titchmarshLions d
 
 end RieszEuclidean.Results
 end

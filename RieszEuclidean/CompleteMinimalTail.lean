@@ -8,7 +8,7 @@ import RieszEuclidean.CompleteMinimalInterpolationFunctions
 
 These composition theorems take an actual compactly supported inverse quotient
 and an actual Fourier-product identity. Their conclusion is derived from the
-single named Titchmarsh–Lions hypothesis, John maximality, and the proved
+Titchmarsh–Lions proposition, John maximality, and the proved
 point-support classification. They do not assert the still separate analytic
 division or the sharp polynomial degree estimate.
 -/

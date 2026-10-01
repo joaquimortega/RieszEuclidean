@@ -1,0 +1,7 @@
+ℹ [2906/2975] Replayed RieszEuclidean.CompleteMinimalBessel
+info: ././././RieszEuclidean/CompleteMinimalBessel.lean:981:4: Try this: ring_nf
+ℹ [2940/2975] Replayed RieszEuclidean.CompleteMinimalSphereMembership
+info: ././././RieszEuclidean/CompleteMinimalSphereMembership.lean:273:38: Try this: ring_nf
+ℹ [2968/2975] Replayed RieszEuclidean.TitchmarshRegularizedConvolution
+info: ././././RieszEuclidean/TitchmarshRegularizedConvolution.lean:151:10: Try this: abel_nf
+Build completed successfully.

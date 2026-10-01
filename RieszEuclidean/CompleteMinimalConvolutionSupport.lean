@@ -5,12 +5,12 @@ import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
 import Mathlib.Geometry.Manifold.PartitionOfUnity
 
 /-!
-# The Titchmarsh–Lions hypothesis and its John-ellipsoid consequence
+# The Titchmarsh–Lions statement and its John-ellipsoid consequence
 
 Distribution support is defined by actual local compact Schwartz tests. The
 convolution relation is the iterated action on `φ(x+y)`; its definition contains
-no support assertion. `TitchmarshLions` is an explicit proposition to be supplied
-as a hypothesis, not an axiom or a theorem asserted without proof.
+no support assertion. `TitchmarshLions` is the support proposition whose concrete
+proof is provided by `titchmarshLions` in `TitchmarshLions.lean`.
 -/
 
 noncomputable section

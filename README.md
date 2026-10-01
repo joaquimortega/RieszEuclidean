@@ -3,14 +3,15 @@
 Lean formalization project for Joaquim Ortega-Cerdà's
 [`RieszEuclidean.tex`](paper/RieszEuclidean.tex).
 
-The **32 obligations for Sections 2–8 are proved**. Section 9 now has 20 proved
-milestones and the author-authorized Titchmarsh–Lions hypothesis. Its main theorem
+The **53 milestones for Sections 2–9 are proved**, including the classical
+Titchmarsh–Lions convolution support theorem. Section 9's main theorem
 constructs locally finite complete and ordinary minimal exponentials on every
 nonempty bounded open convex domain, with biorthogonals supported in a John
 ellipsoid. The same frequencies work on intermediate measurable domains.
 The Bessel argument uses proved ODE and zero-geometry results; the literal
-infinite-product identity is not formalized. All 46 public targets passed
-Comparator and kernel validation; see [the Section 9 review](reviews/complete-minimal-progress.md).
+infinite-product identity is not formalized. All 47 public targets pass
+Comparator and Lean kernel validation; see
+[the current verification review](reviews/titchmarsh-progress.md).
 The existing proofs include the revised Section 2 and Section 8 on bounded
 convex domains with C² boundary. The bump
 characterization is an equivalence, and the projection proof uses adjoints,
@@ -57,22 +58,25 @@ Lebesgue L² exponentials, closed complex spans and supported biorthogonals.
 Both retain the manuscript's dimensional and geometric hypotheses.
 CI builds and lints the modular, public, and standalone sources,
 checks extraction and metadata, audits transitive axioms, and requires all
-blueprint obligations to be resolved, with only the documented Titchmarsh–Lions
-external hypothesis permitted in Section 9.
+blueprint obligations to be proved without external mathematical hypotheses.
 
 ## Verification
 
-`MainResults.lean` exposes 46 public targets, including the unconditional convex
-`C²` corollary, the Section 2 bump equivalence, and five Section 9 results.
+`MainResults.lean` exposes 47 public targets, including the unconditional convex
+`C²` corollary, the Section 2 bump equivalence, five Section 9 results and
+Titchmarsh–Lions. The public complete-minimal and interpolation results no longer
+require a Titchmarsh–Lions hypothesis.
 `RieszEuclideanStandalone.lean` is generated from the same checked source modules.
-The completed Section 9 verification is recorded in
+The current verification is recorded in
+[`reviews/titchmarsh-progress.md`](reviews/titchmarsh-progress.md). The previous
+Section 9 record, with its explicit theorem hypothesis, remains in
 [`reviews/complete-minimal-progress.md`](reviews/complete-minimal-progress.md).
 The completed 41-target verification of Sections 2–8 is recorded in
 [`reviews/convex-progress.md`](reviews/convex-progress.md).
 
 The earlier 37-target Comparator run is a historical verification of the previous
 manuscript scope, recorded in [`reviews/bochner-progress.md`](reviews/bochner-progress.md).
-The current 46-target record covers the extended scope. Pinned Comparator
+The earlier 46-target record covers Section 9 with its former hypothesis. Pinned Comparator
 instructions are in [`standalone/TOOLS.md`](standalone/TOOLS.md).
 
 The axiom checker verifies every blueprint target using Lean's builtin
@@ -121,9 +125,8 @@ latexmk -pdf -interaction=nonstopmode -halt-on-error \
 ```
 
 The paper credits weak limits to Beurling and cites Rudin, *Fourier Analysis on
-Groups*, §1.4.3, for Bochner's theorem. Apart from the explicitly authorized
-Titchmarsh–Lions hypothesis, the required mathematical conclusions are proved
-in Lean or obtained from Mathlib.
+Groups*, §1.4.3, for Bochner's theorem. The required mathematical conclusions
+are proved in Lean or obtained from Mathlib, including Titchmarsh–Lions.
 
 ## Contribution checks
 

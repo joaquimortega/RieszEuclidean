@@ -31,8 +31,9 @@ the adapted Mathlib material and does not assign a license to the manuscript
 or the rest of this project.
 
 On 2026-09-26 the author authorized the Titchmarsh–Lions convolution support
-theorem as an explicit external hypothesis for Section 9. This mathematical
-dependency does not authorize additional unproved analytic inputs.
+theorem as an explicit external hypothesis for Section 9. It is now proved in
+`RieszEuclidean/TitchmarshLions.lean`, and the public Section 9 results use
+that proof directly. Their mathematical inputs are all proved.
 
 Automated kernel and Comparator checks and AI-assisted source reviews are
 recorded in `reviews/`; no independent human review is claimed. No new

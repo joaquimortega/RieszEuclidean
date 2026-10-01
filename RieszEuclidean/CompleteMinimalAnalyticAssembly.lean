@@ -367,8 +367,8 @@ theorem compactSphereTailDivision (n : ℕ) {Ω : Set (Euclidean (n + 1))}
   simpa only [realToComplex_apply, polynomialEvaluation_apply, domainEntireFourier,
     entireFourier_realToComplex] using hproduct (realToComplex x)
 
-/-- The actual normalized spherical analytic package. Its only external
-analytic theorem is the explicitly named Titchmarsh–Lions hypothesis. -/
+/-- The actual normalized spherical analytic package, parameterized by the
+Titchmarsh–Lions proposition proved in `TitchmarshLions.lean`. -/
 def sphereAnalyticInputs (n : ℕ) (hTL : TitchmarshLions (n + 1))
     (Ω : Set (Euclidean (n + 1))) (hΩ : MeasurableSet Ω)
     (hbounded : Bornology.IsBounded Ω) (hfinite : volume Ω ≠ ⊤)

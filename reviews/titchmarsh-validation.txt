@@ -1,0 +1,3 @@
+Inventory checked: 53 proved-scope nodes; 0 authorized external hypotheses; 0 pending full-paper obligations.
+Standalone extraction matches every source module and the result reference.
+formalization.yaml: official v0.4 schema and project-state checks passed.

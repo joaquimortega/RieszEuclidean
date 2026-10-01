@@ -194,8 +194,27 @@ inverse to obtain a smaller patch of positive finite Hausdorff measure.
 `ConvexDomainTheorem.lean` then applies the general boundary criterion and
 proves the unconditional convex C²-domain corollary.
 
+## Section 9: complete and minimal exponential systems
+
+All 21 Section 9 milestones are proved. The Titchmarsh–Lions support theorem,
+formerly supplied as an external hypothesis, is proved in
+[`TitchmarshLions.lean`](../RieszEuclidean/TitchmarshLions.lean). Its support is
+defined by local compact Schwartz tests, and its convolution relation is the
+actual iterated distribution action.
+
+The proof first establishes directional endpoints for compact continuous
+functions using a Laplace-transform square argument, an algebraic bootstrap and
+polynomial moment detection. Arbitrarily small compact Schwartz kernels detect
+distribution support. Finite weighted derivative jets and Hahn–Banach give the
+exact integral interchange needed for regularized convolution. Compact convex
+hulls and separation then yield the distribution theorem.
+
+`CompleteMinimalTheorem.lean` and the public Section 9 wrappers now use this
+proved theorem. Their statements have no external mathematical theorem parameter.
+
 ## Verification
 
-All 32 nodes are proved. The full-completion gate remains enabled.
-Current verification is recorded in [the review](../reviews/convex-progress.md).
-The earlier 37-target Comparator record is retained as historical evidence.
+All 53 nodes are proved, with no authorized external hypotheses or pending
+obligations. The full-completion gate remains enabled. Current verification is
+recorded in [the review](../reviews/titchmarsh-progress.md). The earlier 37-, 41-
+and 46-target Comparator records are retained as historical evidence.

@@ -246,13 +246,11 @@ The Lean formalization of the nonexistence results in
 Sections~\ref{sec:bumps}--\ref{sec:convex} and the existence theorem in
 Section~\ref{sec:complete-minimal} is available at the GitHub repository:
 \href{https://github.com/joaquimortega/RieszEuclidean}{RieszEuclidean}.
-The repository contains the proof blueprint, the Lean sources, a standalone
+The repository contains the Lean sources, a standalone
 proof file, and verification records identifying the statements checked by
-Comparator and Lean's kernel. The existence theorem retains the
-Titchmarsh--Lions convolution support theorem as an explicit hypothesis.
-Its formal proof derives the required Bessel zero geometry directly from
-the radial differential equation. The verification records describe this
-alternative argument and its correspondence with the manuscript.
+Comparator and Lean's kernel. The Titchmarsh--Lions convolution support
+theorem is now proved in Lean and is used directly in the formalized
+existence theorem.
 
 \section{From complete interpolation to bump projections}\label{sec:bumps}
 

@@ -89,7 +89,7 @@ The revised Section 2 and convex-domain extension use 41 public targets.
 Their historical verification record is `reviews/convex-progress.md`, with a
 separate Comparator log and fingerprints so the historical run remains distinct.
 
-The Section 9 configuration extends this to 46 public targets, all accepted
+The earlier Section 9 configuration used 46 public targets, all accepted
 by Comparator and the Lean kernel. Its log is `reviews/comparator-complete-minimal.txt`,
 with scope in `reviews/complete-minimal-progress.md` and exact fingerprints in
 `reviews/complete-minimal-progress-hashes.json`. The historical 37- and 41-target
@@ -102,3 +102,10 @@ the standalone source. It also clears Lean's nonpersistent auxiliary-proof and
 matcher name caches at each file boundary, reproducing separate compilation.
 No declarations or kernel checks are removed. The resulting source remains
 subject to compilation and Comparator replay.
+
+The current configuration has 47 targets and includes the proved
+Titchmarsh–Lions support theorem. The public Section 9 results no longer require
+that theorem as a hypothesis. Current validation is recorded in
+`reviews/titchmarsh-progress.md`, with the Comparator log in
+`reviews/comparator-titchmarsh.txt` and fingerprints in
+`reviews/titchmarsh-progress-hashes.json`.

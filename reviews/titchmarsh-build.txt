@@ -1,0 +1,24 @@
+ℹ [2956/2976] Replayed RieszEuclidean.TitchmarshRegularizedConvolution
+info: ././././RieszEuclidean/TitchmarshRegularizedConvolution.lean:151:10: Try this: abel_nf
+ℹ [2961/2978] Replayed RieszEuclideanStandalone
+info: ././././RieszEuclideanStandalone.lean:20579:4: Try this: ring_nf
+info: ././././RieszEuclideanStandalone.lean:26723:38: Try this: ring_nf
+info: ././././RieszEuclideanStandalone.lean:35043:10: Try this: abel_nf
+ℹ [2963/2978] Built RieszEuclidean.CompleteMinimalBessel
+info: ././././RieszEuclidean/CompleteMinimalBessel.lean:981:4: Try this: ring_nf
+✔ [2964/2978] Built RieszEuclidean.CompleteMinimalBallSupport
+✔ [2965/2978] Built RieszEuclidean.CompleteMinimalFourierGrowth
+✔ [2966/2978] Built RieszEuclidean.CompleteMinimalBesselAsymptotic
+✔ [2967/2978] Built RieszEuclidean.CompleteMinimalBesselComplexZeros
+✔ [2968/2978] Built RieszEuclidean.CompleteMinimalTail
+✔ [2969/2978] Built RieszEuclidean.CompleteMinimalResolvent
+ℹ [2970/2978] Built RieszEuclidean.CompleteMinimalSphereMembership
+info: ././././RieszEuclidean/CompleteMinimalSphereMembership.lean:273:38: Try this: ring_nf
+✔ [2971/2978] Built RieszEuclidean.CompleteMinimalBesselZeros
+✔ [2972/2978] Built RieszEuclidean.CompleteMinimalFourierDivision
+✔ [2973/2978] Built RieszEuclidean.CompleteMinimalAnalyticAssembly
+✔ [2974/2978] Built RieszEuclidean.CompleteMinimalTheorem
+✔ [2975/2978] Built RieszEuclidean.CompleteMinimalInterpolationSpaces
+✔ [2976/2978] Built RieszEuclidean
+✔ [2977/2978] Built MainResults
+Build completed successfully.
